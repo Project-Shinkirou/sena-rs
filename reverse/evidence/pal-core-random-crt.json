@@ -1,0 +1,105 @@
+{
+  "functions": [
+    {
+      "ea": "0x100d5f6f",
+      "name": "_rand",
+      "xrefs": [
+        {
+          "from": "0x100a3df7",
+          "function": "sub_100A34F0"
+        },
+        {
+          "from": "0x100af3c0",
+          "function": "PalRandomReset"
+        },
+        {
+          "from": "0x100af4dc",
+          "function": "PalRandom"
+        }
+      ],
+      "pseudocode": "int __cdecl rand()\n{\n  int v0; // eax\n  unsigned int v1; // ecx\n\n  v0 = __acrt_getptd();\n  v1 = 214013 * *(_DWORD *)(v0 + 24) + 2531011;\n  *(_DWORD *)(v0 + 24) = v1;\n  return HIWORD(v1) & 0x7FFF;\n}\n",
+      "disassembly": [
+        [
+          "0x100d5f6f",
+          "call    ___acrt_getptd"
+        ],
+        [
+          "0x100d5f74",
+          "imul    ecx, [eax+18h], 343FDh"
+        ],
+        [
+          "0x100d5f7b",
+          "add     ecx, 269EC3h"
+        ],
+        [
+          "0x100d5f81",
+          "mov     [eax+18h], ecx"
+        ],
+        [
+          "0x100d5f84",
+          "shr     ecx, 10h"
+        ],
+        [
+          "0x100d5f87",
+          "and     ecx, 7FFFh"
+        ],
+        [
+          "0x100d5f8d",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x100d5f8f",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100d5f90",
+      "name": "_srand",
+      "xrefs": [
+        {
+          "from": "0x100a3db8",
+          "function": "sub_100A34F0"
+        }
+      ],
+      "pseudocode": "void __cdecl srand(unsigned int Seed)\n{\n  *(_DWORD *)(__acrt_getptd() + 24) = Seed;\n}\n",
+      "disassembly": [
+        [
+          "0x100d5f90",
+          "mov     edi, edi"
+        ],
+        [
+          "0x100d5f92",
+          "push    ebp"
+        ],
+        [
+          "0x100d5f93",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100d5f95",
+          "call    ___acrt_getptd"
+        ],
+        [
+          "0x100d5f9a",
+          "mov     ecx, [ebp+Seed]"
+        ],
+        [
+          "0x100d5f9d",
+          "mov     [eax+18h], ecx"
+        ],
+        [
+          "0x100d5fa0",
+          "pop     ebp"
+        ],
+        [
+          "0x100d5fa1",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "dll/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

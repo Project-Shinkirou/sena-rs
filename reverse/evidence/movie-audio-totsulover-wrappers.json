@@ -1,0 +1,3561 @@
+{
+  "functions": [
+    {
+      "ea": "0x45b010",
+      "name": "sub_45B010",
+      "xrefs": [
+        {
+          "from": "0x459804",
+          "function": null
+        },
+        {
+          "from": "0x45bd18",
+          "function": null
+        },
+        {
+          "from": "0x4eab50",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B010(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edi\n  int v3; // esi\n  _DWORD *v4; // eax\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 <= 0x7F )\n  {\n    v3 = 732 * v2 + a1;\n    v4 = *(_DWORD **)(v3 + 164564);\n    if ( v4 )\n    {\n      if ( PalMSpriteCheck(*v4) )\n      {\n        PalMSpriteStop(**(_DWORD **)(v3 + 164564));\n        PalDebugPrintf(10, 0, \"msp_stop %d\", v2);\n      }\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b010",
+          "push    ebp"
+        ],
+        [
+          "0x45b011",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b013",
+          "push    esi"
+        ],
+        [
+          "0x45b014",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b017",
+          "push    edi"
+        ],
+        [
+          "0x45b018",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b01e",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b021",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b023",
+          "jns     short loc_45B03D"
+        ],
+        [
+          "0x45b025",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b02a",
+          "push    0"
+        ],
+        [
+          "0x45b02c",
+          "push    0"
+        ],
+        [
+          "0x45b02e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b034",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b03a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b03d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b040",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b046",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b04d",
+          "cmp     edi, 7Fh"
+        ],
+        [
+          "0x45b050",
+          "ja      short loc_45B094"
+        ],
+        [
+          "0x45b052",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x45b058",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b05a",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b060",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b062",
+          "jz      short loc_45B094"
+        ],
+        [
+          "0x45b064",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b066",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b06c",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b06f",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b071",
+          "jz      short loc_45B094"
+        ],
+        [
+          "0x45b073",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b079",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b07b",
+          "call    __imp_PalMSpriteStop"
+        ],
+        [
+          "0x45b081",
+          "push    edi"
+        ],
+        [
+          "0x45b082",
+          "push    offset aMspStopD; \"msp_stop %d\""
+        ],
+        [
+          "0x45b087",
+          "push    0"
+        ],
+        [
+          "0x45b089",
+          "push    0Ah"
+        ],
+        [
+          "0x45b08b",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b091",
+          "add     esp, 14h"
+        ],
+        [
+          "0x45b094",
+          "pop     edi"
+        ],
+        [
+          "0x45b095",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b09a",
+          "pop     esi"
+        ],
+        [
+          "0x45b09b",
+          "pop     ebp"
+        ],
+        [
+          "0x45b09c",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b0a0",
+      "name": "sub_45B0A0",
+      "xrefs": [
+        {
+          "from": "0x4597f3",
+          "function": null
+        },
+        {
+          "from": "0x45bd07",
+          "function": null
+        },
+        {
+          "from": "0x4eab4c",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B0A0(int a1)\n{\n  int v2; // ecx\n  int v3; // ecx\n  unsigned int v4; // edx\n  int v5; // ebx\n  _DWORD *v6; // esi\n  _DWORD *v7; // eax\n  _DWORD *v8; // eax\n  unsigned int v10; // [esp+14h] [ebp+8h]\n\n  v2 = *(_DWORD *)(a1 + 286352);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v3;\n  v4 = *(_DWORD *)(a1 + 4 * v3 + 258424);\n  v10 = v4;\n  if ( v3 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n    v4 = v10;\n  }\n  *(_DWORD *)(a1 + 286352) = v3 - 1;\n  v5 = *(_DWORD *)(a1 + 4 * (v3 - 1) + 258424);\n  if ( v4 <= 0x7F )\n  {\n    v6 = (_DWORD *)(732 * v4 + a1);\n    v7 = (_DWORD *)v6[41141];\n    if ( v7 )\n    {\n      if ( PalMSpriteCheck(*v7) )\n      {\n        v8 = (_DWORD *)v6[41141];\n        v6[41144] |= (unsigned int)&_ImageBase;\n        v6[41162] = v5;\n        PalMSpritePlay(*v8, v5);\n        PalDebugPrintf(10, 0, \"msp_play %d, %d\", v10, v5);\n        return 1;\n      }\n      PalDebugPrintf(0, 0, aMspPlay);\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b0a0",
+          "push    ebp"
+        ],
+        [
+          "0x45b0a1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b0a3",
+          "push    ebx"
+        ],
+        [
+          "0x45b0a4",
+          "push    esi"
+        ],
+        [
+          "0x45b0a5",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b0a8",
+          "push    edi"
+        ],
+        [
+          "0x45b0a9",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0af",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0b5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b0b8",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b0ba",
+          "jns     short loc_45B0D0"
+        ],
+        [
+          "0x45b0bc",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b0c1",
+          "push    0"
+        ],
+        [
+          "0x45b0c3",
+          "push    0"
+        ],
+        [
+          "0x45b0c5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0c7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0cd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b0d0",
+          "dec     ecx"
+        ],
+        [
+          "0x45b0d1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x45b0d7",
+          "mov     edx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x45b0de",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b0e1",
+          "mov     [ebp+arg_0], edx"
+        ],
+        [
+          "0x45b0e4",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b0e6",
+          "jns     short loc_45B0FF"
+        ],
+        [
+          "0x45b0e8",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b0ed",
+          "push    0"
+        ],
+        [
+          "0x45b0ef",
+          "push    0"
+        ],
+        [
+          "0x45b0f1",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0f3",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0f9",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b0fc",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x45b0ff",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b102",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b108",
+          "mov     ebx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b10f",
+          "cmp     edx, 7Fh"
+        ],
+        [
+          "0x45b112",
+          "ja      short loc_45B17E"
+        ],
+        [
+          "0x45b114",
+          "imul    eax, edx, 2DCh"
+        ],
+        [
+          "0x45b11a",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b11c",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b122",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b124",
+          "jz      short loc_45B17E"
+        ],
+        [
+          "0x45b126",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b128",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b12e",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b131",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b133",
+          "jz      short loc_45B170"
+        ],
+        [
+          "0x45b135",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b13b",
+          "or      dword ptr [esi+282E0h], offset __ImageBase"
+        ],
+        [
+          "0x45b145",
+          "mov     [esi+28328h], ebx"
+        ],
+        [
+          "0x45b14b",
+          "push    ebx"
+        ],
+        [
+          "0x45b14c",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b14e",
+          "call    __imp_PalMSpritePlay"
+        ],
+        [
+          "0x45b154",
+          "push    ebx"
+        ],
+        [
+          "0x45b155",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b158",
+          "push    offset aMspPlayDD; \"msp_play %d, %d\""
+        ],
+        [
+          "0x45b15d",
+          "push    0"
+        ],
+        [
+          "0x45b15f",
+          "push    0Ah"
+        ],
+        [
+          "0x45b161",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b163",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x45b166",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b16b",
+          "pop     edi"
+        ],
+        [
+          "0x45b16c",
+          "pop     esi"
+        ],
+        [
+          "0x45b16d",
+          "pop     ebx"
+        ],
+        [
+          "0x45b16e",
+          "pop     ebp"
+        ],
+        [
+          "0x45b16f",
+          "retn"
+        ],
+        [
+          "0x45b170",
+          "push    offset aMspPlay; \"msp_play : \""
+        ],
+        [
+          "0x45b175",
+          "push    0"
+        ],
+        [
+          "0x45b177",
+          "push    0"
+        ],
+        [
+          "0x45b179",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b17b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b17e",
+          "pop     edi"
+        ],
+        [
+          "0x45b17f",
+          "pop     esi"
+        ],
+        [
+          "0x45b180",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b185",
+          "pop     ebx"
+        ],
+        [
+          "0x45b186",
+          "pop     ebp"
+        ],
+        [
+          "0x45b187",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b190",
+      "name": "sub_45B190",
+      "xrefs": [
+        {
+          "from": "0x4597e2",
+          "function": null
+        },
+        {
+          "from": "0x45bcf6",
+          "function": null
+        },
+        {
+          "from": "0x4eab48",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B190(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edi\n  int v3; // esi\n  _DWORD *v4; // eax\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 <= 0x7F )\n  {\n    v3 = 732 * v2 + a1;\n    v4 = *(_DWORD **)(v3 + 164564);\n    if ( v4 )\n    {\n      if ( PalMSpriteCheck(*v4) )\n        PalMSpriteUnlock(**(_DWORD **)(v3 + 164564));\n      PalDebugPrintf(10, 0, \"msp_unlock %d\", v2);\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b190",
+          "push    ebp"
+        ],
+        [
+          "0x45b191",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b193",
+          "push    esi"
+        ],
+        [
+          "0x45b194",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b197",
+          "push    edi"
+        ],
+        [
+          "0x45b198",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b19e",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b1a1",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b1a3",
+          "jns     short loc_45B1BD"
+        ],
+        [
+          "0x45b1a5",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b1aa",
+          "push    0"
+        ],
+        [
+          "0x45b1ac",
+          "push    0"
+        ],
+        [
+          "0x45b1ae",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b1b4",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b1ba",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b1bd",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b1c0",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b1c6",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b1cd",
+          "cmp     edi, 7Fh"
+        ],
+        [
+          "0x45b1d0",
+          "ja      short loc_45B217"
+        ],
+        [
+          "0x45b1d2",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x45b1d8",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b1da",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b1e0",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b1e2",
+          "jz      short loc_45B217"
+        ],
+        [
+          "0x45b1e4",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b1e6",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b1ec",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b1ef",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b1f1",
+          "jz      short loc_45B204"
+        ],
+        [
+          "0x45b1f3",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b1f9",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b1fb",
+          "call    __imp_PalMSpriteUnlock"
+        ],
+        [
+          "0x45b201",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b204",
+          "push    edi"
+        ],
+        [
+          "0x45b205",
+          "push    offset aMspUnlockD; \"msp_unlock %d\""
+        ],
+        [
+          "0x45b20a",
+          "push    0"
+        ],
+        [
+          "0x45b20c",
+          "push    0Ah"
+        ],
+        [
+          "0x45b20e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b214",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b217",
+          "pop     edi"
+        ],
+        [
+          "0x45b218",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b21d",
+          "pop     esi"
+        ],
+        [
+          "0x45b21e",
+          "pop     ebp"
+        ],
+        [
+          "0x45b21f",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b220",
+      "name": "sub_45B220",
+      "xrefs": [
+        {
+          "from": "0x4597d1",
+          "function": null
+        },
+        {
+          "from": "0x45bce5",
+          "function": null
+        },
+        {
+          "from": "0x4eab44",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B220(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edi\n  int v3; // esi\n  _DWORD *v4; // eax\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 <= 0x7F )\n  {\n    v3 = 732 * v2 + a1;\n    v4 = *(_DWORD **)(v3 + 164564);\n    if ( v4 )\n    {\n      if ( PalMSpriteCheck(*v4) )\n        PalMSpriteLock(**(_DWORD **)(v3 + 164564));\n      PalDebugPrintf(10, 0, \"msp_lock %d\", v2);\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b220",
+          "push    ebp"
+        ],
+        [
+          "0x45b221",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b223",
+          "push    esi"
+        ],
+        [
+          "0x45b224",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b227",
+          "push    edi"
+        ],
+        [
+          "0x45b228",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b22e",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b231",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b233",
+          "jns     short loc_45B24D"
+        ],
+        [
+          "0x45b235",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b23a",
+          "push    0"
+        ],
+        [
+          "0x45b23c",
+          "push    0"
+        ],
+        [
+          "0x45b23e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b244",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b24a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b24d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b250",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b256",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b25d",
+          "cmp     edi, 7Fh"
+        ],
+        [
+          "0x45b260",
+          "ja      short loc_45B2A7"
+        ],
+        [
+          "0x45b262",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x45b268",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b26a",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b270",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b272",
+          "jz      short loc_45B2A7"
+        ],
+        [
+          "0x45b274",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b276",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b27c",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b27f",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b281",
+          "jz      short loc_45B294"
+        ],
+        [
+          "0x45b283",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b289",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b28b",
+          "call    __imp_PalMSpriteLock"
+        ],
+        [
+          "0x45b291",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b294",
+          "push    edi"
+        ],
+        [
+          "0x45b295",
+          "push    offset aMspLockD; \"msp_lock %d\""
+        ],
+        [
+          "0x45b29a",
+          "push    0"
+        ],
+        [
+          "0x45b29c",
+          "push    0Ah"
+        ],
+        [
+          "0x45b29e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b2a4",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b2a7",
+          "pop     edi"
+        ],
+        [
+          "0x45b2a8",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b2ad",
+          "pop     esi"
+        ],
+        [
+          "0x45b2ae",
+          "pop     ebp"
+        ],
+        [
+          "0x45b2af",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b2b0",
+      "name": "sub_45B2B0",
+      "xrefs": [
+        {
+          "from": "0x459859",
+          "function": null
+        },
+        {
+          "from": "0x45bd6d",
+          "function": null
+        },
+        {
+          "from": "0x4eab64",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B2B0(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // ecx\n  int *v3; // ebx\n  int result; // eax\n  int v5; // ebx\n  int State; // edi\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 > 0x7F )\n  {\n    PalDebugPrintf(0, 0, \"error: msp_get_state %d\", v2);\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = -1;\n    return 1;\n  }\n  else\n  {\n    v3 = *(int **)(732 * v2 + a1 + 164564);\n    if ( v3 )\n    {\n      v5 = *v3;\n      State = 0;\n      if ( PalMSpriteCheck(v5) )\n        State = PalMSpriteGetState(v5);\n      result = 1;\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = State;\n    }\n    else\n    {\n      PalDebugPrintf(0, 0, \"error: msp_get_state %d / no image\", v2);\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = -1;\n      return 1;\n    }\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x45b2b0",
+          "push    ebp"
+        ],
+        [
+          "0x45b2b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b2b3",
+          "push    esi"
+        ],
+        [
+          "0x45b2b4",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b2b7",
+          "push    edi"
+        ],
+        [
+          "0x45b2b8",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b2be",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b2c4",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b2c7",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b2c9",
+          "jns     short loc_45B2DF"
+        ],
+        [
+          "0x45b2cb",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b2d0",
+          "push    0"
+        ],
+        [
+          "0x45b2d2",
+          "push    0"
+        ],
+        [
+          "0x45b2d4",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b2d6",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b2dc",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b2df",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b2e2",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b2e8",
+          "mov     ecx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b2ef",
+          "cmp     ecx, 7Fh"
+        ],
+        [
+          "0x45b2f2",
+          "ja      short loc_45B363"
+        ],
+        [
+          "0x45b2f4",
+          "imul    eax, ecx, 2DCh"
+        ],
+        [
+          "0x45b2fa",
+          "push    ebx"
+        ],
+        [
+          "0x45b2fb",
+          "mov     ebx, [eax+esi+282D4h]"
+        ],
+        [
+          "0x45b302",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x45b304",
+          "jnz     short loc_45B32E"
+        ],
+        [
+          "0x45b306",
+          "push    ecx"
+        ],
+        [
+          "0x45b307",
+          "push    offset aErrorMspGetSta; \"error: msp_get_state %d / no image\""
+        ],
+        [
+          "0x45b30c",
+          "push    ebx"
+        ],
+        [
+          "0x45b30d",
+          "push    ebx"
+        ],
+        [
+          "0x45b30e",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b310",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x45b316",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b319",
+          "pop     ebx"
+        ],
+        [
+          "0x45b31a",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x45b325",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b32a",
+          "pop     edi"
+        ],
+        [
+          "0x45b32b",
+          "pop     esi"
+        ],
+        [
+          "0x45b32c",
+          "pop     ebp"
+        ],
+        [
+          "0x45b32d",
+          "retn"
+        ],
+        [
+          "0x45b32e",
+          "mov     ebx, [ebx]"
+        ],
+        [
+          "0x45b330",
+          "xor     edi, edi"
+        ],
+        [
+          "0x45b332",
+          "push    ebx"
+        ],
+        [
+          "0x45b333",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b339",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b33c",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b33e",
+          "jz      short loc_45B34C"
+        ],
+        [
+          "0x45b340",
+          "push    ebx"
+        ],
+        [
+          "0x45b341",
+          "call    __imp_PalMSpriteGetState"
+        ],
+        [
+          "0x45b347",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b34a",
+          "mov     edi, eax"
+        ],
+        [
+          "0x45b34c",
+          "mov     ecx, [esi+45E94h]"
+        ],
+        [
+          "0x45b352",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b357",
+          "pop     ebx"
+        ],
+        [
+          "0x45b358",
+          "mov     [esi+ecx*4+3F278h], edi"
+        ],
+        [
+          "0x45b35f",
+          "pop     edi"
+        ],
+        [
+          "0x45b360",
+          "pop     esi"
+        ],
+        [
+          "0x45b361",
+          "pop     ebp"
+        ],
+        [
+          "0x45b362",
+          "retn"
+        ],
+        [
+          "0x45b363",
+          "push    ecx"
+        ],
+        [
+          "0x45b364",
+          "push    offset aErrorMspGetSta_0; \"error: msp_get_state %d\""
+        ],
+        [
+          "0x45b369",
+          "push    0"
+        ],
+        [
+          "0x45b36b",
+          "push    0"
+        ],
+        [
+          "0x45b36d",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b36f",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x45b375",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b378",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x45b383",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b388",
+          "pop     edi"
+        ],
+        [
+          "0x45b389",
+          "pop     esi"
+        ],
+        [
+          "0x45b38a",
+          "pop     ebp"
+        ],
+        [
+          "0x45b38b",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b390",
+      "name": "sub_45B390",
+      "xrefs": [
+        {
+          "from": "0x45986a",
+          "function": null
+        },
+        {
+          "from": "0x45bd7e",
+          "function": null
+        },
+        {
+          "from": "0x4eab68",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B390(int a1)\n{\n  int v2; // ecx\n  int v3; // ecx\n  unsigned int v4; // ebx\n  int v5; // eax\n  int v6; // ecx\n  int v7; // eax\n  _DWORD *v8; // eax\n  int v9; // ebx\n  int v10; // edi\n  int v12; // [esp+14h] [ebp+8h]\n\n  v2 = *(_DWORD *)(a1 + 286352);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v3;\n  v4 = *(_DWORD *)(a1 + 4 * v3 + 258424);\n  if ( v3 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n  }\n  v5 = v3 - 1;\n  v6 = 0;\n  *(_DWORD *)(a1 + 286352) = v5;\n  v7 = *(_DWORD *)(a1 + 4 * v5 + 258424);\n  if ( v7 >= 0 )\n    v6 = v7;\n  if ( v6 >= 100 )\n    v6 = 100;\n  v12 = v6;\n  if ( v4 > 0x7F )\n  {\n    PalDebugPrintf(0, 0, \"error: msp_set_volume %d\", v4);\n    goto LABEL_16;\n  }\n  v8 = *(_DWORD **)(732 * v4 + a1 + 164564);\n  if ( !v8 )\n  {\n    PalDebugPrintf(0, 0, \"error: msp_set_volume %d / no image\", v4);\nLABEL_16:\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = -1;\n    return 1;\n  }\n  v9 = *v8;\n  v10 = 0;\n  if ( PalMSpriteCheck(*v8) )\n  {\n    PalMSpriteSetVolumeEx(v9, v12);\n    v10 = 1;\n  }\n  *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v10;\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b390",
+          "push    ebp"
+        ],
+        [
+          "0x45b391",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b393",
+          "push    ebx"
+        ],
+        [
+          "0x45b394",
+          "push    esi"
+        ],
+        [
+          "0x45b395",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b398",
+          "push    edi"
+        ],
+        [
+          "0x45b399",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b39f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b3a5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b3a8",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b3aa",
+          "jns     short loc_45B3C0"
+        ],
+        [
+          "0x45b3ac",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b3b1",
+          "push    0"
+        ],
+        [
+          "0x45b3b3",
+          "push    0"
+        ],
+        [
+          "0x45b3b5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b3b7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b3bd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b3c0",
+          "dec     ecx"
+        ],
+        [
+          "0x45b3c1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x45b3c7",
+          "mov     ebx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x45b3ce",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b3d1",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b3d3",
+          "jns     short loc_45B3E9"
+        ],
+        [
+          "0x45b3d5",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b3da",
+          "push    0"
+        ],
+        [
+          "0x45b3dc",
+          "push    0"
+        ],
+        [
+          "0x45b3de",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b3e0",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b3e6",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b3e9",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b3ec",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x45b3ee",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b3f4",
+          "mov     eax, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b3fb",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b3fd",
+          "cmovns  ecx, eax"
+        ],
+        [
+          "0x45b400",
+          "mov     eax, 64h ; 'd'"
+        ],
+        [
+          "0x45b405",
+          "cmp     ecx, eax"
+        ],
+        [
+          "0x45b407",
+          "cmovge  ecx, eax"
+        ],
+        [
+          "0x45b40a",
+          "mov     [ebp+arg_0], ecx"
+        ],
+        [
+          "0x45b40d",
+          "cmp     ebx, 7Fh"
+        ],
+        [
+          "0x45b410",
+          "ja      short loc_45B466"
+        ],
+        [
+          "0x45b412",
+          "imul    eax, ebx, 2DCh"
+        ],
+        [
+          "0x45b418",
+          "mov     eax, [eax+esi+282D4h]"
+        ],
+        [
+          "0x45b41f",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b421",
+          "jnz     short loc_45B42B"
+        ],
+        [
+          "0x45b423",
+          "push    ebx"
+        ],
+        [
+          "0x45b424",
+          "push    offset aErrorMspSetVol; \"error: msp_set_volume %d / no image\""
+        ],
+        [
+          "0x45b429",
+          "jmp     short loc_45B46C"
+        ],
+        [
+          "0x45b42b",
+          "mov     ebx, [eax]"
+        ],
+        [
+          "0x45b42d",
+          "xor     edi, edi"
+        ],
+        [
+          "0x45b42f",
+          "push    ebx"
+        ],
+        [
+          "0x45b430",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b436",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b439",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b43b",
+          "jz      short loc_45B44F"
+        ],
+        [
+          "0x45b43d",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b440",
+          "push    ebx"
+        ],
+        [
+          "0x45b441",
+          "call    __imp_PalMSpriteSetVolumeEx"
+        ],
+        [
+          "0x45b447",
+          "add     esp, 8"
+        ],
+        [
+          "0x45b44a",
+          "mov     edi, 1"
+        ],
+        [
+          "0x45b44f",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x45b455",
+          "mov     [esi+eax*4+3F278h], edi"
+        ],
+        [
+          "0x45b45c",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b461",
+          "pop     edi"
+        ],
+        [
+          "0x45b462",
+          "pop     esi"
+        ],
+        [
+          "0x45b463",
+          "pop     ebx"
+        ],
+        [
+          "0x45b464",
+          "pop     ebp"
+        ],
+        [
+          "0x45b465",
+          "retn"
+        ],
+        [
+          "0x45b466",
+          "push    ebx"
+        ],
+        [
+          "0x45b467",
+          "push    offset aErrorMspSetVol_0; \"error: msp_set_volume %d\""
+        ],
+        [
+          "0x45b46c",
+          "push    0"
+        ],
+        [
+          "0x45b46e",
+          "push    0"
+        ],
+        [
+          "0x45b470",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b472",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x45b478",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b47b",
+          "pop     edi"
+        ],
+        [
+          "0x45b47c",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x45b487",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b48c",
+          "pop     esi"
+        ],
+        [
+          "0x45b48d",
+          "pop     ebx"
+        ],
+        [
+          "0x45b48e",
+          "pop     ebp"
+        ],
+        [
+          "0x45b48f",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b490",
+      "name": "sub_45B490",
+      "xrefs": [
+        {
+          "from": "0x4597c0",
+          "function": null
+        },
+        {
+          "from": "0x45bcd4",
+          "function": null
+        },
+        {
+          "from": "0x4eab40",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B490(_DWORD *a1)\n{\n  _DWORD *v1; // eax\n  int v3; // ecx\n  unsigned int v4; // edi\n  _DWORD *v5; // eax\n\n  v1 = (_DWORD *)a1[2285284];\n  a1[87981] = 1;\n  if ( v1 )\n  {\n    if ( (PalMSpriteGetState(*v1) & 4) != 0 || sub_47CD50() )\n    {\n      a1[2285284] = 0;\n      return 1;\n    }\n  }\n  else\n  {\n    v3 = a1[71588];\n    if ( v3 - 1 < 0 )\n    {\n      PalDebugPrintf(0, 0, \"not stack\");\n      v3 = a1[71588];\n    }\n    a1[71588] = v3 - 1;\n    v4 = a1[v3 + 64605];\n    if ( v4 > 0x7F )\n      return 1;\n    v5 = (_DWORD *)a1[183 * v4 + 41141];\n    if ( !v5 )\n      return 1;\n    a1[2285284] = v5;\n    if ( !PalMSpriteCheck(*v5) )\n    {\n      a1[2285284] = 0;\n      PalDebugPrintf(10, 0, \"not msp %d\", v4);\n      return 1;\n    }\n    PalMSpriteSetLoop(*(_DWORD *)a1[2285284], 0);\n    PalDebugPrintf(10, 0, \"msp_wait %d\", v4);\n  }\n  if ( (sub_47CD50() & 0x30) == 0 )\n  {\n    a1[87975] -= 12;\n    return 1;\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b490",
+          "push    ebp"
+        ],
+        [
+          "0x45b491",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b493",
+          "push    ebx"
+        ],
+        [
+          "0x45b494",
+          "push    esi"
+        ],
+        [
+          "0x45b495",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b498",
+          "push    edi"
+        ],
+        [
+          "0x45b499",
+          "mov     eax, [esi+8B7B90h]"
+        ],
+        [
+          "0x45b49f",
+          "mov     dword ptr [esi+55EB4h], 1"
+        ],
+        [
+          "0x45b4a9",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b4ab",
+          "jz      short loc_45B4DD"
+        ],
+        [
+          "0x45b4ad",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b4af",
+          "call    __imp_PalMSpriteGetState"
+        ],
+        [
+          "0x45b4b5",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b4b8",
+          "test    al, 4"
+        ],
+        [
+          "0x45b4ba",
+          "jnz     short loc_45B4C9"
+        ],
+        [
+          "0x45b4bc",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x45b4c1",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b4c3",
+          "jz      loc_45B55E"
+        ],
+        [
+          "0x45b4c9",
+          "pop     edi"
+        ],
+        [
+          "0x45b4ca",
+          "mov     dword ptr [esi+8B7B90h], 0"
+        ],
+        [
+          "0x45b4d4",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b4d9",
+          "pop     esi"
+        ],
+        [
+          "0x45b4da",
+          "pop     ebx"
+        ],
+        [
+          "0x45b4db",
+          "pop     ebp"
+        ],
+        [
+          "0x45b4dc",
+          "retn"
+        ],
+        [
+          "0x45b4dd",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b4e3",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b4e9",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b4ec",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b4ee",
+          "jns     short loc_45B504"
+        ],
+        [
+          "0x45b4f0",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b4f5",
+          "push    0"
+        ],
+        [
+          "0x45b4f7",
+          "push    0"
+        ],
+        [
+          "0x45b4f9",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b4fb",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b501",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b504",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b507",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b50d",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b514",
+          "cmp     edi, 7Fh"
+        ],
+        [
+          "0x45b517",
+          "ja      short loc_45B591"
+        ],
+        [
+          "0x45b519",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x45b51f",
+          "mov     eax, [eax+esi+282D4h]"
+        ],
+        [
+          "0x45b526",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b528",
+          "jz      short loc_45B591"
+        ],
+        [
+          "0x45b52a",
+          "mov     [esi+8B7B90h], eax"
+        ],
+        [
+          "0x45b530",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b532",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b538",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b53b",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b53d",
+          "jz      short loc_45B578"
+        ],
+        [
+          "0x45b53f",
+          "mov     eax, [esi+8B7B90h]"
+        ],
+        [
+          "0x45b545",
+          "push    0"
+        ],
+        [
+          "0x45b547",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b549",
+          "call    __imp_PalMSpriteSetLoop"
+        ],
+        [
+          "0x45b54f",
+          "push    edi"
+        ],
+        [
+          "0x45b550",
+          "push    offset aMspWaitD; \"msp_wait %d\""
+        ],
+        [
+          "0x45b555",
+          "push    0"
+        ],
+        [
+          "0x45b557",
+          "push    0Ah"
+        ],
+        [
+          "0x45b559",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b55b",
+          "add     esp, 18h"
+        ],
+        [
+          "0x45b55e",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x45b563",
+          "test    al, 30h"
+        ],
+        [
+          "0x45b565",
+          "jnz     short loc_45B591"
+        ],
+        [
+          "0x45b567",
+          "add     dword ptr [esi+55E9Ch], 0FFFFFFF4h"
+        ],
+        [
+          "0x45b56e",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b573",
+          "pop     edi"
+        ],
+        [
+          "0x45b574",
+          "pop     esi"
+        ],
+        [
+          "0x45b575",
+          "pop     ebx"
+        ],
+        [
+          "0x45b576",
+          "pop     ebp"
+        ],
+        [
+          "0x45b577",
+          "retn"
+        ],
+        [
+          "0x45b578",
+          "push    edi"
+        ],
+        [
+          "0x45b579",
+          "push    offset aNotMspD; \"not msp %d\""
+        ],
+        [
+          "0x45b57e",
+          "push    0"
+        ],
+        [
+          "0x45b580",
+          "push    0Ah"
+        ],
+        [
+          "0x45b582",
+          "mov     dword ptr [esi+8B7B90h], 0"
+        ],
+        [
+          "0x45b58c",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b58e",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45b591",
+          "pop     edi"
+        ],
+        [
+          "0x45b592",
+          "pop     esi"
+        ],
+        [
+          "0x45b593",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b598",
+          "pop     ebx"
+        ],
+        [
+          "0x45b599",
+          "pop     ebp"
+        ],
+        [
+          "0x45b59a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b5d0",
+      "name": "sub_45B5D0",
+      "xrefs": [
+        {
+          "from": "0x45979e",
+          "function": null
+        },
+        {
+          "from": "0x45bcb2",
+          "function": null
+        },
+        {
+          "from": "0x4eab38",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B5D0(int a1)\n{\n  int v2; // ecx\n  int v3; // ecx\n  int v4; // edx\n  int v5; // esi\n  int v6; // ecx\n  int v7; // edx\n  int v8; // ecx\n  int v9; // edx\n  int v10; // ecx\n  int v11; // eax\n  int v12; // eax\n  int v13; // eax\n  int v14; // eax\n  _DWORD **v15; // esi\n  int v17; // esi\n  int v18; // [esp+Ch] [ebp-18h]\n  int v19; // [esp+10h] [ebp-14h]\n  int v20; // [esp+14h] [ebp-10h]\n  int v21; // [esp+18h] [ebp-Ch]\n  int v22; // [esp+1Ch] [ebp-8h]\n  int v23; // [esp+20h] [ebp-4h]\n  _DWORD *v24; // [esp+2Ch] [ebp+8h]\n\n  v2 = *(_DWORD *)(a1 + 286352);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v3;\n  v18 = *(_DWORD *)(a1 + 4 * v3 + 258424);\n  if ( v3 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n  }\n  v4 = v3 - 1;\n  *(_DWORD *)(a1 + 286352) = v3 - 1;\n  v5 = *(_DWORD *)(a1 + 4 * v3 + 258420);\n  if ( v3 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v4 = *(_DWORD *)(a1 + 286352);\n  }\n  v6 = v4 - 1;\n  *(_DWORD *)(a1 + 286352) = v4 - 1;\n  v19 = *(_DWORD *)(a1 + 4 * v4 + 258420);\n  if ( v4 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v6 = *(_DWORD *)(a1 + 286352);\n  }\n  v7 = v6 - 1;\n  *(_DWORD *)(a1 + 286352) = v6 - 1;\n  v20 = *(_DWORD *)(a1 + 4 * v6 + 258420);\n  if ( v6 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v7 = *(_DWORD *)(a1 + 286352);\n  }\n  v8 = v7 - 1;\n  *(_DWORD *)(a1 + 286352) = v7 - 1;\n  v21 = *(_DWORD *)(a1 + 4 * v7 + 258420);\n  if ( v7 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v8 = *(_DWORD *)(a1 + 286352);\n  }\n  v9 = v8 - 1;\n  *(_DWORD *)(a1 + 286352) = v8 - 1;\n  v24 = *(_DWORD **)(a1 + 4 * v8 + 258420);\n  if ( v8 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v9 = *(_DWORD *)(a1 + 286352);\n  }\n  v10 = v9 - 1;\n  *(_DWORD *)(a1 + 286352) = v9 - 1;\n  v22 = *(_DWORD *)(a1 + 4 * v9 + 258420);\n  if ( v9 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v10 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v10 - 1;\n  v23 = *(_DWORD *)(a1 + 4 * (v10 - 1) + 258424);\n  *(_DWORD *)(a1 + 4 * (v10 - 1) + 258424) = v21;\n  v11 = ++*(_DWORD *)(a1 + 286352);\n  if ( v11 >= 64 )\n  {\n    PalDebugPrintf(0, 0, \"stack over\");\n    v11 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 4 * v11 + 258424) = v20;\n  v12 = ++*(_DWORD *)(a1 + 286352);\n  if ( v12 >= 64 )\n  {\n    PalDebugPrintf(0, 0, \"stack over\");\n    v12 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 4 * v12 + 258424) = v19;\n  v13 = ++*(_DWORD *)(a1 + 286352);\n  if ( v13 >= 64 )\n  {\n    PalDebugPrintf(0, 0, \"stack over\");\n    v13 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 4 * v13 + 258424) = v5;\n  v14 = ++*(_DWORD *)(a1 + 286352);\n  if ( v14 >= 64 )\n  {\n    PalDebugPrintf(0, 0, \"stack over\");\n    v14 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 4 * v14 + 258424) = v18;\n  if ( (int)++*(_DWORD *)(a1 + 286352) >= 64 )\n    PalDebugPrintf(0, 0, \"stack over\");\n  off_4EAE3C(a1);\n  v15 = (_DWORD **)(732 * v5 + a1 + 164564);\n  if ( !*v15 )\n  {\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 0;\n    return 0;\n  }\n  sub_47AF90(*v15);\n  v15[3] = (_DWORD *)((unsigned int)&_ImageBase | (unsigned int)v15[3]);\n  v15[21] = v24;\n  PalMSpriteSetLoopPoint(**v15, v22, v23);\n  v17 = PalMSpritePlay(**v15, v24);\n  if ( (sub_47CD50() & 0x30) != 0 )\n    v17 = 1;\n  *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v17;\n  if ( v17 )\n  {\n    PalDebugPrintf(10, 0, \"msp_set loop[%d], sp[%d], ep[%d]\", v24, v22, v23);\n    return 1;\n  }\n  if ( (sub_47CD50() & 0x30) != 0 )\n    return 1;\n  PalDebugPrintf(0, 0, \"error msp_set loop[%d], sp[%d], ep[%d]\", v24, v22, v23);\n  return 0;\n}\n",
+      "disassembly": [
+        [
+          "0x45b5d0",
+          "push    ebp"
+        ],
+        [
+          "0x45b5d1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b5d3",
+          "sub     esp, 18h"
+        ],
+        [
+          "0x45b5d6",
+          "push    ebx"
+        ],
+        [
+          "0x45b5d7",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b5dd",
+          "push    esi"
+        ],
+        [
+          "0x45b5de",
+          "push    edi"
+        ],
+        [
+          "0x45b5df",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b5e2",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b5e8",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b5eb",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b5ed",
+          "jns     short loc_45B603"
+        ],
+        [
+          "0x45b5ef",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b5f4",
+          "push    0"
+        ],
+        [
+          "0x45b5f6",
+          "push    0"
+        ],
+        [
+          "0x45b5f8",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b5fa",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b600",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b603",
+          "dec     ecx"
+        ],
+        [
+          "0x45b604",
+          "mov     [edi+45E90h], ecx"
+        ],
+        [
+          "0x45b60a",
+          "mov     eax, [edi+ecx*4+3F178h]"
+        ],
+        [
+          "0x45b611",
+          "mov     [ebp+var_18], eax"
+        ],
+        [
+          "0x45b614",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b617",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b619",
+          "jns     short loc_45B62F"
+        ],
+        [
+          "0x45b61b",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b620",
+          "push    0"
+        ],
+        [
+          "0x45b622",
+          "push    0"
+        ],
+        [
+          "0x45b624",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b626",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b62c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b62f",
+          "lea     edx, [ecx-1]"
+        ],
+        [
+          "0x45b632",
+          "lea     eax, [ecx-2]"
+        ],
+        [
+          "0x45b635",
+          "mov     [edi+45E90h], edx"
+        ],
+        [
+          "0x45b63b",
+          "mov     esi, [edi+ecx*4+3F174h]"
+        ],
+        [
+          "0x45b642",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b644",
+          "jns     short loc_45B65A"
+        ],
+        [
+          "0x45b646",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b64b",
+          "push    0"
+        ],
+        [
+          "0x45b64d",
+          "push    0"
+        ],
+        [
+          "0x45b64f",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b651",
+          "mov     edx, [edi+45E90h]"
+        ],
+        [
+          "0x45b657",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b65a",
+          "lea     ecx, [edx-1]"
+        ],
+        [
+          "0x45b65d",
+          "mov     [edi+45E90h], ecx"
+        ],
+        [
+          "0x45b663",
+          "mov     eax, [edi+edx*4+3F174h]"
+        ],
+        [
+          "0x45b66a",
+          "mov     [ebp+var_14], eax"
+        ],
+        [
+          "0x45b66d",
+          "lea     eax, [edx-2]"
+        ],
+        [
+          "0x45b670",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b672",
+          "jns     short loc_45B688"
+        ],
+        [
+          "0x45b674",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b679",
+          "push    0"
+        ],
+        [
+          "0x45b67b",
+          "push    0"
+        ],
+        [
+          "0x45b67d",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b67f",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b685",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b688",
+          "lea     edx, [ecx-1]"
+        ],
+        [
+          "0x45b68b",
+          "mov     [edi+45E90h], edx"
+        ],
+        [
+          "0x45b691",
+          "mov     eax, [edi+ecx*4+3F174h]"
+        ],
+        [
+          "0x45b698",
+          "mov     [ebp+var_10], eax"
+        ],
+        [
+          "0x45b69b",
+          "lea     eax, [ecx-2]"
+        ],
+        [
+          "0x45b69e",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b6a0",
+          "jns     short loc_45B6B6"
+        ],
+        [
+          "0x45b6a2",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b6a7",
+          "push    0"
+        ],
+        [
+          "0x45b6a9",
+          "push    0"
+        ],
+        [
+          "0x45b6ab",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b6ad",
+          "mov     edx, [edi+45E90h]"
+        ],
+        [
+          "0x45b6b3",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b6b6",
+          "lea     ecx, [edx-1]"
+        ],
+        [
+          "0x45b6b9",
+          "mov     [edi+45E90h], ecx"
+        ],
+        [
+          "0x45b6bf",
+          "mov     eax, [edi+edx*4+3F174h]"
+        ],
+        [
+          "0x45b6c6",
+          "mov     [ebp+var_C], eax"
+        ],
+        [
+          "0x45b6c9",
+          "lea     eax, [edx-2]"
+        ],
+        [
+          "0x45b6cc",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b6ce",
+          "jns     short loc_45B6E4"
+        ],
+        [
+          "0x45b6d0",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b6d5",
+          "push    0"
+        ],
+        [
+          "0x45b6d7",
+          "push    0"
+        ],
+        [
+          "0x45b6d9",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b6db",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b6e1",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b6e4",
+          "lea     edx, [ecx-1]"
+        ],
+        [
+          "0x45b6e7",
+          "mov     [edi+45E90h], edx"
+        ],
+        [
+          "0x45b6ed",
+          "mov     eax, [edi+ecx*4+3F174h]"
+        ],
+        [
+          "0x45b6f4",
+          "mov     [ebp+arg_0], eax"
+        ],
+        [
+          "0x45b6f7",
+          "lea     eax, [ecx-2]"
+        ],
+        [
+          "0x45b6fa",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b6fc",
+          "jns     short loc_45B712"
+        ],
+        [
+          "0x45b6fe",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b703",
+          "push    0"
+        ],
+        [
+          "0x45b705",
+          "push    0"
+        ],
+        [
+          "0x45b707",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b709",
+          "mov     edx, [edi+45E90h]"
+        ],
+        [
+          "0x45b70f",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b712",
+          "lea     ecx, [edx-1]"
+        ],
+        [
+          "0x45b715",
+          "mov     [edi+45E90h], ecx"
+        ],
+        [
+          "0x45b71b",
+          "mov     eax, [edi+edx*4+3F174h]"
+        ],
+        [
+          "0x45b722",
+          "mov     [ebp+var_8], eax"
+        ],
+        [
+          "0x45b725",
+          "lea     eax, [edx-2]"
+        ],
+        [
+          "0x45b728",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b72a",
+          "jns     short loc_45B740"
+        ],
+        [
+          "0x45b72c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b731",
+          "push    0"
+        ],
+        [
+          "0x45b733",
+          "push    0"
+        ],
+        [
+          "0x45b735",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b737",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b73d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b740",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b743",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x45b749",
+          "mov     ecx, [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b750",
+          "mov     [ebp+var_4], ecx"
+        ],
+        [
+          "0x45b753",
+          "mov     ecx, [ebp+var_C]"
+        ],
+        [
+          "0x45b756",
+          "mov     [edi+eax*4+3F178h], ecx"
+        ],
+        [
+          "0x45b75d",
+          "inc     dword ptr [edi+45E90h]"
+        ],
+        [
+          "0x45b763",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b769",
+          "cmp     eax, 40h ; '@'"
+        ],
+        [
+          "0x45b76c",
+          "jl      short loc_45B782"
+        ],
+        [
+          "0x45b76e",
+          "push    offset aStackOver; \"stack over\""
+        ],
+        [
+          "0x45b773",
+          "push    0"
+        ],
+        [
+          "0x45b775",
+          "push    0"
+        ],
+        [
+          "0x45b777",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b779",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b77f",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b782",
+          "mov     ecx, [ebp+var_10]"
+        ],
+        [
+          "0x45b785",
+          "mov     [edi+eax*4+3F178h], ecx"
+        ],
+        [
+          "0x45b78c",
+          "inc     dword ptr [edi+45E90h]"
+        ],
+        [
+          "0x45b792",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b798",
+          "cmp     eax, 40h ; '@'"
+        ],
+        [
+          "0x45b79b",
+          "jl      short loc_45B7B1"
+        ],
+        [
+          "0x45b79d",
+          "push    offset aStackOver; \"stack over\""
+        ],
+        [
+          "0x45b7a2",
+          "push    0"
+        ],
+        [
+          "0x45b7a4",
+          "push    0"
+        ],
+        [
+          "0x45b7a6",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b7a8",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b7ae",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b7b1",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x45b7b4",
+          "mov     [edi+eax*4+3F178h], ecx"
+        ],
+        [
+          "0x45b7bb",
+          "inc     dword ptr [edi+45E90h]"
+        ],
+        [
+          "0x45b7c1",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b7c7",
+          "cmp     eax, 40h ; '@'"
+        ],
+        [
+          "0x45b7ca",
+          "jl      short loc_45B7E0"
+        ],
+        [
+          "0x45b7cc",
+          "push    offset aStackOver; \"stack over\""
+        ],
+        [
+          "0x45b7d1",
+          "push    0"
+        ],
+        [
+          "0x45b7d3",
+          "push    0"
+        ],
+        [
+          "0x45b7d5",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b7d7",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b7dd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b7e0",
+          "mov     [edi+eax*4+3F178h], esi"
+        ],
+        [
+          "0x45b7e7",
+          "inc     dword ptr [edi+45E90h]"
+        ],
+        [
+          "0x45b7ed",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b7f3",
+          "cmp     eax, 40h ; '@'"
+        ],
+        [
+          "0x45b7f6",
+          "jl      short loc_45B80C"
+        ],
+        [
+          "0x45b7f8",
+          "push    offset aStackOver; \"stack over\""
+        ],
+        [
+          "0x45b7fd",
+          "push    0"
+        ],
+        [
+          "0x45b7ff",
+          "push    0"
+        ],
+        [
+          "0x45b801",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b803",
+          "mov     eax, [edi+45E90h]"
+        ],
+        [
+          "0x45b809",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b80c",
+          "mov     ecx, [ebp+var_18]"
+        ],
+        [
+          "0x45b80f",
+          "mov     [edi+eax*4+3F178h], ecx"
+        ],
+        [
+          "0x45b816",
+          "inc     dword ptr [edi+45E90h]"
+        ],
+        [
+          "0x45b81c",
+          "cmp     dword ptr [edi+45E90h], 40h ; '@'"
+        ],
+        [
+          "0x45b823",
+          "jl      short loc_45B833"
+        ],
+        [
+          "0x45b825",
+          "push    offset aStackOver; \"stack over\""
+        ],
+        [
+          "0x45b82a",
+          "push    0"
+        ],
+        [
+          "0x45b82c",
+          "push    0"
+        ],
+        [
+          "0x45b82e",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b830",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b833",
+          "push    edi"
+        ],
+        [
+          "0x45b834",
+          "call    off_4EAE3C"
+        ],
+        [
+          "0x45b83a",
+          "imul    eax, esi, 2DCh"
+        ],
+        [
+          "0x45b840",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b843",
+          "lea     esi, [edi+282D4h]"
+        ],
+        [
+          "0x45b849",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b84b",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x45b84d",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x45b84f",
+          "jnz     short loc_45B867"
+        ],
+        [
+          "0x45b851",
+          "mov     eax, [edi+45E94h]"
+        ],
+        [
+          "0x45b857",
+          "mov     [edi+eax*4+3F278h], ecx"
+        ],
+        [
+          "0x45b85e",
+          "xor     eax, eax"
+        ],
+        [
+          "0x45b860",
+          "pop     edi"
+        ],
+        [
+          "0x45b861",
+          "pop     esi"
+        ],
+        [
+          "0x45b862",
+          "pop     ebx"
+        ],
+        [
+          "0x45b863",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x45b865",
+          "pop     ebp"
+        ],
+        [
+          "0x45b866",
+          "retn"
+        ],
+        [
+          "0x45b867",
+          "call    sub_47AF90"
+        ],
+        [
+          "0x45b86c",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x45b86f",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x45b872",
+          "or      dword ptr [esi+0Ch], offset __ImageBase"
+        ],
+        [
+          "0x45b879",
+          "push    [ebp+var_8]"
+        ],
+        [
+          "0x45b87c",
+          "mov     [esi+54h], eax"
+        ],
+        [
+          "0x45b87f",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x45b881",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b883",
+          "call    __imp_PalMSpriteSetLoopPoint"
+        ],
+        [
+          "0x45b889",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x45b88b",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b88e",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b890",
+          "call    __imp_PalMSpritePlay"
+        ],
+        [
+          "0x45b896",
+          "add     esp, 14h"
+        ],
+        [
+          "0x45b899",
+          "mov     esi, eax"
+        ],
+        [
+          "0x45b89b",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x45b8a0",
+          "test    al, 30h"
+        ],
+        [
+          "0x45b8a2",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b8a7",
+          "cmovnz  esi, eax"
+        ],
+        [
+          "0x45b8aa",
+          "mov     eax, [edi+45E94h]"
+        ],
+        [
+          "0x45b8b0",
+          "mov     [edi+eax*4+3F278h], esi"
+        ],
+        [
+          "0x45b8b7",
+          "test    esi, esi"
+        ],
+        [
+          "0x45b8b9",
+          "jz      short loc_45B8DE"
+        ],
+        [
+          "0x45b8bb",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x45b8be",
+          "push    [ebp+var_8]"
+        ],
+        [
+          "0x45b8c1",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b8c4",
+          "push    offset aMspSetLoopDSpD; \"msp_set loop[%d], sp[%d], ep[%d]\""
+        ],
+        [
+          "0x45b8c9",
+          "push    0"
+        ],
+        [
+          "0x45b8cb",
+          "push    0Ah"
+        ],
+        [
+          "0x45b8cd",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b8cf",
+          "add     esp, 18h"
+        ],
+        [
+          "0x45b8d2",
+          "pop     edi"
+        ],
+        [
+          "0x45b8d3",
+          "pop     esi"
+        ],
+        [
+          "0x45b8d4",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b8d9",
+          "pop     ebx"
+        ],
+        [
+          "0x45b8da",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x45b8dc",
+          "pop     ebp"
+        ],
+        [
+          "0x45b8dd",
+          "retn"
+        ],
+        [
+          "0x45b8de",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x45b8e3",
+          "test    al, 30h"
+        ],
+        [
+          "0x45b8e5",
+          "jnz     short loc_45B8D2"
+        ],
+        [
+          "0x45b8e7",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x45b8ea",
+          "push    [ebp+var_8]"
+        ],
+        [
+          "0x45b8ed",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b8f0",
+          "push    offset aErrorMspSetLoo; \"error msp_set loop[%d], sp[%d], ep[%d]\""
+        ],
+        [
+          "0x45b8f5",
+          "push    0"
+        ],
+        [
+          "0x45b8f7",
+          "push    0"
+        ],
+        [
+          "0x45b8f9",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b8fb",
+          "add     esp, 18h"
+        ],
+        [
+          "0x45b8fe",
+          "xor     eax, eax"
+        ],
+        [
+          "0x45b900",
+          "pop     edi"
+        ],
+        [
+          "0x45b901",
+          "pop     esi"
+        ],
+        [
+          "0x45b902",
+          "pop     ebx"
+        ],
+        [
+          "0x45b903",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x45b905",
+          "pop     ebp"
+        ],
+        [
+          "0x45b906",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45bb00",
+      "name": "sub_45BB00",
+      "xrefs": [
+        {
+          "from": "0x459815",
+          "function": null
+        },
+        {
+          "from": "0x45bd29",
+          "function": null
+        },
+        {
+          "from": "0x4eab54",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45BB00(int a1)\n{\n  int v1; // ecx\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  PalSetVideoVolumeType(*(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45bb00",
+          "push    ebp"
+        ],
+        [
+          "0x45bb01",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45bb03",
+          "push    esi"
+        ],
+        [
+          "0x45bb04",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45bb07",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45bb0d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45bb10",
+          "test    eax, eax"
+        ],
+        [
+          "0x45bb12",
+          "jns     short loc_45BB2C"
+        ],
+        [
+          "0x45bb14",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45bb19",
+          "push    0"
+        ],
+        [
+          "0x45bb1b",
+          "push    0"
+        ],
+        [
+          "0x45bb1d",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45bb23",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45bb29",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45bb2c",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45bb2f",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45bb35",
+          "push    dword ptr [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45bb3c",
+          "call    __imp_PalSetVideoVolumeType"
+        ],
+        [
+          "0x45bb42",
+          "add     esp, 4"
+        ],
+        [
+          "0x45bb45",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45bb4a",
+          "pop     esi"
+        ],
+        [
+          "0x45bb4b",
+          "pop     ebp"
+        ],
+        [
+          "0x45bb4c",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b940",
+      "name": "sub_45B940",
+      "xrefs": [
+        {
+          "from": "0x45978d",
+          "function": null
+        },
+        {
+          "from": "0x45bca1",
+          "function": null
+        },
+        {
+          "from": "0x4eab34",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B940(_DWORD *a1)\n{\n  void (*v1)(_DWORD, _DWORD, const char *, ...); // edx\n  int v2; // ecx\n  int v3; // ecx\n  int v4; // esi\n  char v5; // dl\n  int v6; // esi\n  int v7; // ecx\n  bool v8; // zf\n  int v9; // eax\n  const char *v10; // eax\n  int v11; // esi\n  int v13; // [esp+8h] [ebp-12Ch]\n  CHAR v14[260]; // [esp+Ch] [ebp-128h] BYREF\n  char Str1[32]; // [esp+110h] [ebp-24h] BYREF\n\n  v1 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n  v2 = a1[71588];\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = a1[71588];\n    v1 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n  }\n  v3 = v2 - 1;\n  a1[71588] = v3;\n  v4 = a1[v3 + 64606];\n  if ( v3 - 1 < 0 )\n  {\n    v1(0, 0, \"not stack\");\n    v3 = a1[71588];\n  }\n  a1[71588] = v3 - 1;\n  v13 = LOWORD(a1[v3 + 64605]);\n  sub_47D3D0(Str1, a1 + 64597, v4, 1);\n  v5 = Str1[0];\n  v6 = -1;\n  v7 = 0;\n  if ( Str1[0] )\n  {\n    do\n    {\n      v8 = v5 == 46;\n      v9 = v7;\n      v5 = Str1[v7 + 1];\n      if ( !v8 )\n        v9 = v6;\n      ++v7;\n      v6 = v9;\n    }\n    while ( v5 );\n    if ( v9 != -1 )\n      Str1[v9] = 0;\n  }\n  if ( (sub_47CD50(v7) & 0x30) == 0 && !byte_4ED099 )\n  {\n    if ( a1[39195] )\n      PalSoundSetVolume(a1[39094] * a1[39101], 3);\n    v10 = \".wmv\";\n    v11 = 0;\n    if ( \".wmv\" )\n    {\n      while ( 1 )\n      {\n        wsprintfA(v14, \"%s%s\", Str1, v10);\n        if ( PalVideoPlay(v14, v13) )\n          break;\n        v10 = (&off_4D24B8)[v11++];\n        if ( !v10 )\n          goto LABEL_18;\n      }\n      PalDebugPrintf(10, 0, \"movie_play  %s\", v14);\n    }\n    else\n    {\nLABEL_18:\n      PalDebugPrintf(0, 0, \"error movie_play [%s]\", Str1);\n    }\n    a1[87981] = 1;\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b940",
+          "push    ebp"
+        ],
+        [
+          "0x45b941",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b943",
+          "sub     esp, 12Ch"
+        ],
+        [
+          "0x45b949",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x45b94e",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x45b950",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x45b953",
+          "mov     edx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b959",
+          "push    esi"
+        ],
+        [
+          "0x45b95a",
+          "push    edi"
+        ],
+        [
+          "0x45b95b",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b95e",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b964",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b967",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b969",
+          "jns     short loc_45B985"
+        ],
+        [
+          "0x45b96b",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b970",
+          "push    0"
+        ],
+        [
+          "0x45b972",
+          "push    0"
+        ],
+        [
+          "0x45b974",
+          "call    edx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b976",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b97c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b97f",
+          "mov     edx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b985",
+          "dec     ecx"
+        ],
+        [
+          "0x45b986",
+          "mov     [edi+45E90h], ecx"
+        ],
+        [
+          "0x45b98c",
+          "mov     esi, [edi+ecx*4+3F178h]"
+        ],
+        [
+          "0x45b993",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b996",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b998",
+          "jns     short loc_45B9AE"
+        ],
+        [
+          "0x45b99a",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b99f",
+          "push    0"
+        ],
+        [
+          "0x45b9a1",
+          "push    0"
+        ],
+        [
+          "0x45b9a3",
+          "call    edx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b9a5",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x45b9ab",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b9ae",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b9b1",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x45b9b7",
+          "lea     edx, [edi+3F154h]"
+        ],
+        [
+          "0x45b9bd",
+          "movzx   eax, word ptr [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b9c5",
+          "lea     ecx, [ebp+Str1]; Str1"
+        ],
+        [
+          "0x45b9c8",
+          "push    1; int"
+        ],
+        [
+          "0x45b9ca",
+          "push    esi; int"
+        ],
+        [
+          "0x45b9cb",
+          "mov     [ebp+var_12C], eax"
+        ],
+        [
+          "0x45b9d1",
+          "call    sub_47D3D0"
+        ],
+        [
+          "0x45b9d6",
+          "mov     dl, [ebp+Str1]"
+        ],
+        [
+          "0x45b9d9",
+          "add     esp, 8"
+        ],
+        [
+          "0x45b9dc",
+          "or      esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x45b9df",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x45b9e1",
+          "test    dl, dl"
+        ],
+        [
+          "0x45b9e3",
+          "jz      short loc_45BA01"
+        ],
+        [
+          "0x45b9e5",
+          "cmp     dl, 2Eh ; '.'"
+        ],
+        [
+          "0x45b9e8",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x45b9ea",
+          "mov     dl, [ebp+ecx+var_23]"
+        ],
+        [
+          "0x45b9ee",
+          "cmovnz  eax, esi"
+        ],
+        [
+          "0x45b9f1",
+          "inc     ecx"
+        ],
+        [
+          "0x45b9f2",
+          "mov     esi, eax"
+        ],
+        [
+          "0x45b9f4",
+          "test    dl, dl"
+        ],
+        [
+          "0x45b9f6",
+          "jnz     short loc_45B9E5"
+        ],
+        [
+          "0x45b9f8",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x45b9fb",
+          "jz      short loc_45BA01"
+        ],
+        [
+          "0x45b9fd",
+          "mov     [ebp+esi+Str1], dl"
+        ],
+        [
+          "0x45ba01",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x45ba06",
+          "test    al, 30h"
+        ],
+        [
+          "0x45ba08",
+          "jnz     loc_45BAAB"
+        ],
+        [
+          "0x45ba0e",
+          "cmp     byte_4ED099, 0"
+        ],
+        [
+          "0x45ba15",
+          "jnz     loc_45BAAB"
+        ],
+        [
+          "0x45ba1b",
+          "cmp     dword ptr [edi+2646Ch], 0"
+        ],
+        [
+          "0x45ba22",
+          "jz      short loc_45BA3D"
+        ],
+        [
+          "0x45ba24",
+          "mov     eax, [edi+262F4h]"
+        ],
+        [
+          "0x45ba2a",
+          "imul    eax, [edi+262D8h]"
+        ],
+        [
+          "0x45ba31",
+          "push    3"
+        ],
+        [
+          "0x45ba33",
+          "push    eax"
+        ],
+        [
+          "0x45ba34",
+          "call    __imp_PalSoundSetVolume"
+        ],
+        [
+          "0x45ba3a",
+          "add     esp, 8"
+        ],
+        [
+          "0x45ba3d",
+          "mov     eax, ds:off_4D24B4; \".wmv\""
+        ],
+        [
+          "0x45ba42",
+          "xor     esi, esi"
+        ],
+        [
+          "0x45ba44",
+          "push    ebx"
+        ],
+        [
+          "0x45ba45",
+          "test    eax, eax"
+        ],
+        [
+          "0x45ba47",
+          "jz      short loc_45BA89"
+        ],
+        [
+          "0x45ba49",
+          "mov     ebx, ds:__imp_wsprintfA"
+        ],
+        [
+          "0x45ba4f",
+          "nop"
+        ],
+        [
+          "0x45ba50",
+          "push    eax"
+        ],
+        [
+          "0x45ba51",
+          "lea     eax, [ebp+Str1]"
+        ],
+        [
+          "0x45ba54",
+          "push    eax"
+        ],
+        [
+          "0x45ba55",
+          "lea     eax, [ebp+var_128]"
+        ],
+        [
+          "0x45ba5b",
+          "push    offset aSS; \"%s%s\""
+        ],
+        [
+          "0x45ba60",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x45ba61",
+          "call    ebx ; __imp_wsprintfA"
+        ],
+        [
+          "0x45ba63",
+          "push    [ebp+var_12C]"
+        ],
+        [
+          "0x45ba69",
+          "lea     eax, [ebp+var_128]"
+        ],
+        [
+          "0x45ba6f",
+          "push    eax"
+        ],
+        [
+          "0x45ba70",
+          "call    __imp_PalVideoPlay"
+        ],
+        [
+          "0x45ba76",
+          "add     esp, 18h"
+        ],
+        [
+          "0x45ba79",
+          "test    eax, eax"
+        ],
+        [
+          "0x45ba7b",
+          "jnz     short loc_45BAC0"
+        ],
+        [
+          "0x45ba7d",
+          "mov     eax, ds:off_4D24B8[esi*4]; \".mpg\""
+        ],
+        [
+          "0x45ba84",
+          "inc     esi"
+        ],
+        [
+          "0x45ba85",
+          "test    eax, eax"
+        ],
+        [
+          "0x45ba87",
+          "jnz     short loc_45BA50"
+        ],
+        [
+          "0x45ba89",
+          "lea     eax, [ebp+Str1]"
+        ],
+        [
+          "0x45ba8c",
+          "push    eax"
+        ],
+        [
+          "0x45ba8d",
+          "push    offset aErrorMoviePlay; \"error movie_play [%s]\""
+        ],
+        [
+          "0x45ba92",
+          "push    0"
+        ],
+        [
+          "0x45ba94",
+          "push    0"
+        ],
+        [
+          "0x45ba96",
+          "mov     eax, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45ba9b",
+          "call    eax ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45ba9d",
+          "add     esp, 10h"
+        ],
+        [
+          "0x45baa0",
+          "mov     dword ptr [edi+55EB4h], 1"
+        ],
+        [
+          "0x45baaa",
+          "pop     ebx"
+        ],
+        [
+          "0x45baab",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x45baae",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45bab3",
+          "pop     edi"
+        ],
+        [
+          "0x45bab4",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x45bab6",
+          "pop     esi"
+        ],
+        [
+          "0x45bab7",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x45babc",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x45babe",
+          "pop     ebp"
+        ],
+        [
+          "0x45babf",
+          "retn"
+        ],
+        [
+          "0x45bac0",
+          "lea     eax, [ebp+var_128]"
+        ],
+        [
+          "0x45bac6",
+          "push    eax"
+        ],
+        [
+          "0x45bac7",
+          "push    offset aMoviePlayS; \"movie_play  %s\""
+        ],
+        [
+          "0x45bacc",
+          "push    0"
+        ],
+        [
+          "0x45bace",
+          "push    0Ah"
+        ],
+        [
+          "0x45bad0",
+          "jmp     short loc_45BA96"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

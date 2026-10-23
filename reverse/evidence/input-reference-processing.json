@@ -1,0 +1,972 @@
+{
+  "functions": [
+    {
+      "ea": "0x100ab690",
+      "name": "sub_100AB690",
+      "xrefs": [
+        {
+          "from": "0x100a2181",
+          "function": "sub_100A20F0"
+        }
+      ],
+      "pseudocode": "int sub_100AB690()\n{\n  _DWORD *v0; // esi\n  int v1; // ebx\n  _DWORD *v2; // edi\n  float v3; // xmm2_4\n  float v4; // xmm0_4\n  int v5; // ecx\n  unsigned int v6; // eax\n  LONG v7; // eax\n  float v8; // xmm0_4\n  int v9; // eax\n  int v10; // ecx\n  int v11; // eax\n  int v12; // ecx\n  int v13; // eax\n  int v14; // esi\n  int v15; // ebx\n  int v16; // eax\n  int v17; // eax\n  int v18; // edx\n  int v19; // ecx\n  int v20; // esi\n  int v21; // ecx\n  int v22; // eax\n  int v23; // edx\n  int v24; // ecx\n  int v25; // esi\n  _DWORD *v26; // ecx\n  int v27; // esi\n  _DWORD *v28; // ecx\n  int result; // eax\n  int v30; // edx\n  int v31; // [esp+14h] [ebp-Ch]\n  struct tagPOINT Point; // [esp+18h] [ebp-8h] BYREF\n\n  v0 = dword_10128698;\n  if ( !*((_DWORD *)dword_10128698 + 4) || *((_DWORD *)dword_10128698 + 6) || *((_DWORD *)dword_10128698 + 311) )\n  {\n    result = 0;\n    *((_DWORD *)dword_10128698 + 134) = 0;\n    v0[135] = 0;\n    v0[136] = 0;\n    v0[137] = 0;\n    v0[138] = 0;\n    v0[139] = 0;\n    v0[149] = -1;\n    v0[150] = -1;\n    v0[151] = 0;\n    v0[152] = 0;\n    *((_WORD *)v0 + 306) = 0;\n    v0[142] = 0;\n    v0[143] = 0;\n    v0[144] = 0;\n    v0[146] = 0;\n    return result;\n  }\n  v1 = *((_DWORD *)dword_10128698 + 149);\n  v31 = *((_DWORD *)dword_10128698 + 150);\n  GetCursorPos(&Point);\n  v2 = dword_10128698;\n  if ( *((_DWORD *)dword_10128698 + 243) )\n  {\n    Point.x -= *((_DWORD *)dword_10128698 + 317);\n    Point.y -= *((_DWORD *)dword_10128698 + 318);\n    v3 = (float)Point.y / (float)(*((_DWORD *)dword_10128698 + 320) - *((_DWORD *)dword_10128698 + 318));\n    v4 = (float)*((unsigned int *)dword_10128698 + 256);\n    v5 = (int)(float)((float)((float)Point.x\n                            / (float)(*((_DWORD *)dword_10128698 + 319) - *((_DWORD *)dword_10128698 + 317)))\n                    * v4);\n  }\n  else\n  {\n    v7 = Point.y - v0[239];\n    Point.x -= v0[238];\n    Point.y = v7;\n    v3 = (float)v7 / (float)*((int *)dword_10128698 + 255);\n    v8 = (float)*((unsigned int *)dword_10128698 + 256);\n    v5 = (int)(float)((float)((float)Point.x / (float)*((int *)dword_10128698 + 254)) * v8);\n  }\n  v0[149] = v5;\n  v6 = v2[257];\n  v0[150] = (int)(float)((float)v6 * v3);\n  v9 = v2[256];\n  if ( v5 >= v9 || v5 < -v9 )\n  {\n    v0[149] = -1;\n    goto LABEL_12;\n  }\n  if ( v5 == -1 )\n  {\nLABEL_12:\n    v10 = 0;\n    goto LABEL_13;\n  }\n  v10 = v5 - v1;\nLABEL_13:\n  v0[151] = v10;\n  v11 = v0[150];\n  v12 = v2[257];\n  if ( v11 >= v12 || v11 < -v12 )\n  {\n    v0[150] = -1;\n    goto LABEL_18;\n  }\n  if ( v11 == -1 )\n  {\nLABEL_18:\n    v13 = 0;\n    goto LABEL_19;\n  }\n  v13 = v11 - v31;\nLABEL_19:\n  v0[152] = v13;\n  v14 = 0;\n  v15 = 0;\n  if ( GetSystemMetrics(23) )\n  {\n    v16 = 27;\n    do\n    {\n      if ( GetAsyncKeyState(v16) < 0 )\n        v14 |= 1 << v15;\n      v16 = dword_1010C8EC[v15++];\n    }\n    while ( v16 );\n  }\n  else\n  {\n    v17 = 27;\n    do\n    {\n      if ( GetAsyncKeyState(v17) < 0 )\n        v14 |= 1 << v15;\n      v17 = dword_1010C96C[v15++];\n    }\n    while ( v17 );\n  }\n  v18 = v2[160];\n  v19 = v14 | 0x40800000;\n  v2[146] = 0;\n  if ( (v18 & 1) == 0 )\n    v19 = v14;\n  v20 = v19 | 1;\n  if ( (v18 & 8) == 0 )\n    v20 = v19;\n  v21 = v2[140];\n  v2[141] = v21;\n  v2[140] = v20;\n  v22 = v20 ^ v21;\n  v23 = v20 & v21;\n  v24 = (v20 ^ v21) & v21;\n  v2[143] = v23;\n  v25 = v22 & v20;\n  v2[144] = v24;\n  v26 = dword_10128698;\n  v2[142] = v25;\n  if ( v25 )\n  {\n    v2[148] = v26[3184];\n    v2[147] = v25;\n  }\n  else\n  {\n    v27 = v2[147];\n    if ( (v23 & v27) != 0 )\n    {\n      if ( (unsigned int)(v26[3184] - v2[148]) > 0x1F4 )\n        v2[146] = v27;\n    }\n    else\n    {\n      v2[147] = 0;\n    }\n  }\n  if ( !sub_100AB0D0(v26 + 120) )\n  {\n    v2[142] &= 0xBC7FFFFF;\n    *((_WORD *)v2 + 306) = 0;\n  }\n  sub_100AB2D0((int)dword_10128698 + 480);\n  v28 = dword_10128698;\n  result = *((_DWORD *)dword_10128698 + 240);\n  v30 = *((_DWORD *)dword_10128698 + 241);\n  if ( result )\n  {\n    result = ~result;\n    *((_DWORD *)dword_10128698 + 143) &= result;\n    v28[142] &= result;\n    v28[144] &= result;\n    v28[146] &= result;\n  }\n  if ( v30 )\n  {\n    result = ~v30;\n    v28[145] &= ~v30;\n    if ( (v30 & 0x10) != 0 )\n    {\n      result = 0;\n      *((_WORD *)v28 + 306) = 0;\n    }\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100ab690",
+          "push    ebp"
+        ],
+        [
+          "0x100ab691",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100ab693",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100ab696",
+          "sub     esp, 14h"
+        ],
+        [
+          "0x100ab699",
+          "push    ebx"
+        ],
+        [
+          "0x100ab69a",
+          "push    esi"
+        ],
+        [
+          "0x100ab69b",
+          "mov     esi, dword_10128698"
+        ],
+        [
+          "0x100ab6a1",
+          "push    edi"
+        ],
+        [
+          "0x100ab6a2",
+          "cmp     dword ptr [esi+10h], 0"
+        ],
+        [
+          "0x100ab6a6",
+          "jz      loc_100ABA02"
+        ],
+        [
+          "0x100ab6ac",
+          "cmp     dword ptr [esi+18h], 0"
+        ],
+        [
+          "0x100ab6b0",
+          "jnz     loc_100ABA02"
+        ],
+        [
+          "0x100ab6b6",
+          "cmp     dword ptr [esi+4DCh], 0"
+        ],
+        [
+          "0x100ab6bd",
+          "jnz     loc_100ABA02"
+        ],
+        [
+          "0x100ab6c3",
+          "mov     eax, [esi+258h]"
+        ],
+        [
+          "0x100ab6c9",
+          "mov     ebx, [esi+254h]"
+        ],
+        [
+          "0x100ab6cf",
+          "mov     [esp+20h+var_C], eax"
+        ],
+        [
+          "0x100ab6d3",
+          "lea     eax, [esp+20h+Point]"
+        ],
+        [
+          "0x100ab6d7",
+          "push    eax; lpPoint"
+        ],
+        [
+          "0x100ab6d8",
+          "call    ds:GetCursorPos"
+        ],
+        [
+          "0x100ab6de",
+          "mov     edi, dword_10128698"
+        ],
+        [
+          "0x100ab6e4",
+          "mov     ecx, [esp+20h+Point.x]"
+        ],
+        [
+          "0x100ab6e8",
+          "mov     eax, [esp+20h+Point.y]"
+        ],
+        [
+          "0x100ab6ec",
+          "cmp     dword ptr [edi+3CCh], 0"
+        ],
+        [
+          "0x100ab6f3",
+          "jz      loc_100AB785"
+        ],
+        [
+          "0x100ab6f9",
+          "sub     ecx, [edi+4F4h]"
+        ],
+        [
+          "0x100ab6ff",
+          "mov     [esp+20h+Point.x], ecx"
+        ],
+        [
+          "0x100ab703",
+          "sub     eax, [edi+4F8h]"
+        ],
+        [
+          "0x100ab709",
+          "mov     [esp+20h+Point.y], eax"
+        ],
+        [
+          "0x100ab70d",
+          "movd    xmm1, ecx"
+        ],
+        [
+          "0x100ab711",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100ab714",
+          "movd    xmm2, eax"
+        ],
+        [
+          "0x100ab718",
+          "mov     eax, [edi+500h]"
+        ],
+        [
+          "0x100ab71e",
+          "sub     eax, [edi+4F8h]"
+        ],
+        [
+          "0x100ab724",
+          "cvtdq2ps xmm2, xmm2"
+        ],
+        [
+          "0x100ab727",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100ab72b",
+          "mov     eax, [edi+4FCh]"
+        ],
+        [
+          "0x100ab731",
+          "sub     eax, [edi+4F4h]"
+        ],
+        [
+          "0x100ab737",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100ab73a",
+          "divss   xmm2, xmm0"
+        ],
+        [
+          "0x100ab73e",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100ab742",
+          "mov     eax, [edi+400h]"
+        ],
+        [
+          "0x100ab748",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100ab74b",
+          "divss   xmm1, xmm0"
+        ],
+        [
+          "0x100ab74f",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100ab753",
+          "cvtdq2pd xmm0, xmm0"
+        ],
+        [
+          "0x100ab757",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x100ab75a",
+          "addsd   xmm0, ds:qword_1010EEA0[eax*8]"
+        ],
+        [
+          "0x100ab763",
+          "cvtpd2ps xmm0, xmm0"
+        ],
+        [
+          "0x100ab767",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100ab76b",
+          "cvttss2si ecx, xmm1"
+        ],
+        [
+          "0x100ab76f",
+          "mov     [esi+254h], ecx"
+        ],
+        [
+          "0x100ab775",
+          "mov     eax, [edi+404h]"
+        ],
+        [
+          "0x100ab77b",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100ab77f",
+          "cvtdq2pd xmm0, xmm0"
+        ],
+        [
+          "0x100ab783",
+          "jmp     short loc_100AB7FD"
+        ],
+        [
+          "0x100ab785",
+          "sub     eax, [esi+3BCh]"
+        ],
+        [
+          "0x100ab78b",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100ab78e",
+          "sub     ecx, [esi+3B8h]"
+        ],
+        [
+          "0x100ab794",
+          "xorps   xmm2, xmm2"
+        ],
+        [
+          "0x100ab797",
+          "mov     [esp+20h+Point.x], ecx"
+        ],
+        [
+          "0x100ab79b",
+          "xorps   xmm1, xmm1"
+        ],
+        [
+          "0x100ab79e",
+          "mov     [esp+20h+Point.y], eax"
+        ],
+        [
+          "0x100ab7a2",
+          "cvtsi2ss xmm0, dword ptr [edi+3FCh]"
+        ],
+        [
+          "0x100ab7aa",
+          "cvtsi2ss xmm2, eax"
+        ],
+        [
+          "0x100ab7ae",
+          "mov     eax, [edi+400h]"
+        ],
+        [
+          "0x100ab7b4",
+          "cvtsi2ss xmm1, ecx"
+        ],
+        [
+          "0x100ab7b8",
+          "divss   xmm2, xmm0"
+        ],
+        [
+          "0x100ab7bc",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100ab7bf",
+          "cvtsi2ss xmm0, dword ptr [edi+3F8h]"
+        ],
+        [
+          "0x100ab7c7",
+          "divss   xmm1, xmm0"
+        ],
+        [
+          "0x100ab7cb",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100ab7ce",
+          "cvtsi2sd xmm0, eax"
+        ],
+        [
+          "0x100ab7d2",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x100ab7d5",
+          "addsd   xmm0, ds:qword_1010EEA0[eax*8]"
+        ],
+        [
+          "0x100ab7de",
+          "cvtpd2ps xmm0, xmm0"
+        ],
+        [
+          "0x100ab7e2",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100ab7e6",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100ab7e9",
+          "cvttss2si ecx, xmm1"
+        ],
+        [
+          "0x100ab7ed",
+          "mov     [esi+254h], ecx"
+        ],
+        [
+          "0x100ab7f3",
+          "mov     eax, [edi+404h]"
+        ],
+        [
+          "0x100ab7f9",
+          "cvtsi2sd xmm0, eax"
+        ],
+        [
+          "0x100ab7fd",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x100ab800",
+          "addsd   xmm0, ds:qword_1010EEA0[eax*8]"
+        ],
+        [
+          "0x100ab809",
+          "cvtpd2ps xmm0, xmm0"
+        ],
+        [
+          "0x100ab80d",
+          "mulss   xmm0, xmm2"
+        ],
+        [
+          "0x100ab811",
+          "cvttss2si eax, xmm0"
+        ],
+        [
+          "0x100ab815",
+          "mov     [esi+258h], eax"
+        ],
+        [
+          "0x100ab81b",
+          "mov     eax, [edi+400h]"
+        ],
+        [
+          "0x100ab821",
+          "cmp     ecx, eax"
+        ],
+        [
+          "0x100ab823",
+          "jge     short loc_100AB834"
+        ],
+        [
+          "0x100ab825",
+          "neg     eax"
+        ],
+        [
+          "0x100ab827",
+          "cmp     ecx, eax"
+        ],
+        [
+          "0x100ab829",
+          "jl      short loc_100AB834"
+        ],
+        [
+          "0x100ab82b",
+          "cmp     ecx, 0FFFFFFFFh"
+        ],
+        [
+          "0x100ab82e",
+          "jz      short loc_100AB83E"
+        ],
+        [
+          "0x100ab830",
+          "sub     ecx, ebx"
+        ],
+        [
+          "0x100ab832",
+          "jmp     short loc_100AB840"
+        ],
+        [
+          "0x100ab834",
+          "mov     dword ptr [esi+254h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100ab83e",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100ab840",
+          "mov     [esi+25Ch], ecx"
+        ],
+        [
+          "0x100ab846",
+          "mov     eax, [esi+258h]"
+        ],
+        [
+          "0x100ab84c",
+          "mov     ecx, [edi+404h]"
+        ],
+        [
+          "0x100ab852",
+          "cmp     eax, ecx"
+        ],
+        [
+          "0x100ab854",
+          "jge     short loc_100AB867"
+        ],
+        [
+          "0x100ab856",
+          "neg     ecx"
+        ],
+        [
+          "0x100ab858",
+          "cmp     eax, ecx"
+        ],
+        [
+          "0x100ab85a",
+          "jl      short loc_100AB867"
+        ],
+        [
+          "0x100ab85c",
+          "cmp     eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x100ab85f",
+          "jz      short loc_100AB871"
+        ],
+        [
+          "0x100ab861",
+          "sub     eax, [esp+20h+var_C]"
+        ],
+        [
+          "0x100ab865",
+          "jmp     short loc_100AB873"
+        ],
+        [
+          "0x100ab867",
+          "mov     dword ptr [esi+258h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100ab871",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ab873",
+          "mov     [esi+260h], eax"
+        ],
+        [
+          "0x100ab879",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100ab87b",
+          "push    17h; nIndex"
+        ],
+        [
+          "0x100ab87d",
+          "call    ds:GetSystemMetrics"
+        ],
+        [
+          "0x100ab883",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x100ab885",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ab887",
+          "jz      short loc_100AB8AF"
+        ],
+        [
+          "0x100ab889",
+          "mov     eax, ds:vKey"
+        ],
+        [
+          "0x100ab88e",
+          "xchg    ax, ax"
+        ],
+        [
+          "0x100ab890",
+          "push    eax; vKey"
+        ],
+        [
+          "0x100ab891",
+          "call    ds:GetAsyncKeyState"
+        ],
+        [
+          "0x100ab897",
+          "bt      ax, 0Fh"
+        ],
+        [
+          "0x100ab89c",
+          "jnb     short loc_100AB8A1"
+        ],
+        [
+          "0x100ab89e",
+          "bts     esi, ebx"
+        ],
+        [
+          "0x100ab8a1",
+          "mov     eax, ds:dword_1010C8EC[ebx*4]"
+        ],
+        [
+          "0x100ab8a8",
+          "inc     ebx"
+        ],
+        [
+          "0x100ab8a9",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ab8ab",
+          "jnz     short loc_100AB890"
+        ],
+        [
+          "0x100ab8ad",
+          "jmp     short loc_100AB8D1"
+        ],
+        [
+          "0x100ab8af",
+          "mov     eax, ds:dword_1010C968"
+        ],
+        [
+          "0x100ab8b4",
+          "push    eax; vKey"
+        ],
+        [
+          "0x100ab8b5",
+          "call    ds:GetAsyncKeyState"
+        ],
+        [
+          "0x100ab8bb",
+          "bt      ax, 0Fh"
+        ],
+        [
+          "0x100ab8c0",
+          "jnb     short loc_100AB8C5"
+        ],
+        [
+          "0x100ab8c2",
+          "bts     esi, ebx"
+        ],
+        [
+          "0x100ab8c5",
+          "mov     eax, ds:dword_1010C96C[ebx*4]"
+        ],
+        [
+          "0x100ab8cc",
+          "inc     ebx"
+        ],
+        [
+          "0x100ab8cd",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ab8cf",
+          "jnz     short loc_100AB8B4"
+        ],
+        [
+          "0x100ab8d1",
+          "mov     edx, [edi+280h]"
+        ],
+        [
+          "0x100ab8d7",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100ab8d9",
+          "or      ecx, 40800000h"
+        ],
+        [
+          "0x100ab8df",
+          "mov     dword ptr [edi+248h], 0"
+        ],
+        [
+          "0x100ab8e9",
+          "mov     eax, edx"
+        ],
+        [
+          "0x100ab8eb",
+          "and     al, 1"
+        ],
+        [
+          "0x100ab8ed",
+          "cmovz   ecx, esi"
+        ],
+        [
+          "0x100ab8f0",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x100ab8f2",
+          "or      esi, 1"
+        ],
+        [
+          "0x100ab8f5",
+          "and     dl, 8"
+        ],
+        [
+          "0x100ab8f8",
+          "cmovz   esi, ecx"
+        ],
+        [
+          "0x100ab8fb",
+          "mov     ecx, [edi+230h]"
+        ],
+        [
+          "0x100ab901",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x100ab903",
+          "mov     [edi+234h], ecx"
+        ],
+        [
+          "0x100ab909",
+          "mov     edx, ecx"
+        ],
+        [
+          "0x100ab90b",
+          "mov     [edi+230h], esi"
+        ],
+        [
+          "0x100ab911",
+          "xor     eax, esi"
+        ],
+        [
+          "0x100ab913",
+          "and     edx, esi"
+        ],
+        [
+          "0x100ab915",
+          "and     ecx, eax"
+        ],
+        [
+          "0x100ab917",
+          "mov     [edi+23Ch], edx"
+        ],
+        [
+          "0x100ab91d",
+          "and     esi, eax"
+        ],
+        [
+          "0x100ab91f",
+          "mov     [edi+240h], ecx"
+        ],
+        [
+          "0x100ab925",
+          "mov     ecx, dword_10128698"
+        ],
+        [
+          "0x100ab92b",
+          "mov     [edi+238h], esi"
+        ],
+        [
+          "0x100ab931",
+          "jz      short loc_100AB947"
+        ],
+        [
+          "0x100ab933",
+          "mov     eax, [ecx+31C0h]"
+        ],
+        [
+          "0x100ab939",
+          "mov     [edi+250h], eax"
+        ],
+        [
+          "0x100ab93f",
+          "mov     [edi+24Ch], esi"
+        ],
+        [
+          "0x100ab945",
+          "jmp     short loc_100AB976"
+        ],
+        [
+          "0x100ab947",
+          "mov     esi, [edi+24Ch]"
+        ],
+        [
+          "0x100ab94d",
+          "test    esi, edx"
+        ],
+        [
+          "0x100ab94f",
+          "jz      short loc_100AB96C"
+        ],
+        [
+          "0x100ab951",
+          "mov     eax, [ecx+31C0h]"
+        ],
+        [
+          "0x100ab957",
+          "sub     eax, [edi+250h]"
+        ],
+        [
+          "0x100ab95d",
+          "cmp     eax, 1F4h"
+        ],
+        [
+          "0x100ab962",
+          "jbe     short loc_100AB976"
+        ],
+        [
+          "0x100ab964",
+          "mov     [edi+248h], esi"
+        ],
+        [
+          "0x100ab96a",
+          "jmp     short loc_100AB976"
+        ],
+        [
+          "0x100ab96c",
+          "mov     dword ptr [edi+24Ch], 0"
+        ],
+        [
+          "0x100ab976",
+          "add     ecx, 1E0h"
+        ],
+        [
+          "0x100ab97c",
+          "call    sub_100AB0D0"
+        ],
+        [
+          "0x100ab981",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ab983",
+          "jnz     short loc_100AB996"
+        ],
+        [
+          "0x100ab985",
+          "and     dword ptr [edi+238h], 0BC7FFFFFh"
+        ],
+        [
+          "0x100ab98f",
+          "mov     [edi+264h], ax"
+        ],
+        [
+          "0x100ab996",
+          "mov     ecx, dword_10128698"
+        ],
+        [
+          "0x100ab99c",
+          "lea     ecx, [ecx+1E0h]"
+        ],
+        [
+          "0x100ab9a2",
+          "call    sub_100AB2D0"
+        ],
+        [
+          "0x100ab9a7",
+          "mov     ecx, dword_10128698"
+        ],
+        [
+          "0x100ab9ad",
+          "mov     eax, [ecx+3C0h]"
+        ],
+        [
+          "0x100ab9b3",
+          "mov     edx, [ecx+3C4h]"
+        ],
+        [
+          "0x100ab9b9",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ab9bb",
+          "jz      short loc_100AB9D7"
+        ],
+        [
+          "0x100ab9bd",
+          "not     eax"
+        ],
+        [
+          "0x100ab9bf",
+          "and     [ecx+23Ch], eax"
+        ],
+        [
+          "0x100ab9c5",
+          "and     [ecx+238h], eax"
+        ],
+        [
+          "0x100ab9cb",
+          "and     [ecx+240h], eax"
+        ],
+        [
+          "0x100ab9d1",
+          "and     [ecx+248h], eax"
+        ],
+        [
+          "0x100ab9d7",
+          "test    edx, edx"
+        ],
+        [
+          "0x100ab9d9",
+          "jz      loc_100ABA87"
+        ],
+        [
+          "0x100ab9df",
+          "mov     eax, edx"
+        ],
+        [
+          "0x100ab9e1",
+          "not     eax"
+        ],
+        [
+          "0x100ab9e3",
+          "and     [ecx+244h], eax"
+        ],
+        [
+          "0x100ab9e9",
+          "test    dl, 10h"
+        ],
+        [
+          "0x100ab9ec",
+          "jz      loc_100ABA87"
+        ],
+        [
+          "0x100ab9f2",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ab9f4",
+          "mov     [ecx+264h], ax"
+        ],
+        [
+          "0x100ab9fb",
+          "pop     edi"
+        ],
+        [
+          "0x100ab9fc",
+          "pop     esi"
+        ],
+        [
+          "0x100ab9fd",
+          "pop     ebx"
+        ],
+        [
+          "0x100ab9fe",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100aba00",
+          "pop     ebp"
+        ],
+        [
+          "0x100aba01",
+          "retn"
+        ],
+        [
+          "0x100aba02",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100aba04",
+          "mov     dword ptr [esi+218h], 0"
+        ],
+        [
+          "0x100aba0e",
+          "mov     dword ptr [esi+21Ch], 0"
+        ],
+        [
+          "0x100aba18",
+          "mov     dword ptr [esi+220h], 0"
+        ],
+        [
+          "0x100aba22",
+          "mov     dword ptr [esi+224h], 0"
+        ],
+        [
+          "0x100aba2c",
+          "mov     dword ptr [esi+228h], 0"
+        ],
+        [
+          "0x100aba36",
+          "mov     dword ptr [esi+22Ch], 0"
+        ],
+        [
+          "0x100aba40",
+          "mov     dword ptr [esi+254h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100aba4a",
+          "mov     dword ptr [esi+258h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100aba54",
+          "mov     dword ptr [esi+25Ch], 0"
+        ],
+        [
+          "0x100aba5e",
+          "mov     dword ptr [esi+260h], 0"
+        ],
+        [
+          "0x100aba68",
+          "mov     [esi+264h], ax"
+        ],
+        [
+          "0x100aba6f",
+          "mov     [esi+238h], eax"
+        ],
+        [
+          "0x100aba75",
+          "mov     [esi+23Ch], eax"
+        ],
+        [
+          "0x100aba7b",
+          "mov     [esi+240h], eax"
+        ],
+        [
+          "0x100aba81",
+          "mov     [esi+248h], eax"
+        ],
+        [
+          "0x100aba87",
+          "pop     edi"
+        ],
+        [
+          "0x100aba88",
+          "pop     esi"
+        ],
+        [
+          "0x100aba89",
+          "pop     ebx"
+        ],
+        [
+          "0x100aba8a",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100aba8c",
+          "pop     ebp"
+        ],
+        [
+          "0x100aba8d",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/PAL.dll",
+  "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+}

@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-23",
+  "scope": "Version-specific native MP4/H.264 audit and explicit unsupported-profile policy; no OpenH264/AAC dependency or decoder added.",
+  "checks": [
+    {
+      "command": "python3 reverse/abi/generate.py --check",
+      "result": "passed"
+    },
+    {
+      "command": "i686-w64-mingw32-gcc -std=c11 -Wall -Wextra -Werror -fsyntax-only -x c reverse/abi/pal32.h",
+      "result": "passed"
+    },
+    {
+      "command": "i686-w64-mingw32-g++ -std=c++11 -Wall -Wextra -Werror -fsyntax-only -x c++ reverse/abi/pal32.h",
+      "result": "passed"
+    },
+    {
+      "command": "cargo check -p pal-vm --lib --no-default-features --target i686-pc-windows-gnu",
+      "result": "passed",
+      "log": "target/reverse-audit/mp4-policy-win32-check.log"
+    },
+    {
+      "command": "cargo test -p pal-vm --no-default-features --test movie_timing --test mpeg2_movie",
+      "result": "10 passed; 0 failed; 0 ignored",
+      "log": "target/reverse-audit/mp4-policy-tests.log"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "sha256": {
+    "crates/pal-vm/src/msprite.rs": "5e2d90f3a87fb104f5b4f712d6db88b5ef6a6845b8198c3a3320c7ab82b87854",
+    "crates/pal-vm/src/runtime.rs": "4afb51900ce957b0b9fe238b8850baecf56fde70e763c34d282e909da9849978",
+    "crates/pal-vm/src/abi/generated.rs": "cc95175b95443641eb8acaefa3418cde734e17d5933f6d91b5d995a551dd4887",
+    "reverse/abi/pal32.json": "8bfe0486ab2636f434af829734e79957c7d8d8415d9bfd7480c230afe6c45de3",
+    "reverse/abi/pal32.h": "61312d4c07aca043c56e87e86230044469708f7eae690db1282b64b409a151fc",
+    "reverse/movie-format-policy.md": "d1ff11b1e445b4550467821c33a3442c9060566ce68e356c36af883a77ba9f66"
+  },
+  "limits": [
+    "Native support conclusion is scoped to the three checked release PalVideoPlay entry points.",
+    "Debug PAL_d.dll findings come from the saved SQLite decompilation; its original binary was not available for fresh execution.",
+    "This does not certify engine-wide equivalence or movie soundtrack playback."
+  ]
+}

@@ -16,7 +16,7 @@ mod pac;
 mod resource;
 pub mod vfs;
 
-pub use archive_dat::parse_archive_dat_paths;
+pub use archive_dat::{parse_archive_dat_paths, parse_archive_dat_profile};
 pub use decrypt::{decrypt_dollar_payload, decrypt_pal_dollar_file};
 pub use error::{AssetError, Result};
 pub use key::{make_pac_key, normalize_pal_name_bytes, PacKey};

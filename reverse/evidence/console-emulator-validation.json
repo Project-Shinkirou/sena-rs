@@ -1,0 +1,750 @@
+{
+  "date": "2026-10-24",
+  "scope": "Actual console emulator execution and Vita allocation pressure; finite host-input replay, not complete compatibility or hardware certification.",
+  "subagents_started": 0,
+  "regression_tests_added": 0,
+  "cargo_tests_run": 0,
+  "resources": "Original games read-only. Isolated resource links/copies, saves, emulator configuration and logs under target/reverse-audit/emulators.",
+  "emulators": {
+    "vita": "Vita3K v0.2.1 4154-b75d5e62, Vulkan via MoltenVK",
+    "switch": "Ryujinx Canary 1.3.351, firmware 22.5.0, Vulkan via MoltenVK"
+  },
+  "fixed_dt_ms": 100,
+  "final_audio_clock": "PCM drain follows the fixed VM timestep; output discarded. Native real-time AudioOut validation is a separate run.",
+  "initial_koikake_budgets_bytes": {
+    "cpu_heap": 335544320,
+    "scene_cdram_including_retired": 83886080,
+    "scene_uncached_including_retired": 16777216
+  },
+  "koikake": {
+    "vita": {
+      "outcome": "Normal finite exit after 2400 frames; title, ADV and scene changes observed.",
+      "artifact": {
+        "path": "target/reverse-audit/emulators/vita/koikake-tested.vpk",
+        "bytes": 7060473,
+        "sha256": "29929deb94893de85225d3cf1eae02786439cf8824ea5b3cdaeb509010b0643f"
+      },
+      "replay": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/koikake-audit.txt",
+        "bytes": 11383,
+        "sha256": "f2923745c5355c6affb4641649e95825a0cfc3770612ae864a9da450c5110964"
+      },
+      "memory": {
+        "log": {
+          "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/koikake-final.log",
+          "bytes": 16507,
+          "sha256": "e26cd990a949cf1a1be100b078ab9d99db644ced0250202790aef4f0ea15a4f4"
+        },
+        "sample_interval_frames": 120,
+        "extra_samples": "Before large PGD base allocations when enabled in the final Vita build.",
+        "sampled_max": {
+          "heap_arena": 245211136,
+          "heap_used": 127785064,
+          "peak_cdram": 79691776,
+          "peak_uncached": 9396224,
+          "retired_bytes": 13065472,
+          "cpu_large": 0,
+          "peak_cpu_large": 0,
+          "small_used_plus_large_reserved": 127785064
+        },
+        "final": {
+          "stage": "after-release",
+          "frame": "2400",
+          "rc": "0",
+          "heap_arena": "10657792",
+          "heap_used": "4480",
+          "heap_free": "10653312",
+          "user_free": "14033000",
+          "cdram_free": "886610704",
+          "phycont_free": "27262976",
+          "textures": "0",
+          "texture_bytes": "0",
+          "retired": "0",
+          "retired_bytes": "0",
+          "gpu_cdram": "0",
+          "gpu_uncached": "0",
+          "peak_cdram": "79691776",
+          "peak_uncached": "9396224"
+        },
+        "allocator_failures": [],
+        "oom_reports": [],
+        "engine_stop_reports": []
+      }
+    },
+    "switch": {
+      "outcome": "Normal finite exit after 2400 frames; title, ADV and scene changes observed. Last sampled PC 0x7C278.",
+      "artifact": {
+        "path": "target/reverse-audit/emulators/switch/koikake-tested.nro",
+        "bytes": 13733968,
+        "sha256": "d25fca4e238f5ba46749bdee198f985f3804e60ae03f6f90f5e47fa557edb427"
+      },
+      "replay": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/koikake-audit.txt",
+        "bytes": 11383,
+        "sha256": "f2923745c5355c6affb4641649e95825a0cfc3770612ae864a9da450c5110964"
+      },
+      "log": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/koikake-final.log",
+        "bytes": 11506,
+        "sha256": "dbb644d3af06fdd9cb48014b22041063c9ceab4a77a633de3bec211338462af5"
+      }
+    },
+    "audio_clock_scope": "Historical 100 ms VM step with real-time PCM worker; not a shared-clock playback timing comparison."
+  },
+  "reproduced_failures": [
+    {
+      "platform": "switch",
+      "cause": "The libc 0.2.186 patch was unused by the pinned build-std dependency 0.2.178. Incorrect stat layout prevented archive bootstrap. Corrected and actually booted."
+    },
+    {
+      "platform": "vita",
+      "cause": "Whole-track growing PCM vector and Arc copy caused a 104857600-byte allocation failure. Corrected by exact shared allocation and two decode passes.",
+      "log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/oom-confirmed.log",
+        "bytes": 4167,
+        "sha256": "280b534a3f0b8bbc3e0039d81d9e3a904e549b661a5a2449a29c82b40f1c779f"
+      }
+    },
+    {
+      "profile": "totsulover",
+      "platform": "switch",
+      "observation": "Main-story replay requested 2147485784 bytes. Subsequent diagnostic identified temp operand index 0x1000010B at PC 0x17EE4 with argument_base 268435594.",
+      "log": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/newer-index-failed.log",
+        "bytes": 2161,
+        "sha256": "c8bc1c553181df3f2cdd0d7a0f126d119a6c38f1190d8ce88dcb34b4703ec13e"
+      }
+    },
+    {
+      "profile": "totsulover",
+      "platform": "vita",
+      "observation": "Main-story replay crashed during the same scheduled interval. Not a passing run.",
+      "host_log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-story-failed.log",
+        "bytes": 4431,
+        "sha256": "41d7eca91cb4c189e023cf13f6f09fe1676040768f4568c551f065e7c40b9196"
+      },
+      "emulator_log": {
+        "path": "target/reverse-audit/emulators/vita/run-newer-story.log",
+        "bytes": 3016239,
+        "sha256": "075a3e47550b5d3f7f28b6d151cdb492f679f5fd5242b7172c9ec1afabc1a0e8"
+      }
+    },
+    {
+      "platform": "vita",
+      "log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-clocked-allocator-failed.log",
+        "bytes": 13070,
+        "sha256": "3560d3432f3eddfaa2e2c5939fd2f963ea87cbda0b69060d9773bc12062d0254"
+      },
+      "observation": "Actual 67108864-byte calloc failure in the earlier single-arena allocator. Streaming alone did not resolve the later fragmentation failure. Not a passing run."
+    },
+    {
+      "platform": "vita",
+      "log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-stream-not-routed-failed.log",
+        "bytes": 13072,
+        "sha256": "dcc3759df34aaca9486c540056f022dc62dcb68d63c768d97354379cd4ef97e4"
+      },
+      "observation": "Actual 67108864-byte calloc failure in the earlier single-arena allocator. Streaming alone did not resolve the later fragmentation failure. Not a passing run."
+    },
+    {
+      "platform": "vita",
+      "log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-stream-fragmentation-failed.log",
+        "bytes": 71303,
+        "sha256": "378b6c844b07eea02ba9bfe75c94da007ea5934d609a34e42f62cda849551460"
+      },
+      "observation": "Actual 67108864-byte calloc failure in the earlier single-arena allocator. Streaming alone did not resolve the later fragmentation failure. Not a passing run."
+    },
+    {
+      "platform": "vita",
+      "log": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-cpu-block-budget-failed.log",
+        "bytes": 74557,
+        "sha256": "bdbe7ea14d081a2b416c1737f71158cc767ab9cd9b8b01f8284f748a46e81610"
+      },
+      "observation": "The earlier 64+272 MiB split exceeded its large-block reservation limit at frame 2313. Rebalanced to 48+288 MiB without increasing the combined cap."
+    }
+  ],
+  "pcm_comparison": {
+    "method": "Temporary diagnostic utility compares all f32 sample bits against the prior Kira 0.12.1 static decoder.",
+    "log": {
+      "path": "target/reverse-audit/emulator-audio-compare.log",
+      "bytes": 18908,
+      "sha256": "d89b8ce3759b8cb04e0daf7dd7f2f9c5502bfcb7845f9596713b7db65ab5b500"
+    },
+    "tracks": [
+      {
+        "name": "BGM01.OGG",
+        "rate": 44100,
+        "frames": 7931328,
+        "equal": true,
+        "fnv64": "8b37c0b82b3e9110"
+      },
+      {
+        "name": "BGM02.OGG",
+        "rate": 44100,
+        "frames": 6612928,
+        "equal": true,
+        "fnv64": "135e6d2b2ce8ed11"
+      }
+    ]
+  },
+  "vita_budgets_bytes": {
+    "combined_cpu_ceiling": 352321536,
+    "small_newlib_arena": 50331648,
+    "large_reservations_including_headers_and_rounding": 301989888,
+    "scene_cdram_including_retired": 83886080,
+    "scene_uncached_including_retired": 8388608
+  },
+  "checks": [
+    {
+      "path": "target/reverse-audit/emulator-vita-budget-build.log",
+      "bytes": 17086,
+      "sha256": "d8836cd1851f38f7488b270a303ece7a0fe8f8675dfca9114320524d142f8c0c"
+    },
+    {
+      "path": "target/reverse-audit/emulator-switch-bounded-audio-build.log",
+      "bytes": 18149,
+      "sha256": "24308cf0de1a443646c3165c96061b4b7e29240e4fd4c68c0cb5f2c8a14e62f9"
+    },
+    {
+      "path": "target/reverse-audit/emulator-audio-memory-host-build.log",
+      "bytes": 14448,
+      "sha256": "0dc3515732f7b57a170244ad20cee557c4f044ff5fcebd353aa1f6d622407f3c"
+    },
+    {
+      "path": "target/reverse-audit/emulator-audio-wasm-check.log",
+      "bytes": 14725,
+      "sha256": "1c5119924ad10225771dc60941fb02245ddb0d66ad5cbb2048ecd54a03bb7840"
+    }
+  ],
+  "limits": [
+    "Vita CPU maxima are 120-frame samples, not allocation high-water marks. GPU peaks are updated on every tracked texture allocation.",
+    "Vita3K raw kernel free-memory counters are defective in the pinned revision; independently tracked mapped GPU allocations are the acceptance measurement.",
+    "Physical controller/touch operation, audible output and AV synchronization were not established by the replay.",
+    "Real-device fragmentation, frame rate, suspend/resume and long-duration play remain unmeasured.",
+    "WMA/movie audio and arbitrarily long static clips retain separate memory limits.",
+    "Known unsupported named animation assets, unreviewed newer wrappers and incomplete native comparisons preclude whole-engine or full-route acceptance.",
+    "Final Vita acceptance is two checkpoint-based finite segments, not an uninterrupted complete route. Ordinary menu-save compatibility and arbitrary transient host checkpoints are separate concerns."
+  ],
+  "final_artifacts": [
+    {
+      "path": "dist/vita/sena.vpk",
+      "bytes": 7097055,
+      "sha256": "6a4db4984c801fd3f1c040868e882b448503cae206fc59ba1c5eeee21fe147d2"
+    },
+    {
+      "path": "dist/switch/sena.nro",
+      "bytes": 13754448,
+      "sha256": "c71168dfa267833f3e06032dadde2bded8002c89e02c66abd639fbeb8b208527"
+    }
+  ],
+  "final_builds": [
+    {
+      "path": "target/reverse-audit/emulator-checkpoint-vita-build.log",
+      "bytes": 17131,
+      "sha256": "c3e5e866033e963151ad777842dc4ba58ec8a0350fbe02283476de47f99134af"
+    },
+    {
+      "path": "target/reverse-audit/emulator-switch-stream-audio-final-build.log",
+      "bytes": 17407,
+      "sha256": "af77c5186dceb3cc1810876c840b96f1d9e5a8ac8742da2d98cc23e2c698fdf7"
+    },
+    {
+      "path": "target/reverse-audit/emulator-stream-audio-host-build.log",
+      "bytes": 14928,
+      "sha256": "f05df0ac8679f79e35693d63acf0b0d14d080b39a938984e1d20f264a112887c"
+    },
+    {
+      "path": "target/reverse-audit/emulator-stream-audio-wasm.log",
+      "bytes": 14279,
+      "sha256": "96fcd883e0ae287d0eea2843e028abbc8d91dd8988b1f4664cafdbefac0a8927"
+    }
+  ],
+  "image_comparison": {
+    "log": {
+      "path": "target/reverse-audit/emulator-image-compare-streaming.log",
+      "bytes": 17147,
+      "sha256": "d8a3cd8e6545c0f7b9494b422d410cb78983c7c987de16bc2f9041cc66588370"
+    },
+    "reference_source": {
+      "path": "target/reverse-audit/image-compare/baseline/image.rs",
+      "bytes": 21671,
+      "sha256": "65fa4cb1e1f4fb1b7aa96df9004cfa660c46e93e647caa8ac0132526072085a4"
+    },
+    "result": "All seven metadata and RGBA comparisons equal. Both 4096-square images retain their full resolution. SceneTexture keeps the original decoder pixel pointer."
+  },
+  "native_vm_corrections": {
+    "substring": {
+      "coordinate": "18:119",
+      "handler": "0x4354C0",
+      "pop_count": 4,
+      "writes_destination": false,
+      "evidence": {
+        "path": "reverse/evidence/totsulover-string-split.json",
+        "bytes": 11123,
+        "sha256": "123382554126fdbbfcd695cb4debf1d4ba163b8a78463e10d1562cf659acb1c7"
+      }
+    },
+    "newer_gosub": {
+      "opcode": 11,
+      "handler": "0x458C10",
+      "target": "Evaluated operand",
+      "evidence": {
+        "path": "reverse/evidence/totsulover-gosub-operand.json",
+        "bytes": 19425,
+        "sha256": "680c75ffcaa2bc6d8e8c85760d526fbb3cca7ed25edc3ce7d5ecec6573b365da"
+      }
+    }
+  },
+  "final_source_sha256": {
+    "Cargo.toml": "dfb8bd6558bbe22d51398ecc6dda8d225eb92f6170325afffd3a1807176de4a5",
+    "Cargo.lock": "7b1c73b3714c0df96ceb5dc44530b85447f3070a8ca19aab6e7e1c7f8147d09e",
+    "crates/pal-vm/src/image.rs": "f1f290a32e7a2a60a56caa4dd26a0f09608563ec17df014da2d7476d7843e03f",
+    "crates/pal-vm/src/engine.rs": "e4f0aa352e839f4f900c5dab5a33148dc931e6c86a769afb661dab373f170d30",
+    "crates/pal-vm/src/ffi.rs": "3c98a2db25755e3161668e81f2e98608c3b0513355b852d4b09393bc05a0d471",
+    "crates/pal-vm/src/audio/decode.rs": "4bb96a1953cf1f9bd29fb28a608c728ae445d1eaa38d8d0ea98ec2ebd00067cb",
+    "crates/pal-vm/src/audio.rs": "f0d0a6df0f5073e3f363bad1d934866f8b36382e7261203629a4fa86c788674a",
+    "crates/pal-vm/src/audio/native_sound.rs": "4ffe57842c7856b34049a3f0223012985aeebced58bc1af099fd5edf083f55ef",
+    "crates/pal-vm/src/audio/source_format.rs": "c2e6ca17721b1e8e5334234369d0be6bd08de12b0044f4585066622c173c7b25",
+    "crates/pal-vm/src/audio/stream.rs": "6edcc1ab03b000ae411936acfa9b1c124af2df7d06e98f412c1314efada483c4",
+    "crates/pal-vm/src/scene.rs": "3519ffa887ac9977bd42a8790b56373f82cb1cd99b4c41786775b568fa4a04f5",
+    "crates/pal-vm/src/sprite.rs": "d5d3d2e0b1db605179611ce9988cca4dc450a899f223215076edb253776efe25",
+    "crates/pal-vm/src/runtime.rs": "fa18f9c997c54d2283eea7b3d20968679ecf293c327908320378575ef5acb9d5",
+    "crates/pal-script/src/extsig_registered.rs": "beab564df0a44ab5cc62530ba8ccd969f932a2200d389e43fa32b95ddc1c926f",
+    "platform/switch/build_switch.sh": "aa790a396dd6461e1e13dff1f331103ab4819e242d9ed36c4ce9840bc8f1eee0",
+    "platform/switch/core/Cargo.lock": "b10e287fe89be002efa4aec8368923d9c5978037b7f366d0727edcd0150d7b21",
+    "platform/vita/core/Cargo.lock": "c68fd30a32bcf31f158c5f56227f2c2a01cf843d1e2fb2821791e40d01dd1c00",
+    "platform/vita/core/src/lib.rs": "b163de838d13bc348365af30eb7d36e5d08320f65a8ede720a282954237d52de",
+    "platform/vita/source/main.c": "39b9f9e1eefd01e2e6b2c18e37df1ad08164954e10343599f549bf61fcad5bdb",
+    "platform/vita/source/cpu_memory.c": "a5309cf2e0b5d8f331ebecf510974c0c11be07648f9ceafa8062f727bf3437ce",
+    "platform/vita/source/cpu_memory.h": "7405d0d8b4af5d423884d1e5f33dbf45223a204b95eb2128c0930e809afcc974",
+    "platform/vita/CMakeLists.txt": "a2b8dd7f866d8c3280b2baa8a1da5d6831226dcd70dea700304585bdade89a88",
+    "vendor/kira/src/sound/streaming/sound.rs": "3a146af015a6a6d9d676ac62432d40cc057b8c5ac6065359bb13783f0bc1eb23",
+    "vendor/kira/UPSTREAM.md": "6851bbcf23bfac6f4bdc72dc8b7252ce135ffdfdfc4e50bb2e7bc23984720358",
+    "platform/vita/source/scene_gpu.c": "836c38b4315a76d7e134b3da98432f88a4666c628fe14eec5a5969ce50c0a6ab",
+    "platform/common/audit.h": "567afd02c9caa702979eaecc326072803d0c5425ff4773a916e72f7c97b77448",
+    "crates/pal-vm/src/runtime/host_checkpoint.rs": "0a25a429e503e8fe786f159c3268578c1abdb43eed55a1197bcaba733c4cbd05",
+    "crates/pal-vm/src/runtime/sprite_surface.rs": "8c2580711d021bda14a844b424d06861352abf842206a1f1e3648ff0fce5f537",
+    "platform/scripts/create_checkpoint.py": "375449cc31d99b9f94da1913b6d84d0513ad4506227ec1c5165add057854bb99",
+    "platform/common/sena.h": "edd68deab81d54d7cf049d793005d2c218b830a7f3292c1930231aaac248847d"
+  },
+  "final_runs": {
+    "switch_newer": {
+      "log": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/newer-streaming-final.log",
+        "bytes": 17635,
+        "sha256": "1a4aba8b3861d815390ea4b592dc59951c9b7d1a11b748a137642291503c4073"
+      },
+      "artifact": {
+        "path": "dist/switch/sena.nro",
+        "bytes": 13754448,
+        "sha256": "c71168dfa267833f3e06032dadde2bded8002c89e02c66abd639fbeb8b208527"
+      },
+      "normal_frame_limit_exit": true,
+      "replay": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/newer-streaming-audit.txt",
+        "bytes": 5309,
+        "sha256": "678d522793c9c6304afcc3126cc14d9fe6234ea2c526f4274029b5ef0af78b76"
+      },
+      "last_scene": "[console] frame=3600 status=wait click (task) pc=0x0015AA00 pc=0x15aa00 textures=13 source_bytes=228231232 draws=13"
+    },
+    "switch_koikake": {
+      "log": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/koikake-streaming-final.log",
+        "bytes": 11550,
+        "sha256": "844cd9e3fd6930e183172e935270d04fa4e6cc88e6dd050fdb10312a1d74098a"
+      },
+      "artifact": {
+        "path": "dist/switch/sena.nro",
+        "bytes": 13754448,
+        "sha256": "c71168dfa267833f3e06032dadde2bded8002c89e02c66abd639fbeb8b208527"
+      },
+      "normal_frame_limit_exit": true,
+      "replay": {
+        "path": "target/reverse-audit/emulators/switch/sdcard/switch/sena/koikake-streaming-audit.txt",
+        "bytes": 11383,
+        "sha256": "f2923745c5355c6affb4641649e95825a0cfc3770612ae864a9da450c5110964"
+      },
+      "last_scene": "[console] frame=2400 status=running pc=0x0007C278 pc=0x7c278 textures=21 source_bytes=19633136 draws=21"
+    }
+  },
+  "streaming_audio_comparison": {
+    "decoder_log": {
+      "path": "target/reverse-audit/emulator-stream-audio-compare.log",
+      "bytes": 18855,
+      "sha256": "b34850fabc53883535eb3ef1e6de6355019a509b6e756b4211dfde9b177bd1fb"
+    },
+    "decoder_result": "Every PCM f32 bit matches for BGM01.OGG/BGM02.OGG; six 2048-frame seek windows each; max packet 1024 frames.",
+    "mixer_log": {
+      "path": "target/reverse-audit/emulator-stream-mixer-compare.log",
+      "bytes": 17800,
+      "sha256": "961e02c3bc86949a17cc687cebd65cfdaa098dba4d834c0e0251c3a08c6bd861"
+    },
+    "mixer_result": "All 256000 stereo i16 frames equal, including native fades, pause/resume, start position, rate 1.1, pan 0.2, gain -6 dB and a 1..2 second loop.",
+    "mixer_fnv64": "90d53a627fa0e250",
+    "scope": "Manual diagnostic programs, not regression tests. Decoder/mixer comparison is not audible or real-device latency validation."
+  },
+  "stream_worker_teardown": {
+    "before_log": {
+      "path": "target/reverse-audit/emulator-stream-teardown-before.log",
+      "bytes": 19581,
+      "sha256": "9465395baa70fac597b7fd1037f6d735f49a00d7e0d8b7f1c5f2f80686c7fb5f"
+    },
+    "after_log": {
+      "path": "target/reverse-audit/emulator-stream-teardown-after.log",
+      "bytes": 19590,
+      "sha256": "57230b6830c4156f9f0a99b47ce293a0df8fa45255575bd59e8b2da0eb7edb0d"
+    },
+    "result": "Upstream retains one traced decoder after manager destruction; the local sound Drop fix releases it, leaving zero.",
+    "scope": "Temporary diagnostic, not a new project regression test. Original third-party tests are retained with the vendored source but were not run."
+  },
+  "checkpoint_tool": {
+    "source": {
+      "path": "platform/scripts/create_checkpoint.py",
+      "bytes": 4408,
+      "sha256": "375449cc31d99b9f94da1913b6d84d0513ad4506227ec1c5165add057854bb99"
+    },
+    "smoke_log": {
+      "path": "target/reverse-audit/checkpoint-tool-smoke.log",
+      "bytes": 369,
+      "sha256": "9455a3796ea1056cb03b3bdc6c231d72008996947141e03df7215a74fa38d325"
+    },
+    "host_build": {
+      "path": "target/reverse-audit/emulator-checkpoint-host-build.log",
+      "bytes": 14300,
+      "sha256": "b3aed10aec00b5fa78bb04578c0ad084458490f0ebfbd0b52224adaa1ede6ece"
+    },
+    "wasm_check": {
+      "path": "target/reverse-audit/emulator-checkpoint-wasm.log",
+      "bytes": 14511,
+      "sha256": "b0f28c816eb3a2acc5e4e992c0b226c1c5d813adebcb7a205db9fff48d81df65"
+    }
+  },
+  "targeted_checkpoint_runs": {
+    "allocation": {
+      "artifact": {
+        "path": "target/reverse-audit/emulators/vita/checkpoint-tested.vpk",
+        "bytes": 7097055,
+        "sha256": "6a4db4984c801fd3f1c040868e882b448503cae206fc59ba1c5eeee21fe147d2"
+      },
+      "checkpoint": {
+        "slot": 997,
+        "after_frame": 2250,
+        "bytes": 27187900,
+        "sha256": "8c02dcaefb5246647d0cb04451e150d198417509d55ecc6b3a60432711b42c6a",
+        "logical_size": [
+          1280,
+          720
+        ],
+        "file": {
+          "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/game/save/save997.dat",
+          "bytes": 27187900,
+          "sha256": "8c02dcaefb5246647d0cb04451e150d198417509d55ecc6b3a60432711b42c6a"
+        }
+      },
+      "replay": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-checkpoint-allocation-audit.txt",
+        "bytes": 860,
+        "sha256": "995fb3a52470513e75e3d877bb4beccb08a088ea2c84abd8149276b327d8cb08"
+      },
+      "frames_after_restore": 400,
+      "source_frame_origin": 2250,
+      "restored": true,
+      "normal_frame_limit_exit": true,
+      "memory": {
+        "log": {
+          "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-checkpoint-allocation-final.log",
+          "bytes": 7393,
+          "sha256": "33440ebe109a5f44a02f15ef932973eed492c0987505d66766cb8d648ad09129"
+        },
+        "sample_interval_frames": 120,
+        "extra_samples": "Before large PGD base allocations when enabled in the final Vita build.",
+        "sampled_max": {
+          "heap_arena": 16433152,
+          "heap_used": 13528544,
+          "peak_cdram": 61603840,
+          "peak_uncached": 1982464,
+          "retired_bytes": 21554368,
+          "cpu_large": 222994432,
+          "peak_cpu_large": 255172608,
+          "small_used_plus_large_reserved": 236522976
+        },
+        "final": {
+          "stage": "after-release",
+          "frame": "400",
+          "rc": "0",
+          "heap_arena": "9097216",
+          "heap_used": "224264",
+          "heap_free": "8872952",
+          "user_free": "1023141640",
+          "cdram_free": "0",
+          "phycont_free": "27262976",
+          "textures": "0",
+          "texture_bytes": "0",
+          "retired": "0",
+          "retired_bytes": "0",
+          "gpu_cdram": "0",
+          "gpu_uncached": "0",
+          "peak_cdram": "61603840",
+          "peak_uncached": "1982464",
+          "cpu_large": "0",
+          "peak_cpu_large": "255172608"
+        },
+        "allocator_failures": [],
+        "oom_reports": [],
+        "engine_stop_reports": []
+      },
+      "image_allocations": [
+        {
+          "frame": 21,
+          "requested": 16777216
+        },
+        {
+          "frame": 25,
+          "requested": 16777216
+        },
+        {
+          "frame": 27,
+          "requested": 16777216
+        },
+        {
+          "frame": 31,
+          "requested": 16777216
+        },
+        {
+          "frame": 39,
+          "requested": 16777216
+        },
+        {
+          "frame": 59,
+          "requested": 19660800
+        }
+      ],
+      "allocation_budgets_respected": true,
+      "tracked_resources_released": true,
+      "scope": "Fresh host restore followed by finite native Vita execution. This does not reproduce all caches or decoder positions of an uninterrupted title-to-scene run."
+    },
+    "images": {
+      "artifact": {
+        "path": "target/reverse-audit/emulators/vita/checkpoint-tested.vpk",
+        "bytes": 7097055,
+        "sha256": "6a4db4984c801fd3f1c040868e882b448503cae206fc59ba1c5eeee21fe147d2"
+      },
+      "checkpoint": {
+        "slot": 996,
+        "after_frame": 2170,
+        "bytes": 28007611,
+        "sha256": "616960ae394f331337c514a0e4c07d1e1835e1fd3a0ee1ec64d3a7544fbbfbd9",
+        "logical_size": [
+          1280,
+          720
+        ],
+        "file": {
+          "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/game/save/save996.dat",
+          "bytes": 28007611,
+          "sha256": "616960ae394f331337c514a0e4c07d1e1835e1fd3a0ee1ec64d3a7544fbbfbd9"
+        }
+      },
+      "replay": {
+        "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-checkpoint-images-audit.txt",
+        "bytes": 508,
+        "sha256": "6d8153e4b680aaaeb1feaa1ecb3c7406f46b1779c5310e417dcde13c376d1a53"
+      },
+      "frames_after_restore": 240,
+      "source_frame_origin": 2170,
+      "restored": true,
+      "normal_frame_limit_exit": true,
+      "memory": {
+        "log": {
+          "path": "target/reverse-audit/emulators/vita/fs/ux0/data/sena/newer-checkpoint-images-final.log",
+          "bytes": 22330,
+          "sha256": "0b69082339bfddc0a98a3f9a4fde798a6816f5e584d75f3a6214a8cd2c3bf3d6"
+        },
+        "sample_interval_frames": 120,
+        "extra_samples": "Before large PGD base allocations when enabled in the final Vita build.",
+        "sampled_max": {
+          "heap_arena": 25518080,
+          "heap_used": 21747976,
+          "peak_cdram": 83361792,
+          "peak_uncached": 2019328,
+          "retired_bytes": 76984704,
+          "cpu_large": 222994432,
+          "peak_cpu_large": 258863104,
+          "small_used_plus_large_reserved": 236522976
+        },
+        "final": {
+          "stage": "after-release",
+          "frame": "240",
+          "rc": "0",
+          "heap_arena": "23691264",
+          "heap_used": "26792",
+          "heap_free": "23664472",
+          "user_free": "0",
+          "cdram_free": "0",
+          "phycont_free": "27262976",
+          "textures": "0",
+          "texture_bytes": "0",
+          "retired": "0",
+          "retired_bytes": "0",
+          "gpu_cdram": "0",
+          "gpu_uncached": "0",
+          "peak_cdram": "83361792",
+          "peak_uncached": "2019328",
+          "cpu_large": "0",
+          "peak_cpu_large": "258863104"
+        },
+        "allocator_failures": [],
+        "oom_reports": [],
+        "engine_stop_reports": []
+      },
+      "image_allocations": [
+        {
+          "frame": 21,
+          "requested": 16777216
+        },
+        {
+          "frame": 25,
+          "requested": 16777216
+        },
+        {
+          "frame": 27,
+          "requested": 16777216
+        },
+        {
+          "frame": 31,
+          "requested": 16777216
+        },
+        {
+          "frame": 39,
+          "requested": 16777216
+        },
+        {
+          "frame": 59,
+          "requested": 19660800
+        },
+        {
+          "frame": 7,
+          "requested": 16777216
+        },
+        {
+          "frame": 25,
+          "requested": 16777216
+        },
+        {
+          "frame": 27,
+          "requested": 16777216
+        },
+        {
+          "frame": 41,
+          "requested": 16777216
+        },
+        {
+          "frame": 45,
+          "requested": 67108864
+        },
+        {
+          "frame": 49,
+          "requested": 67108864
+        },
+        {
+          "frame": 53,
+          "requested": 67108864
+        },
+        {
+          "frame": 69,
+          "requested": 16777216
+        },
+        {
+          "frame": 71,
+          "requested": 16777216
+        },
+        {
+          "frame": 73,
+          "requested": 16777216
+        },
+        {
+          "frame": 77,
+          "requested": 16777216
+        },
+        {
+          "frame": 101,
+          "requested": 16777216
+        },
+        {
+          "frame": 105,
+          "requested": 16777216
+        },
+        {
+          "frame": 107,
+          "requested": 16777216
+        },
+        {
+          "frame": 111,
+          "requested": 16777216
+        },
+        {
+          "frame": 119,
+          "requested": 16777216
+        },
+        {
+          "frame": 139,
+          "requested": 19660800
+        },
+        {
+          "frame": 194,
+          "requested": 16777216
+        },
+        {
+          "frame": 196,
+          "requested": 16777216
+        },
+        {
+          "frame": 198,
+          "requested": 16777216
+        },
+        {
+          "frame": 200,
+          "requested": 16777216
+        },
+        {
+          "frame": 202,
+          "requested": 16777216
+        },
+        {
+          "frame": 206,
+          "requested": 16777216
+        },
+        {
+          "frame": 208,
+          "requested": 16777216
+        },
+        {
+          "frame": 212,
+          "requested": 16777216
+        },
+        {
+          "frame": 214,
+          "requested": 16777216
+        },
+        {
+          "frame": 218,
+          "requested": 67108864
+        },
+        {
+          "frame": 222,
+          "requested": 67108864
+        },
+        {
+          "frame": 226,
+          "requested": 67108864
+        }
+      ],
+      "allocation_budgets_respected": true,
+      "tracked_resources_released": true,
+      "scope": "Fresh host restore followed by finite native Vita execution. This does not reproduce all caches or decoder positions of an uninterrupted title-to-scene run."
+    }
+  }
+}

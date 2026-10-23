@@ -1,0 +1,48 @@
+{
+  "checked_at_utc": "2026-10-23T11:24:15.953140+00:00",
+  "scope": "11 reviewed native PAL ABI declarations and 32-bit sprite cell-index correction; not full engine parity.",
+  "checks": {
+    "generated_declarations": "python3 reverse/abi/generate.py --check: passed",
+    "c_header": "i686-w64-mingw32-gcc -std=c11 -Wall -Wextra -Werror -fsyntax-only -x c reverse/abi/pal32.h: passed",
+    "cpp_header": "i686-w64-mingw32-g++ -std=c++11 -Wall -Wextra -Werror -fsyntax-only -x c++ reverse/abi/pal32.h: passed",
+    "rust_native_target": "cargo check -p pal-vm --lib --no-default-features --target i686-pc-windows-gnu: passed (existing warnings)",
+    "whitespace": "git diff --check: passed"
+  },
+  "tests": [
+    {
+      "log": "target/reverse-audit/abi-lib-tests.log",
+      "passed": 180,
+      "failed": 0,
+      "ignored": 4
+    },
+    {
+      "log": "target/reverse-audit/abi-sprite-tests.log",
+      "passed": 19,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "target/reverse-audit/abi-adapter-tests.log",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "source_sha256": {
+    "reverse/abi/pal32.json": "1639ed633126aca0e1a2c0b72532c313239f50b07709a015b5b21713790e007a",
+    "reverse/abi/pal32.h": "518664b741e82500cd44482c79b33918c26fa8839fce598c3d85fc8646a702c2",
+    "crates/pal-vm/src/abi/mod.rs": "45f853cda0aca2e95922a31392538903fab07d6ad690260132d3dbed7ffdd157",
+    "crates/pal-vm/src/abi/generated.rs": "52a48f0df59628a6cc25629e49c8954bd053017984d740f7064e9aa1caa829f9",
+    "crates/pal-vm/src/sprite.rs": "8c3335be98c240e8d1a1a5f5f2c34a2add764301955d4ea20ae18647d90771f6",
+    "crates/pal-vm/src/runtime.rs": "9f925ec26397c83923e374e89804b70582772a8ef5922d35c979805186597180",
+    "crates/pal-vm/src/runtime/actions.rs": "6a1bb9277b83d38c8778f121d7fc0df7355d7f1cb18a3aff84419fc1b5030737",
+    "crates/pal-vm/src/runtime/select.rs": "c1470a81dd001eeccbd0a6a65a067c93bb83a1e4a45b07ac35f8b3ac0ad0114c",
+    "crates/pal-vm/src/animation.rs": "099ff2c3796a1e7ea11a9265f5cba121fb0cc75bbb8991ee7885ede12342d3a8"
+  },
+  "limits": [
+    "These checks do not establish coverage of all PAL exports.",
+    "The generated declarations cover machine-level ABI contracts; portable implementation mappings can still have semantic gaps.",
+    "Four optional library tests remained ignored.",
+    "The animation fixture had stale two-argument TaskSystem::process calls; its skip/voice flags were updated to false for the existing scenarios before validation."
+  ]
+}

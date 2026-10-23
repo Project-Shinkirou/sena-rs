@@ -1,0 +1,1533 @@
+{
+  "functions": [
+    {
+      "ea": "0x44c090",
+      "name": "sub_44C090",
+      "xrefs": [
+        {
+          "from": "0x45b5a6",
+          "function": "sub_45B5A0"
+        },
+        {
+          "from": "0x454304",
+          "function": "sub_4542D0"
+        },
+        {
+          "from": "0x4eae44",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_44C090(int a1)\n{\n  int v2; // ecx\n  int v3; // esi\n  int v4; // esi\n  _DWORD *v5; // edi\n  int v7; // [esp+14h] [ebp+8h]\n\n  v2 = *(_DWORD *)(a1 + 286352);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v2 - 1;\n  v3 = *(_DWORD *)(a1 + 4 * (v2 - 1) + 258424);\n  v7 = v3;\n  if ( (unsigned int)(v3 + 1) > 0x80 )\n  {\n    PalDebugPrintf(0, 0, aGraphError, v3);\n    return 0;\n  }\n  else\n  {\n    if ( v3 == -1 )\n    {\n      v4 = 0;\n      v5 = (_DWORD *)(a1 + 164564);\n      do\n      {\n        if ( *v5 )\n        {\n          if ( !sub_4453F0(v5) )\n            PalDebugPrintf(0, 0, \"sprite cls error [%d]\", v4);\n        }\n        ++v4;\n        v5 += 183;\n      }\n      while ( v4 < 128 );\n      v3 = v7;\n    }\n    else if ( !sub_4453F0((void *)(732 * v3 + a1 + 164564)) )\n    {\n      PalDebugPrintf(0, 0, \"sprite cls error [%d]\", v3);\n    }\n    PalDebugPrintf(10, 0, \"sp_cls  %d\", v3);\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x44c090",
+          "push    ebp"
+        ],
+        [
+          "0x44c091",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x44c093",
+          "push    ebx"
+        ],
+        [
+          "0x44c094",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c09a",
+          "push    esi"
+        ],
+        [
+          "0x44c09b",
+          "push    edi"
+        ],
+        [
+          "0x44c09c",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x44c09f",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x44c0a5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c0a8",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c0aa",
+          "jns     short loc_44C0C0"
+        ],
+        [
+          "0x44c0ac",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c0b1",
+          "push    0"
+        ],
+        [
+          "0x44c0b3",
+          "push    0"
+        ],
+        [
+          "0x44c0b5",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c0b7",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x44c0bd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c0c0",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c0c3",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x44c0c9",
+          "mov     esi, [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x44c0d0",
+          "mov     [ebp+arg_0], esi"
+        ],
+        [
+          "0x44c0d3",
+          "lea     eax, [esi+1]"
+        ],
+        [
+          "0x44c0d6",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x44c0db",
+          "ja      loc_44C15E"
+        ],
+        [
+          "0x44c0e1",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x44c0e4",
+          "jnz     short loc_44C121"
+        ],
+        [
+          "0x44c0e6",
+          "xor     esi, esi"
+        ],
+        [
+          "0x44c0e8",
+          "add     edi, 282D4h"
+        ],
+        [
+          "0x44c0ee",
+          "xchg    ax, ax"
+        ],
+        [
+          "0x44c0f0",
+          "cmp     dword ptr [edi], 0"
+        ],
+        [
+          "0x44c0f3",
+          "jz      short loc_44C10D"
+        ],
+        [
+          "0x44c0f5",
+          "mov     ecx, edi; void *"
+        ],
+        [
+          "0x44c0f7",
+          "call    sub_4453F0"
+        ],
+        [
+          "0x44c0fc",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c0fe",
+          "jnz     short loc_44C10D"
+        ],
+        [
+          "0x44c100",
+          "push    esi"
+        ],
+        [
+          "0x44c101",
+          "push    offset aSpriteClsError; \"sprite cls error [%d]\""
+        ],
+        [
+          "0x44c106",
+          "push    eax"
+        ],
+        [
+          "0x44c107",
+          "push    eax"
+        ],
+        [
+          "0x44c108",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c10a",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44c10d",
+          "inc     esi"
+        ],
+        [
+          "0x44c10e",
+          "add     edi, 2DCh"
+        ],
+        [
+          "0x44c114",
+          "cmp     esi, 80h"
+        ],
+        [
+          "0x44c11a",
+          "jl      short loc_44C0F0"
+        ],
+        [
+          "0x44c11c",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x44c11f",
+          "jmp     short loc_44C145"
+        ],
+        [
+          "0x44c121",
+          "imul    eax, esi, 2DCh"
+        ],
+        [
+          "0x44c127",
+          "lea     ecx, [edi+282D4h]"
+        ],
+        [
+          "0x44c12d",
+          "add     ecx, eax; void *"
+        ],
+        [
+          "0x44c12f",
+          "call    sub_4453F0"
+        ],
+        [
+          "0x44c134",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c136",
+          "jnz     short loc_44C145"
+        ],
+        [
+          "0x44c138",
+          "push    esi"
+        ],
+        [
+          "0x44c139",
+          "push    offset aSpriteClsError; \"sprite cls error [%d]\""
+        ],
+        [
+          "0x44c13e",
+          "push    eax"
+        ],
+        [
+          "0x44c13f",
+          "push    eax"
+        ],
+        [
+          "0x44c140",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c142",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44c145",
+          "push    esi"
+        ],
+        [
+          "0x44c146",
+          "push    offset aSpClsD; \"sp_cls  %d\""
+        ],
+        [
+          "0x44c14b",
+          "push    0"
+        ],
+        [
+          "0x44c14d",
+          "push    0Ah"
+        ],
+        [
+          "0x44c14f",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c151",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44c154",
+          "mov     eax, 1"
+        ],
+        [
+          "0x44c159",
+          "pop     edi"
+        ],
+        [
+          "0x44c15a",
+          "pop     esi"
+        ],
+        [
+          "0x44c15b",
+          "pop     ebx"
+        ],
+        [
+          "0x44c15c",
+          "pop     ebp"
+        ],
+        [
+          "0x44c15d",
+          "retn"
+        ],
+        [
+          "0x44c15e",
+          "push    esi"
+        ],
+        [
+          "0x44c15f",
+          "push    offset aGraphError; \"graph error : \""
+        ],
+        [
+          "0x44c164",
+          "push    0"
+        ],
+        [
+          "0x44c166",
+          "push    0"
+        ],
+        [
+          "0x44c168",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c16a",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44c16d",
+          "xor     eax, eax"
+        ],
+        [
+          "0x44c16f",
+          "pop     edi"
+        ],
+        [
+          "0x44c170",
+          "pop     esi"
+        ],
+        [
+          "0x44c171",
+          "pop     ebx"
+        ],
+        [
+          "0x44c172",
+          "pop     ebp"
+        ],
+        [
+          "0x44c173",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x44c6a0",
+      "name": "sub_44C6A0",
+      "xrefs": [
+        {
+          "from": "0x45b834",
+          "function": "sub_45B5D0"
+        },
+        {
+          "from": "0x4542e2",
+          "function": "sub_4542D0"
+        },
+        {
+          "from": "0x4eae3c",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_44C6A0(int a1)\n{\n  int v1; // ecx\n  int v2; // ecx\n  int v3; // ecx\n  int v4; // ebx\n  int v5; // ecx\n  int v6; // ecx\n  int v7; // ebx\n  int v8; // ebx\n  _DWORD *v9; // esi\n  int v10; // eax\n  int v12; // eax\n  int v13; // eax\n  float v14; // xmm0_4\n  int v15; // edx\n  float v16; // xmm0_4\n  float v17; // xmm0_4\n  float v18; // xmm0_4\n  int v19; // eax\n  int v20; // eax\n  int v21; // ebx\n  _DWORD v22[2]; // [esp+Ch] [ebp-344h] BYREF\n  __int128 v23; // [esp+14h] [ebp-33Ch]\n  __int128 v24; // [esp+24h] [ebp-32Ch]\n  int v25; // [esp+34h] [ebp-31Ch]\n  _DWORD *v26; // [esp+38h] [ebp-318h]\n  int v27; // [esp+3Ch] [ebp-314h]\n  int v28; // [esp+40h] [ebp-310h]\n  int v29; // [esp+44h] [ebp-30Ch]\n  int v30; // [esp+48h] [ebp-308h]\n  int v31; // [esp+4Ch] [ebp-304h]\n  _BYTE v32[4]; // [esp+50h] [ebp-300h] BYREF\n  int v33; // [esp+54h] [ebp-2FCh]\n  float v34; // [esp+58h] [ebp-2F8h]\n  float v35; // [esp+5Ch] [ebp-2F4h]\n  float v36; // [esp+88h] [ebp-2C8h]\n  float v37; // [esp+8Ch] [ebp-2C4h]\n  float v38; // [esp+90h] [ebp-2C0h]\n  float v39; // [esp+94h] [ebp-2BCh]\n  float v40; // [esp+98h] [ebp-2B8h]\n  _BYTE v41[32]; // [esp+1C4h] [ebp-18Ch] BYREF\n  int v42; // [esp+1E4h] [ebp-16Ch]\n  __int128 v43; // [esp+1E8h] [ebp-168h]\n  __int128 v44; // [esp+1F8h] [ebp-158h]\n  int v45; // [esp+228h] [ebp-128h]\n  int v46; // [esp+230h] [ebp-120h]\n  int v47; // [esp+234h] [ebp-11Ch]\n  int v48; // [esp+238h] [ebp-118h]\n  int v49; // [esp+23Ch] [ebp-114h]\n  char Str1[16]; // [esp+248h] [ebp-108h] BYREF\n  __int128 v51; // [esp+258h] [ebp-F8h]\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  v2 = v1 - 1;\n  *(_DWORD *)(a1 + 286352) = v2;\n  v30 = *(_DWORD *)(a1 + 4 * v2 + 258424);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v3;\n  v4 = *(_DWORD *)(a1 + 4 * v3 + 258424);\n  v29 = v4;\n  if ( v3 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n  }\n  v5 = v3 - 1;\n  *(_DWORD *)(a1 + 286352) = v5;\n  v27 = *(_DWORD *)(a1 + 4 * v5 + 258424);\n  if ( v5 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v5 = *(_DWORD *)(a1 + 286352);\n  }\n  v6 = v5 - 1;\n  *(_DWORD *)(a1 + 286352) = v6;\n  v31 = *(_DWORD *)(a1 + 4 * v6 + 258424);\n  if ( v6 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v6 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v6 - 1;\n  v28 = *(_DWORD *)(a1 + 4 * (v6 - 1) + 258424);\n  if ( (unsigned int)(v4 + 1) > 0x80 )\n  {\n    PalDebugPrintf(0, 0, aGraphError, v4);\n    return 0;\n  }\n  else\n  {\n    v7 = 732 * v4 + a1 + 164564;\n    v26 = (_DWORD *)v7;\n    if ( *(_DWORD *)(v7 + 20) )\n    {\n      sub_47ACC0(*(void **)v7);\n      sub_44C660(v7);\n    }\n    else if ( *(_DWORD *)v7 )\n    {\n      sub_4453F0((void *)v7);\n    }\n    if ( v30 != 0xFFFFFFF )\n    {\n      sub_47D3D0(Str1, v30, 1);\n      v8 = *(_DWORD *)(a1 + 352072) - v29 + 4999;\n      if ( sub_47A160(Str1, v41) )\n      {\n        *(_OWORD *)Str1 = v43;\n        v8 += 134 * v45;\n        v51 = v44;\n      }\n      v9 = (_DWORD *)sub_47AD60(1, v29);\n      v10 = sub_479B80(yBottom, v8);\n      *v9 = v10;\n      if ( !v10 )\n      {\n        sub_47ACC0(v9);\n        return 0;\n      }\n      PalSpriteGetInfo(v10, v32);\n      v12 = v31;\n      if ( v27 == 0xFFFF && v31 == 0xFFFF )\n      {\n        v9[4] = (int)v34;\n        v13 = (int)v35;\n        v9[6] = 0;\n        v9[5] = v13;\n        *((float *)v9 + 29) = v34;\n        *((float *)v9 + 30) = v35;\n        v14 = 0.0;\n      }\n      else\n      {\n        v15 = v28;\n        v16 = (float)v27;\n        v9[4] = v27;\n        v9[5] = v12;\n        v9[6] = v15;\n        *((float *)v9 + 29) = v16;\n        *((float *)v9 + 30) = (float)v12;\n        v14 = (float)v15;\n      }\n      *((float *)v9 + 31) = v14;\n      v9[4] += v46;\n      v9[5] += v47;\n      *((float *)v9 + 29) = (float)v46 + *((float *)v9 + 29);\n      *((float *)v9 + 30) = (float)v47 + *((float *)v9 + 30);\n      v9[10] = (int)v38;\n      v9[11] = (int)v39;\n      v9[12] = (int)v40;\n      *((float *)v9 + 35) = v38;\n      *((float *)v9 + 36) = v39;\n      *((float *)v9 + 37) = v40;\n      if ( (v42 & 0x100000) != 0 )\n        v17 = (float)v48 / 100.0;\n      else\n        v17 = v36;\n      *((float *)v9 + 21) = v17;\n      if ( (v42 & 0x100000) != 0 )\n        v18 = (float)v48 / 100.0;\n      else\n        v18 = v37;\n      *((float *)v9 + 22) = v18;\n      v19 = v33;\n      if ( (v42 & 0x80000) != 0 )\n        v19 = v49;\n      v9[25] = v19;\n      v20 = v30;\n      v9[1] = v30;\n      if ( (v20 & 0x10000000) != 0 )\n      {\n        *((_OWORD *)v9 + 39) = *(_OWORD *)Str1;\n        *((_OWORD *)v9 + 40) = v51;\n      }\n      sub_47A060(-1);\n      *v26 = v9;\n      sub_47AF90(v9);\n      v21 = v29;\n      v22[0] = 196611;\n      v22[1] = v29;\n      v23 = 0LL;\n      v25 = 0;\n      v24 = 0LL;\n      sub_47D610(v22);\n      PalDebugPrintf(10, 0, \"sp_set_ex  %s, %d, %d, %d, %d\", Str1, v21, v27, v31, v28);\n    }\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x44c6a0",
+          "push    ebp"
+        ],
+        [
+          "0x44c6a1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x44c6a3",
+          "sub     esp, 344h"
+        ],
+        [
+          "0x44c6a9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x44c6ae",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x44c6b0",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x44c6b3",
+          "push    ebx"
+        ],
+        [
+          "0x44c6b4",
+          "push    esi"
+        ],
+        [
+          "0x44c6b5",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x44c6b8",
+          "push    edi"
+        ],
+        [
+          "0x44c6b9",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c6bf",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c6c5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c6c8",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c6ca",
+          "jns     short loc_44C6E0"
+        ],
+        [
+          "0x44c6cc",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c6d1",
+          "push    0"
+        ],
+        [
+          "0x44c6d3",
+          "push    0"
+        ],
+        [
+          "0x44c6d5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c6d7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c6dd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c6e0",
+          "dec     ecx"
+        ],
+        [
+          "0x44c6e1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x44c6e7",
+          "mov     eax, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x44c6ee",
+          "mov     [ebp+var_308], eax"
+        ],
+        [
+          "0x44c6f4",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c6f7",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c6f9",
+          "jns     short loc_44C70F"
+        ],
+        [
+          "0x44c6fb",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c700",
+          "push    0"
+        ],
+        [
+          "0x44c702",
+          "push    0"
+        ],
+        [
+          "0x44c704",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c706",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c70c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c70f",
+          "dec     ecx"
+        ],
+        [
+          "0x44c710",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x44c716",
+          "mov     ebx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x44c71d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c720",
+          "mov     [ebp+var_30C], ebx"
+        ],
+        [
+          "0x44c726",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c728",
+          "jns     short loc_44C73E"
+        ],
+        [
+          "0x44c72a",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c72f",
+          "push    0"
+        ],
+        [
+          "0x44c731",
+          "push    0"
+        ],
+        [
+          "0x44c733",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c735",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c73b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c73e",
+          "dec     ecx"
+        ],
+        [
+          "0x44c73f",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x44c745",
+          "mov     eax, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x44c74c",
+          "mov     [ebp+var_314], eax"
+        ],
+        [
+          "0x44c752",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c755",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c757",
+          "jns     short loc_44C76D"
+        ],
+        [
+          "0x44c759",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c75e",
+          "push    0"
+        ],
+        [
+          "0x44c760",
+          "push    0"
+        ],
+        [
+          "0x44c762",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c764",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c76a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c76d",
+          "dec     ecx"
+        ],
+        [
+          "0x44c76e",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x44c774",
+          "mov     eax, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x44c77b",
+          "mov     [ebp+var_304], eax"
+        ],
+        [
+          "0x44c781",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c784",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c786",
+          "jns     short loc_44C79C"
+        ],
+        [
+          "0x44c788",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x44c78d",
+          "push    0"
+        ],
+        [
+          "0x44c78f",
+          "push    0"
+        ],
+        [
+          "0x44c791",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44c793",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x44c799",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44c79c",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x44c79f",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x44c7a5",
+          "mov     eax, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x44c7ac",
+          "mov     [ebp+var_310], eax"
+        ],
+        [
+          "0x44c7b2",
+          "lea     eax, [ebx+1]"
+        ],
+        [
+          "0x44c7b5",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x44c7ba",
+          "ja      loc_44CB19"
+        ],
+        [
+          "0x44c7c0",
+          "imul    eax, ebx, 2DCh"
+        ],
+        [
+          "0x44c7c6",
+          "lea     ebx, [esi+282D4h]"
+        ],
+        [
+          "0x44c7cc",
+          "add     ebx, eax"
+        ],
+        [
+          "0x44c7ce",
+          "mov     [ebp+var_318], ebx"
+        ],
+        [
+          "0x44c7d4",
+          "cmp     dword ptr [ebx+14h], 0"
+        ],
+        [
+          "0x44c7d8",
+          "jz      short loc_44C7EA"
+        ],
+        [
+          "0x44c7da",
+          "mov     ecx, [ebx]; void *"
+        ],
+        [
+          "0x44c7dc",
+          "call    sub_47ACC0"
+        ],
+        [
+          "0x44c7e1",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x44c7e3",
+          "call    sub_44C660"
+        ],
+        [
+          "0x44c7e8",
+          "jmp     short loc_44C7F6"
+        ],
+        [
+          "0x44c7ea",
+          "cmp     dword ptr [ebx], 0"
+        ],
+        [
+          "0x44c7ed",
+          "jz      short loc_44C7F6"
+        ],
+        [
+          "0x44c7ef",
+          "mov     ecx, ebx; void *"
+        ],
+        [
+          "0x44c7f1",
+          "call    sub_4453F0"
+        ],
+        [
+          "0x44c7f6",
+          "mov     eax, [ebp+var_308]"
+        ],
+        [
+          "0x44c7fc",
+          "cmp     eax, 0FFFFFFFh"
+        ],
+        [
+          "0x44c801",
+          "jz      loc_44CB03"
+        ],
+        [
+          "0x44c807",
+          "push    1; int"
+        ],
+        [
+          "0x44c809",
+          "push    eax; int"
+        ],
+        [
+          "0x44c80a",
+          "lea     edx, [esi+3F154h]"
+        ],
+        [
+          "0x44c810",
+          "lea     ecx, [ebp+Str1]; Str1"
+        ],
+        [
+          "0x44c816",
+          "call    sub_47D3D0"
+        ],
+        [
+          "0x44c81b",
+          "mov     ebx, [esi+55F48h]"
+        ],
+        [
+          "0x44c821",
+          "lea     edx, [ebp+var_18C]"
+        ],
+        [
+          "0x44c827",
+          "mov     esi, [ebp+var_30C]"
+        ],
+        [
+          "0x44c82d",
+          "lea     ecx, [ebp+Str1]"
+        ],
+        [
+          "0x44c833",
+          "add     esp, 8"
+        ],
+        [
+          "0x44c836",
+          "sub     ebx, esi"
+        ],
+        [
+          "0x44c838",
+          "add     ebx, 1387h"
+        ],
+        [
+          "0x44c83e",
+          "call    sub_47A160"
+        ],
+        [
+          "0x44c843",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c845",
+          "jz      short loc_44C86F"
+        ],
+        [
+          "0x44c847",
+          "movups  xmm0, [ebp+var_168]"
+        ],
+        [
+          "0x44c84e",
+          "imul    eax, [ebp+var_128], 86h"
+        ],
+        [
+          "0x44c858",
+          "movups  xmmword ptr [ebp+Str1], xmm0"
+        ],
+        [
+          "0x44c85f",
+          "movups  xmm0, [ebp+var_158]"
+        ],
+        [
+          "0x44c866",
+          "add     ebx, eax"
+        ],
+        [
+          "0x44c868",
+          "movups  [ebp+var_F8], xmm0"
+        ],
+        [
+          "0x44c86f",
+          "mov     edx, esi"
+        ],
+        [
+          "0x44c871",
+          "mov     ecx, 1"
+        ],
+        [
+          "0x44c876",
+          "call    sub_47AD60"
+        ],
+        [
+          "0x44c87b",
+          "mov     edx, xRight"
+        ],
+        [
+          "0x44c881",
+          "lea     ecx, [ebp+Str1]"
+        ],
+        [
+          "0x44c887",
+          "push    ebx"
+        ],
+        [
+          "0x44c888",
+          "push    yBottom"
+        ],
+        [
+          "0x44c88e",
+          "mov     esi, eax"
+        ],
+        [
+          "0x44c890",
+          "call    sub_479B80"
+        ],
+        [
+          "0x44c895",
+          "add     esp, 8"
+        ],
+        [
+          "0x44c898",
+          "mov     [esi], eax"
+        ],
+        [
+          "0x44c89a",
+          "test    eax, eax"
+        ],
+        [
+          "0x44c89c",
+          "jnz     short loc_44C8B8"
+        ],
+        [
+          "0x44c89e",
+          "mov     ecx, esi; void *"
+        ],
+        [
+          "0x44c8a0",
+          "call    sub_47ACC0"
+        ],
+        [
+          "0x44c8a5",
+          "pop     edi"
+        ],
+        [
+          "0x44c8a6",
+          "pop     esi"
+        ],
+        [
+          "0x44c8a7",
+          "xor     eax, eax"
+        ],
+        [
+          "0x44c8a9",
+          "pop     ebx"
+        ],
+        [
+          "0x44c8aa",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x44c8ad",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x44c8af",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x44c8b4",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x44c8b6",
+          "pop     ebp"
+        ],
+        [
+          "0x44c8b7",
+          "retn"
+        ],
+        [
+          "0x44c8b8",
+          "lea     ecx, [ebp+var_300]"
+        ],
+        [
+          "0x44c8be",
+          "push    ecx"
+        ],
+        [
+          "0x44c8bf",
+          "push    eax"
+        ],
+        [
+          "0x44c8c0",
+          "call    __imp_PalSpriteGetInfo"
+        ],
+        [
+          "0x44c8c6",
+          "mov     ecx, [ebp+var_314]"
+        ],
+        [
+          "0x44c8cc",
+          "add     esp, 8"
+        ],
+        [
+          "0x44c8cf",
+          "mov     eax, [ebp+var_304]"
+        ],
+        [
+          "0x44c8d5",
+          "cmp     ecx, 0FFFFh"
+        ],
+        [
+          "0x44c8db",
+          "jnz     short loc_44C91D"
+        ],
+        [
+          "0x44c8dd",
+          "cmp     eax, ecx"
+        ],
+        [
+          "0x44c8df",
+          "jnz     short loc_44C91D"
+        ],
+        [
+          "0x44c8e1",
+          "cvttss2si eax, [ebp+var_2F8]"
+        ],
+        [
+          "0x44c8e9",
+          "mov     [esi+10h], eax"
+        ],
+        [
+          "0x44c8ec",
+          "cvttss2si eax, [ebp+var_2F4]"
+        ],
+        [
+          "0x44c8f4",
+          "mov     dword ptr [esi+18h], 0"
+        ],
+        [
+          "0x44c8fb",
+          "mov     [esi+14h], eax"
+        ],
+        [
+          "0x44c8fe",
+          "movss   xmm0, [ebp+var_2F8]"
+        ],
+        [
+          "0x44c906",
+          "movss   dword ptr [esi+74h], xmm0"
+        ],
+        [
+          "0x44c90b",
+          "movss   xmm0, [ebp+var_2F4]"
+        ],
+        [
+          "0x44c913",
+          "movss   dword ptr [esi+78h], xmm0"
+        ],
+        [
+          "0x44c918",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x44c91b",
+          "jmp     short loc_44C94B"
+        ],
+        [
+          "0x44c91d",
+          "mov     edx, [ebp+var_310]"
+        ],
+        [
+          "0x44c923",
+          "movd    xmm0, ecx"
+        ],
+        [
+          "0x44c927",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c92a",
+          "mov     [esi+10h], ecx"
+        ],
+        [
+          "0x44c92d",
+          "mov     [esi+14h], eax"
+        ],
+        [
+          "0x44c930",
+          "mov     [esi+18h], edx"
+        ],
+        [
+          "0x44c933",
+          "movss   dword ptr [esi+74h], xmm0"
+        ],
+        [
+          "0x44c938",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x44c93c",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c93f",
+          "movss   dword ptr [esi+78h], xmm0"
+        ],
+        [
+          "0x44c944",
+          "movd    xmm0, edx"
+        ],
+        [
+          "0x44c948",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c94b",
+          "movss   dword ptr [esi+7Ch], xmm0"
+        ],
+        [
+          "0x44c950",
+          "mov     eax, [ebp+var_120]"
+        ],
+        [
+          "0x44c956",
+          "add     [esi+10h], eax"
+        ],
+        [
+          "0x44c959",
+          "mov     eax, [ebp+var_11C]"
+        ],
+        [
+          "0x44c95f",
+          "add     [esi+14h], eax"
+        ],
+        [
+          "0x44c962",
+          "movd    xmm0, [ebp+var_120]"
+        ],
+        [
+          "0x44c96a",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c96d",
+          "movss   xmm1, ds:dword_4DB5CC"
+        ],
+        [
+          "0x44c975",
+          "addss   xmm0, dword ptr [esi+74h]"
+        ],
+        [
+          "0x44c97a",
+          "movss   dword ptr [esi+74h], xmm0"
+        ],
+        [
+          "0x44c97f",
+          "movd    xmm0, [ebp+var_11C]"
+        ],
+        [
+          "0x44c987",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c98a",
+          "addss   xmm0, dword ptr [esi+78h]"
+        ],
+        [
+          "0x44c98f",
+          "movss   dword ptr [esi+78h], xmm0"
+        ],
+        [
+          "0x44c994",
+          "cvttss2si eax, [ebp+var_2C0]"
+        ],
+        [
+          "0x44c99c",
+          "mov     [esi+28h], eax"
+        ],
+        [
+          "0x44c99f",
+          "cvttss2si eax, [ebp+var_2BC]"
+        ],
+        [
+          "0x44c9a7",
+          "mov     [esi+2Ch], eax"
+        ],
+        [
+          "0x44c9aa",
+          "cvttss2si eax, [ebp+var_2B8]"
+        ],
+        [
+          "0x44c9b2",
+          "mov     [esi+30h], eax"
+        ],
+        [
+          "0x44c9b5",
+          "movss   xmm0, [ebp+var_2C0]"
+        ],
+        [
+          "0x44c9bd",
+          "movss   dword ptr [esi+8Ch], xmm0"
+        ],
+        [
+          "0x44c9c5",
+          "movss   xmm0, [ebp+var_2BC]"
+        ],
+        [
+          "0x44c9cd",
+          "movss   dword ptr [esi+90h], xmm0"
+        ],
+        [
+          "0x44c9d5",
+          "movss   xmm0, [ebp+var_2B8]"
+        ],
+        [
+          "0x44c9dd",
+          "movss   dword ptr [esi+94h], xmm0"
+        ],
+        [
+          "0x44c9e5",
+          "test    [ebp+var_16C], 100000h"
+        ],
+        [
+          "0x44c9ef",
+          "jz      short loc_44CA02"
+        ],
+        [
+          "0x44c9f1",
+          "movd    xmm0, [ebp+var_118]"
+        ],
+        [
+          "0x44c9f9",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44c9fc",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x44ca00",
+          "jmp     short loc_44CA0A"
+        ],
+        [
+          "0x44ca02",
+          "movss   xmm0, [ebp+var_2C8]"
+        ],
+        [
+          "0x44ca0a",
+          "movss   dword ptr [esi+54h], xmm0"
+        ],
+        [
+          "0x44ca0f",
+          "test    [ebp+var_16C], 100000h"
+        ],
+        [
+          "0x44ca19",
+          "jz      short loc_44CA2C"
+        ],
+        [
+          "0x44ca1b",
+          "movd    xmm0, [ebp+var_118]"
+        ],
+        [
+          "0x44ca23",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x44ca26",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x44ca2a",
+          "jmp     short loc_44CA34"
+        ],
+        [
+          "0x44ca2c",
+          "movss   xmm0, [ebp+var_2C4]"
+        ],
+        [
+          "0x44ca34",
+          "movss   dword ptr [esi+58h], xmm0"
+        ],
+        [
+          "0x44ca39",
+          "test    [ebp+var_16C], 80000h"
+        ],
+        [
+          "0x44ca43",
+          "mov     eax, [ebp+var_2FC]"
+        ],
+        [
+          "0x44ca49",
+          "cmovnz  eax, [ebp+var_114]"
+        ],
+        [
+          "0x44ca50",
+          "mov     [esi+64h], eax"
+        ],
+        [
+          "0x44ca53",
+          "mov     eax, [ebp+var_308]"
+        ],
+        [
+          "0x44ca59",
+          "mov     [esi+4], eax"
+        ],
+        [
+          "0x44ca5c",
+          "test    eax, 10000000h"
+        ],
+        [
+          "0x44ca61",
+          "jz      short loc_44CA7F"
+        ],
+        [
+          "0x44ca63",
+          "movups  xmm0, xmmword ptr [ebp+Str1]"
+        ],
+        [
+          "0x44ca6a",
+          "movups  xmmword ptr [esi+270h], xmm0"
+        ],
+        [
+          "0x44ca71",
+          "movups  xmm0, [ebp+var_F8]"
+        ],
+        [
+          "0x44ca78",
+          "movups  xmmword ptr [esi+280h], xmm0"
+        ],
+        [
+          "0x44ca7f",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x44ca81",
+          "lea     edx, [ebp+var_18C]"
+        ],
+        [
+          "0x44ca87",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x44ca89",
+          "call    sub_47A060"
+        ],
+        [
+          "0x44ca8e",
+          "mov     eax, [ebp+var_318]"
+        ],
+        [
+          "0x44ca94",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x44ca96",
+          "mov     [eax], esi"
+        ],
+        [
+          "0x44ca98",
+          "call    sub_47AF90"
+        ],
+        [
+          "0x44ca9d",
+          "mov     ebx, [ebp+var_30C]"
+        ],
+        [
+          "0x44caa3",
+          "lea     ecx, [ebp+var_344]"
+        ],
+        [
+          "0x44caa9",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x44caac",
+          "mov     [ebp+var_344], 30003h"
+        ],
+        [
+          "0x44cab6",
+          "mov     [ebp+var_340], ebx"
+        ],
+        [
+          "0x44cabc",
+          "movups  [ebp+var_33C], xmm0"
+        ],
+        [
+          "0x44cac3",
+          "mov     [ebp+var_31C], 0"
+        ],
+        [
+          "0x44cacd",
+          "movups  [ebp+var_32C], xmm0"
+        ],
+        [
+          "0x44cad4",
+          "call    sub_47D610"
+        ],
+        [
+          "0x44cad9",
+          "push    [ebp+var_310]"
+        ],
+        [
+          "0x44cadf",
+          "mov     eax, [ebp+var_304]"
+        ],
+        [
+          "0x44cae5",
+          "lea     ecx, [ebp+Str1]"
+        ],
+        [
+          "0x44caeb",
+          "push    eax"
+        ],
+        [
+          "0x44caec",
+          "mov     eax, [ebp+var_314]"
+        ],
+        [
+          "0x44caf2",
+          "push    eax"
+        ],
+        [
+          "0x44caf3",
+          "push    ebx"
+        ],
+        [
+          "0x44caf4",
+          "push    ecx"
+        ],
+        [
+          "0x44caf5",
+          "push    offset aSpSetExSDDDD; \"sp_set_ex  %s, %d, %d, %d, %d\""
+        ],
+        [
+          "0x44cafa",
+          "push    0"
+        ],
+        [
+          "0x44cafc",
+          "push    0Ah"
+        ],
+        [
+          "0x44cafe",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44cb00",
+          "add     esp, 24h"
+        ],
+        [
+          "0x44cb03",
+          "pop     edi"
+        ],
+        [
+          "0x44cb04",
+          "pop     esi"
+        ],
+        [
+          "0x44cb05",
+          "mov     eax, 1"
+        ],
+        [
+          "0x44cb0a",
+          "pop     ebx"
+        ],
+        [
+          "0x44cb0b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x44cb0e",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x44cb10",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x44cb15",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x44cb17",
+          "pop     ebp"
+        ],
+        [
+          "0x44cb18",
+          "retn"
+        ],
+        [
+          "0x44cb19",
+          "push    ebx"
+        ],
+        [
+          "0x44cb1a",
+          "push    offset aGraphError; \"graph error : \""
+        ],
+        [
+          "0x44cb1f",
+          "push    0"
+        ],
+        [
+          "0x44cb21",
+          "push    0"
+        ],
+        [
+          "0x44cb23",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44cb25",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x44cb28",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44cb2b",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x44cb2d",
+          "xor     eax, eax"
+        ],
+        [
+          "0x44cb2f",
+          "pop     edi"
+        ],
+        [
+          "0x44cb30",
+          "pop     esi"
+        ],
+        [
+          "0x44cb31",
+          "pop     ebx"
+        ],
+        [
+          "0x44cb32",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x44cb37",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x44cb39",
+          "pop     ebp"
+        ],
+        [
+          "0x44cb3a",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

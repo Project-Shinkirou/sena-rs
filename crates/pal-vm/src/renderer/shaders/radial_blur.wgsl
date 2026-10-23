@@ -31,18 +31,24 @@ fn vs_main(input: VertexInput) -> VertexOutput {
 
 @fragment
 fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
-    let offset = vec2<f32>(uniforms.effect_params.x, uniforms.effect_params.y);
-    let level = max(uniforms.effect_params.z, 0.0);
-    let center = vec2<f32>(0.5, 0.5) + offset;
+    // FX.dll ps_2_0 c0/c1 = texture dimensions, c2/c3 = absolute
+    // center UV, c4 = level. Twelve taps span -6 through +5.
+    let center = uniforms.effect_params.xy;
+    let level = uniforms.effect_params.z;
     let direction = input.tex_coord - center;
-    let strength = level * 0.015625;
-
-    var color = vec4<f32>(0.0, 0.0, 0.0, 0.0);
-    let sample_count = 12.0;
-    for (var i: i32 = 0; i < 12; i = i + 1) {
-        let t = f32(i) / (sample_count - 1.0);
-        let uv = input.tex_coord - direction * strength * t;
-        color = color + textureSample(pal_texture, pal_sampler, uv);
+    let radius = length(direction);
+    if radius == 0.0 || level <= 0.0 {
+        return textureSampleLevel(pal_texture, pal_sampler, input.tex_coord, 0.0) * input.color;
     }
-    return (color / sample_count) * input.color;
+    let divisor = radius * log2(2.5 / (radius * level)) * 0.3010300099849701;
+    if abs(divisor) < 0.0000001 {
+        return textureSampleLevel(pal_texture, pal_sampler, input.tex_coord, 0.0) * input.color;
+    }
+    let step = direction / divisor / uniforms.tex_size;
+    var color = vec4<f32>(0.0);
+    for (var tap = -6; tap <= 5; tap += 1) {
+        let uv = clamp(input.tex_coord + step * f32(tap), vec2<f32>(0.0), vec2<f32>(1.0));
+        color += textureSampleLevel(pal_texture, pal_sampler, uv, 0.0);
+    }
+    return color * input.color * 0.0833333358168602;
 }

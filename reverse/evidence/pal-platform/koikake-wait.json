@@ -1,0 +1,451 @@
+{
+  "functions": [
+    {
+      "ea": "0x100cc1a0",
+      "name": "sub_100CC1A0",
+      "disassembly": [
+        [
+          "0x100cc1a0",
+          "push    ebp"
+        ],
+        [
+          "0x100cc1a1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100cc1a3",
+          "push    ecx"
+        ],
+        [
+          "0x100cc1a4",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc1a7",
+          "cmp     dword ptr [eax], 0FFFFFFFFh"
+        ],
+        [
+          "0x100cc1aa",
+          "jz      short loc_100CC1CF"
+        ],
+        [
+          "0x100cc1ac",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc1af",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100cc1b1",
+          "sub     edx, 1"
+        ],
+        [
+          "0x100cc1b4",
+          "mov     [ebp+var_4], edx"
+        ],
+        [
+          "0x100cc1b7",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc1ba",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100cc1bd",
+          "mov     [eax], ecx"
+        ],
+        [
+          "0x100cc1bf",
+          "cmp     [ebp+var_4], 0"
+        ],
+        [
+          "0x100cc1c3",
+          "jnz     short loc_100CC1CF"
+        ],
+        [
+          "0x100cc1c5",
+          "push    0"
+        ],
+        [
+          "0x100cc1c7",
+          "call    PalTaskFree"
+        ],
+        [
+          "0x100cc1cc",
+          "add     esp, 4"
+        ],
+        [
+          "0x100cc1cf",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100cc1d1",
+          "pop     ebp"
+        ],
+        [
+          "0x100cc1d2",
+          "retn"
+        ]
+      ],
+      "xrefs": [
+        {
+          "from": "0x100cc1e3",
+          "function": "sub_100CC1E0"
+        }
+      ],
+      "pseudocode": "int *__cdecl sub_100CC1A0(int *a1)\n{\n  int *result; // eax\n  int v2; // [esp+0h] [ebp-4h]\n\n  result = a1;\n  if ( *a1 != -1 )\n  {\n    v2 = *a1 - 1;\n    result = a1;\n    *a1 = v2;\n    if ( !v2 )\n      return (int *)PalTaskFree(0);\n  }\n  return result;\n}\n"
+    },
+    {
+      "ea": "0x100cc250",
+      "name": "sub_100CC250",
+      "disassembly": [
+        [
+          "0x100cc250",
+          "push    ebp"
+        ],
+        [
+          "0x100cc251",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100cc253",
+          "call    PaltimeGetTime"
+        ],
+        [
+          "0x100cc258",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc25b",
+          "sub     eax, [ecx+4]"
+        ],
+        [
+          "0x100cc25e",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc261",
+          "cmp     eax, [edx]"
+        ],
+        [
+          "0x100cc263",
+          "jb      short loc_100CC26F"
+        ],
+        [
+          "0x100cc265",
+          "push    0"
+        ],
+        [
+          "0x100cc267",
+          "call    PalTaskFree"
+        ],
+        [
+          "0x100cc26c",
+          "add     esp, 4"
+        ],
+        [
+          "0x100cc26f",
+          "pop     ebp"
+        ],
+        [
+          "0x100cc270",
+          "retn"
+        ]
+      ],
+      "xrefs": [
+        {
+          "from": "0x100cc28e",
+          "function": "sub_100CC280"
+        }
+      ],
+      "pseudocode": "unsigned int __cdecl sub_100CC250(unsigned int *a1)\n{\n  unsigned int result; // eax\n\n  result = PaltimeGetTime() - a1[1];\n  if ( result >= *a1 )\n    return PalTaskFree(0);\n  return result;\n}\n"
+    },
+    {
+      "ea": "0x100cc200",
+      "name": "sub_100CC200",
+      "disassembly": [
+        [
+          "0x100cc200",
+          "push    ebp"
+        ],
+        [
+          "0x100cc201",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100cc203",
+          "call    PaltimeGetTime"
+        ],
+        [
+          "0x100cc208",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc20b",
+          "sub     eax, [ecx+8]"
+        ],
+        [
+          "0x100cc20e",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100cc211",
+          "cmp     eax, [edx+4]"
+        ],
+        [
+          "0x100cc214",
+          "jb      short loc_100CC220"
+        ],
+        [
+          "0x100cc216",
+          "push    0"
+        ],
+        [
+          "0x100cc218",
+          "call    PalTaskFree"
+        ],
+        [
+          "0x100cc21d",
+          "add     esp, 4"
+        ],
+        [
+          "0x100cc220",
+          "pop     ebp"
+        ],
+        [
+          "0x100cc221",
+          "retn"
+        ]
+      ],
+      "xrefs": [
+        {
+          "from": "0x100cc23e",
+          "function": "sub_100CC230"
+        }
+      ],
+      "pseudocode": "unsigned int __cdecl sub_100CC200(int a1)\n{\n  unsigned int result; // eax\n\n  result = PaltimeGetTime() - *(_DWORD *)(a1 + 8);\n  if ( result >= *(_DWORD *)(a1 + 4) )\n    return PalTaskFree(0);\n  return result;\n}\n"
+    },
+    {
+      "ea": "0x100b6e10",
+      "name": "sub_100B6E10",
+      "disassembly": [
+        [
+          "0x100b6e10",
+          "push    ebp"
+        ],
+        [
+          "0x100b6e11",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b6e13",
+          "sub     esp, 8"
+        ],
+        [
+          "0x100b6e16",
+          "mov     eax, dword_1012950C"
+        ],
+        [
+          "0x100b6e1b",
+          "and     eax, 1"
+        ],
+        [
+          "0x100b6e1e",
+          "jnz     short loc_100B6E3A"
+        ],
+        [
+          "0x100b6e20",
+          "mov     ecx, dword_1012950C"
+        ],
+        [
+          "0x100b6e26",
+          "or      ecx, 1"
+        ],
+        [
+          "0x100b6e29",
+          "mov     dword_1012950C, ecx"
+        ],
+        [
+          "0x100b6e2f",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100b6e35",
+          "mov     dword_10129508, eax"
+        ],
+        [
+          "0x100b6e3a",
+          "mov     eax, 3E8h"
+        ],
+        [
+          "0x100b6e3f",
+          "xor     edx, edx"
+        ],
+        [
+          "0x100b6e41",
+          "div     [ebp+arg_0]"
+        ],
+        [
+          "0x100b6e44",
+          "mov     [ebp+dwMilliseconds], eax"
+        ],
+        [
+          "0x100b6e47",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100b6e4d",
+          "sub     eax, dword_10129508"
+        ],
+        [
+          "0x100b6e53",
+          "mov     [ebp+var_8], eax"
+        ],
+        [
+          "0x100b6e56",
+          "mov     edx, [ebp+var_8]"
+        ],
+        [
+          "0x100b6e59",
+          "cmp     edx, [ebp+dwMilliseconds]"
+        ],
+        [
+          "0x100b6e5c",
+          "ja      short loc_100B6EAE"
+        ],
+        [
+          "0x100b6e5e",
+          "mov     eax, [ebp+dwMilliseconds]"
+        ],
+        [
+          "0x100b6e61",
+          "sub     eax, [ebp+var_8]"
+        ],
+        [
+          "0x100b6e64",
+          "mov     [ebp+dwMilliseconds], eax"
+        ],
+        [
+          "0x100b6e67",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b6e6d",
+          "cmp     dword ptr [ecx+2D0h], 2"
+        ],
+        [
+          "0x100b6e74",
+          "jnz     short loc_100B6E92"
+        ],
+        [
+          "0x100b6e76",
+          "cmp     [ebp+arg_0], 0FFFFFFFFh"
+        ],
+        [
+          "0x100b6e7a",
+          "jnz     short loc_100B6E86"
+        ],
+        [
+          "0x100b6e7c",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b6e7e",
+          "call    ds:Sleep"
+        ],
+        [
+          "0x100b6e84",
+          "jmp     short loc_100B6E90"
+        ],
+        [
+          "0x100b6e86",
+          "mov     edx, [ebp+dwMilliseconds]"
+        ],
+        [
+          "0x100b6e89",
+          "push    edx; dwMilliseconds"
+        ],
+        [
+          "0x100b6e8a",
+          "call    ds:Sleep"
+        ],
+        [
+          "0x100b6e90",
+          "jmp     short loc_100B6E9A"
+        ],
+        [
+          "0x100b6e92",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b6e94",
+          "call    ds:Sleep"
+        ],
+        [
+          "0x100b6e9a",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100b6ea0",
+          "mov     dword_10129508, eax"
+        ],
+        [
+          "0x100b6ea5",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b6eaa",
+          "jmp     short loc_100B6EC6"
+        ],
+        [
+          "0x100b6eac",
+          "jmp     short loc_100B6EC6"
+        ],
+        [
+          "0x100b6eae",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b6eb0",
+          "call    ds:Sleep"
+        ],
+        [
+          "0x100b6eb6",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100b6ebc",
+          "mov     dword_10129508, eax"
+        ],
+        [
+          "0x100b6ec1",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b6ec6",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b6ec8",
+          "pop     ebp"
+        ],
+        [
+          "0x100b6ec9",
+          "retn"
+        ]
+      ],
+      "xrefs": [
+        {
+          "from": "0x100aeb6c",
+          "function": "sub_100AEA80"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B6E10(unsigned int a1)\n{\n  unsigned int v2; // [esp+0h] [ebp-8h]\n\n  if ( (dword_1012950C & 1) == 0 )\n  {\n    dword_1012950C |= 1u;\n    dword_10129508 = timeGetTime();\n  }\n  v2 = timeGetTime() - dword_10129508;\n  if ( v2 > 0x3E8 / a1 )\n  {\n    Sleep(1u);\n    dword_10129508 = timeGetTime();\n    return 1;\n  }\n  else\n  {\n    if ( *((_DWORD *)dword_101294A4 + 180) != 2 || a1 == -1 )\n      Sleep(1u);\n    else\n      Sleep(0x3E8 / a1 - v2);\n    dword_10129508 = timeGetTime();\n    return 1;\n  }\n}\n"
+    }
+  ],
+  "binary": "Pal.dll",
+  "build": "koikake",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

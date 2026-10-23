@@ -1,0 +1,3955 @@
+{
+  "functions": [
+    {
+      "ea": "0x442c00",
+      "name": "sub_442C00",
+      "xrefs": [
+        {
+          "from": "0x443091",
+          "function": null
+        },
+        {
+          "from": "0x4430c2",
+          "function": null
+        },
+        {
+          "from": "0x443110",
+          "function": "sub_4430D0"
+        },
+        {
+          "from": "0x443203",
+          "function": "sub_443120"
+        },
+        {
+          "from": "0x443315",
+          "function": "sub_4432B0"
+        },
+        {
+          "from": "0x458a34",
+          "function": "sub_458A20"
+        },
+        {
+          "from": "0x47bfe6",
+          "function": "sub_47BD00"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_442C00(int this)\n{\n  unsigned int *v2; // esi\n  void (*v3)(_DWORD, _DWORD, const char *, ...); // edi\n  unsigned int v4; // edx\n  unsigned int v5; // eax\n  int v6; // edi\n  int v7; // eax\n  int Time; // eax\n  int result; // eax\n  unsigned int v10; // edx\n  int v11; // edi\n  _DWORD *v12; // ecx\n  unsigned int v13; // eax\n  int v14; // eax\n  int v15; // ecx\n  _DWORD *v16; // edx\n  _DWORD *v17; // eax\n  int v18; // edi\n  _DWORD *v19; // eax\n  const char *TaskData; // eax\n  unsigned int v21; // eax\n  unsigned int v22; // eax\n  int v23; // eax\n  int Active; // [esp+Ch] [ebp-4h]\n\n  Active = PalRenderGetActive();\n  v2 = (unsigned int *)PalListPop(*(_DWORD *)(this + 352068), 1);\n  if ( v2 )\n  {\n    v3 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n    do\n    {\n      v4 = *v2;\n      v5 = *v2;\n      if ( *v2 > 0x80003 )\n      {\n        if ( v5 > 0xB0001 )\n        {\n          if ( v5 > 0xB0007 )\n          {\n            if ( v5 == -268435455 )\n            {\n              v22 = v2[1];\n              if ( v22 )\n              {\n                if ( v22 <= 0x80 )\n                {\n                  v23 = 21 * v22;\n                  if ( dword_4F1A04[v23] == 4 )\n                  {\n                    dword_4F19FC[v23 + 2] = 2;\n                    sub_478160();\n                  }\n                }\n                else\n                {\n                  v3(0, 0, \"*** ERROR AdvAnimStart %d (1-128)\", v2[1]);\n                }\n              }\n            }\n          }\n          else if ( v5 == 720903 )\n          {\n            PalMSpriteStop(v2[1]);\n          }\n          else\n          {\n            v21 = v5 - 720898;\n            if ( v21 )\n            {\n              if ( v21 == 4 )\n                PalMSpritePlay(v2[1], v2[2]);\n            }\n            else\n            {\nLABEL_56:\n              PalSpriteRelease(Active, v2[1]);\n            }\n          }\n          goto LABEL_17;\n        }\n        if ( v5 != 720897 )\n        {\n          if ( v5 > 0xA0006 )\n          {\n            if ( v5 < 0xA000D || v5 > 0xA000E && v5 != 655376 )\n              goto LABEL_17;\n          }\n          else if ( v5 < 0xA0005 )\n          {\n            if ( v5 >= 0x80004 )\n            {\n              if ( v5 <= 0x80005 )\n              {\n                v17 = *(_DWORD **)(32 * v2[2] + this + 4552 * v2[1] + 13004);\n                if ( v17 )\n                  PalSpriteViewCtrl(*v17, v2[3]);\n              }\n              else if ( v5 == 524301 )\n              {\n                v15 = this + 4552 * v2[1];\n                v16 = *(_DWORD **)(32 * v2[2] + v15 + 13004);\n                if ( v16 )\n                  PalButtonSetPos(*(_DWORD *)(v15 + 12988), *v16, 3 * v2[3]);\n              }\n            }\n            goto LABEL_17;\n          }\n        }\nLABEL_43:\n        v18 = 732 * v2[1];\n        v19 = *(_DWORD **)(v18 + this + 164564);\n        if ( !v19 )\n        {\n          v3 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n          PalDebugPrintf(0, 0, aRunError, v2[1]);\n          TaskData = (const char *)PalTaskGetTaskData(0);\n          PalDebugPrintf(0, &Default, \"name=%s / voice=%s / %s\", TaskData + 5184, TaskData + 9540, TaskData + 5444);\n          goto LABEL_17;\n        }\n        if ( v4 == 196628 )\n          PalSpriteViewCtrl(*v19, *(_DWORD *)(this + 4184));\n        else\n          PalSpriteViewCtrl(*v19, 1);\n        v13 = *(_DWORD *)(*(_DWORD *)(v18 + this + 164564) + 8);\n        if ( !v13 )\n          goto LABEL_16;\n        if ( v13 > 0x80 )\n        {\n          v3 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n          PalDebugPrintf(0, 0, \"*** ERROR AdvAnimStart %d (1-128)\", v13);\n          goto LABEL_17;\n        }\n      }\n      else\n      {\n        if ( *v2 != 524291 )\n        {\n          switch ( v5 )\n          {\n            case 0x30002u:\n            case 0x30003u:\n            case 0x30014u:\n            case 0x30016u:\n            case 0x3002Bu:\n              goto LABEL_43;\n            case 0x30005u:\n            case 0x3000Bu:\n            case 0x30017u:\n              goto LABEL_56;\n            case 0x30006u:\n            case 0x30025u:\n              PalSpriteSetColor(v2[1], v2[2]);\n              break;\n            case 0x3000Du:\n            case 0x30032u:\n              v6 = 732 * v2[1] + this + 164564;\n              if ( *(_DWORD *)(v6 + 16) )\n              {\n                if ( *(_DWORD *)v6 )\n                {\n                  if ( v4 == 196658 )\n                  {\n                    PalSpriteViewCtrl(**(_DWORD **)v6, 1);\n                    sub_478C80(*(_DWORD *)(*(_DWORD *)v6 + 8));\n                  }\n                  if ( dword_4F18F0 )\n                  {\n                    v7 = *(_DWORD *)(v6 + 40);\n                  }\n                  else\n                  {\n                    *(_DWORD *)(v6 + 40) = 0;\n                    v7 = 0;\n                  }\n                  Time = PaltimeGetTime(v7, *(_DWORD *)(v6 + 24));\n                  PalSpriteSetTransition(Active, *(_DWORD *)(v6 + 28), *(_DWORD *)(v6 + 32), *(_DWORD *)(v6 + 36), Time);\n                }\n                else\n                {\n                  PalDebugPrintf(0, 0, aRunError_0, v2[1]);\n                  sub_467B80();\n                }\n                *(_DWORD *)(v6 + 20) = 0;\n                *(_DWORD *)(v6 + 28) = 0;\n                *(_DWORD *)(v6 + 32) = 0;\n              }\n              goto LABEL_16;\n            case 0x3002Eu:\n            case 0x3002Fu:\n              PalSpriteViewCtrl(v2[1], v2[2]);\n              break;\n            default:\n              goto LABEL_17;\n          }\n          goto LABEL_17;\n        }\n        v10 = v2[1];\n        v11 = this + 32 * v2[2] + 4552 * v10;\n        v12 = *(_DWORD **)(v11 + 13004);\n        if ( !v12 )\n          goto LABEL_16;\n        if ( *(unsigned __int16 *)(this + 48) != v10 )\n        {\n          PalSpriteViewCtrl(*v12, 1);\n          v12 = *(_DWORD **)(v11 + 13004);\n        }\n        v13 = v12[2];\n        if ( !v13 )\n          goto LABEL_16;\n        if ( v13 > 0x80 )\n        {\n          v3 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n          PalDebugPrintf(0, 0, \"*** ERROR AdvAnimStart %d (1-128)\", v12[2]);\n          goto LABEL_17;\n        }\n      }\n      v14 = 21 * v13;\n      if ( dword_4F1A04[v14] == 4 )\n      {\n        dword_4F19FC[v14 + 2] = 2;\n        sub_478160();\n      }\nLABEL_16:\n      v3 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\nLABEL_17:\n      PalMemoryFree(v2);\n      v2 = (unsigned int *)PalListPop(*(_DWORD *)(this + 352068), 1);\n    }\n    while ( v2 );\n  }\n  *(_DWORD *)(this + 4192) = 0;\n  result = 1;\n  dword_4F18F0 = 0;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x442c00",
+          "push    ebp"
+        ],
+        [
+          "0x442c01",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x442c03",
+          "push    ecx"
+        ],
+        [
+          "0x442c04",
+          "push    ebx"
+        ],
+        [
+          "0x442c05",
+          "push    esi"
+        ],
+        [
+          "0x442c06",
+          "push    edi"
+        ],
+        [
+          "0x442c07",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x442c09",
+          "call    __imp_PalRenderGetActive"
+        ],
+        [
+          "0x442c0f",
+          "push    1"
+        ],
+        [
+          "0x442c11",
+          "push    dword ptr [ebx+55F44h]"
+        ],
+        [
+          "0x442c17",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x442c1a",
+          "call    __imp_PalListPop"
+        ],
+        [
+          "0x442c20",
+          "mov     esi, eax"
+        ],
+        [
+          "0x442c22",
+          "add     esp, 8"
+        ],
+        [
+          "0x442c25",
+          "test    esi, esi"
+        ],
+        [
+          "0x442c27",
+          "jz      loc_442D36"
+        ],
+        [
+          "0x442c2d",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442c33",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x442c35",
+          "mov     eax, edx"
+        ],
+        [
+          "0x442c37",
+          "cmp     eax, 80003h"
+        ],
+        [
+          "0x442c3c",
+          "ja      loc_442E08"
+        ],
+        [
+          "0x442c42",
+          "jz      loc_442D78"
+        ],
+        [
+          "0x442c48",
+          "sub     eax, 30002h; switch 49 cases"
+        ],
+        [
+          "0x442c4d",
+          "cmp     eax, 30h"
+        ],
+        [
+          "0x442c50",
+          "ja      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442c56",
+          "movzx   eax, ds:byte_443048[eax]"
+        ],
+        [
+          "0x442c5d",
+          "jmp     ds:jpt_442C5D[eax*4]; switch jump"
+        ],
+        [
+          "0x442c64",
+          "mov     ecx, [esi+4]; jumptable 00442C5D cases 196621,196658"
+        ],
+        [
+          "0x442c67",
+          "lea     edi, [ebx+282D4h]"
+        ],
+        [
+          "0x442c6d",
+          "imul    eax, ecx, 2DCh"
+        ],
+        [
+          "0x442c73",
+          "add     edi, eax"
+        ],
+        [
+          "0x442c75",
+          "cmp     dword ptr [edi+10h], 0"
+        ],
+        [
+          "0x442c79",
+          "jz      loc_442D0B"
+        ],
+        [
+          "0x442c7f",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x442c81",
+          "test    eax, eax"
+        ],
+        [
+          "0x442c83",
+          "jz      short loc_442CDE"
+        ],
+        [
+          "0x442c85",
+          "cmp     edx, 30032h"
+        ],
+        [
+          "0x442c8b",
+          "jnz     short loc_442CA5"
+        ],
+        [
+          "0x442c8d",
+          "push    1"
+        ],
+        [
+          "0x442c8f",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x442c91",
+          "mov     eax, __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442c96",
+          "call    eax ; __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442c98",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x442c9a",
+          "add     esp, 8"
+        ],
+        [
+          "0x442c9d",
+          "mov     ecx, [ecx+8]"
+        ],
+        [
+          "0x442ca0",
+          "call    sub_478C80"
+        ],
+        [
+          "0x442ca5",
+          "cmp     dword_4F18F0, 0"
+        ],
+        [
+          "0x442cac",
+          "jnz     short loc_442CB9"
+        ],
+        [
+          "0x442cae",
+          "mov     dword ptr [edi+28h], 0"
+        ],
+        [
+          "0x442cb5",
+          "xor     eax, eax"
+        ],
+        [
+          "0x442cb7",
+          "jmp     short loc_442CBC"
+        ],
+        [
+          "0x442cb9",
+          "mov     eax, [edi+28h]"
+        ],
+        [
+          "0x442cbc",
+          "push    dword ptr [edi+18h]"
+        ],
+        [
+          "0x442cbf",
+          "push    eax"
+        ],
+        [
+          "0x442cc0",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x442cc6",
+          "push    eax"
+        ],
+        [
+          "0x442cc7",
+          "push    dword ptr [edi+24h]"
+        ],
+        [
+          "0x442cca",
+          "push    dword ptr [edi+20h]"
+        ],
+        [
+          "0x442ccd",
+          "push    dword ptr [edi+1Ch]"
+        ],
+        [
+          "0x442cd0",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x442cd3",
+          "call    __imp_PalSpriteSetTransition"
+        ],
+        [
+          "0x442cd9",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x442cdc",
+          "jmp     short loc_442CF6"
+        ],
+        [
+          "0x442cde",
+          "push    ecx"
+        ],
+        [
+          "0x442cdf",
+          "push    offset aRunError_0; \"run error : \""
+        ],
+        [
+          "0x442ce4",
+          "push    0"
+        ],
+        [
+          "0x442ce6",
+          "push    0"
+        ],
+        [
+          "0x442ce8",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442cee",
+          "add     esp, 10h"
+        ],
+        [
+          "0x442cf1",
+          "call    sub_467B80"
+        ],
+        [
+          "0x442cf6",
+          "mov     dword ptr [edi+14h], 0"
+        ],
+        [
+          "0x442cfd",
+          "mov     dword ptr [edi+1Ch], 0"
+        ],
+        [
+          "0x442d04",
+          "mov     dword ptr [edi+20h], 0"
+        ],
+        [
+          "0x442d0b",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442d11",
+          "push    esi; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442d12",
+          "call    __imp_PalMemoryFree"
+        ],
+        [
+          "0x442d18",
+          "add     esp, 4"
+        ],
+        [
+          "0x442d1b",
+          "push    1"
+        ],
+        [
+          "0x442d1d",
+          "push    dword ptr [ebx+55F44h]"
+        ],
+        [
+          "0x442d23",
+          "call    __imp_PalListPop"
+        ],
+        [
+          "0x442d29",
+          "mov     esi, eax"
+        ],
+        [
+          "0x442d2b",
+          "add     esp, 8"
+        ],
+        [
+          "0x442d2e",
+          "test    esi, esi"
+        ],
+        [
+          "0x442d30",
+          "jnz     loc_442C33"
+        ],
+        [
+          "0x442d36",
+          "pop     edi"
+        ],
+        [
+          "0x442d37",
+          "pop     esi"
+        ],
+        [
+          "0x442d38",
+          "mov     dword ptr [ebx+1060h], 0"
+        ],
+        [
+          "0x442d42",
+          "mov     eax, 1"
+        ],
+        [
+          "0x442d47",
+          "mov     dword_4F18F0, 0"
+        ],
+        [
+          "0x442d51",
+          "pop     ebx"
+        ],
+        [
+          "0x442d52",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x442d54",
+          "pop     ebp"
+        ],
+        [
+          "0x442d55",
+          "retn"
+        ],
+        [
+          "0x442d56",
+          "push    dword ptr [esi+8]; jumptable 00442C5D cases 196654,196655"
+        ],
+        [
+          "0x442d59",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x442d5c",
+          "call    __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442d62",
+          "add     esp, 8"
+        ],
+        [
+          "0x442d65",
+          "jmp     short def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442d67",
+          "push    dword ptr [esi+8]; jumptable 00442C5D cases 196614,196645"
+        ],
+        [
+          "0x442d6a",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x442d6d",
+          "call    __imp_PalSpriteSetColor"
+        ],
+        [
+          "0x442d73",
+          "add     esp, 8"
+        ],
+        [
+          "0x442d76",
+          "jmp     short def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442d78",
+          "mov     edx, [esi+4]"
+        ],
+        [
+          "0x442d7b",
+          "mov     ecx, [esi+8]"
+        ],
+        [
+          "0x442d7e",
+          "imul    edi, edx, 11C8h"
+        ],
+        [
+          "0x442d84",
+          "shl     ecx, 5"
+        ],
+        [
+          "0x442d87",
+          "add     ecx, ebx"
+        ],
+        [
+          "0x442d89",
+          "add     edi, ecx"
+        ],
+        [
+          "0x442d8b",
+          "mov     ecx, [edi+32CCh]"
+        ],
+        [
+          "0x442d91",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x442d93",
+          "jz      loc_442D0B"
+        ],
+        [
+          "0x442d99",
+          "movzx   eax, word ptr [ebx+30h]"
+        ],
+        [
+          "0x442d9d",
+          "cmp     eax, edx"
+        ],
+        [
+          "0x442d9f",
+          "jz      short loc_442DB5"
+        ],
+        [
+          "0x442da1",
+          "mov     eax, __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442da6",
+          "push    1"
+        ],
+        [
+          "0x442da8",
+          "push    dword ptr [ecx]"
+        ],
+        [
+          "0x442daa",
+          "call    eax ; __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442dac",
+          "mov     ecx, [edi+32CCh]"
+        ],
+        [
+          "0x442db2",
+          "add     esp, 8"
+        ],
+        [
+          "0x442db5",
+          "mov     eax, [ecx+8]"
+        ],
+        [
+          "0x442db8",
+          "test    eax, eax"
+        ],
+        [
+          "0x442dba",
+          "jz      loc_442D0B"
+        ],
+        [
+          "0x442dc0",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x442dc5",
+          "jbe     short loc_442DE1"
+        ],
+        [
+          "0x442dc7",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442dcd",
+          "push    eax"
+        ],
+        [
+          "0x442dce",
+          "push    offset aErrorAdvanimst; \"*** ERROR AdvAnimStart %d (1-128)\""
+        ],
+        [
+          "0x442dd3",
+          "push    0"
+        ],
+        [
+          "0x442dd5",
+          "push    0"
+        ],
+        [
+          "0x442dd7",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442dd9",
+          "add     esp, 10h"
+        ],
+        [
+          "0x442ddc",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442de1",
+          "imul    eax, 54h ; 'T'"
+        ],
+        [
+          "0x442de4",
+          "cmp     dword_4F1A04[eax], 4"
+        ],
+        [
+          "0x442deb",
+          "lea     ecx, dword_4F19FC[eax]"
+        ],
+        [
+          "0x442df1",
+          "jnz     loc_442D0B"
+        ],
+        [
+          "0x442df7",
+          "mov     dword ptr [ecx+8], 2"
+        ],
+        [
+          "0x442dfe",
+          "call    sub_478160"
+        ],
+        [
+          "0x442e03",
+          "jmp     loc_442D0B"
+        ],
+        [
+          "0x442e08",
+          "cmp     eax, 0B0001h"
+        ],
+        [
+          "0x442e0d",
+          "ja      loc_442F86"
+        ],
+        [
+          "0x442e13",
+          "jz      loc_442ED6; jumptable 00442C5D cases 196610,196611,196628,196630,196651"
+        ],
+        [
+          "0x442e19",
+          "cmp     eax, 0A0006h"
+        ],
+        [
+          "0x442e1e",
+          "ja      loc_442EB9"
+        ],
+        [
+          "0x442e24",
+          "cmp     eax, 0A0005h"
+        ],
+        [
+          "0x442e29",
+          "jnb     loc_442ED6; jumptable 00442C5D cases 196610,196611,196628,196630,196651"
+        ],
+        [
+          "0x442e2f",
+          "cmp     eax, 80004h"
+        ],
+        [
+          "0x442e34",
+          "jb      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442e3a",
+          "cmp     eax, 80005h"
+        ],
+        [
+          "0x442e3f",
+          "jbe     short loc_442E87"
+        ],
+        [
+          "0x442e41",
+          "cmp     eax, 8000Dh"
+        ],
+        [
+          "0x442e46",
+          "jnz     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442e4c",
+          "imul    ecx, [esi+4], 11C8h"
+        ],
+        [
+          "0x442e53",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x442e56",
+          "shl     eax, 5"
+        ],
+        [
+          "0x442e59",
+          "add     ecx, ebx"
+        ],
+        [
+          "0x442e5b",
+          "mov     edx, [eax+ecx+32CCh]"
+        ],
+        [
+          "0x442e62",
+          "test    edx, edx"
+        ],
+        [
+          "0x442e64",
+          "jz      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442e6a",
+          "mov     eax, [esi+0Ch]"
+        ],
+        [
+          "0x442e6d",
+          "lea     eax, [eax+eax*2]"
+        ],
+        [
+          "0x442e70",
+          "push    eax"
+        ],
+        [
+          "0x442e71",
+          "push    dword ptr [edx]"
+        ],
+        [
+          "0x442e73",
+          "push    dword ptr [ecx+32BCh]"
+        ],
+        [
+          "0x442e79",
+          "call    __imp_PalButtonSetPos"
+        ],
+        [
+          "0x442e7f",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x442e82",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442e87",
+          "imul    ecx, [esi+4], 11C8h"
+        ],
+        [
+          "0x442e8e",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x442e91",
+          "shl     eax, 5"
+        ],
+        [
+          "0x442e94",
+          "add     ecx, ebx"
+        ],
+        [
+          "0x442e96",
+          "mov     eax, [eax+ecx+32CCh]"
+        ],
+        [
+          "0x442e9d",
+          "test    eax, eax"
+        ],
+        [
+          "0x442e9f",
+          "jz      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442ea5",
+          "push    dword ptr [esi+0Ch]"
+        ],
+        [
+          "0x442ea8",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x442eaa",
+          "mov     eax, __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442eaf",
+          "call    eax ; __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442eb1",
+          "add     esp, 8"
+        ],
+        [
+          "0x442eb4",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442eb9",
+          "cmp     eax, 0A000Dh"
+        ],
+        [
+          "0x442ebe",
+          "jb      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442ec4",
+          "cmp     eax, 0A000Eh"
+        ],
+        [
+          "0x442ec9",
+          "jbe     short loc_442ED6; jumptable 00442C5D cases 196610,196611,196628,196630,196651"
+        ],
+        [
+          "0x442ecb",
+          "cmp     eax, 0A0010h"
+        ],
+        [
+          "0x442ed0",
+          "jnz     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442ed6",
+          "mov     ecx, [esi+4]; jumptable 00442C5D cases 196610,196611,196628,196630,196651"
+        ],
+        [
+          "0x442ed9",
+          "imul    edi, ecx, 2DCh"
+        ],
+        [
+          "0x442edf",
+          "mov     eax, [edi+ebx+282D4h]"
+        ],
+        [
+          "0x442ee6",
+          "test    eax, eax"
+        ],
+        [
+          "0x442ee8",
+          "jz      short loc_442F3F"
+        ],
+        [
+          "0x442eea",
+          "cmp     edx, 30014h"
+        ],
+        [
+          "0x442ef0",
+          "jnz     short loc_442EFA"
+        ],
+        [
+          "0x442ef2",
+          "push    dword ptr [ebx+1058h]"
+        ],
+        [
+          "0x442ef8",
+          "jmp     short loc_442EFC"
+        ],
+        [
+          "0x442efa",
+          "push    1"
+        ],
+        [
+          "0x442efc",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x442efe",
+          "mov     eax, __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442f03",
+          "call    eax ; __imp_PalSpriteViewCtrl"
+        ],
+        [
+          "0x442f05",
+          "mov     eax, [edi+ebx+282D4h]"
+        ],
+        [
+          "0x442f0c",
+          "add     esp, 8"
+        ],
+        [
+          "0x442f0f",
+          "mov     eax, [eax+8]"
+        ],
+        [
+          "0x442f12",
+          "test    eax, eax"
+        ],
+        [
+          "0x442f14",
+          "jz      loc_442D0B"
+        ],
+        [
+          "0x442f1a",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x442f1f",
+          "jbe     loc_442DE1"
+        ],
+        [
+          "0x442f25",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442f2b",
+          "push    eax"
+        ],
+        [
+          "0x442f2c",
+          "push    offset aErrorAdvanimst; \"*** ERROR AdvAnimStart %d (1-128)\""
+        ],
+        [
+          "0x442f31",
+          "push    0"
+        ],
+        [
+          "0x442f33",
+          "push    0"
+        ],
+        [
+          "0x442f35",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442f37",
+          "add     esp, 10h"
+        ],
+        [
+          "0x442f3a",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442f3f",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442f45",
+          "push    ecx"
+        ],
+        [
+          "0x442f46",
+          "push    offset aRunError; \"run error : \""
+        ],
+        [
+          "0x442f4b",
+          "push    0"
+        ],
+        [
+          "0x442f4d",
+          "push    0"
+        ],
+        [
+          "0x442f4f",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442f51",
+          "push    0"
+        ],
+        [
+          "0x442f53",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x442f59",
+          "add     esp, 14h"
+        ],
+        [
+          "0x442f5c",
+          "lea     ecx, [eax+1544h]"
+        ],
+        [
+          "0x442f62",
+          "push    ecx"
+        ],
+        [
+          "0x442f63",
+          "lea     ecx, [eax+2544h]"
+        ],
+        [
+          "0x442f69",
+          "add     eax, 1440h"
+        ],
+        [
+          "0x442f6e",
+          "push    ecx"
+        ],
+        [
+          "0x442f6f",
+          "push    eax"
+        ],
+        [
+          "0x442f70",
+          "push    offset aNameSVoiceSS; \"name=%s / voice=%s / %s\""
+        ],
+        [
+          "0x442f75",
+          "push    offset Default"
+        ],
+        [
+          "0x442f7a",
+          "push    0"
+        ],
+        [
+          "0x442f7c",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x442f7e",
+          "add     esp, 18h"
+        ],
+        [
+          "0x442f81",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442f86",
+          "cmp     eax, 0B0007h"
+        ],
+        [
+          "0x442f8b",
+          "ja      short loc_442FD8"
+        ],
+        [
+          "0x442f8d",
+          "jz      short loc_442FC7"
+        ],
+        [
+          "0x442f8f",
+          "sub     eax, 0B0002h"
+        ],
+        [
+          "0x442f94",
+          "jz      short loc_442FB3; jumptable 00442C5D cases 196613,196619,196631"
+        ],
+        [
+          "0x442f96",
+          "sub     eax, 4"
+        ],
+        [
+          "0x442f99",
+          "jnz     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442f9f",
+          "push    dword ptr [esi+8]"
+        ],
+        [
+          "0x442fa2",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x442fa5",
+          "call    __imp_PalMSpritePlay"
+        ],
+        [
+          "0x442fab",
+          "add     esp, 8"
+        ],
+        [
+          "0x442fae",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442fb3",
+          "push    dword ptr [esi+4]; jumptable 00442C5D cases 196613,196619,196631"
+        ],
+        [
+          "0x442fb6",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x442fb9",
+          "call    __imp_PalSpriteRelease"
+        ],
+        [
+          "0x442fbf",
+          "add     esp, 8"
+        ],
+        [
+          "0x442fc2",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442fc7",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x442fca",
+          "call    __imp_PalMSpriteStop"
+        ],
+        [
+          "0x442fd0",
+          "add     esp, 4"
+        ],
+        [
+          "0x442fd3",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442fd8",
+          "cmp     eax, 0F0000001h"
+        ],
+        [
+          "0x442fdd",
+          "jnz     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442fe3",
+          "mov     eax, [esi+4]"
+        ],
+        [
+          "0x442fe6",
+          "test    eax, eax"
+        ],
+        [
+          "0x442fe8",
+          "jz      def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x442fee",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x442ff3",
+          "jbe     short loc_443009"
+        ],
+        [
+          "0x442ff5",
+          "push    eax"
+        ],
+        [
+          "0x442ff6",
+          "push    offset aErrorAdvanimst; \"*** ERROR AdvAnimStart %d (1-128)\""
+        ],
+        [
+          "0x442ffb",
+          "push    0"
+        ],
+        [
+          "0x442ffd",
+          "push    0"
+        ],
+        [
+          "0x442fff",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x443001",
+          "add     esp, 10h"
+        ],
+        [
+          "0x443004",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x443009",
+          "imul    eax, 54h ; 'T'"
+        ],
+        [
+          "0x44300c",
+          "cmp     dword_4F1A04[eax], 4"
+        ],
+        [
+          "0x443013",
+          "lea     ecx, dword_4F19FC[eax]"
+        ],
+        [
+          "0x443019",
+          "jnz     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ],
+        [
+          "0x44301f",
+          "mov     dword ptr [ecx+8], 2"
+        ],
+        [
+          "0x443026",
+          "call    sub_478160"
+        ],
+        [
+          "0x44302b",
+          "jmp     def_442C5D; jumptable 00442C5D default case, cases 196612,196615-196618,196620,196622-196627,196629,196632-196644,196646-196650,196652,196653,196656,196657"
+        ]
+      ]
+    },
+    {
+      "ea": "0x446280",
+      "name": "sub_446280",
+      "xrefs": [
+        {
+          "from": "0x45c8fe",
+          "function": "sub_45C5F0"
+        }
+      ],
+      "pseudocode": "int __fastcall sub_446280(int a1, int *a2, int **a3)\n{\n  int v3; // esi\n  int **v4; // edi\n  int v5; // ecx\n  int v6; // esi\n  int v7; // edi\n  int v8; // eax\n  _DWORD *v9; // esi\n  int v10; // eax\n  int v11; // eax\n  unsigned int v12; // ecx\n  int v13; // ecx\n  int v14; // esi\n  int v15; // esi\n  int v16; // ecx\n  bool v17; // zf\n  int i; // esi\n  int *v19; // eax\n  int TaskData; // eax\n  int *v21; // eax\n  int v22; // esi\n  int v23; // eax\n  unsigned int v24; // ecx\n  int *v25; // eax\n  int v26; // esi\n  int Time; // eax\n  unsigned int v28; // eax\n  int v29; // eax\n  int v31; // [esp+0h] [ebp-348h]\n  int v32; // [esp+4h] [ebp-344h]\n  int **v34; // [esp+Ch] [ebp-33Ch]\n  int v35; // [esp+Ch] [ebp-33Ch]\n  int Effect; // [esp+Ch] [ebp-33Ch]\n  int *v37; // [esp+Ch] [ebp-33Ch]\n  int v38; // [esp+14h] [ebp-334h]\n  int v39; // [esp+14h] [ebp-334h]\n  int v40; // [esp+14h] [ebp-334h]\n  int v41; // [esp+18h] [ebp-330h]\n  unsigned __int16 Type; // [esp+18h] [ebp-330h]\n  int v43; // [esp+18h] [ebp-330h]\n  int v45; // [esp+20h] [ebp-328h]\n  _DWORD *v46; // [esp+24h] [ebp-324h]\n  int *v47; // [esp+28h] [ebp-320h]\n  int FontSize; // [esp+2Ch] [ebp-31Ch]\n  int v49; // [esp+2Ch] [ebp-31Ch]\n  int v50; // [esp+30h] [ebp-318h] BYREF\n  int v51; // [esp+34h] [ebp-314h] BYREF\n  _DWORD v52[34]; // [esp+38h] [ebp-310h] BYREF\n  _BYTE v53[28]; // [esp+C0h] [ebp-288h] BYREF\n  int v54; // [esp+DCh] [ebp-26Ch]\n  int v55; // [esp+E0h] [ebp-268h]\n  int v56; // [esp+F4h] [ebp-254h]\n  char Destination[16]; // [esp+238h] [ebp-110h] BYREF\n  __int128 v58; // [esp+248h] [ebp-100h]\n\n  v3 = a1;\n  v4 = a3;\n  memmove_0(a3 + 23424, (const void *)(*(_DWORD *)(a1 + 68) + *(_DWORD *)(a1 + 72)), 0x80u);\n  v45 = 0;\n  v34 = a3;\n  *(_DWORD *)(v3 + 72) += 128;\n  v46 = &unk_4F6E04;\n  do\n  {\n    v5 = *(_DWORD *)(v3 + 72);\n    v38 = *(_DWORD *)(*(_DWORD *)(v3 + 68) + v5);\n    *(_DWORD *)(v3 + 72) = v5 + 4;\n    if ( v38 )\n    {\n      v47 = v46 - 21;\n      memset(v46 - 21, 0, 0x290u);\n      *v46 = 1065353216;\n      *(v46 - 18) = v45 + 16;\n      v46[1] = 1065353216;\n      v46[4] = -1;\n      v46[133] = dword_652108;\n      v46[132] = &unk_651EA0;\n      if ( dword_652108 )\n        *(_DWORD *)(dword_652108 + 612) = v46 - 21;\n      dword_652108 = (int)(v46 - 21);\n      v6 = *(_DWORD *)(a1 + 72);\n      v7 = *(_DWORD *)(a1 + 68);\n      memmove_0(v53, (const void *)(v7 + v6), 0x174u);\n      v8 = v6 + 372;\n      v9 = v46;\n      *(_DWORD *)(a1 + 72) = v8;\n      memmove_0(v46 - 17, (const void *)(v7 + v8), 0x98u);\n      v10 = *(_DWORD *)(a1 + 68);\n      *(_DWORD *)(a1 + 72) += 152;\n      memmove_0(v46 + 99, (const void *)(*(_DWORD *)(a1 + 72) + v10), 0x84u);\n      v4 = v34;\n      *(_DWORD *)(a1 + 72) += 132;\n      *(v46 - 19) = *(_DWORD *)(*(_DWORD *)(a1 + 72) + *(_DWORD *)(a1 + 68));\n      *(_DWORD *)(a1 + 72) += 4;\n      v34[3] = *(int **)(*(_DWORD *)(a1 + 72) + *(_DWORD *)(a1 + 68));\n      *(_DWORD *)(a1 + 72) += 4;\n      v34[2] = *(int **)(*(_DWORD *)(a1 + 72) + *(_DWORD *)(a1 + 68));\n      *(_DWORD *)(a1 + 72) += 4;\n      *(_OWORD *)(v34 + 11) = *(_OWORD *)(*(_DWORD *)(a1 + 72) + *(_DWORD *)(a1 + 68));\n      *(_DWORD *)(a1 + 72) += 16;\n      v34[21] = *(int **)(*(_DWORD *)(a1 + 72) + *(_DWORD *)(a1 + 68));\n      v11 = *(_DWORD *)(a1 + 68);\n      *(_DWORD *)(a1 + 72) += 4;\n      memmove_0(v34 + 22, (const void *)(*(_DWORD *)(a1 + 72) + v11), 0x280u);\n      *(_DWORD *)(a1 + 72) += 640;\n      v12 = *(v46 - 19);\n      if ( v12 > 0x80 )\n      {\n        PalDebugPrintf(\n          0,\n          0,\n          \"*** ERROR load layer=%d dwAnimeNo=%d / lFileNo=%d / szFileName=%s\",\n          v45,\n          v12,\n          *(v46 - 20),\n          (const char *)v46 + 540);\n        *(v46 - 19) = 0;\n      }\n      if ( (v34[182][1] - *v34[182]) / 56 )\n        PalDebugPrintf(0, &Default, \"error AdvGraphicLoad: prev VecTagTextPtr\");\n      sub_445B20(v31, v32);\n      if ( (v38 & 0x10000000) != 0 )\n      {\n        memmove_0(v46 + 135, (const void *)(*(_DWORD *)(a1 + 68) + *(_DWORD *)(a1 + 72)), 0x20u);\n        *(_DWORD *)(a1 + 72) += 32;\n        strncpy(Destination, (const char *)v46 + 540, 0x20u);\n        v9 = v46;\n      }\n      else\n      {\n        sub_47D3D0(Destination, a2, v38, 1);\n      }\n      if ( sub_47A160(Destination, v52) )\n      {\n        *(_OWORD *)Destination = *(_OWORD *)&v52[9];\n        v58 = *(_OWORD *)&v52[13];\n      }\n      else if ( v9[107] )\n      {\n        qmemcpy(v52, v46 + 99, 0x84u);\n        v13 = 0;\n        v4 = v34;\n      }\n      v14 = v56;\n      v41 = v55;\n      v35 = v54;\n      if ( PalIsWorkThreadId(v13) )\n        PalRenderLockLeave();\n      v15 = sub_479900(Destination, v35, v41, v14);\n      if ( PalIsWorkThreadId(v16) )\n        PalRenderLockEnter();\n      *v47 = v15;\n      PalSpriteSetInfo(v15, v53);\n      *(v46 - 20) = v38;\n      v17 = ((unsigned int)v4[3] & 0x40000) == 0;\n      *v4 = v46 - 21;\n      if ( !v17 )\n      {\n        for ( i = 0; i < 8; ++i )\n        {\n          v39 = 20 * i;\n          switch ( (unsigned int)v4[20 * i + 22] & 0xEFFFFFFF )\n          {\n            case 1u:\n              sub_4446D0(i);\n              break;\n            case 2u:\n              sub_444680(v4, i);\n              break;\n            case 3u:\n              sub_444510(i);\n              break;\n            case 4u:\n              sub_444A50(i);\n              break;\n            case 5u:\n              sub_44D490((int)v4, i);\n              break;\n            case 6u:\n              sub_444350(i);\n              break;\n            case 7u:\n              sub_4442D0(i);\n              break;\n            case 8u:\n              sub_42FD40(v4, i);\n              break;\n            case 9u:\n              sub_444310(i);\n              break;\n            case 0xAu:\n              sub_44E330((int)v4, i);\n              break;\n            case 0xBu:\n              sub_47CD50();\n              break;\n            case 0xCu:\n              sub_44E400((int)v4, i);\n              break;\n            case 0xDu:\n              sub_450330((int)v4, i);\n              break;\n            case 0xEu:\n              sub_444800(i);\n              break;\n            case 0xFu:\n              sub_444B60(i);\n              break;\n            case 0x10u:\n              sub_444C70(i);\n              break;\n            case 0x11u:\n              if ( !i )\n                PalTargetRenderListClear();\n              v19 = a3[183 * (_DWORD)v4[v39 + 23]];\n              if ( v19 )\n                PalTargetRenderListAdd(*v19);\n              else\n                PalDebugPrintf(0, &Default, \"*** ERROR GRAPH_CHILD_MODE_RENDER_LIST_ADD [%d] is NULL\", v4[v39 + 23]);\n              break;\n            case 0x12u:\n              TaskData = PalTaskGetTaskData(0);\n              sub_44F8A0(TaskData + 824, v45);\n              PalTargetRenderListDraw();\n              if ( *v4 )\n                PalSpriteRenderCopy(**v4);\n              else\n                PalDebugPrintf(0, &Default, \"*** ERROR GRAPH_CHILD_MODE_RENDER_LIST_RUN [%d] is NULL\", v45);\n              break;\n            case 0x13u:\n              sub_444D10(i);\n              break;\n            case 0x14u:\n              if ( (sub_47CD50() & 0x30) == 0 )\n                PalSpriteCircleFill(**v4, v4[v39 + 24], v4[v39 + 25], v4[v39 + 28], v4[v39 + 29]);\n              break;\n            case 0x15u:\n              sub_444E70(i);\n              break;\n            case 0x16u:\n              sub_4443B0(i);\n              break;\n            case 0x17u:\n              sub_444450(i);\n              break;\n            default:\n              continue;\n          }\n        }\n      }\n      v21 = v4[182];\n      v22 = *v21;\n      if ( *v21 != v21[1] )\n      {\n        do\n        {\n          v40 = v22 + 32;\n          if ( *(_DWORD *)(v22 + 52) >= 0x10u )\n            v40 = *(_DWORD *)(v22 + 32);\n          PalTaskGetTaskData(0);\n          Type = PalFontGetType();\n          Effect = (unsigned __int16)PalFontGetEffect();\n          FontSize = (unsigned __int16)PalFontGetFontSize();\n          PalFontGetColor(&v51, &v50);\n          PalFontSetType(*(_DWORD *)(v22 + 4));\n          PalFontSetEffect(*(unsigned __int16 *)(v22 + 8));\n          PalFontSetFontSize(*(unsigned __int16 *)(v22 + 12));\n          PalFontSetColor(*(_DWORD *)(v22 + 16), *(_DWORD *)(v22 + 20));\n          if ( *v4 && (v23 = **v4) != 0 )\n            PalSpriteCreateTextEx(v23, v40, *(_DWORD *)(v22 + 24), *(_DWORD *)(v22 + 28), -1);\n          else\n            PalDebugPrintf(0, &Default, \"error hSprite or lpImage = nullptr\");\n          PalFontSetType(Type);\n          PalFontSetEffect(Effect);\n          PalFontSetFontSize(FontSize);\n          PalFontSetColor(v51, v50);\n          v22 += 56;\n        }\n        while ( v22 != v4[182][1] );\n      }\n      v24 = (unsigned int)v4[3];\n      if ( (_WORD)v24 )\n      {\n        v25 = (int *)&unk_4D2624;\n        v26 = 2;\n        v37 = (int *)&unk_4D2624;\n        do\n        {\n          if ( (v26 & (unsigned int)v4[3]) != 0 )\n          {\n            v49 = *v25;\n            v43 = *v47;\n            if ( (sub_47CD50() & 0x30) == 0 )\n              PalSpriteSetOption(v43, v49);\n            v25 = v37;\n          }\n          ++v25;\n          v26 = __ROL4__(v26, 1);\n          v37 = v25;\n        }\n        while ( (int)v25 <= (int)&dword_4D2660 );\n        v24 = (unsigned int)v4[3];\n      }\n      if ( (v24 & 0x200000) != 0 && v4[13] == (int *)-1 )\n      {\n        Time = PaltimeGetTime(v31, v32);\n        v24 = (unsigned int)v4[3];\n        v4[14] = (int *)Time;\n      }\n      if ( ((unsigned int)&_ImageBase & v24) != 0 )\n        PalMSpritePlay(*v47, v4[21]);\n      if ( v47[2] )\n      {\n        sub_47A060(24576);\n        v28 = v47[2];\n        if ( v28 )\n        {\n          if ( v28 <= 0x80 )\n          {\n            v29 = 21 * v28;\n            if ( dword_4F1A04[v29] == 4 )\n            {\n              dword_4F19FC[v29 + 2] = 2;\n              sub_478160();\n            }\n          }\n          else\n          {\n            PalDebugPrintf(0, 0, \"*** ERROR AdvAnimStart %d (1-128)\", v47[2]);\n          }\n        }\n      }\n      else\n      {\n        sub_47A060(0x2000);\n      }\n      v3 = a1;\n    }\n    v4 += 183;\n    ++v45;\n    v34 = v4;\n    v46 += 164;\n  }\n  while ( (int)v46 < (int)dword_501204 );\n  sub_4451B0(a3, 0);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x446280",
+          "push    ebp"
+        ],
+        [
+          "0x446281",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x446283",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x446286",
+          "sub     esp, 340h"
+        ],
+        [
+          "0x44628c",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x446291",
+          "xor     eax, esp"
+        ],
+        [
+          "0x446293",
+          "mov     [esp+340h+var_4], eax"
+        ],
+        [
+          "0x44629a",
+          "push    esi"
+        ],
+        [
+          "0x44629b",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x44629d",
+          "mov     [esp+344h+var_32C], edx"
+        ],
+        [
+          "0x4462a1",
+          "push    edi"
+        ],
+        [
+          "0x4462a2",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x4462a5",
+          "push    80h; Size"
+        ],
+        [
+          "0x4462aa",
+          "mov     eax, [esi+48h]"
+        ],
+        [
+          "0x4462ad",
+          "add     eax, [esi+44h]"
+        ],
+        [
+          "0x4462b0",
+          "push    eax; Src"
+        ],
+        [
+          "0x4462b1",
+          "lea     eax, [edi+16E00h]"
+        ],
+        [
+          "0x4462b7",
+          "mov     [esp+350h+var_340], esi"
+        ],
+        [
+          "0x4462bb",
+          "push    eax; void *"
+        ],
+        [
+          "0x4462bc",
+          "mov     [esp+354h+var_338], edi"
+        ],
+        [
+          "0x4462c0",
+          "call    _memmove_0"
+        ],
+        [
+          "0x4462c5",
+          "mov     ecx, offset unk_4F6E04"
+        ],
+        [
+          "0x4462ca",
+          "mov     [esp+354h+var_328], 0"
+        ],
+        [
+          "0x4462d2",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4462d5",
+          "mov     [esp+348h+var_33C], edi"
+        ],
+        [
+          "0x4462d9",
+          "sub     dword ptr [esi+48h], 0FFFFFF80h"
+        ],
+        [
+          "0x4462dd",
+          "mov     [esp+348h+var_324], ecx"
+        ],
+        [
+          "0x4462e1",
+          "mov     ecx, [esi+48h]"
+        ],
+        [
+          "0x4462e4",
+          "mov     eax, [esi+44h]"
+        ],
+        [
+          "0x4462e7",
+          "mov     edx, [eax+ecx]"
+        ],
+        [
+          "0x4462ea",
+          "lea     eax, [ecx+4]"
+        ],
+        [
+          "0x4462ed",
+          "mov     [esp+348h+var_334], edx"
+        ],
+        [
+          "0x4462f1",
+          "mov     [esi+48h], eax"
+        ],
+        [
+          "0x4462f4",
+          "test    edx, edx"
+        ],
+        [
+          "0x4462f6",
+          "jz      loc_446A37"
+        ],
+        [
+          "0x4462fc",
+          "mov     edi, [esp+348h+var_324]"
+        ],
+        [
+          "0x446300",
+          "push    290h; Size"
+        ],
+        [
+          "0x446305",
+          "push    0; Val"
+        ],
+        [
+          "0x446307",
+          "lea     esi, [edi-54h]"
+        ],
+        [
+          "0x44630a",
+          "push    esi; void *"
+        ],
+        [
+          "0x44630b",
+          "mov     [esp+354h+var_320], esi"
+        ],
+        [
+          "0x44630f",
+          "call    _memset"
+        ],
+        [
+          "0x446314",
+          "mov     eax, [esp+354h+var_328]"
+        ],
+        [
+          "0x446318",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x44631b",
+          "add     eax, 10h"
+        ],
+        [
+          "0x44631e",
+          "mov     dword ptr [edi], 3F800000h"
+        ],
+        [
+          "0x446324",
+          "mov     [edi-48h], eax"
+        ],
+        [
+          "0x446327",
+          "mov     dword ptr [edi+4], 3F800000h"
+        ],
+        [
+          "0x44632e",
+          "mov     dword ptr [edi+10h], 0FFFFFFFFh"
+        ],
+        [
+          "0x446335",
+          "mov     eax, dword_652108"
+        ],
+        [
+          "0x44633a",
+          "mov     [edi+214h], eax"
+        ],
+        [
+          "0x446340",
+          "mov     dword ptr [edi+210h], offset unk_651EA0"
+        ],
+        [
+          "0x44634a",
+          "mov     eax, dword_652108"
+        ],
+        [
+          "0x44634f",
+          "test    eax, eax"
+        ],
+        [
+          "0x446351",
+          "jz      short loc_446359"
+        ],
+        [
+          "0x446353",
+          "mov     [eax+264h], esi"
+        ],
+        [
+          "0x446359",
+          "mov     eax, [esp+348h+var_340]"
+        ],
+        [
+          "0x44635d",
+          "mov     dword_652108, esi"
+        ],
+        [
+          "0x446363",
+          "push    174h; Size"
+        ],
+        [
+          "0x446368",
+          "mov     esi, [eax+48h]"
+        ],
+        [
+          "0x44636b",
+          "mov     edi, [eax+44h]"
+        ],
+        [
+          "0x44636e",
+          "lea     eax, [edi+esi]"
+        ],
+        [
+          "0x446371",
+          "push    eax; Src"
+        ],
+        [
+          "0x446372",
+          "lea     eax, [esp+350h+var_288]"
+        ],
+        [
+          "0x446379",
+          "push    eax; void *"
+        ],
+        [
+          "0x44637a",
+          "call    _memmove_0"
+        ],
+        [
+          "0x44637f",
+          "mov     ecx, [esp+354h+var_340]"
+        ],
+        [
+          "0x446383",
+          "lea     eax, [esi+174h]"
+        ],
+        [
+          "0x446389",
+          "mov     esi, [esp+354h+var_324]"
+        ],
+        [
+          "0x44638d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x446390",
+          "mov     [ecx+48h], eax"
+        ],
+        [
+          "0x446393",
+          "add     eax, edi"
+        ],
+        [
+          "0x446395",
+          "push    98h; Size"
+        ],
+        [
+          "0x44639a",
+          "push    eax; Src"
+        ],
+        [
+          "0x44639b",
+          "lea     eax, [esi-44h]"
+        ],
+        [
+          "0x44639e",
+          "push    eax; void *"
+        ],
+        [
+          "0x44639f",
+          "call    _memmove_0"
+        ],
+        [
+          "0x4463a4",
+          "mov     edx, [esp+354h+var_340]"
+        ],
+        [
+          "0x4463a8",
+          "lea     ecx, [esi+18Ch]"
+        ],
+        [
+          "0x4463ae",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4463b1",
+          "mov     [esp+348h+var_330], ecx"
+        ],
+        [
+          "0x4463b5",
+          "mov     eax, [edx+44h]"
+        ],
+        [
+          "0x4463b8",
+          "add     dword ptr [edx+48h], 98h"
+        ],
+        [
+          "0x4463bf",
+          "add     eax, [edx+48h]"
+        ],
+        [
+          "0x4463c2",
+          "push    84h; Size"
+        ],
+        [
+          "0x4463c7",
+          "push    eax; Src"
+        ],
+        [
+          "0x4463c8",
+          "push    ecx; void *"
+        ],
+        [
+          "0x4463c9",
+          "call    _memmove_0"
+        ],
+        [
+          "0x4463ce",
+          "mov     ecx, [esp+354h+var_340]"
+        ],
+        [
+          "0x4463d2",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4463d5",
+          "mov     edi, [esp+348h+var_33C]"
+        ],
+        [
+          "0x4463d9",
+          "add     dword ptr [ecx+48h], 84h"
+        ],
+        [
+          "0x4463e0",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x4463e3",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x4463e6",
+          "push    280h; Size"
+        ],
+        [
+          "0x4463eb",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x4463ed",
+          "mov     [esi-4Ch], eax"
+        ],
+        [
+          "0x4463f0",
+          "add     dword ptr [ecx+48h], 4"
+        ],
+        [
+          "0x4463f4",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x4463f7",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x4463fa",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x4463fc",
+          "mov     [edi+0Ch], eax"
+        ],
+        [
+          "0x4463ff",
+          "add     dword ptr [ecx+48h], 4"
+        ],
+        [
+          "0x446403",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x446406",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x446409",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x44640b",
+          "mov     [edi+8], eax"
+        ],
+        [
+          "0x44640e",
+          "add     dword ptr [ecx+48h], 4"
+        ],
+        [
+          "0x446412",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x446415",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x446418",
+          "movups  xmm0, xmmword ptr [eax]"
+        ],
+        [
+          "0x44641b",
+          "movups  xmmword ptr [edi+2Ch], xmm0"
+        ],
+        [
+          "0x44641f",
+          "add     dword ptr [ecx+48h], 10h"
+        ],
+        [
+          "0x446423",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x446426",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x446429",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x44642b",
+          "mov     [edi+54h], eax"
+        ],
+        [
+          "0x44642e",
+          "mov     eax, [ecx+44h]"
+        ],
+        [
+          "0x446431",
+          "add     dword ptr [ecx+48h], 4"
+        ],
+        [
+          "0x446435",
+          "add     eax, [ecx+48h]"
+        ],
+        [
+          "0x446438",
+          "push    eax; Src"
+        ],
+        [
+          "0x446439",
+          "lea     eax, [edi+58h]"
+        ],
+        [
+          "0x44643c",
+          "push    eax; void *"
+        ],
+        [
+          "0x44643d",
+          "call    _memmove_0"
+        ],
+        [
+          "0x446442",
+          "mov     eax, [esp+354h+var_340]"
+        ],
+        [
+          "0x446446",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x446449",
+          "add     dword ptr [eax+48h], 280h"
+        ],
+        [
+          "0x446450",
+          "mov     ecx, [esi-4Ch]"
+        ],
+        [
+          "0x446453",
+          "cmp     ecx, 80h"
+        ],
+        [
+          "0x446459",
+          "jbe     short loc_446483"
+        ],
+        [
+          "0x44645b",
+          "lea     eax, [esi+21Ch]"
+        ],
+        [
+          "0x446461",
+          "push    eax"
+        ],
+        [
+          "0x446462",
+          "push    dword ptr [esi-50h]"
+        ],
+        [
+          "0x446465",
+          "push    ecx"
+        ],
+        [
+          "0x446466",
+          "push    [esp+354h+var_328]"
+        ],
+        [
+          "0x44646a",
+          "push    offset aErrorLoadLayer; \"*** ERROR load layer=%d dwAnimeNo=%d / \"..."
+        ],
+        [
+          "0x44646f",
+          "push    0"
+        ],
+        [
+          "0x446471",
+          "push    0"
+        ],
+        [
+          "0x446473",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x446479",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x44647c",
+          "mov     dword ptr [esi-4Ch], 0"
+        ],
+        [
+          "0x446483",
+          "mov     eax, [edi+2D8h]"
+        ],
+        [
+          "0x446489",
+          "mov     ecx, [eax+4]"
+        ],
+        [
+          "0x44648c",
+          "sub     ecx, [eax]"
+        ],
+        [
+          "0x44648e",
+          "mov     eax, 92492493h"
+        ],
+        [
+          "0x446493",
+          "imul    ecx"
+        ],
+        [
+          "0x446495",
+          "add     edx, ecx"
+        ],
+        [
+          "0x446497",
+          "sar     edx, 5"
+        ],
+        [
+          "0x44649a",
+          "mov     eax, edx"
+        ],
+        [
+          "0x44649c",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x44649f",
+          "add     eax, edx"
+        ],
+        [
+          "0x4464a1",
+          "jz      short loc_4464B8"
+        ],
+        [
+          "0x4464a3",
+          "push    offset aErrorAdvgraphi; \"error AdvGraphicLoad: prev VecTagTextPt\"..."
+        ],
+        [
+          "0x4464a8",
+          "push    offset Default"
+        ],
+        [
+          "0x4464ad",
+          "push    0"
+        ],
+        [
+          "0x4464af",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4464b5",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4464b8",
+          "mov     ecx, [esp+348h+var_340]"
+        ],
+        [
+          "0x4464bc",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4464be",
+          "call    sub_445B20"
+        ],
+        [
+          "0x4464c3",
+          "mov     eax, [esp+348h+var_334]"
+        ],
+        [
+          "0x4464c7",
+          "test    eax, 10000000h"
+        ],
+        [
+          "0x4464cc",
+          "jz      short loc_44650B"
+        ],
+        [
+          "0x4464ce",
+          "mov     ecx, [esp+348h+var_340]"
+        ],
+        [
+          "0x4464d2",
+          "add     esi, 21Ch"
+        ],
+        [
+          "0x4464d8",
+          "push    20h ; ' '; Size"
+        ],
+        [
+          "0x4464da",
+          "mov     eax, [ecx+48h]"
+        ],
+        [
+          "0x4464dd",
+          "add     eax, [ecx+44h]"
+        ],
+        [
+          "0x4464e0",
+          "push    eax; Src"
+        ],
+        [
+          "0x4464e1",
+          "push    esi; void *"
+        ],
+        [
+          "0x4464e2",
+          "call    _memmove_0"
+        ],
+        [
+          "0x4464e7",
+          "mov     eax, [esp+354h+var_340]"
+        ],
+        [
+          "0x4464eb",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4464ee",
+          "add     dword ptr [eax+48h], 20h ; ' '"
+        ],
+        [
+          "0x4464f2",
+          "lea     eax, [esp+348h+Destination]"
+        ],
+        [
+          "0x4464f9",
+          "push    20h ; ' '; Count"
+        ],
+        [
+          "0x4464fb",
+          "push    esi; Source"
+        ],
+        [
+          "0x4464fc",
+          "push    eax; Destination"
+        ],
+        [
+          "0x4464fd",
+          "call    _strncpy"
+        ],
+        [
+          "0x446502",
+          "mov     esi, [esp+354h+var_324]"
+        ],
+        [
+          "0x446506",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x446509",
+          "jmp     short loc_446521"
+        ],
+        [
+          "0x44650b",
+          "mov     edx, [esp+348h+var_32C]"
+        ],
+        [
+          "0x44650f",
+          "lea     ecx, [esp+348h+Destination]; Str1"
+        ],
+        [
+          "0x446516",
+          "push    1; int"
+        ],
+        [
+          "0x446518",
+          "push    eax; int"
+        ],
+        [
+          "0x446519",
+          "call    sub_47D3D0"
+        ],
+        [
+          "0x44651e",
+          "add     esp, 8"
+        ],
+        [
+          "0x446521",
+          "lea     edx, [esp+348h+var_310]"
+        ],
+        [
+          "0x446525",
+          "lea     ecx, [esp+348h+Destination]"
+        ],
+        [
+          "0x44652c",
+          "call    sub_47A160"
+        ],
+        [
+          "0x446531",
+          "test    eax, eax"
+        ],
+        [
+          "0x446533",
+          "jz      short loc_446551"
+        ],
+        [
+          "0x446535",
+          "movups  xmm0, [esp+348h+var_2EC]"
+        ],
+        [
+          "0x44653a",
+          "movups  xmmword ptr [esp+348h+Destination], xmm0"
+        ],
+        [
+          "0x446542",
+          "movups  xmm0, [esp+348h+var_2DC]"
+        ],
+        [
+          "0x446547",
+          "movups  [esp+348h+var_100], xmm0"
+        ],
+        [
+          "0x44654f",
+          "jmp     short loc_44656D"
+        ],
+        [
+          "0x446551",
+          "cmp     dword ptr [esi+1ACh], 0"
+        ],
+        [
+          "0x446558",
+          "jz      short loc_44656D"
+        ],
+        [
+          "0x44655a",
+          "mov     esi, [esp+348h+var_330]"
+        ],
+        [
+          "0x44655e",
+          "lea     edi, [esp+348h+var_310]"
+        ],
+        [
+          "0x446562",
+          "mov     ecx, 21h ; '!'"
+        ],
+        [
+          "0x446567",
+          "rep movsd"
+        ],
+        [
+          "0x446569",
+          "mov     edi, [esp+348h+var_33C]"
+        ],
+        [
+          "0x44656d",
+          "mov     eax, [esp+348h+var_268]"
+        ],
+        [
+          "0x446574",
+          "mov     esi, [esp+348h+var_254]"
+        ],
+        [
+          "0x44657b",
+          "mov     [esp+348h+var_330], eax"
+        ],
+        [
+          "0x44657f",
+          "mov     eax, [esp+348h+var_26C]"
+        ],
+        [
+          "0x446586",
+          "mov     [esp+348h+var_33C], eax"
+        ],
+        [
+          "0x44658a",
+          "call    __imp_PalIsWorkThreadId"
+        ],
+        [
+          "0x446590",
+          "test    eax, eax"
+        ],
+        [
+          "0x446592",
+          "jz      short loc_44659A"
+        ],
+        [
+          "0x446594",
+          "call    __imp_PalRenderLockLeave"
+        ],
+        [
+          "0x44659a",
+          "mov     edx, [esp+348h+var_33C]"
+        ],
+        [
+          "0x44659e",
+          "lea     ecx, [esp+348h+Destination]"
+        ],
+        [
+          "0x4465a5",
+          "push    esi"
+        ],
+        [
+          "0x4465a6",
+          "push    [esp+34Ch+var_330]"
+        ],
+        [
+          "0x4465aa",
+          "call    sub_479900"
+        ],
+        [
+          "0x4465af",
+          "add     esp, 8"
+        ],
+        [
+          "0x4465b2",
+          "mov     esi, eax"
+        ],
+        [
+          "0x4465b4",
+          "call    __imp_PalIsWorkThreadId"
+        ],
+        [
+          "0x4465ba",
+          "test    eax, eax"
+        ],
+        [
+          "0x4465bc",
+          "jz      short loc_4465C4"
+        ],
+        [
+          "0x4465be",
+          "call    __imp_PalRenderLockEnter"
+        ],
+        [
+          "0x4465c4",
+          "mov     eax, [esp+348h+var_320]"
+        ],
+        [
+          "0x4465c8",
+          "mov     [eax], esi"
+        ],
+        [
+          "0x4465ca",
+          "lea     eax, [esp+348h+var_288]"
+        ],
+        [
+          "0x4465d1",
+          "push    eax"
+        ],
+        [
+          "0x4465d2",
+          "push    esi"
+        ],
+        [
+          "0x4465d3",
+          "call    __imp_PalSpriteSetInfo"
+        ],
+        [
+          "0x4465d9",
+          "mov     ecx, [esp+350h+var_324]"
+        ],
+        [
+          "0x4465dd",
+          "add     esp, 8"
+        ],
+        [
+          "0x4465e0",
+          "mov     eax, [esp+348h+var_334]"
+        ],
+        [
+          "0x4465e4",
+          "mov     [ecx-50h], eax"
+        ],
+        [
+          "0x4465e7",
+          "lea     eax, [ecx-54h]"
+        ],
+        [
+          "0x4465ea",
+          "test    dword ptr [edi+0Ch], 40000h"
+        ],
+        [
+          "0x4465f1",
+          "mov     [edi], eax"
+        ],
+        [
+          "0x4465f3",
+          "jz      loc_446809"
+        ],
+        [
+          "0x4465f9",
+          "xor     esi, esi"
+        ],
+        [
+          "0x4465fb",
+          "nop     dword ptr [eax+eax+00h]"
+        ],
+        [
+          "0x446600",
+          "lea     eax, [esi+esi*4]"
+        ],
+        [
+          "0x446603",
+          "shl     eax, 4"
+        ],
+        [
+          "0x446606",
+          "mov     [esp+348h+var_334], eax"
+        ],
+        [
+          "0x44660a",
+          "mov     eax, [eax+edi+58h]"
+        ],
+        [
+          "0x44660e",
+          "and     eax, 0EFFFFFFFh"
+        ],
+        [
+          "0x446613",
+          "dec     eax; switch 23 cases"
+        ],
+        [
+          "0x446614",
+          "cmp     eax, 16h"
+        ],
+        [
+          "0x446617",
+          "ja      def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x44661d",
+          "jmp     ds:jpt_44661D[eax*4]; switch jump"
+        ],
+        [
+          "0x446624",
+          "mov     ecx, [esp+348h+var_32C]; jumptable 0044661D case 1"
+        ],
+        [
+          "0x446628",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44662a",
+          "push    esi"
+        ],
+        [
+          "0x44662b",
+          "call    sub_4446D0"
+        ],
+        [
+          "0x446630",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446635",
+          "mov     edx, [esp+348h+var_338]; jumptable 0044661D case 2"
+        ],
+        [
+          "0x446639",
+          "push    esi"
+        ],
+        [
+          "0x44663a",
+          "push    edi"
+        ],
+        [
+          "0x44663b",
+          "call    sub_444680"
+        ],
+        [
+          "0x446640",
+          "add     esp, 8"
+        ],
+        [
+          "0x446643",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x446648",
+          "mov     ecx, [esp+348h+var_32C]; jumptable 0044661D case 3"
+        ],
+        [
+          "0x44664c",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44664e",
+          "push    esi"
+        ],
+        [
+          "0x44664f",
+          "call    sub_444510"
+        ],
+        [
+          "0x446654",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446659",
+          "mov     ecx, [esp+348h+var_32C]; jumptable 0044661D case 4"
+        ],
+        [
+          "0x44665d",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44665f",
+          "push    esi"
+        ],
+        [
+          "0x446660",
+          "call    sub_444A50"
+        ],
+        [
+          "0x446665",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x44666a",
+          "mov     edx, esi; jumptable 0044661D case 5"
+        ],
+        [
+          "0x44666c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x44666e",
+          "call    sub_44D490"
+        ],
+        [
+          "0x446673",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x446678",
+          "mov     ecx, [esp+348h+var_338]; jumptable 0044661D case 6"
+        ],
+        [
+          "0x44667c",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44667e",
+          "push    esi"
+        ],
+        [
+          "0x44667f",
+          "call    sub_444350"
+        ],
+        [
+          "0x446684",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446689",
+          "push    esi; jumptable 0044661D case 7"
+        ],
+        [
+          "0x44668a",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44668c",
+          "call    sub_4442D0"
+        ],
+        [
+          "0x446691",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446696",
+          "mov     edx, esi; jumptable 0044661D case 8"
+        ],
+        [
+          "0x446698",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x44669a",
+          "call    sub_42FD40"
+        ],
+        [
+          "0x44669f",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4466a4",
+          "push    esi; jumptable 0044661D case 9"
+        ],
+        [
+          "0x4466a5",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4466a7",
+          "call    sub_444310"
+        ],
+        [
+          "0x4466ac",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x4466b1",
+          "mov     edx, esi; jumptable 0044661D case 10"
+        ],
+        [
+          "0x4466b3",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x4466b5",
+          "call    sub_44E330"
+        ],
+        [
+          "0x4466ba",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4466bf",
+          "call    sub_47CD50; jumptable 0044661D case 11"
+        ],
+        [
+          "0x4466c4",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4466c9",
+          "mov     edx, esi; jumptable 0044661D case 12"
+        ],
+        [
+          "0x4466cb",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x4466cd",
+          "call    sub_44E400"
+        ],
+        [
+          "0x4466d2",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4466d7",
+          "mov     edx, esi; jumptable 0044661D case 13"
+        ],
+        [
+          "0x4466d9",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x4466db",
+          "call    sub_450330"
+        ],
+        [
+          "0x4466e0",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4466e5",
+          "mov     ecx, [esp+348h+var_32C]; jumptable 0044661D case 14"
+        ],
+        [
+          "0x4466e9",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4466eb",
+          "push    esi"
+        ],
+        [
+          "0x4466ec",
+          "call    sub_444800"
+        ],
+        [
+          "0x4466f1",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x4466f6",
+          "mov     ecx, [esp+348h+var_32C]; jumptable 0044661D case 15"
+        ],
+        [
+          "0x4466fa",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4466fc",
+          "push    esi"
+        ],
+        [
+          "0x4466fd",
+          "call    sub_444B60"
+        ],
+        [
+          "0x446702",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446707",
+          "mov     ecx, [esp+348h+var_338]; jumptable 0044661D case 16"
+        ],
+        [
+          "0x44670b",
+          "mov     edx, edi"
+        ],
+        [
+          "0x44670d",
+          "push    esi"
+        ],
+        [
+          "0x44670e",
+          "call    sub_444C70"
+        ],
+        [
+          "0x446713",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446718",
+          "test    esi, esi; jumptable 0044661D case 17"
+        ],
+        [
+          "0x44671a",
+          "jnz     short loc_446722"
+        ],
+        [
+          "0x44671c",
+          "call    __imp_PalTargetRenderListClear"
+        ],
+        [
+          "0x446722",
+          "mov     eax, [esp+348h+var_334]"
+        ],
+        [
+          "0x446726",
+          "mov     edx, [esp+348h+var_338]"
+        ],
+        [
+          "0x44672a",
+          "mov     ecx, [eax+edi+5Ch]"
+        ],
+        [
+          "0x44672e",
+          "imul    eax, ecx, 2DCh"
+        ],
+        [
+          "0x446734",
+          "mov     eax, [eax+edx]"
+        ],
+        [
+          "0x446737",
+          "test    eax, eax"
+        ],
+        [
+          "0x446739",
+          "jnz     short loc_446756"
+        ],
+        [
+          "0x44673b",
+          "push    ecx"
+        ],
+        [
+          "0x44673c",
+          "push    offset aErrorGraphChil; \"*** ERROR GRAPH_CHILD_MODE_RENDER_LIST_\"..."
+        ],
+        [
+          "0x446741",
+          "push    offset Default"
+        ],
+        [
+          "0x446746",
+          "push    0"
+        ],
+        [
+          "0x446748",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44674e",
+          "add     esp, 10h"
+        ],
+        [
+          "0x446751",
+          "jmp     def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x446756",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x446758",
+          "call    __imp_PalTargetRenderListAdd"
+        ],
+        [
+          "0x44675e",
+          "jmp     loc_4467FC"
+        ],
+        [
+          "0x446763",
+          "push    0; jumptable 0044661D case 18"
+        ],
+        [
+          "0x446765",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x44676b",
+          "mov     edx, [esp+34Ch+var_328]"
+        ],
+        [
+          "0x44676f",
+          "add     esp, 4"
+        ],
+        [
+          "0x446772",
+          "lea     ecx, [eax+338h]"
+        ],
+        [
+          "0x446778",
+          "call    sub_44F8A0"
+        ],
+        [
+          "0x44677d",
+          "call    __imp_PalTargetRenderListDraw"
+        ],
+        [
+          "0x446783",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x446785",
+          "test    eax, eax"
+        ],
+        [
+          "0x446787",
+          "jnz     short loc_446794"
+        ],
+        [
+          "0x446789",
+          "push    [esp+348h+var_328]"
+        ],
+        [
+          "0x44678d",
+          "push    offset aErrorGraphChil_0; \"*** ERROR GRAPH_CHILD_MODE_RENDER_LIST_\"..."
+        ],
+        [
+          "0x446792",
+          "jmp     short loc_446741"
+        ],
+        [
+          "0x446794",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x446796",
+          "call    __imp_PalSpriteRenderCopy"
+        ],
+        [
+          "0x44679c",
+          "jmp     short loc_4467FC"
+        ],
+        [
+          "0x44679e",
+          "push    esi; jumptable 0044661D case 19"
+        ],
+        [
+          "0x44679f",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4467a1",
+          "call    sub_444D10"
+        ],
+        [
+          "0x4467a6",
+          "jmp     short loc_4467FC"
+        ],
+        [
+          "0x4467a8",
+          "call    sub_47CD50; jumptable 0044661D case 20"
+        ],
+        [
+          "0x4467ad",
+          "test    al, 30h"
+        ],
+        [
+          "0x4467af",
+          "jnz     short def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4467b1",
+          "mov     eax, [esp+348h+var_334]"
+        ],
+        [
+          "0x4467b5",
+          "push    dword ptr [eax+edi+74h]"
+        ],
+        [
+          "0x4467b9",
+          "push    dword ptr [eax+edi+70h]"
+        ],
+        [
+          "0x4467bd",
+          "push    dword ptr [eax+edi+64h]"
+        ],
+        [
+          "0x4467c1",
+          "push    dword ptr [eax+edi+60h]"
+        ],
+        [
+          "0x4467c5",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x4467c7",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x4467c9",
+          "call    __imp_PalSpriteCircleFill"
+        ],
+        [
+          "0x4467cf",
+          "add     esp, 14h"
+        ],
+        [
+          "0x4467d2",
+          "jmp     short def_44661D; jumptable 0044661D default case"
+        ],
+        [
+          "0x4467d4",
+          "mov     ecx, [esp+348h+var_338]; jumptable 0044661D case 21"
+        ],
+        [
+          "0x4467d8",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4467da",
+          "push    esi"
+        ],
+        [
+          "0x4467db",
+          "call    sub_444E70"
+        ],
+        [
+          "0x4467e0",
+          "jmp     short loc_4467FC"
+        ],
+        [
+          "0x4467e2",
+          "mov     ecx, [esp+348h+var_338]; jumptable 0044661D case 22"
+        ],
+        [
+          "0x4467e6",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4467e8",
+          "push    esi"
+        ],
+        [
+          "0x4467e9",
+          "call    sub_4443B0"
+        ],
+        [
+          "0x4467ee",
+          "jmp     short loc_4467FC"
+        ],
+        [
+          "0x4467f0",
+          "mov     ecx, [esp+348h+var_338]; jumptable 0044661D case 23"
+        ],
+        [
+          "0x4467f4",
+          "mov     edx, edi"
+        ],
+        [
+          "0x4467f6",
+          "push    esi"
+        ],
+        [
+          "0x4467f7",
+          "call    sub_444450"
+        ],
+        [
+          "0x4467fc",
+          "add     esp, 4"
+        ],
+        [
+          "0x4467ff",
+          "inc     esi; jumptable 0044661D default case"
+        ],
+        [
+          "0x446800",
+          "cmp     esi, 8"
+        ],
+        [
+          "0x446803",
+          "jl      loc_446600"
+        ],
+        [
+          "0x446809",
+          "mov     eax, [edi+2D8h]"
+        ],
+        [
+          "0x44680f",
+          "mov     esi, [eax]"
+        ],
+        [
+          "0x446811",
+          "cmp     esi, [eax+4]"
+        ],
+        [
+          "0x446814",
+          "jz      loc_446933"
+        ],
+        [
+          "0x44681a",
+          "nop     word ptr [eax+eax+00h]"
+        ],
+        [
+          "0x446820",
+          "cmp     dword ptr [esi+34h], 10h"
+        ],
+        [
+          "0x446824",
+          "lea     eax, [esi+20h]"
+        ],
+        [
+          "0x446827",
+          "mov     [esp+348h+var_334], eax"
+        ],
+        [
+          "0x44682b",
+          "jb      short loc_446833"
+        ],
+        [
+          "0x44682d",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x44682f",
+          "mov     [esp+348h+var_334], eax"
+        ],
+        [
+          "0x446833",
+          "push    0"
+        ],
+        [
+          "0x446835",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x44683b",
+          "add     esp, 4"
+        ],
+        [
+          "0x44683e",
+          "call    __imp_PalFontGetType"
+        ],
+        [
+          "0x446844",
+          "movzx   eax, ax"
+        ],
+        [
+          "0x446847",
+          "mov     [esp+348h+var_330], eax"
+        ],
+        [
+          "0x44684b",
+          "call    __imp_PalFontGetEffect"
+        ],
+        [
+          "0x446851",
+          "movzx   eax, ax"
+        ],
+        [
+          "0x446854",
+          "mov     [esp+348h+var_33C], eax"
+        ],
+        [
+          "0x446858",
+          "call    __imp_PalFontGetFontSize"
+        ],
+        [
+          "0x44685e",
+          "movzx   eax, ax"
+        ],
+        [
+          "0x446861",
+          "mov     [esp+348h+var_31C], eax"
+        ],
+        [
+          "0x446865",
+          "lea     eax, [esp+348h+var_318]"
+        ],
+        [
+          "0x446869",
+          "push    eax"
+        ],
+        [
+          "0x44686a",
+          "lea     eax, [esp+34Ch+var_314]"
+        ],
+        [
+          "0x44686e",
+          "push    eax"
+        ],
+        [
+          "0x44686f",
+          "call    __imp_PalFontGetColor"
+        ],
+        [
+          "0x446875",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x446878",
+          "call    __imp_PalFontSetType"
+        ],
+        [
+          "0x44687e",
+          "movzx   eax, word ptr [esi+8]"
+        ],
+        [
+          "0x446882",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x446885",
+          "push    eax"
+        ],
+        [
+          "0x446886",
+          "call    __imp_PalFontSetEffect"
+        ],
+        [
+          "0x44688c",
+          "movzx   eax, word ptr [esi+0Ch]"
+        ],
+        [
+          "0x446890",
+          "add     esp, 4"
+        ],
+        [
+          "0x446893",
+          "push    eax"
+        ],
+        [
+          "0x446894",
+          "call    __imp_PalFontSetFontSize"
+        ],
+        [
+          "0x44689a",
+          "add     esp, 4"
+        ],
+        [
+          "0x44689d",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x4468a0",
+          "push    dword ptr [esi+10h]"
+        ],
+        [
+          "0x4468a3",
+          "call    __imp_PalFontSetColor"
+        ],
+        [
+          "0x4468a9",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x4468ab",
+          "add     esp, 8"
+        ],
+        [
+          "0x4468ae",
+          "test    eax, eax"
+        ],
+        [
+          "0x4468b0",
+          "jz      short loc_4468D0"
+        ],
+        [
+          "0x4468b2",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x4468b4",
+          "test    eax, eax"
+        ],
+        [
+          "0x4468b6",
+          "jz      short loc_4468D0"
+        ],
+        [
+          "0x4468b8",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x4468ba",
+          "push    dword ptr [esi+1Ch]"
+        ],
+        [
+          "0x4468bd",
+          "push    dword ptr [esi+18h]"
+        ],
+        [
+          "0x4468c0",
+          "push    [esp+354h+var_334]"
+        ],
+        [
+          "0x4468c4",
+          "push    eax"
+        ],
+        [
+          "0x4468c5",
+          "call    __imp_PalSpriteCreateTextEx"
+        ],
+        [
+          "0x4468cb",
+          "add     esp, 14h"
+        ],
+        [
+          "0x4468ce",
+          "jmp     short loc_4468E5"
+        ],
+        [
+          "0x4468d0",
+          "push    offset aErrorHspriteOr; \"error hSprite or lpImage = nullptr\""
+        ],
+        [
+          "0x4468d5",
+          "push    offset Default"
+        ],
+        [
+          "0x4468da",
+          "push    0"
+        ],
+        [
+          "0x4468dc",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4468e2",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4468e5",
+          "mov     eax, [esp+348h+var_330]"
+        ],
+        [
+          "0x4468e9",
+          "movzx   eax, ax"
+        ],
+        [
+          "0x4468ec",
+          "push    eax"
+        ],
+        [
+          "0x4468ed",
+          "call    __imp_PalFontSetType"
+        ],
+        [
+          "0x4468f3",
+          "add     esp, 4"
+        ],
+        [
+          "0x4468f6",
+          "push    [esp+348h+var_33C]"
+        ],
+        [
+          "0x4468fa",
+          "call    __imp_PalFontSetEffect"
+        ],
+        [
+          "0x446900",
+          "add     esp, 4"
+        ],
+        [
+          "0x446903",
+          "push    [esp+348h+var_31C]"
+        ],
+        [
+          "0x446907",
+          "call    __imp_PalFontSetFontSize"
+        ],
+        [
+          "0x44690d",
+          "add     esp, 4"
+        ],
+        [
+          "0x446910",
+          "push    [esp+348h+var_318]"
+        ],
+        [
+          "0x446914",
+          "push    [esp+34Ch+var_314]"
+        ],
+        [
+          "0x446918",
+          "call    __imp_PalFontSetColor"
+        ],
+        [
+          "0x44691e",
+          "mov     eax, [edi+2D8h]"
+        ],
+        [
+          "0x446924",
+          "add     esi, 38h ; '8'"
+        ],
+        [
+          "0x446927",
+          "add     esp, 8"
+        ],
+        [
+          "0x44692a",
+          "cmp     esi, [eax+4]"
+        ],
+        [
+          "0x44692d",
+          "jnz     loc_446820"
+        ],
+        [
+          "0x446933",
+          "mov     ecx, [edi+0Ch]"
+        ],
+        [
+          "0x446936",
+          "test    cx, cx"
+        ],
+        [
+          "0x446939",
+          "jz      short loc_446996"
+        ],
+        [
+          "0x44693b",
+          "mov     eax, offset unk_4D2624"
+        ],
+        [
+          "0x446940",
+          "mov     esi, 2"
+        ],
+        [
+          "0x446945",
+          "mov     [esp+348h+var_33C], eax"
+        ],
+        [
+          "0x446949",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x446950",
+          "test    [edi+0Ch], esi"
+        ],
+        [
+          "0x446953",
+          "jz      short loc_446983"
+        ],
+        [
+          "0x446955",
+          "mov     ecx, [esp+348h+var_320]"
+        ],
+        [
+          "0x446959",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x44695b",
+          "mov     [esp+348h+var_31C], eax"
+        ],
+        [
+          "0x44695f",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x446961",
+          "mov     [esp+348h+var_330], eax"
+        ],
+        [
+          "0x446965",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x44696a",
+          "test    al, 30h"
+        ],
+        [
+          "0x44696c",
+          "jnz     short loc_44697F"
+        ],
+        [
+          "0x44696e",
+          "push    [esp+348h+var_31C]"
+        ],
+        [
+          "0x446972",
+          "push    [esp+34Ch+var_330]"
+        ],
+        [
+          "0x446976",
+          "call    __imp_PalSpriteSetOption"
+        ],
+        [
+          "0x44697c",
+          "add     esp, 8"
+        ],
+        [
+          "0x44697f",
+          "mov     eax, [esp+348h+var_33C]"
+        ],
+        [
+          "0x446983",
+          "add     eax, 4"
+        ],
+        [
+          "0x446986",
+          "rol     esi, 1"
+        ],
+        [
+          "0x446988",
+          "mov     [esp+348h+var_33C], eax"
+        ],
+        [
+          "0x44698c",
+          "cmp     eax, offset dword_4D2660"
+        ],
+        [
+          "0x446991",
+          "jle     short loc_446950"
+        ],
+        [
+          "0x446993",
+          "mov     ecx, [edi+0Ch]"
+        ],
+        [
+          "0x446996",
+          "test    ecx, 200000h"
+        ],
+        [
+          "0x44699c",
+          "jz      short loc_4469B0"
+        ],
+        [
+          "0x44699e",
+          "cmp     dword ptr [edi+34h], 0FFFFFFFFh"
+        ],
+        [
+          "0x4469a2",
+          "jnz     short loc_4469B0"
+        ],
+        [
+          "0x4469a4",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x4469aa",
+          "mov     ecx, [edi+0Ch]"
+        ],
+        [
+          "0x4469ad",
+          "mov     [edi+38h], eax"
+        ],
+        [
+          "0x4469b0",
+          "mov     esi, [esp+348h+var_320]"
+        ],
+        [
+          "0x4469b4",
+          "test    ecx, offset __ImageBase"
+        ],
+        [
+          "0x4469ba",
+          "jz      short loc_4469CA"
+        ],
+        [
+          "0x4469bc",
+          "push    dword ptr [edi+54h]"
+        ],
+        [
+          "0x4469bf",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x4469c1",
+          "call    __imp_PalMSpritePlay"
+        ],
+        [
+          "0x4469c7",
+          "add     esp, 8"
+        ],
+        [
+          "0x4469ca",
+          "cmp     dword ptr [esi+8], 0"
+        ],
+        [
+          "0x4469ce",
+          "lea     edx, [esp+348h+var_310]"
+        ],
+        [
+          "0x4469d2",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x4469d4",
+          "jz      short loc_446A26"
+        ],
+        [
+          "0x4469d6",
+          "push    6000h"
+        ],
+        [
+          "0x4469db",
+          "call    sub_47A060"
+        ],
+        [
+          "0x4469e0",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x4469e3",
+          "add     esp, 4"
+        ],
+        [
+          "0x4469e6",
+          "test    eax, eax"
+        ],
+        [
+          "0x4469e8",
+          "jz      short loc_446A33"
+        ],
+        [
+          "0x4469ea",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x4469ef",
+          "jbe     short loc_446A06"
+        ],
+        [
+          "0x4469f1",
+          "push    eax"
+        ],
+        [
+          "0x4469f2",
+          "push    offset aErrorAdvanimst; \"*** ERROR AdvAnimStart %d (1-128)\""
+        ],
+        [
+          "0x4469f7",
+          "push    0"
+        ],
+        [
+          "0x4469f9",
+          "push    0"
+        ],
+        [
+          "0x4469fb",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x446a01",
+          "add     esp, 10h"
+        ],
+        [
+          "0x446a04",
+          "jmp     short loc_446A33"
+        ],
+        [
+          "0x446a06",
+          "imul    eax, 54h ; 'T'"
+        ],
+        [
+          "0x446a09",
+          "cmp     dword_4F1A04[eax], 4"
+        ],
+        [
+          "0x446a10",
+          "lea     ecx, dword_4F19FC[eax]"
+        ],
+        [
+          "0x446a16",
+          "jnz     short loc_446A33"
+        ],
+        [
+          "0x446a18",
+          "mov     dword ptr [ecx+8], 2"
+        ],
+        [
+          "0x446a1f",
+          "call    sub_478160"
+        ],
+        [
+          "0x446a24",
+          "jmp     short loc_446A33"
+        ],
+        [
+          "0x446a26",
+          "push    2000h"
+        ],
+        [
+          "0x446a2b",
+          "call    sub_47A060"
+        ],
+        [
+          "0x446a30",
+          "add     esp, 4"
+        ],
+        [
+          "0x446a33",
+          "mov     esi, [esp+348h+var_340]"
+        ],
+        [
+          "0x446a37",
+          "mov     eax, [esp+348h+var_324]"
+        ],
+        [
+          "0x446a3b",
+          "add     edi, 2DCh"
+        ],
+        [
+          "0x446a41",
+          "inc     [esp+348h+var_328]"
+        ],
+        [
+          "0x446a45",
+          "add     eax, 290h"
+        ],
+        [
+          "0x446a4a",
+          "mov     [esp+348h+var_33C], edi"
+        ],
+        [
+          "0x446a4e",
+          "mov     [esp+348h+var_324], eax"
+        ],
+        [
+          "0x446a52",
+          "cmp     eax, offset dword_501204"
+        ],
+        [
+          "0x446a57",
+          "jl      loc_4462E1"
+        ],
+        [
+          "0x446a5d",
+          "mov     ecx, [esp+348h+var_338]"
+        ],
+        [
+          "0x446a61",
+          "xor     edx, edx"
+        ],
+        [
+          "0x446a63",
+          "call    sub_4451B0"
+        ],
+        [
+          "0x446a68",
+          "mov     ecx, [esp+348h+var_4]"
+        ],
+        [
+          "0x446a6f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x446a74",
+          "pop     edi"
+        ],
+        [
+          "0x446a75",
+          "pop     esi"
+        ],
+        [
+          "0x446a76",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x446a78",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x446a7d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x446a7f",
+          "pop     ebp"
+        ],
+        [
+          "0x446a80",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b0a0",
+      "name": "sub_45B0A0",
+      "xrefs": [
+        {
+          "from": "0x4597f3",
+          "function": null
+        },
+        {
+          "from": "0x45bd07",
+          "function": null
+        },
+        {
+          "from": "0x4eab4c",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B0A0(int a1)\n{\n  int v2; // ecx\n  int v3; // ecx\n  unsigned int v4; // edx\n  int v5; // ebx\n  _DWORD *v6; // esi\n  _DWORD *v7; // eax\n  _DWORD *v8; // eax\n  unsigned int v10; // [esp+14h] [ebp+8h]\n\n  v2 = *(_DWORD *)(a1 + 286352);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v3;\n  v4 = *(_DWORD *)(a1 + 4 * v3 + 258424);\n  v10 = v4;\n  if ( v3 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n    v4 = v10;\n  }\n  *(_DWORD *)(a1 + 286352) = v3 - 1;\n  v5 = *(_DWORD *)(a1 + 4 * (v3 - 1) + 258424);\n  if ( v4 <= 0x7F )\n  {\n    v6 = (_DWORD *)(732 * v4 + a1);\n    v7 = (_DWORD *)v6[41141];\n    if ( v7 )\n    {\n      if ( PalMSpriteCheck(*v7) )\n      {\n        v8 = (_DWORD *)v6[41141];\n        v6[41144] |= (unsigned int)&_ImageBase;\n        v6[41162] = v5;\n        PalMSpritePlay(*v8, v5);\n        PalDebugPrintf(10, 0, \"msp_play %d, %d\", v10, v5);\n        return 1;\n      }\n      PalDebugPrintf(0, 0, aMspPlay);\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b0a0",
+          "push    ebp"
+        ],
+        [
+          "0x45b0a1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b0a3",
+          "push    ebx"
+        ],
+        [
+          "0x45b0a4",
+          "push    esi"
+        ],
+        [
+          "0x45b0a5",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b0a8",
+          "push    edi"
+        ],
+        [
+          "0x45b0a9",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0af",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0b5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b0b8",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b0ba",
+          "jns     short loc_45B0D0"
+        ],
+        [
+          "0x45b0bc",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b0c1",
+          "push    0"
+        ],
+        [
+          "0x45b0c3",
+          "push    0"
+        ],
+        [
+          "0x45b0c5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0c7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0cd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b0d0",
+          "dec     ecx"
+        ],
+        [
+          "0x45b0d1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x45b0d7",
+          "mov     edx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x45b0de",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b0e1",
+          "mov     [ebp+arg_0], edx"
+        ],
+        [
+          "0x45b0e4",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b0e6",
+          "jns     short loc_45B0FF"
+        ],
+        [
+          "0x45b0e8",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b0ed",
+          "push    0"
+        ],
+        [
+          "0x45b0ef",
+          "push    0"
+        ],
+        [
+          "0x45b0f1",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b0f3",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b0f9",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b0fc",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x45b0ff",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b102",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b108",
+          "mov     ebx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b10f",
+          "cmp     edx, 7Fh"
+        ],
+        [
+          "0x45b112",
+          "ja      short loc_45B17E"
+        ],
+        [
+          "0x45b114",
+          "imul    eax, edx, 2DCh"
+        ],
+        [
+          "0x45b11a",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b11c",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b122",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b124",
+          "jz      short loc_45B17E"
+        ],
+        [
+          "0x45b126",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b128",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b12e",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b131",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b133",
+          "jz      short loc_45B170"
+        ],
+        [
+          "0x45b135",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b13b",
+          "or      dword ptr [esi+282E0h], offset __ImageBase"
+        ],
+        [
+          "0x45b145",
+          "mov     [esi+28328h], ebx"
+        ],
+        [
+          "0x45b14b",
+          "push    ebx"
+        ],
+        [
+          "0x45b14c",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b14e",
+          "call    __imp_PalMSpritePlay"
+        ],
+        [
+          "0x45b154",
+          "push    ebx"
+        ],
+        [
+          "0x45b155",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x45b158",
+          "push    offset aMspPlayDD; \"msp_play %d, %d\""
+        ],
+        [
+          "0x45b15d",
+          "push    0"
+        ],
+        [
+          "0x45b15f",
+          "push    0Ah"
+        ],
+        [
+          "0x45b161",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b163",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x45b166",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b16b",
+          "pop     edi"
+        ],
+        [
+          "0x45b16c",
+          "pop     esi"
+        ],
+        [
+          "0x45b16d",
+          "pop     ebx"
+        ],
+        [
+          "0x45b16e",
+          "pop     ebp"
+        ],
+        [
+          "0x45b16f",
+          "retn"
+        ],
+        [
+          "0x45b170",
+          "push    offset aMspPlay; \"msp_play : \""
+        ],
+        [
+          "0x45b175",
+          "push    0"
+        ],
+        [
+          "0x45b177",
+          "push    0"
+        ],
+        [
+          "0x45b179",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b17b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b17e",
+          "pop     edi"
+        ],
+        [
+          "0x45b17f",
+          "pop     esi"
+        ],
+        [
+          "0x45b180",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b185",
+          "pop     ebx"
+        ],
+        [
+          "0x45b186",
+          "pop     ebp"
+        ],
+        [
+          "0x45b187",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x45b010",
+      "name": "sub_45B010",
+      "xrefs": [
+        {
+          "from": "0x459804",
+          "function": null
+        },
+        {
+          "from": "0x45bd18",
+          "function": null
+        },
+        {
+          "from": "0x4eab50",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_45B010(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edi\n  int v3; // esi\n  _DWORD *v4; // eax\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 <= 0x7F )\n  {\n    v3 = 732 * v2 + a1;\n    v4 = *(_DWORD **)(v3 + 164564);\n    if ( v4 )\n    {\n      if ( PalMSpriteCheck(*v4) )\n      {\n        PalMSpriteStop(**(_DWORD **)(v3 + 164564));\n        PalDebugPrintf(10, 0, \"msp_stop %d\", v2);\n      }\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x45b010",
+          "push    ebp"
+        ],
+        [
+          "0x45b011",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x45b013",
+          "push    esi"
+        ],
+        [
+          "0x45b014",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x45b017",
+          "push    edi"
+        ],
+        [
+          "0x45b018",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b01e",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b021",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b023",
+          "jns     short loc_45B03D"
+        ],
+        [
+          "0x45b025",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x45b02a",
+          "push    0"
+        ],
+        [
+          "0x45b02c",
+          "push    0"
+        ],
+        [
+          "0x45b02e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b034",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x45b03a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x45b03d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x45b040",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x45b046",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x45b04d",
+          "cmp     edi, 7Fh"
+        ],
+        [
+          "0x45b050",
+          "ja      short loc_45B094"
+        ],
+        [
+          "0x45b052",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x45b058",
+          "add     esi, eax"
+        ],
+        [
+          "0x45b05a",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b060",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b062",
+          "jz      short loc_45B094"
+        ],
+        [
+          "0x45b064",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b066",
+          "call    __imp_PalMSpriteCheck"
+        ],
+        [
+          "0x45b06c",
+          "add     esp, 4"
+        ],
+        [
+          "0x45b06f",
+          "test    eax, eax"
+        ],
+        [
+          "0x45b071",
+          "jz      short loc_45B094"
+        ],
+        [
+          "0x45b073",
+          "mov     eax, [esi+282D4h]"
+        ],
+        [
+          "0x45b079",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x45b07b",
+          "call    __imp_PalMSpriteStop"
+        ],
+        [
+          "0x45b081",
+          "push    edi"
+        ],
+        [
+          "0x45b082",
+          "push    offset aMspStopD; \"msp_stop %d\""
+        ],
+        [
+          "0x45b087",
+          "push    0"
+        ],
+        [
+          "0x45b089",
+          "push    0Ah"
+        ],
+        [
+          "0x45b08b",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x45b091",
+          "add     esp, 14h"
+        ],
+        [
+          "0x45b094",
+          "pop     edi"
+        ],
+        [
+          "0x45b095",
+          "mov     eax, 1"
+        ],
+        [
+          "0x45b09a",
+          "pop     esi"
+        ],
+        [
+          "0x45b09b",
+          "pop     ebp"
+        ],
+        [
+          "0x45b09c",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "totsulover_try.exe",
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

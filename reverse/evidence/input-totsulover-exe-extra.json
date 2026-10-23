@@ -1,0 +1,1788 @@
+{
+  "functions": [
+    {
+      "ea": "0x4237e0",
+      "name": "sub_4237E0",
+      "xrefs": [
+        {
+          "from": "0x42738c",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaa80",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_4237E0(_DWORD *a1)\n{\n  void (*v1)(_DWORD, _DWORD, const char *, ...); // ecx\n  int v2; // edx\n  int v3; // edx\n  unsigned int v4; // edi\n  unsigned int v5; // ecx\n  int v6; // ebx\n  int result; // eax\n\n  v1 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n  v2 = a1[71588];\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = a1[71588];\n    v1 = (void (*)(_DWORD, _DWORD, const char *, ...))PalDebugPrintf;\n  }\n  v3 = v2 - 1;\n  a1[71588] = v3;\n  v4 = a1[v3 + 64606];\n  if ( v3 - 1 < 0 )\n  {\n    v1(0, 0, \"not stack\");\n    v3 = a1[71588];\n  }\n  a1[71588] = v3 - 1;\n  v5 = a1[v3 + 64605];\n  if ( a1 == (_DWORD *)-12936 || v4 >= 0x10 || (v6 = (int)&a1[1138 * v4 + 3238]) == 0 )\n  {\n    PalDebugPrintf(0, 0, \"btn_slide_end  %d, %d over ID\", v4, v5);\n    return 1;\n  }\n  if ( v5 >= 0x80 || !(v6 + 32 * v5 + 52) )\n  {\n    PalDebugPrintf(0, 0, \"btn_slide_end  %d, %d over NO\", v4, v5);\n    return 1;\n  }\n  if ( (PalInputGetKeyPull(v5) & 0x800000) != 0 || *(_DWORD *)(v6 + 8) )\n  {\n    *(_DWORD *)(v6 + 8) = 1;\n    a1[a1[71589] + 64670] = -1;\n    return 1;\n  }\n  else\n  {\n    a1[a1[71589] + 64670] = 0;\n    result = 1;\n    a1[87981] = 1;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x4237e0",
+          "push    ebp"
+        ],
+        [
+          "0x4237e1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x4237e3",
+          "mov     ecx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4237e9",
+          "push    ebx"
+        ],
+        [
+          "0x4237ea",
+          "push    esi"
+        ],
+        [
+          "0x4237eb",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x4237ee",
+          "push    edi"
+        ],
+        [
+          "0x4237ef",
+          "mov     edx, [esi+45E90h]"
+        ],
+        [
+          "0x4237f5",
+          "lea     eax, [edx-1]"
+        ],
+        [
+          "0x4237f8",
+          "test    eax, eax"
+        ],
+        [
+          "0x4237fa",
+          "jns     short loc_423816"
+        ],
+        [
+          "0x4237fc",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x423801",
+          "push    0"
+        ],
+        [
+          "0x423803",
+          "push    0"
+        ],
+        [
+          "0x423805",
+          "call    ecx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423807",
+          "mov     edx, [esi+45E90h]"
+        ],
+        [
+          "0x42380d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x423810",
+          "mov     ecx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423816",
+          "dec     edx"
+        ],
+        [
+          "0x423817",
+          "mov     [esi+45E90h], edx"
+        ],
+        [
+          "0x42381d",
+          "mov     edi, [esi+edx*4+3F178h]"
+        ],
+        [
+          "0x423824",
+          "lea     eax, [edx-1]"
+        ],
+        [
+          "0x423827",
+          "test    eax, eax"
+        ],
+        [
+          "0x423829",
+          "jns     short loc_42383F"
+        ],
+        [
+          "0x42382b",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x423830",
+          "push    0"
+        ],
+        [
+          "0x423832",
+          "push    0"
+        ],
+        [
+          "0x423834",
+          "call    ecx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423836",
+          "mov     edx, [esi+45E90h]"
+        ],
+        [
+          "0x42383c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x42383f",
+          "lea     eax, [edx-1]"
+        ],
+        [
+          "0x423842",
+          "lea     edx, [esi+3288h]"
+        ],
+        [
+          "0x423848",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x42384e",
+          "mov     ecx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x423855",
+          "test    edx, edx"
+        ],
+        [
+          "0x423857",
+          "jz      loc_4238F6"
+        ],
+        [
+          "0x42385d",
+          "test    edi, edi"
+        ],
+        [
+          "0x42385f",
+          "js      loc_4238F6"
+        ],
+        [
+          "0x423865",
+          "cmp     edi, 10h"
+        ],
+        [
+          "0x423868",
+          "jnb     loc_4238F6"
+        ],
+        [
+          "0x42386e",
+          "imul    eax, edi, 11C8h"
+        ],
+        [
+          "0x423874",
+          "lea     ebx, [edx+10h]"
+        ],
+        [
+          "0x423877",
+          "add     ebx, eax"
+        ],
+        [
+          "0x423879",
+          "jz      short loc_4238F6"
+        ],
+        [
+          "0x42387b",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x42387d",
+          "js      short loc_4238ED"
+        ],
+        [
+          "0x42387f",
+          "cmp     ecx, 80h"
+        ],
+        [
+          "0x423885",
+          "jnb     short loc_4238ED"
+        ],
+        [
+          "0x423887",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x423889",
+          "shl     eax, 5"
+        ],
+        [
+          "0x42388c",
+          "add     eax, 34h ; '4'"
+        ],
+        [
+          "0x42388f",
+          "add     eax, ebx"
+        ],
+        [
+          "0x423891",
+          "jz      short loc_4238ED"
+        ],
+        [
+          "0x423893",
+          "call    __imp_PalInputGetKeyPull"
+        ],
+        [
+          "0x423899",
+          "test    eax, 800000h"
+        ],
+        [
+          "0x42389e",
+          "jnz     short loc_4238CB"
+        ],
+        [
+          "0x4238a0",
+          "cmp     dword ptr [ebx+8], 0"
+        ],
+        [
+          "0x4238a4",
+          "jnz     short loc_4238CB"
+        ],
+        [
+          "0x4238a6",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4238ac",
+          "pop     edi"
+        ],
+        [
+          "0x4238ad",
+          "mov     dword ptr [esi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x4238b8",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4238bd",
+          "mov     dword ptr [esi+55EB4h], 1"
+        ],
+        [
+          "0x4238c7",
+          "pop     esi"
+        ],
+        [
+          "0x4238c8",
+          "pop     ebx"
+        ],
+        [
+          "0x4238c9",
+          "pop     ebp"
+        ],
+        [
+          "0x4238ca",
+          "retn"
+        ],
+        [
+          "0x4238cb",
+          "mov     dword ptr [ebx+8], 1"
+        ],
+        [
+          "0x4238d2",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4238d8",
+          "pop     edi"
+        ],
+        [
+          "0x4238d9",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x4238e4",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4238e9",
+          "pop     esi"
+        ],
+        [
+          "0x4238ea",
+          "pop     ebx"
+        ],
+        [
+          "0x4238eb",
+          "pop     ebp"
+        ],
+        [
+          "0x4238ec",
+          "retn"
+        ],
+        [
+          "0x4238ed",
+          "push    ecx"
+        ],
+        [
+          "0x4238ee",
+          "push    edi"
+        ],
+        [
+          "0x4238ef",
+          "push    offset aBtnSlideEndDDO; \"btn_slide_end  %d, %d over NO\""
+        ],
+        [
+          "0x4238f4",
+          "jmp     short loc_4238FD"
+        ],
+        [
+          "0x4238f6",
+          "push    ecx"
+        ],
+        [
+          "0x4238f7",
+          "push    edi"
+        ],
+        [
+          "0x4238f8",
+          "push    offset aBtnSlideEndDDO_0; \"btn_slide_end  %d, %d over ID\""
+        ],
+        [
+          "0x4238fd",
+          "mov     eax, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423902",
+          "push    0"
+        ],
+        [
+          "0x423904",
+          "push    0"
+        ],
+        [
+          "0x423906",
+          "call    eax ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423908",
+          "add     esp, 14h"
+        ],
+        [
+          "0x42390b",
+          "mov     eax, 1"
+        ],
+        [
+          "0x423910",
+          "pop     edi"
+        ],
+        [
+          "0x423911",
+          "pop     esi"
+        ],
+        [
+          "0x423912",
+          "pop     ebx"
+        ],
+        [
+          "0x423913",
+          "pop     ebp"
+        ],
+        [
+          "0x423914",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x423110",
+      "name": "sub_423110",
+      "xrefs": [
+        {
+          "from": "0x4273e1",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaa94",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_423110(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edx\n  int v3; // ebx\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( a1 == -12936 || v2 >= 0x10 || (v3 = 4552 * v2 + a1 + 12952) == 0 )\n  {\n    PalDebugPrintf(0, 0, \"btn_get_push %d\", v2);\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = -1;\n    return 1;\n  }\n  else\n  {\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = *(_DWORD *)(v3 + 24);\n    PalDebugPrintf(10, 0, \"[%d] btn_get_push %d\", *(_DWORD *)(v3 + 24), v2);\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x423110",
+          "push    ebp"
+        ],
+        [
+          "0x423111",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x423113",
+          "push    ebx"
+        ],
+        [
+          "0x423114",
+          "push    esi"
+        ],
+        [
+          "0x423115",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x423118",
+          "push    edi"
+        ],
+        [
+          "0x423119",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42311f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x423125",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x423128",
+          "test    eax, eax"
+        ],
+        [
+          "0x42312a",
+          "jns     short loc_423140"
+        ],
+        [
+          "0x42312c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x423131",
+          "push    0"
+        ],
+        [
+          "0x423133",
+          "push    0"
+        ],
+        [
+          "0x423135",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423137",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x42313d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x423140",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x423143",
+          "lea     ecx, [esi+3288h]"
+        ],
+        [
+          "0x423149",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x42314f",
+          "mov     edx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x423156",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x423158",
+          "jz      short loc_42319C"
+        ],
+        [
+          "0x42315a",
+          "test    edx, edx"
+        ],
+        [
+          "0x42315c",
+          "js      short loc_42319C"
+        ],
+        [
+          "0x42315e",
+          "cmp     edx, 10h"
+        ],
+        [
+          "0x423161",
+          "jnb     short loc_42319C"
+        ],
+        [
+          "0x423163",
+          "imul    eax, edx, 11C8h"
+        ],
+        [
+          "0x423169",
+          "lea     ebx, [ecx+10h]"
+        ],
+        [
+          "0x42316c",
+          "add     ebx, eax"
+        ],
+        [
+          "0x42316e",
+          "jz      short loc_42319C"
+        ],
+        [
+          "0x423170",
+          "mov     ecx, [esi+45E94h]"
+        ],
+        [
+          "0x423176",
+          "mov     eax, [ebx+18h]"
+        ],
+        [
+          "0x423179",
+          "push    edx"
+        ],
+        [
+          "0x42317a",
+          "mov     [esi+ecx*4+3F278h], eax"
+        ],
+        [
+          "0x423181",
+          "push    dword ptr [ebx+18h]"
+        ],
+        [
+          "0x423184",
+          "push    offset aDBtnGetPushD; \"[%d] btn_get_push %d\""
+        ],
+        [
+          "0x423189",
+          "push    0"
+        ],
+        [
+          "0x42318b",
+          "push    0Ah"
+        ],
+        [
+          "0x42318d",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42318f",
+          "add     esp, 14h"
+        ],
+        [
+          "0x423192",
+          "mov     eax, 1"
+        ],
+        [
+          "0x423197",
+          "pop     edi"
+        ],
+        [
+          "0x423198",
+          "pop     esi"
+        ],
+        [
+          "0x423199",
+          "pop     ebx"
+        ],
+        [
+          "0x42319a",
+          "pop     ebp"
+        ],
+        [
+          "0x42319b",
+          "retn"
+        ],
+        [
+          "0x42319c",
+          "push    edx"
+        ],
+        [
+          "0x42319d",
+          "push    offset aBtnGetPushD; \"btn_get_push %d\""
+        ],
+        [
+          "0x4231a2",
+          "push    0"
+        ],
+        [
+          "0x4231a4",
+          "push    0"
+        ],
+        [
+          "0x4231a6",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4231a8",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4231ae",
+          "add     esp, 10h"
+        ],
+        [
+          "0x4231b1",
+          "pop     edi"
+        ],
+        [
+          "0x4231b2",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x4231bd",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4231c2",
+          "pop     esi"
+        ],
+        [
+          "0x4231c3",
+          "pop     ebx"
+        ],
+        [
+          "0x4231c4",
+          "pop     ebp"
+        ],
+        [
+          "0x4231c5",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x423050",
+      "name": "sub_423050",
+      "xrefs": [
+        {
+          "from": "0x427447",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaaac",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_423050(int a1)\n{\n  int v1; // ecx\n  unsigned int v2; // edx\n  int v3; // ebx\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( a1 == -12936 || v2 >= 0x10 || (v3 = 4552 * v2 + a1 + 12952) == 0 )\n  {\n    PalDebugPrintf(0, 0, \"***btn_get_onmouse %d over ID\", v2);\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = -1;\n    return 1;\n  }\n  else\n  {\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = *(_DWORD *)(v3 + 28);\n    PalDebugPrintf(10, 0, \"[%d] btn_get_onmouse %d\", *(_DWORD *)(v3 + 28), v2);\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x423050",
+          "push    ebp"
+        ],
+        [
+          "0x423051",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x423053",
+          "push    ebx"
+        ],
+        [
+          "0x423054",
+          "push    esi"
+        ],
+        [
+          "0x423055",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x423058",
+          "push    edi"
+        ],
+        [
+          "0x423059",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42305f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x423065",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x423068",
+          "test    eax, eax"
+        ],
+        [
+          "0x42306a",
+          "jns     short loc_423080"
+        ],
+        [
+          "0x42306c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x423071",
+          "push    0"
+        ],
+        [
+          "0x423073",
+          "push    0"
+        ],
+        [
+          "0x423075",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x423077",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x42307d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x423080",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x423083",
+          "lea     ecx, [esi+3288h]"
+        ],
+        [
+          "0x423089",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x42308f",
+          "mov     edx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x423096",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x423098",
+          "jz      short loc_4230DC"
+        ],
+        [
+          "0x42309a",
+          "test    edx, edx"
+        ],
+        [
+          "0x42309c",
+          "js      short loc_4230DC"
+        ],
+        [
+          "0x42309e",
+          "cmp     edx, 10h"
+        ],
+        [
+          "0x4230a1",
+          "jnb     short loc_4230DC"
+        ],
+        [
+          "0x4230a3",
+          "imul    eax, edx, 11C8h"
+        ],
+        [
+          "0x4230a9",
+          "lea     ebx, [ecx+10h]"
+        ],
+        [
+          "0x4230ac",
+          "add     ebx, eax"
+        ],
+        [
+          "0x4230ae",
+          "jz      short loc_4230DC"
+        ],
+        [
+          "0x4230b0",
+          "mov     ecx, [esi+45E94h]"
+        ],
+        [
+          "0x4230b6",
+          "mov     eax, [ebx+1Ch]"
+        ],
+        [
+          "0x4230b9",
+          "push    edx"
+        ],
+        [
+          "0x4230ba",
+          "mov     [esi+ecx*4+3F278h], eax"
+        ],
+        [
+          "0x4230c1",
+          "push    dword ptr [ebx+1Ch]"
+        ],
+        [
+          "0x4230c4",
+          "push    offset aDBtnGetOnmouse; \"[%d] btn_get_onmouse %d\""
+        ],
+        [
+          "0x4230c9",
+          "push    0"
+        ],
+        [
+          "0x4230cb",
+          "push    0Ah"
+        ],
+        [
+          "0x4230cd",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4230cf",
+          "add     esp, 14h"
+        ],
+        [
+          "0x4230d2",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4230d7",
+          "pop     edi"
+        ],
+        [
+          "0x4230d8",
+          "pop     esi"
+        ],
+        [
+          "0x4230d9",
+          "pop     ebx"
+        ],
+        [
+          "0x4230da",
+          "pop     ebp"
+        ],
+        [
+          "0x4230db",
+          "retn"
+        ],
+        [
+          "0x4230dc",
+          "push    edx"
+        ],
+        [
+          "0x4230dd",
+          "push    offset aBtnGetOnmouseD; \"***btn_get_onmouse %d over ID\""
+        ],
+        [
+          "0x4230e2",
+          "push    0"
+        ],
+        [
+          "0x4230e4",
+          "push    0"
+        ],
+        [
+          "0x4230e6",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4230e8",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4230ee",
+          "add     esp, 10h"
+        ],
+        [
+          "0x4230f1",
+          "pop     edi"
+        ],
+        [
+          "0x4230f2",
+          "mov     dword ptr [esi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x4230fd",
+          "mov     eax, 1"
+        ],
+        [
+          "0x423102",
+          "pop     esi"
+        ],
+        [
+          "0x423103",
+          "pop     ebx"
+        ],
+        [
+          "0x423104",
+          "pop     ebp"
+        ],
+        [
+          "0x423105",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x426080",
+      "name": "sub_426080",
+      "xrefs": [
+        {
+          "from": "0x427557",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaaec",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_426080(int a1)\n{\n  int v1; // ecx\n  int v2; // ecx\n  unsigned int v3; // ebx\n  unsigned int v4; // edx\n  int v6; // [esp-Ch] [ebp-18h]\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  v2 = v1 - 1;\n  *(_DWORD *)(a1 + 286352) = v2;\n  v3 = *(_DWORD *)(a1 + 4 * v2 + 258424);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v2 - 1;\n  v4 = *(_DWORD *)(a1 + 4 * (v2 - 1) + 258424);\n  *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 0;\n  if ( v3 < 0x10 )\n  {\n    if ( v4 < 0x80 )\n    {\n      if ( *(_DWORD *)(4552 * v3 + 32 * v4 + a1 + 13004) )\n      {\n        v6 = *(_DWORD *)(4552 * v3 + a1 + 17500);\n        *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v6;\n        PalDebugPrintf(10, 0, \"[%d]btn_get_toggle  %d, %d\", v6, v3, v4);\n      }\n      return 1;\n    }\n    else\n    {\n      PalDebugPrintf(0, 0, \"btn count over error : %d\", v4);\n      return 0;\n    }\n  }\n  else\n  {\n    PalDebugPrintf(0, 0, \"btn group over error : %d\", v3);\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x426080",
+          "push    ebp"
+        ],
+        [
+          "0x426081",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x426083",
+          "push    ebx"
+        ],
+        [
+          "0x426084",
+          "push    esi"
+        ],
+        [
+          "0x426085",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x426088",
+          "push    edi"
+        ],
+        [
+          "0x426089",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42608f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x426095",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x426098",
+          "test    eax, eax"
+        ],
+        [
+          "0x42609a",
+          "jns     short loc_4260B0"
+        ],
+        [
+          "0x42609c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x4260a1",
+          "push    0"
+        ],
+        [
+          "0x4260a3",
+          "push    0"
+        ],
+        [
+          "0x4260a5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4260a7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x4260ad",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4260b0",
+          "dec     ecx"
+        ],
+        [
+          "0x4260b1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x4260b7",
+          "mov     ebx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x4260be",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4260c1",
+          "test    eax, eax"
+        ],
+        [
+          "0x4260c3",
+          "jns     short loc_4260D9"
+        ],
+        [
+          "0x4260c5",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x4260ca",
+          "push    0"
+        ],
+        [
+          "0x4260cc",
+          "push    0"
+        ],
+        [
+          "0x4260ce",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4260d0",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x4260d6",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4260d9",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4260dc",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x4260e2",
+          "mov     edx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x4260e9",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4260ef",
+          "mov     dword ptr [esi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x4260fa",
+          "cmp     ebx, 10h"
+        ],
+        [
+          "0x4260fd",
+          "jb      short loc_426115"
+        ],
+        [
+          "0x4260ff",
+          "push    ebx"
+        ],
+        [
+          "0x426100",
+          "push    offset aBtnGroupOverEr; \"btn group over error : %d\""
+        ],
+        [
+          "0x426105",
+          "push    0"
+        ],
+        [
+          "0x426107",
+          "push    0"
+        ],
+        [
+          "0x426109",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42610b",
+          "add     esp, 10h"
+        ],
+        [
+          "0x42610e",
+          "xor     eax, eax"
+        ],
+        [
+          "0x426110",
+          "pop     edi"
+        ],
+        [
+          "0x426111",
+          "pop     esi"
+        ],
+        [
+          "0x426112",
+          "pop     ebx"
+        ],
+        [
+          "0x426113",
+          "pop     ebp"
+        ],
+        [
+          "0x426114",
+          "retn"
+        ],
+        [
+          "0x426115",
+          "cmp     edx, 80h"
+        ],
+        [
+          "0x42611b",
+          "jb      short loc_426133"
+        ],
+        [
+          "0x42611d",
+          "push    edx"
+        ],
+        [
+          "0x42611e",
+          "push    offset aBtnCountOverEr; \"btn count over error : %d\""
+        ],
+        [
+          "0x426123",
+          "push    0"
+        ],
+        [
+          "0x426125",
+          "push    0"
+        ],
+        [
+          "0x426127",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x426129",
+          "add     esp, 10h"
+        ],
+        [
+          "0x42612c",
+          "xor     eax, eax"
+        ],
+        [
+          "0x42612e",
+          "pop     edi"
+        ],
+        [
+          "0x42612f",
+          "pop     esi"
+        ],
+        [
+          "0x426130",
+          "pop     ebx"
+        ],
+        [
+          "0x426131",
+          "pop     ebp"
+        ],
+        [
+          "0x426132",
+          "retn"
+        ],
+        [
+          "0x426133",
+          "imul    ecx, ebx, 11C8h"
+        ],
+        [
+          "0x426139",
+          "mov     eax, edx"
+        ],
+        [
+          "0x42613b",
+          "shl     eax, 5"
+        ],
+        [
+          "0x42613e",
+          "add     eax, ecx"
+        ],
+        [
+          "0x426140",
+          "cmp     dword ptr [eax+esi+32CCh], 0"
+        ],
+        [
+          "0x426148",
+          "jz      short loc_42616F"
+        ],
+        [
+          "0x42614a",
+          "mov     ecx, [ecx+esi+445Ch]"
+        ],
+        [
+          "0x426151",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x426157",
+          "push    edx"
+        ],
+        [
+          "0x426158",
+          "push    ebx"
+        ],
+        [
+          "0x426159",
+          "push    ecx"
+        ],
+        [
+          "0x42615a",
+          "push    offset aDBtnGetToggleD; \"[%d]btn_get_toggle  %d, %d\""
+        ],
+        [
+          "0x42615f",
+          "push    0"
+        ],
+        [
+          "0x426161",
+          "push    0Ah"
+        ],
+        [
+          "0x426163",
+          "mov     [esi+eax*4+3F278h], ecx"
+        ],
+        [
+          "0x42616a",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42616c",
+          "add     esp, 18h"
+        ],
+        [
+          "0x42616f",
+          "pop     edi"
+        ],
+        [
+          "0x426170",
+          "pop     esi"
+        ],
+        [
+          "0x426171",
+          "mov     eax, 1"
+        ],
+        [
+          "0x426176",
+          "pop     ebx"
+        ],
+        [
+          "0x426177",
+          "pop     ebp"
+        ],
+        [
+          "0x426178",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x426180",
+      "name": "sub_426180",
+      "xrefs": [
+        {
+          "from": "0x427568",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaaf0",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_426180(int a1)\n{\n  int v1; // ecx\n  int v2; // ecx\n  int v3; // edx\n  unsigned int v4; // ebx\n  int v5; // edx\n  _DWORD *v6; // eax\n  _DWORD *v7; // edi\n  const char *v9; // [esp-Ch] [ebp-198h]\n  unsigned int v10; // [esp-8h] [ebp-194h]\n  unsigned int v11; // [esp-4h] [ebp-190h]\n  unsigned int v12; // [esp+Ch] [ebp-180h]\n  unsigned int v13; // [esp+10h] [ebp-17Ch]\n  _BYTE v14[28]; // [esp+14h] [ebp-178h] BYREF\n  int v15; // [esp+30h] [ebp-15Ch]\n  int v16; // [esp+34h] [ebp-158h]\n  int v17; // [esp+38h] [ebp-154h]\n  int v18; // [esp+3Ch] [ebp-150h]\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  v2 = v1 - 1;\n  *(_DWORD *)(a1 + 286352) = v2;\n  v13 = *(_DWORD *)(a1 + 4 * v2 + 258424);\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n  }\n  v3 = v2 - 1;\n  *(_DWORD *)(a1 + 286352) = v2 - 1;\n  v4 = *(_DWORD *)(a1 + 4 * v2 + 258420);\n  if ( v2 - 2 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v3 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v3 - 1;\n  v12 = *(_DWORD *)(a1 + 4 * (v3 - 1) + 258424);\n  if ( a1 == -12936 || v13 >= 0x10 || (v5 = 4552 * v13 + a1 + 12952) == 0 )\n  {\n    v11 = v4;\n    v10 = v13;\n    v9 = \"btn_get_info  %d, %d, over ID\";\n    goto LABEL_18;\n  }\n  if ( v4 >= 0x80 || (v6 = (_DWORD *)(v5 + 32 * v4 + 52)) == 0 )\n  {\n    v11 = v4;\n    v10 = v13;\n    v9 = \"btn_get_info  %d, %d over ID\";\nLABEL_18:\n    *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 0;\n    PalDebugPrintf(0, 0, v9, v10, v11);\n    return 1;\n  }\n  v7 = (_DWORD *)*v6;\n  if ( *v6 )\n  {\n    PalSpriteGetInfo(*v7, v14);\n    if ( v12 > 0x78 )\n    {\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 0;\n    }\n    else\n    {\n      *(_DWORD *)(a1 + 4 * v12 + 263796) = v7[4];\n      *(_DWORD *)(a1 + 4 * v12 + 263800) = v7[5];\n      *(_DWORD *)(a1 + 4 * v12 + 263804) = v17;\n      *(_DWORD *)(a1 + 4 * v12 + 263808) = v18;\n      *(_DWORD *)(a1 + 4 * v12 + 263812) = v15;\n      *(_DWORD *)(a1 + 4 * v12 + 263816) = v16;\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 1;\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x426180",
+          "push    ebp"
+        ],
+        [
+          "0x426181",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x426183",
+          "sub     esp, 180h"
+        ],
+        [
+          "0x426189",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x42618e",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x426190",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x426193",
+          "push    ebx"
+        ],
+        [
+          "0x426194",
+          "push    esi"
+        ],
+        [
+          "0x426195",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x426198",
+          "push    edi"
+        ],
+        [
+          "0x426199",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42619f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x4261a5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4261a8",
+          "test    eax, eax"
+        ],
+        [
+          "0x4261aa",
+          "jns     short loc_4261C0"
+        ],
+        [
+          "0x4261ac",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x4261b1",
+          "push    0"
+        ],
+        [
+          "0x4261b3",
+          "push    0"
+        ],
+        [
+          "0x4261b5",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4261b7",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x4261bd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4261c0",
+          "dec     ecx"
+        ],
+        [
+          "0x4261c1",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x4261c7",
+          "mov     eax, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x4261ce",
+          "mov     [ebp+var_17C], eax"
+        ],
+        [
+          "0x4261d4",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4261d7",
+          "test    eax, eax"
+        ],
+        [
+          "0x4261d9",
+          "jns     short loc_4261EF"
+        ],
+        [
+          "0x4261db",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x4261e0",
+          "push    0"
+        ],
+        [
+          "0x4261e2",
+          "push    0"
+        ],
+        [
+          "0x4261e4",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4261e6",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x4261ec",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4261ef",
+          "lea     edx, [ecx-1]"
+        ],
+        [
+          "0x4261f2",
+          "lea     eax, [ecx-2]"
+        ],
+        [
+          "0x4261f5",
+          "mov     [esi+45E90h], edx"
+        ],
+        [
+          "0x4261fb",
+          "mov     ebx, [esi+ecx*4+3F174h]"
+        ],
+        [
+          "0x426202",
+          "test    eax, eax"
+        ],
+        [
+          "0x426204",
+          "jns     short loc_42621A"
+        ],
+        [
+          "0x426206",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x42620b",
+          "push    0"
+        ],
+        [
+          "0x42620d",
+          "push    0"
+        ],
+        [
+          "0x42620f",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x426211",
+          "mov     edx, [esi+45E90h]"
+        ],
+        [
+          "0x426217",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x42621a",
+          "mov     ecx, [ebp+var_17C]"
+        ],
+        [
+          "0x426220",
+          "lea     eax, [edx-1]"
+        ],
+        [
+          "0x426223",
+          "lea     edx, [esi+3288h]"
+        ],
+        [
+          "0x426229",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x42622f",
+          "mov     eax, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x426236",
+          "mov     [ebp+var_180], eax"
+        ],
+        [
+          "0x42623c",
+          "test    edx, edx"
+        ],
+        [
+          "0x42623e",
+          "jz      loc_426328"
+        ],
+        [
+          "0x426244",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x426246",
+          "js      loc_426328"
+        ],
+        [
+          "0x42624c",
+          "cmp     ecx, 10h"
+        ],
+        [
+          "0x42624f",
+          "jnb     loc_426328"
+        ],
+        [
+          "0x426255",
+          "imul    eax, ecx, 11C8h"
+        ],
+        [
+          "0x42625b",
+          "add     edx, 10h"
+        ],
+        [
+          "0x42625e",
+          "add     edx, eax"
+        ],
+        [
+          "0x426260",
+          "jz      loc_426328"
+        ],
+        [
+          "0x426266",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x426268",
+          "js      loc_42631F"
+        ],
+        [
+          "0x42626e",
+          "cmp     ebx, 80h"
+        ],
+        [
+          "0x426274",
+          "jnb     loc_42631F"
+        ],
+        [
+          "0x42627a",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x42627c",
+          "shl     eax, 5"
+        ],
+        [
+          "0x42627f",
+          "add     eax, 34h ; '4'"
+        ],
+        [
+          "0x426282",
+          "add     eax, edx"
+        ],
+        [
+          "0x426284",
+          "jz      loc_42631F"
+        ],
+        [
+          "0x42628a",
+          "mov     edi, [eax]"
+        ],
+        [
+          "0x42628c",
+          "test    edi, edi"
+        ],
+        [
+          "0x42628e",
+          "jz      loc_426349"
+        ],
+        [
+          "0x426294",
+          "lea     eax, [ebp+var_178]"
+        ],
+        [
+          "0x42629a",
+          "push    eax"
+        ],
+        [
+          "0x42629b",
+          "push    dword ptr [edi]"
+        ],
+        [
+          "0x42629d",
+          "call    __imp_PalSpriteGetInfo"
+        ],
+        [
+          "0x4262a3",
+          "mov     ecx, [ebp+var_180]"
+        ],
+        [
+          "0x4262a9",
+          "add     esp, 8"
+        ],
+        [
+          "0x4262ac",
+          "cmp     ecx, 78h ; 'x'"
+        ],
+        [
+          "0x4262af",
+          "ja      short loc_42630C"
+        ],
+        [
+          "0x4262b1",
+          "mov     eax, [edi+10h]"
+        ],
+        [
+          "0x4262b4",
+          "mov     [esi+ecx*4+40674h], eax"
+        ],
+        [
+          "0x4262bb",
+          "mov     eax, [edi+14h]"
+        ],
+        [
+          "0x4262be",
+          "mov     [esi+ecx*4+40678h], eax"
+        ],
+        [
+          "0x4262c5",
+          "mov     eax, [ebp+var_154]"
+        ],
+        [
+          "0x4262cb",
+          "mov     [esi+ecx*4+4067Ch], eax"
+        ],
+        [
+          "0x4262d2",
+          "mov     eax, [ebp+var_150]"
+        ],
+        [
+          "0x4262d8",
+          "mov     [esi+ecx*4+40680h], eax"
+        ],
+        [
+          "0x4262df",
+          "mov     eax, [ebp+var_15C]"
+        ],
+        [
+          "0x4262e5",
+          "mov     [esi+ecx*4+40684h], eax"
+        ],
+        [
+          "0x4262ec",
+          "mov     eax, [ebp+var_158]"
+        ],
+        [
+          "0x4262f2",
+          "mov     [esi+ecx*4+40688h], eax"
+        ],
+        [
+          "0x4262f9",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x4262ff",
+          "mov     dword ptr [esi+eax*4+3F278h], 1"
+        ],
+        [
+          "0x42630a",
+          "jmp     short loc_426349"
+        ],
+        [
+          "0x42630c",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x426312",
+          "mov     dword ptr [esi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x42631d",
+          "jmp     short loc_426349"
+        ],
+        [
+          "0x42631f",
+          "push    ebx"
+        ],
+        [
+          "0x426320",
+          "push    ecx"
+        ],
+        [
+          "0x426321",
+          "push    offset aBtnGetInfoDDOv; \"btn_get_info  %d, %d over ID\""
+        ],
+        [
+          "0x426326",
+          "jmp     short loc_42632F"
+        ],
+        [
+          "0x426328",
+          "push    ebx"
+        ],
+        [
+          "0x426329",
+          "push    ecx"
+        ],
+        [
+          "0x42632a",
+          "push    offset aBtnGetInfoDDOv_0; \"btn_get_info  %d, %d, over ID\""
+        ],
+        [
+          "0x42632f",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x426335",
+          "push    0"
+        ],
+        [
+          "0x426337",
+          "push    0"
+        ],
+        [
+          "0x426339",
+          "mov     dword ptr [esi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x426344",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x426346",
+          "add     esp, 14h"
+        ],
+        [
+          "0x426349",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x42634c",
+          "mov     eax, 1"
+        ],
+        [
+          "0x426351",
+          "pop     edi"
+        ],
+        [
+          "0x426352",
+          "pop     esi"
+        ],
+        [
+          "0x426353",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x426355",
+          "pop     ebx"
+        ],
+        [
+          "0x426356",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x42635b",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x42635d",
+          "pop     ebp"
+        ],
+        [
+          "0x42635e",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

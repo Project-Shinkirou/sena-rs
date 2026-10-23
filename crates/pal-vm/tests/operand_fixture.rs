@@ -93,6 +93,8 @@ fn assets_with_script(entry_pc: u32, script_body: Vec<u8>) -> CoreAssets {
         text_dat_multilingual: false,
         file_dat_layout: FileDatLayout::default(),
         extended_softpal: false,
+            native_build: Default::default(),
+            registered_softpal: false,
         script_check_value: 0,
         script_entry_pc: entry_pc,
         point_table: PointTable::parse(&[]).expect("empty Point.dat should parse"),
@@ -266,13 +268,13 @@ fn pack_args_drop_args_cycle() {
 // UnsupportedCommand sets faulted-like status without crashing
 // ---------------------------------------------------------------------------
 
-/// An unknown opcode (e.g. opcode 99) sets UnsupportedCommand status; the runtime stays alive.
+/// An unknown opcode (e.g. opcode 65535) sets UnsupportedCommand status; the runtime stays alive.
 #[test]
 fn unsupported_command_sets_status_without_crash() {
     let entry_pc = 12u32;
     let mut body = Vec::new();
-    // opcode 99 is not implemented
-    body.extend_from_slice(&opcode(99));
+    // This opcode is outside the audited native dispatch range.
+    body.extend_from_slice(&opcode(0xFFFF));
 
     let assets = assets_with_script(entry_pc, body);
     let config = ScriptRuntimeConfig::default();
@@ -282,9 +284,9 @@ fn unsupported_command_sets_status_without_crash() {
     assert!(
         matches!(
             runtime.status(),
-            RuntimeStatus::UnsupportedCommand { opcode: 99, .. }
+            RuntimeStatus::UnsupportedCommand { opcode: 0xFFFF, .. }
         ),
-        "expected UnsupportedCommand(99), got {:?}",
+        "expected UnsupportedCommand(65535), got {:?}",
         runtime.status()
     );
 }
@@ -299,7 +301,9 @@ fn unsupported_command_sets_status_without_crash() {
 fn wait_click_emits_request_and_status_is_wait_click() {
     let entry_pc = 12u32;
     let mut body = Vec::new();
-    body.extend_from_slice(&opcode(253)); // WaitClick
+    body.extend_from_slice(&opcode(31));
+    body.extend_from_slice(&word(120));
+    body.extend_from_slice(&opcode(253)); // Native wait_click(duration_ms).
 
     let assets = assets_with_script(entry_pc, body);
     let config = ScriptRuntimeConfig::default();
@@ -311,8 +315,8 @@ fn wait_click_emits_request_and_status_is_wait_click() {
 
     assert!(
         tick.wait_request
-            .map_or(false, |r| r == pal_vm::WaitRequest::Click),
-        "expected WaitRequest::Click"
+            .map_or(false, |r| r == pal_vm::WaitRequest::ClickOrTime(120)),
+        "expected WaitRequest::ClickOrTime(120)"
     );
     assert!(
         matches!(runtime.status(), RuntimeStatus::WaitClick { .. }),
@@ -594,11 +598,11 @@ fn title_system_button_extcalls_use_script_arities() {
 }
 
 #[test]
-fn category9_index35_returns_pal_time_for_title_delta_logic() {
+fn category18_index121_returns_pal_time_for_title_delta_logic() {
     let entry_pc = 12u32;
     let mut body = Vec::new();
     body.extend_from_slice(&opcode(23));
-    body.extend_from_slice(&word(ext_raw(9, 35)));
+    body.extend_from_slice(&word(ext_raw(18, 121)));
     body.extend_from_slice(&word(dst_slot(1)));
     body.extend_from_slice(&opcode(21));
 
@@ -608,7 +612,7 @@ fn category9_index35_returns_pal_time_for_title_delta_logic() {
     runtime.set_pal_time(3456);
     let tick = runtime
         .run_frame(&assets, &config)
-        .expect("category 9 timer extcall should run");
+        .expect("category 18 timer extcall should run");
 
     assert_eq!(runtime.vars()[1], 3456);
     assert!(

@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-24",
+  "scope": "Remove automatic source-height fitting and duplicate rectangle projection for ordinary standing-art wrappers. Preserve native source dimensions, script scale, placement and movement.",
+  "subagents_started": 0,
+  "regression_tests_added": 0,
+  "cargo_tests_run": 0,
+  "game_roots": "Original game resources remain read-only; isolated roots and save directories under target/reverse-audit.",
+  "native_evidence": [
+    "reverse/evidence/standing-size-koikake.json",
+    "reverse/evidence/standing-size-reference.json",
+    "reverse/evidence/pal-graphics/koikake-exports.json",
+    "reverse/abi/graphics32.json"
+  ],
+  "baseline_runtime_sha256": "88854343f151fff33a03eacb35cf7b9f027663f02aca7bc8c784c84fecb47cf0",
+  "checks": [
+    {
+      "command": "cargo build -p pal-vm --release --bin sena --lib --features host-audio",
+      "exit_code": 0,
+      "log": "target/reverse-audit/standing-size/build-final.log"
+    },
+    {
+      "command": "cargo check -p pal-vm --lib --no-default-features --target i686-pc-windows-gnu",
+      "exit_code": 0,
+      "log": "target/reverse-audit/standing-size/windows-check.log"
+    },
+    {
+      "command": "python3 reverse/abi/generate.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 reverse/evidence/generate_registered_dispatch.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check -- AGENTS.md crates/pal-vm/src/runtime.rs",
+      "exit_code": 0
+    }
+  ],
+  "runs": [
+    {
+      "profile": "koikake",
+      "command": "RUST_LOG=pal_vm::sprite=debug,warn target/release/sena target/reverse-audit/isolated-game --headless --no-audio --diagnostic-frame-ms 0 --fixed-timestep-ms 16 --diagnostic-auto-advance --diagnostic-auto-advance-min-frames 15 --diagnostic-frames 17800 --diagnostic-click-when-hit-enabled 160:260 --diagnostic-png-at 17000:target/reverse-audit/standing-koikake-17000.png --diagnostic-png target/reverse-audit/standing-koikake-17800.png",
+      "log": "target/reverse-audit/standing-size/koikake-final.log",
+      "log_sha256": "1bb31c1970320e0325b3207d91a4dda54a072bad9369145a53b555d64e938230",
+      "last_frame": "[headless] frame=17799 clock=17800 dt=16ms elapsed=284800ms status=wait click (task) pc=0x00074538 textures=19 draw_commands=19 events=0 clear=[0.0363060329178679, 0.02, 0.05, 1.0]",
+      "draw_sample": "handle=263 name=ST07A_A040.PGD pos=(343,-478,0) src=1106x2048 scale=0.500 native_projection=None dst=(619.5,34.0,553.0,1024.0) alpha=255 priority=-4987",
+      "warnings": 67,
+      "faults": []
+    },
+    {
+      "profile": "totsulover",
+      "command": "RUST_LOG=pal_vm::sprite=debug,warn target/release/sena target/reverse-audit/isolated-totsulover-graphics --headless --no-audio --diagnostic-frame-ms 0 --fixed-timestep-ms 16 --diagnostic-auto-advance --diagnostic-auto-advance-min-frames 15 --diagnostic-frames 11150 --diagnostic-click 2500:200:140 --diagnostic-click 3000:540:415 --diagnostic-click 4500:620:150 --diagnostic-png-at 10920:target/reverse-audit/standing-newer-10920.png --diagnostic-png-at 11000:target/reverse-audit/standing-newer-11000.png --diagnostic-png target/reverse-audit/standing-newer-11150.png",
+      "log": "target/reverse-audit/standing-size/newer-portrait.log",
+      "log_sha256": "12fd57bf16da62bd36c8efd058e1990ebdbe3d6af3c9f859907ddb481f014af4",
+      "last_frame": "[headless] frame=11149 clock=11150 dt=16ms elapsed=178400ms status=wait frame (task) pc=0x00138C9C textures=10 draw_commands=10 events=0 clear=[0.02, 0.03, 0.055, 1.0]",
+      "draw_sample": "handle=484 name=ST03A_A010.pgd pos=(-384,-256,0) src=2048x2048 scale=1.000 native_projection=None dst=(-384.0,-256.0,2048.0,2048.0) alpha=255 priority=-4989",
+      "warnings": 67,
+      "faults": []
+    }
+  ],
+  "artifact_sha256": {
+    "crates/pal-vm/src/runtime.rs": "82b9b6163fff7fbee43dea57c747fae5ca6a64af6affe88ab92d8e8bc8cbaa2b",
+    "target/release/sena": "251ad5b2b6f97fb6953a74db2d617236d545baa277d067e0cb86bbb09a8dabfe",
+    "target/release/libpal_vm.dylib": "f8c76c2340faf923dca8079af5cb1fa30afa7740d1730e01c56ebfc25f2d424b",
+    "target/reverse-audit/standing-before-koikake.png": "f8ad291ea5da8f4e655d3476c16799ac4eeab8b8c62e5dc6b46024e4392cd3e4",
+    "target/reverse-audit/standing-koikake-17800.png": "66452affce26466a68514f80a0ec20c04b54ad43411399d69a70a018bf7d1359",
+    "target/reverse-audit/standing-newer-11000.png": "8dc57ccfd96841112c5181c17f4e282c7d821af2833931ed72ddad10251c0d91",
+    "reverse/evidence/standing-size-koikake.json": "2c7af67c65023f6895fb7d25dba4a356f5a89c239658749e563156293fe3f4dd",
+    "reverse/evidence/standing-size-reference.json": "f9940ccf60ce00fcd64ac297da205df4bcdf942b399c0246ae168259a952cf37"
+  },
+  "observations": {
+    "koikake_before": "At the 17000-frame scene, 1106x2048 standing art with script scale 50% drew 194.4x360 at y=298.7 because of automatic 1080/2048 fitting and full-rectangle 2/3 projection.",
+    "koikake_after": "Same script placement and movement produce source-centered scale 0.5, 553x1024 draw at y=34. The 17800-frame image shows normal half-body framing and expression replacement.",
+    "newer_after": "11000-frame capture shows visible standing art at its script size. ST03A_A010 uses scale 1.0 with no automatic fitting or full-rectangle projection."
+  },
+  "limitations": [
+    "The longer newer run faults at frame 11904 / PC 0x10D8FC on point id 1073741824. The unmodified baseline run faults at the same frame, PC and point id; the geometry change does not resolve this pre-existing script/VM issue. Logs: target/reverse-audit/standing-before-newer.log and target/reverse-audit/standing-size/newer-after.log.",
+    "Older portable snapshots can retain already fitted flattened transforms and lack original wrapper lanes. No automatic reconstruction is introduced here.",
+    "CPU headless captures and host/Windows compilation do not establish native pixel equivalence, hardware GPU acceptance, or full-game completion.",
+    "Native newer 3:4 arity/version-dependent placement remains a separately confirmed pending correction.",
+    "Existing font/layout, unsupported named animation and diagnostic scale warnings remain outside this correction."
+  ]
+}

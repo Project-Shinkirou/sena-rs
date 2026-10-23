@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalSpriteGetInfo",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "info",
+          "type": "PalSpriteInfoKoikake32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/save_format.rs::PalSpriteInfoKoikake32; crates/pal-vm/src/runtime/native_save.rs",
+      "notes": "Koikake-only 76-byte borrowed record; later builds use different layouts. Both pointers must be nonnull. Returns 1 on success, or 0 and sets PAL LastError 6 when either pointer is null; success does not clear LastError. GetInfo writes all fields; SetInfo copies raw fields into the sprite and updates an attached texture wrapper width/height without recomputing the source rectangle or reordering the render list. Native pointers are not portable arena handles. The save importer decodes this record explicitly as little-endian words; it never casts unaligned serialized bytes or native pointers. Portable reconstruction handles resource-backed scene records; this mapping is not a binary DLL export shim.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c29d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/koikake-save-subsystems.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetInfo",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "info",
+          "type": "const PalSpriteInfoKoikake32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/save_format.rs::PalSpriteInfoKoikake32; crates/pal-vm/src/runtime/native_save.rs",
+      "notes": "Koikake-only 76-byte borrowed record; later builds use different layouts. Both pointers must be nonnull. Returns 1 on success, or 0 and sets PAL LastError 6 when either pointer is null; success does not clear LastError. GetInfo writes all fields; SetInfo copies raw fields into the sprite and updates an attached texture wrapper width/height without recomputing the source rectangle or reordering the render list. Native pointers are not portable arena handles. The save importer decodes this record explicitly as little-endian words; it never casts unaligned serialized bytes or native pointers. Portable reconstruction handles resource-backed scene records; this mapping is not a binary DLL export shim.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c2b00",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/koikake-save-subsystems.json"
+          ]
+        }
+      }
+    }
+  ],
+  "shared_layouts": [
+    {
+      "name": "PalSpriteInfoKoikake32",
+      "size": 76,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "visible",
+          "offset": 0,
+          "type": "uint32_t"
+        },
+        {
+          "name": "color",
+          "offset": 4,
+          "type": "uint32_t"
+        },
+        {
+          "name": "x",
+          "offset": 8,
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "offset": 12,
+          "type": "float"
+        },
+        {
+          "name": "z",
+          "offset": 16,
+          "type": "float"
+        },
+        {
+          "name": "offset_x",
+          "offset": 20,
+          "type": "int32_t"
+        },
+        {
+          "name": "offset_y",
+          "offset": 24,
+          "type": "int32_t"
+        },
+        {
+          "name": "texture_width",
+          "offset": 28,
+          "type": "uint32_t"
+        },
+        {
+          "name": "texture_height",
+          "offset": 32,
+          "type": "uint32_t"
+        },
+        {
+          "name": "cell_width",
+          "offset": 36,
+          "type": "uint32_t"
+        },
+        {
+          "name": "cell_height",
+          "offset": 40,
+          "type": "uint32_t"
+        },
+        {
+          "name": "center_x",
+          "offset": 44,
+          "type": "int32_t"
+        },
+        {
+          "name": "center_y",
+          "offset": 48,
+          "type": "int32_t"
+        },
+        {
+          "name": "priority",
+          "offset": 52,
+          "type": "int32_t"
+        },
+        {
+          "name": "scale",
+          "offset": 56,
+          "type": "float"
+        },
+        {
+          "name": "rotation_x",
+          "offset": 60,
+          "type": "float"
+        },
+        {
+          "name": "rotation_y",
+          "offset": 64,
+          "type": "float"
+        },
+        {
+          "name": "rotation_z",
+          "offset": 68,
+          "type": "float"
+        },
+        {
+          "name": "render_mode",
+          "offset": 72,
+          "type": "uint32_t"
+        }
+      ],
+      "evidence": "reverse/evidence/pal-graphics/koikake-exports.json; reverse/evidence/koikake-save-subsystems.json"
+    }
+  ]
+}

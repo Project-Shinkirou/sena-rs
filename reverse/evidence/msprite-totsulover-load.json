@@ -1,0 +1,2326 @@
+{
+  "functions": [
+    {
+      "ea": "0x100aed90",
+      "name": "PalMSpriteLoad",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "char *__cdecl PalMSpriteLoad(int a1, int a2, int a3)\n{\n  char *v3; // esi\n  int v4; // eax\n  int v6; // ecx\n  int v7; // eax\n  int v8; // eax\n  int v9; // [esp-4h] [ebp-Ch]\n  int v10; // [esp-4h] [ebp-Ch]\n\n  if ( a1 && (v3 = (char *)PalMemoryAlloc(0x1A8u, 1)) != 0 )\n  {\n    v4 = sub_100AE920(a2);\n    *((_DWORD *)v3 + 5) = v4;\n    if ( v4 )\n    {\n      *((_DWORD *)v3 + 27) = a3;\n      *((_DWORD *)v3 + 10) = 0;\n      *((_DWORD *)v3 + 15) = -1;\n      *((_DWORD *)v3 + 28) = 1065353216;\n      *((_DWORD *)v3 + 29) = 1065353216;\n      *((_DWORD *)v3 + 30) = 0;\n      *((_DWORD *)v3 + 31) = 0;\n      *((_DWORD *)v3 + 32) = 0;\n      *((_DWORD *)v3 + 33) = 1;\n      *((_DWORD *)v3 + 16) = 0;\n      *((_DWORD *)v3 + 17) = 0;\n      v6 = *(_DWORD *)(v4 + 64);\n      *((_DWORD *)v3 + 23) = v6;\n      v9 = *(_DWORD *)(v4 + 68);\n      *((_DWORD *)v3 + 24) = v9;\n      SetRect((LPRECT)(v3 + 44), 0, 0, v6, v9);\n      v10 = *((_DWORD *)v3 + 24);\n      if ( (*((_BYTE *)dword_101336F4 + 1084) & 8) != 0 )\n        v7 = sub_100CDEF0(v10);\n      else\n        v7 = sub_100C7EF0(v10);\n      *(_DWORD *)v3 = v7;\n      v8 = *((_DWORD *)v3 + 5);\n      if ( v8 )\n        *(_DWORD *)(*(_DWORD *)(v8 + 36) + 376) = v3;\n      *((_DWORD *)v3 + 8) = PalRenderInsert(a1, v3, sub_100AE9B0, *((_DWORD *)v3 + 27));\n      return v3;\n    }\n    else\n    {\n      if ( dword_101336F4 )\n        --*((_DWORD *)dword_101336F4 + 82);\n      j___free_base(v3);\n      return 0;\n    }\n  }\n  else\n  {\n    SetLastError(6u);\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100aed90",
+          "push    ebp"
+        ],
+        [
+          "0x100aed91",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100aed93",
+          "push    esi"
+        ],
+        [
+          "0x100aed94",
+          "push    edi"
+        ],
+        [
+          "0x100aed95",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x100aed98",
+          "test    edi, edi"
+        ],
+        [
+          "0x100aed9a",
+          "jz      loc_100AEEAC"
+        ],
+        [
+          "0x100aeda0",
+          "push    1; char"
+        ],
+        [
+          "0x100aeda2",
+          "push    1A8h; Size"
+        ],
+        [
+          "0x100aeda7",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100aedac",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100aedae",
+          "add     esp, 8"
+        ],
+        [
+          "0x100aedb1",
+          "test    esi, esi"
+        ],
+        [
+          "0x100aedb3",
+          "jz      loc_100AEEAC"
+        ],
+        [
+          "0x100aedb9",
+          "mov     ecx, [ebp+arg_4]"
+        ],
+        [
+          "0x100aedbc",
+          "call    sub_100AE920"
+        ],
+        [
+          "0x100aedc1",
+          "mov     edx, eax"
+        ],
+        [
+          "0x100aedc3",
+          "mov     [esi+14h], edx"
+        ],
+        [
+          "0x100aedc6",
+          "test    edx, edx"
+        ],
+        [
+          "0x100aedc8",
+          "jnz     short loc_100AEDE8"
+        ],
+        [
+          "0x100aedca",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100aedcf",
+          "test    eax, eax"
+        ],
+        [
+          "0x100aedd1",
+          "jz      short loc_100AEDD9"
+        ],
+        [
+          "0x100aedd3",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100aedd9",
+          "push    esi; Block"
+        ],
+        [
+          "0x100aedda",
+          "call    j___free_base"
+        ],
+        [
+          "0x100aeddf",
+          "add     esp, 4"
+        ],
+        [
+          "0x100aede2",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100aede4",
+          "pop     edi"
+        ],
+        [
+          "0x100aede5",
+          "pop     esi"
+        ],
+        [
+          "0x100aede6",
+          "pop     ebp"
+        ],
+        [
+          "0x100aede7",
+          "retn"
+        ],
+        [
+          "0x100aede8",
+          "mov     eax, [ebp+arg_8]"
+        ],
+        [
+          "0x100aedeb",
+          "mov     [esi+6Ch], eax"
+        ],
+        [
+          "0x100aedee",
+          "mov     dword ptr [esi+28h], 0"
+        ],
+        [
+          "0x100aedf5",
+          "mov     dword ptr [esi+3Ch], 0FFFFFFFFh"
+        ],
+        [
+          "0x100aedfc",
+          "mov     dword ptr [esi+70h], 3F800000h"
+        ],
+        [
+          "0x100aee03",
+          "mov     dword ptr [esi+74h], 3F800000h"
+        ],
+        [
+          "0x100aee0a",
+          "mov     dword ptr [esi+78h], 0"
+        ],
+        [
+          "0x100aee11",
+          "mov     dword ptr [esi+7Ch], 0"
+        ],
+        [
+          "0x100aee18",
+          "mov     dword ptr [esi+80h], 0"
+        ],
+        [
+          "0x100aee22",
+          "mov     dword ptr [esi+84h], 1"
+        ],
+        [
+          "0x100aee2c",
+          "mov     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100aee33",
+          "mov     dword ptr [esi+44h], 0"
+        ],
+        [
+          "0x100aee3a",
+          "mov     ecx, [edx+40h]"
+        ],
+        [
+          "0x100aee3d",
+          "mov     [esi+5Ch], ecx"
+        ],
+        [
+          "0x100aee40",
+          "mov     eax, [edx+44h]"
+        ],
+        [
+          "0x100aee43",
+          "push    eax; yBottom"
+        ],
+        [
+          "0x100aee44",
+          "push    ecx; xRight"
+        ],
+        [
+          "0x100aee45",
+          "push    0; yTop"
+        ],
+        [
+          "0x100aee47",
+          "mov     [esi+60h], eax"
+        ],
+        [
+          "0x100aee4a",
+          "lea     eax, [esi+2Ch]"
+        ],
+        [
+          "0x100aee4d",
+          "push    0; xLeft"
+        ],
+        [
+          "0x100aee4f",
+          "push    eax; lprc"
+        ],
+        [
+          "0x100aee50",
+          "call    ds:SetRect"
+        ],
+        [
+          "0x100aee56",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100aee5c",
+          "push    dword ptr [esi+60h]"
+        ],
+        [
+          "0x100aee5f",
+          "mov     edx, [esi+5Ch]"
+        ],
+        [
+          "0x100aee62",
+          "test    byte ptr [ecx+43Ch], 8"
+        ],
+        [
+          "0x100aee69",
+          "jz      short loc_100AEE74"
+        ],
+        [
+          "0x100aee6b",
+          "mov     ecx, [ecx]"
+        ],
+        [
+          "0x100aee6d",
+          "call    sub_100CDEF0"
+        ],
+        [
+          "0x100aee72",
+          "jmp     short loc_100AEE7C"
+        ],
+        [
+          "0x100aee74",
+          "mov     ecx, [ecx+4]"
+        ],
+        [
+          "0x100aee77",
+          "call    sub_100C7EF0"
+        ],
+        [
+          "0x100aee7c",
+          "mov     [esi], eax"
+        ],
+        [
+          "0x100aee7e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100aee81",
+          "mov     eax, [esi+14h]"
+        ],
+        [
+          "0x100aee84",
+          "test    eax, eax"
+        ],
+        [
+          "0x100aee86",
+          "jz      short loc_100AEE91"
+        ],
+        [
+          "0x100aee88",
+          "mov     eax, [eax+24h]"
+        ],
+        [
+          "0x100aee8b",
+          "mov     [eax+178h], esi"
+        ],
+        [
+          "0x100aee91",
+          "push    dword ptr [esi+6Ch]"
+        ],
+        [
+          "0x100aee94",
+          "push    offset sub_100AE9B0"
+        ],
+        [
+          "0x100aee99",
+          "push    esi"
+        ],
+        [
+          "0x100aee9a",
+          "push    edi"
+        ],
+        [
+          "0x100aee9b",
+          "call    PalRenderInsert"
+        ],
+        [
+          "0x100aeea0",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100aeea3",
+          "mov     [esi+20h], eax"
+        ],
+        [
+          "0x100aeea6",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100aeea8",
+          "pop     edi"
+        ],
+        [
+          "0x100aeea9",
+          "pop     esi"
+        ],
+        [
+          "0x100aeeaa",
+          "pop     ebp"
+        ],
+        [
+          "0x100aeeab",
+          "retn"
+        ],
+        [
+          "0x100aeeac",
+          "push    6; dwErrCode"
+        ],
+        [
+          "0x100aeeae",
+          "call    ds:SetLastError"
+        ],
+        [
+          "0x100aeeb4",
+          "pop     edi"
+        ],
+        [
+          "0x100aeeb5",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100aeeb7",
+          "pop     esi"
+        ],
+        [
+          "0x100aeeb8",
+          "pop     ebp"
+        ],
+        [
+          "0x100aeeb9",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100ae920",
+      "name": "sub_100AE920",
+      "xrefs": [
+        {
+          "from": "0x100aed1f",
+          "function": "PalMSpriteInfoCreate"
+        },
+        {
+          "from": "0x100aedbc",
+          "function": "PalMSpriteLoad"
+        }
+      ],
+      "pseudocode": "void *__thiscall sub_100AE920(const char *this)\n{\n  void *v2; // esi\n\n  v2 = (void *)PalMemoryAlloc(0x158u, 1);\n  if ( !v2 || !strlen(this) )\n    return 0;\n  memset(v2, 0, 0x158u);\n  if ( !sub_100AE420(this, v2) )\n  {\n    sub_100AE140(v2);\n    return 0;\n  }\n  return v2;\n}\n",
+      "disassembly": [
+        [
+          "0x100ae920",
+          "push    ebp"
+        ],
+        [
+          "0x100ae921",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100ae923",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100ae926",
+          "sub     esp, 8"
+        ],
+        [
+          "0x100ae929",
+          "push    esi"
+        ],
+        [
+          "0x100ae92a",
+          "push    edi"
+        ],
+        [
+          "0x100ae92b",
+          "push    1; char"
+        ],
+        [
+          "0x100ae92d",
+          "push    158h; Size"
+        ],
+        [
+          "0x100ae932",
+          "mov     edi, ecx"
+        ],
+        [
+          "0x100ae934",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100ae939",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100ae93b",
+          "add     esp, 8"
+        ],
+        [
+          "0x100ae93e",
+          "test    esi, esi"
+        ],
+        [
+          "0x100ae940",
+          "jz      short loc_100AE976"
+        ],
+        [
+          "0x100ae942",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100ae944",
+          "lea     edx, [ecx+1]"
+        ],
+        [
+          "0x100ae947",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x100ae949",
+          "inc     ecx"
+        ],
+        [
+          "0x100ae94a",
+          "test    al, al"
+        ],
+        [
+          "0x100ae94c",
+          "jnz     short loc_100AE947"
+        ],
+        [
+          "0x100ae94e",
+          "sub     ecx, edx"
+        ],
+        [
+          "0x100ae950",
+          "jz      short loc_100AE976"
+        ],
+        [
+          "0x100ae952",
+          "push    158h; Size"
+        ],
+        [
+          "0x100ae957",
+          "push    0; Val"
+        ],
+        [
+          "0x100ae959",
+          "push    esi; void *"
+        ],
+        [
+          "0x100ae95a",
+          "call    _memset"
+        ],
+        [
+          "0x100ae95f",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100ae962",
+          "mov     edx, esi"
+        ],
+        [
+          "0x100ae964",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100ae966",
+          "call    sub_100AE420"
+        ],
+        [
+          "0x100ae96b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae96d",
+          "jnz     short loc_100AE97E"
+        ],
+        [
+          "0x100ae96f",
+          "mov     ecx, esi; Block"
+        ],
+        [
+          "0x100ae971",
+          "call    sub_100AE140"
+        ],
+        [
+          "0x100ae976",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ae978",
+          "pop     edi"
+        ],
+        [
+          "0x100ae979",
+          "pop     esi"
+        ],
+        [
+          "0x100ae97a",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ae97c",
+          "pop     ebp"
+        ],
+        [
+          "0x100ae97d",
+          "retn"
+        ],
+        [
+          "0x100ae97e",
+          "pop     edi"
+        ],
+        [
+          "0x100ae97f",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100ae981",
+          "pop     esi"
+        ],
+        [
+          "0x100ae982",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ae984",
+          "pop     ebp"
+        ],
+        [
+          "0x100ae985",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100ae420",
+      "name": "sub_100AE420",
+      "xrefs": [
+        {
+          "from": "0x100ae966",
+          "function": "sub_100AE920"
+        }
+      ],
+      "pseudocode": "int __usercall sub_100AE420@<eax>(LPVOID *a1@<edx>, char *a2@<ecx>, int a3@<ebp>)\n{\n  char *v5; // edx\n  int v6; // edi\n  char v7; // al\n  int v9; // eax\n  char *v10; // eax\n  bool v11; // sf\n  int v12; // edx\n  char *v13; // edi\n  LPVOID *v14; // eax\n  LPVOID *v15; // edi\n  int *v16; // esi\n  int v17; // edi\n  int v18; // eax\n  _DWORD *v19; // ecx\n  int v20; // esi\n  __int64 v21; // [esp-9Ch] [ebp-A8h]\n  char *v22; // [esp-94h] [ebp-A0h]\n  int v23; // [esp-90h] [ebp-9Ch]\n  _DWORD v24[2]; // [esp-80h] [ebp-8Ch] BYREF\n  LPVOID *v25; // [esp-78h] [ebp-84h]\n  char *v26; // [esp-74h] [ebp-80h]\n  HRESULT Instance; // [esp-70h] [ebp-7Ch] BYREF\n  _DWORD v28[3]; // [esp-6Ch] [ebp-78h] BYREF\n  _OWORD v29[5]; // [esp-60h] [ebp-6Ch] BYREF\n  int *v30; // [esp-10h] [ebp-1Ch]\n  struct _EXCEPTION_REGISTRATION_RECORD *ExceptionList; // [esp-Ch] [ebp-18h]\n  void *v32; // [esp-8h] [ebp-14h]\n  int v33; // [esp-4h] [ebp-10h]\n  int v34; // [esp+0h] [ebp-Ch]\n  void *v35; // [esp+4h] [ebp-8h]\n  int v36; // [esp+8h] [ebp-4h] BYREF\n  void *retaddr; // [esp+Ch] [ebp+0h]\n\n  v34 = a3;\n  v35 = retaddr;\n  v33 = -1;\n  v32 = &loc_100F1A22;\n  ExceptionList = NtCurrentTeb()->NtTib.ExceptionList;\n  v30 = &v36;\n  v25 = a1;\n  v26 = a2;\n  v5 = a2;\n  v6 = (char *)a1 - a2;\n  do\n  {\n    v7 = *v5++;\n    v5[v6 + 83] = v7;\n  }\n  while ( v7 );\n  Instance = CoCreateInstance(&rclsid, 0, 1u, &riid, a1);\n  if ( Instance < 0 )\n    return 0;\n  Instance = (**(int (__stdcall ***)(LPVOID, void *, int))*a1)(*a1, &unk_100F3C14, (int)(a1 + 1));\n  if ( Instance < 0 )\n    return 0;\n  Instance = (**(int (__stdcall ***)(LPVOID, void *, int))*a1)(*a1, &unk_100F3C24, (int)(a1 + 2));\n  if ( Instance < 0 )\n    return 0;\n  Instance = (**(int (__stdcall ***)(LPVOID, void *, int))*a1)(*a1, &unk_100F3D14, (int)(a1 + 3));\n  if ( Instance < 0 )\n    return 0;\n  v9 = PalFileCreateEx(v26, 0x80000000, 1, 3, 0x8000000, (int)v28);\n  a1[12] = (LPVOID)v9;\n  if ( v9 == -1 )\n    return 0;\n  sub_10004B30(v29);\n  v33 = 0;\n  v29[0] = xmmword_100F3AF4;\n  v29[1] = xmmword_100F3B14;\n  v26 = (char *)operator new(0x40u);\n  a1[10] = (LPVOID)sub_100AD880(a1[12], v28[2], 0, v28[0], v23);\n  v26 = (char *)operator new(0x1E8u);\n  LOBYTE(v33) = 1;\n  v10 = (char *)sub_100ADA90(a1[10], v29, &Instance);\n  LOBYTE(v33) = 0;\n  v11 = Instance < 0;\n  a1[11] = v10;\n  if ( v11 )\n    goto LABEL_34;\n  v12 = v10 ? (int)(v10 + 12) : 0;\n  Instance = (*(int (__stdcall **)(LPVOID, int, const wchar_t *))(*(_DWORD *)*a1 + 12))(*a1, v12, L\"Source File\");\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = CoCreateInstance(&stru_100F3B44, 0, 1u, &stru_100F3CA4, a1 + 5);\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = (*(int (__stdcall **)(LPVOID, LPVOID, const wchar_t *))(*(_DWORD *)*a1 + 12))(\n               *a1,\n               a1[5],\n               L\"MPEG-l Stream Splitter\");\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = CoCreateInstance(&stru_100F3B54, 0, 1u, &stru_100F3CA4, a1 + 6);\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = (*(int (__stdcall **)(LPVOID, LPVOID, const wchar_t *))(*(_DWORD *)*a1 + 12))(\n               *a1,\n               a1[6],\n               L\"MPEG Video Decoder\");\n  if ( Instance < 0 )\n    goto LABEL_34;\n  v13 = (char *)operator new(0x1A0u);\n  v26 = v13;\n  LOBYTE(v33) = 2;\n  sub_100056C0(&unk_10116ED4, 0, 0, &Instance);\n  *(_DWORD *)v13 = &CDShowRenderer::`vftable';\n  *((_DWORD *)v13 + 4) = &CDShowRenderer::`vftable';\n  *((_DWORD *)v13 + 3) = &CDShowRenderer::`vftable';\n  *((_DWORD *)v13 + 56) = &CDShowRenderer::`vftable';\n  *((_DWORD *)v13 + 57) = &CDShowRenderer::`vftable';\n  InitializeCriticalSection((LPCRITICAL_SECTION)(v13 + 352));\n  LOBYTE(v33) = 4;\n  *((_DWORD *)v13 + 94) = 0;\n  *((_DWORD *)v13 + 99) = 0;\n  *((_DWORD *)v13 + 98) = 0;\n  Instance = 0;\n  (*(void (__stdcall **)(_DWORD))(**((_DWORD **)v13 + 1) + 4))(*((_DWORD *)v13 + 1));\n  v14 = v25;\n  LOBYTE(v33) = 0;\n  v22 = v13 + 12;\n  v25[9] = v13;\n  v15 = v14;\n  Instance = (*(int (__stdcall **)(LPVOID, char *, const wchar_t *))(*(_DWORD *)*v14 + 12))(*v14, v22, L\"Renderer\");\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = sub_100ADE00(v15[5], xmmword_100F3AF4);\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = sub_100ADE00(v15[6], xmmword_100F3AD4);\n  if ( Instance < 0 )\n    goto LABEL_34;\n  Instance = sub_100ADE00(v15[9] != 0 ? (char *)v15[9] + 12 : 0, xmmword_100F3AD4);\n  if ( Instance < 0 )\n    goto LABEL_34;\n  if ( !sub_100ADF00(xmmword_100F3AE4) )\n  {\n    Instance = (**(int (__stdcall ***)(LPVOID, void *, int))*v15)(*v15, &unk_100F3C44, (int)(v15 + 4));\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = CoCreateInstance(&stru_100F3B64, 0, 1u, &stru_100F3CA4, v15 + 7);\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = (*(int (__stdcall **)(LPVOID, LPVOID, const wchar_t *))(*(_DWORD *)*v15 + 12))(\n                 *v15,\n                 v15[7],\n                 L\"MPEG Audio Decoder\");\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = CoCreateInstance(&stru_100F3B94, 0, 1u, &stru_100F3CA4, v15 + 8);\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = (*(int (__stdcall **)(LPVOID, LPVOID, const wchar_t *))(*(_DWORD *)*v15 + 12))(\n                 *v15,\n                 v15[8],\n                 L\"Default DirectSound Device\");\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = sub_100ADE00(v15[7], xmmword_100F3AE4);\n    if ( Instance < 0 )\n      goto LABEL_34;\n    Instance = sub_100ADE00(v15[8], xmmword_100F3AE4);\n    if ( Instance < 0 )\n      goto LABEL_34;\n    v16 = (int *)v15[4];\n    v17 = *v16;\n    v18 = sub_100B0150(*((_DWORD *)dword_101336F4 + 4693));\n    Instance = (*(int (__stdcall **)(int *, int))(v17 + 28))(v16, v18);\n    if ( Instance < 0 )\n      goto LABEL_34;\n    v15 = v25;\n  }\n  v19 = v15[9];\n  v15[16] = (LPVOID)v19[101];\n  v15[17] = (LPVOID)v19[102];\n  (*(void (__stdcall **)(LPVOID, void *))(*(_DWORD *)v15[3] + 36))(v15[3], &unk_100F3BE4);\n  Instance = (*(int (__stdcall **)(LPVOID, _DWORD *))(*(_DWORD *)v15[3] + 40))(v15[3], v24);\n  if ( Instance < 0 )\n  {\nLABEL_34:\n    v20 = 0;\n    goto LABEL_35;\n  }\n  HIDWORD(v21) = v24[1];\n  v15[13] = 0;\n  LODWORD(v21) = v24[0];\n  v15[14] = (LPVOID)(v21 / 10000);\n  v20 = 1;\nLABEL_35:\n  sub_10004B60(v29);\n  return v20;\n}\n",
+      "disassembly": [
+        [
+          "0x100ae420",
+          "push    ebx"
+        ],
+        [
+          "0x100ae421",
+          "mov     ebx, esp"
+        ],
+        [
+          "0x100ae423",
+          "sub     esp, 8"
+        ],
+        [
+          "0x100ae426",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100ae429",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ae42c",
+          "push    ebp"
+        ],
+        [
+          "0x100ae42d",
+          "mov     ebp, [ebx+4]"
+        ],
+        [
+          "0x100ae430",
+          "mov     [esp+0Ch+var_8], ebp"
+        ],
+        [
+          "0x100ae434",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100ae436",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x100ae438",
+          "push    offset loc_100F1A22"
+        ],
+        [
+          "0x100ae43d",
+          "mov     eax, large fs:0"
+        ],
+        [
+          "0x100ae443",
+          "push    eax"
+        ],
+        [
+          "0x100ae444",
+          "push    ebx"
+        ],
+        [
+          "0x100ae445",
+          "sub     esp, 70h"
+        ],
+        [
+          "0x100ae448",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100ae44d",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x100ae44f",
+          "mov     [ebp-14h], eax"
+        ],
+        [
+          "0x100ae452",
+          "push    esi"
+        ],
+        [
+          "0x100ae453",
+          "push    edi"
+        ],
+        [
+          "0x100ae454",
+          "push    eax"
+        ],
+        [
+          "0x100ae455",
+          "lea     eax, [ebp-0Ch]"
+        ],
+        [
+          "0x100ae458",
+          "mov     large fs:0, eax"
+        ],
+        [
+          "0x100ae45e",
+          "mov     esi, edx"
+        ],
+        [
+          "0x100ae460",
+          "mov     [ebp-78h], esi"
+        ],
+        [
+          "0x100ae463",
+          "mov     [ebp-74h], ecx"
+        ],
+        [
+          "0x100ae466",
+          "mov     edi, esi"
+        ],
+        [
+          "0x100ae468",
+          "mov     edx, ecx"
+        ],
+        [
+          "0x100ae46a",
+          "sub     edi, ecx"
+        ],
+        [
+          "0x100ae46c",
+          "nop     dword ptr [eax+00h]"
+        ],
+        [
+          "0x100ae470",
+          "mov     al, [edx]"
+        ],
+        [
+          "0x100ae472",
+          "lea     edx, [edx+1]"
+        ],
+        [
+          "0x100ae475",
+          "mov     [edi+edx+53h], al"
+        ],
+        [
+          "0x100ae479",
+          "test    al, al"
+        ],
+        [
+          "0x100ae47b",
+          "jnz     short loc_100AE470"
+        ],
+        [
+          "0x100ae47d",
+          "push    esi; ppv"
+        ],
+        [
+          "0x100ae47e",
+          "push    offset riid; riid"
+        ],
+        [
+          "0x100ae483",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100ae485",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100ae487",
+          "push    offset rclsid; rclsid"
+        ],
+        [
+          "0x100ae48c",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100ae492",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae495",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae497",
+          "jns     short loc_100AE4A0"
+        ],
+        [
+          "0x100ae499",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ae49b",
+          "jmp     loc_100AE900"
+        ],
+        [
+          "0x100ae4a0",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100ae4a2",
+          "lea     eax, [esi+4]"
+        ],
+        [
+          "0x100ae4a5",
+          "push    eax"
+        ],
+        [
+          "0x100ae4a6",
+          "push    offset unk_100F3C14"
+        ],
+        [
+          "0x100ae4ab",
+          "push    ecx"
+        ],
+        [
+          "0x100ae4ac",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100ae4ae",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100ae4b0",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae4b3",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae4b5",
+          "js      short loc_100AE499"
+        ],
+        [
+          "0x100ae4b7",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100ae4b9",
+          "lea     eax, [esi+8]"
+        ],
+        [
+          "0x100ae4bc",
+          "push    eax"
+        ],
+        [
+          "0x100ae4bd",
+          "push    offset unk_100F3C24"
+        ],
+        [
+          "0x100ae4c2",
+          "push    ecx"
+        ],
+        [
+          "0x100ae4c3",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100ae4c5",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100ae4c7",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae4ca",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae4cc",
+          "js      short loc_100AE499"
+        ],
+        [
+          "0x100ae4ce",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100ae4d0",
+          "lea     edx, [esi+0Ch]"
+        ],
+        [
+          "0x100ae4d3",
+          "push    edx"
+        ],
+        [
+          "0x100ae4d4",
+          "push    offset unk_100F3D14"
+        ],
+        [
+          "0x100ae4d9",
+          "push    ecx"
+        ],
+        [
+          "0x100ae4da",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100ae4dc",
+          "call    dword ptr [eax]"
+        ],
+        [
+          "0x100ae4de",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae4e1",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae4e3",
+          "js      short loc_100AE499"
+        ],
+        [
+          "0x100ae4e5",
+          "lea     eax, [ebp-6Ch]"
+        ],
+        [
+          "0x100ae4e8",
+          "push    eax; int"
+        ],
+        [
+          "0x100ae4e9",
+          "push    8000000h; int"
+        ],
+        [
+          "0x100ae4ee",
+          "push    3; int"
+        ],
+        [
+          "0x100ae4f0",
+          "push    1; int"
+        ],
+        [
+          "0x100ae4f2",
+          "push    80000000h; int"
+        ],
+        [
+          "0x100ae4f7",
+          "push    dword ptr [ebp-74h]; Source"
+        ],
+        [
+          "0x100ae4fa",
+          "call    PalFileCreateEx"
+        ],
+        [
+          "0x100ae4ff",
+          "add     esp, 18h"
+        ],
+        [
+          "0x100ae502",
+          "mov     [esi+30h], eax"
+        ],
+        [
+          "0x100ae505",
+          "cmp     eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x100ae508",
+          "jz      short loc_100AE499"
+        ],
+        [
+          "0x100ae50a",
+          "lea     ecx, [ebp-60h]; void *"
+        ],
+        [
+          "0x100ae50d",
+          "call    sub_10004B30"
+        ],
+        [
+          "0x100ae512",
+          "mov     dword ptr [ebp-4], 0"
+        ],
+        [
+          "0x100ae519",
+          "movups  xmm0, ds:xmmword_100F3AF4"
+        ],
+        [
+          "0x100ae520",
+          "push    40h ; '@'; Size"
+        ],
+        [
+          "0x100ae522",
+          "movups  xmmword ptr [ebp-60h], xmm0"
+        ],
+        [
+          "0x100ae526",
+          "movups  xmm0, ds:xmmword_100F3B14"
+        ],
+        [
+          "0x100ae52d",
+          "movups  xmmword ptr [ebp-50h], xmm0"
+        ],
+        [
+          "0x100ae531",
+          "call    ??2@YAPAXI@Z; operator new(uint)"
+        ],
+        [
+          "0x100ae536",
+          "mov     [ebp-74h], eax"
+        ],
+        [
+          "0x100ae539",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100ae53b",
+          "push    dword ptr [ebp-6Ch]"
+        ],
+        [
+          "0x100ae53e",
+          "push    0"
+        ],
+        [
+          "0x100ae540",
+          "push    dword ptr [ebp-64h]"
+        ],
+        [
+          "0x100ae543",
+          "push    dword ptr [esi+30h]"
+        ],
+        [
+          "0x100ae546",
+          "call    sub_100AD880"
+        ],
+        [
+          "0x100ae54b",
+          "push    1E8h; Size"
+        ],
+        [
+          "0x100ae550",
+          "mov     [esi+28h], eax"
+        ],
+        [
+          "0x100ae553",
+          "call    ??2@YAPAXI@Z; operator new(uint)"
+        ],
+        [
+          "0x100ae558",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ae55b",
+          "mov     [ebp-74h], eax"
+        ],
+        [
+          "0x100ae55e",
+          "lea     ecx, [ebp-70h]"
+        ],
+        [
+          "0x100ae561",
+          "mov     byte ptr [ebp-4], 1"
+        ],
+        [
+          "0x100ae565",
+          "push    ecx"
+        ],
+        [
+          "0x100ae566",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100ae569",
+          "push    ecx"
+        ],
+        [
+          "0x100ae56a",
+          "push    dword ptr [esi+28h]"
+        ],
+        [
+          "0x100ae56d",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100ae56f",
+          "call    sub_100ADA90"
+        ],
+        [
+          "0x100ae574",
+          "mov     byte ptr [ebp-4], 0"
+        ],
+        [
+          "0x100ae578",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100ae57c",
+          "mov     [esi+2Ch], eax"
+        ],
+        [
+          "0x100ae57f",
+          "jl      loc_100AE8F4"
+        ],
+        [
+          "0x100ae585",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae587",
+          "jz      short loc_100AE58E"
+        ],
+        [
+          "0x100ae589",
+          "lea     edx, [eax+0Ch]"
+        ],
+        [
+          "0x100ae58c",
+          "jmp     short loc_100AE590"
+        ],
+        [
+          "0x100ae58e",
+          "xor     edx, edx"
+        ],
+        [
+          "0x100ae590",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x100ae592",
+          "push    offset aSourceFile; \"Source File\""
+        ],
+        [
+          "0x100ae597",
+          "push    edx"
+        ],
+        [
+          "0x100ae598",
+          "push    eax"
+        ],
+        [
+          "0x100ae599",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae59b",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae59e",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae5a1",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae5a3",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae5a9",
+          "lea     edi, [esi+14h]"
+        ],
+        [
+          "0x100ae5ac",
+          "push    edi; ppv"
+        ],
+        [
+          "0x100ae5ad",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100ae5b2",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100ae5b4",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100ae5b6",
+          "push    offset stru_100F3B44; rclsid"
+        ],
+        [
+          "0x100ae5bb",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100ae5c1",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae5c4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae5c6",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae5cc",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x100ae5ce",
+          "push    offset aMpegLStreamSpl; \"MPEG-l Stream Splitter\""
+        ],
+        [
+          "0x100ae5d3",
+          "push    dword ptr [edi]"
+        ],
+        [
+          "0x100ae5d5",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae5d7",
+          "push    eax"
+        ],
+        [
+          "0x100ae5d8",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae5db",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae5de",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae5e0",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae5e6",
+          "lea     edi, [esi+18h]"
+        ],
+        [
+          "0x100ae5e9",
+          "push    edi; ppv"
+        ],
+        [
+          "0x100ae5ea",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100ae5ef",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100ae5f1",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100ae5f3",
+          "push    offset stru_100F3B54; rclsid"
+        ],
+        [
+          "0x100ae5f8",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100ae5fe",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae601",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae603",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae609",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x100ae60b",
+          "push    offset aMpegVideoDecod; \"MPEG Video Decoder\""
+        ],
+        [
+          "0x100ae610",
+          "push    dword ptr [edi]"
+        ],
+        [
+          "0x100ae612",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae614",
+          "push    eax"
+        ],
+        [
+          "0x100ae615",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae618",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae61b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae61d",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae623",
+          "push    1A0h; Size"
+        ],
+        [
+          "0x100ae628",
+          "call    ??2@YAPAXI@Z; operator new(uint)"
+        ],
+        [
+          "0x100ae62d",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100ae62f",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ae632",
+          "mov     [ebp-74h], edi"
+        ],
+        [
+          "0x100ae635",
+          "lea     eax, [ebp-70h]"
+        ],
+        [
+          "0x100ae638",
+          "mov     byte ptr [ebp-4], 2"
+        ],
+        [
+          "0x100ae63c",
+          "push    eax"
+        ],
+        [
+          "0x100ae63d",
+          "push    0"
+        ],
+        [
+          "0x100ae63f",
+          "push    0"
+        ],
+        [
+          "0x100ae641",
+          "push    offset unk_10116ED4"
+        ],
+        [
+          "0x100ae646",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100ae648",
+          "call    sub_100056C0"
+        ],
+        [
+          "0x100ae64d",
+          "lea     eax, [edi+160h]"
+        ],
+        [
+          "0x100ae653",
+          "mov     dword ptr [edi], offset ??_7CDShowRenderer@@6B@; const CDShowRenderer::`vftable'"
+        ],
+        [
+          "0x100ae659",
+          "lea     esi, [edi+0Ch]"
+        ],
+        [
+          "0x100ae65c",
+          "mov     dword ptr [edi+10h], offset ??_7CDShowRenderer@@6B@_0; const CDShowRenderer::`vftable'"
+        ],
+        [
+          "0x100ae663",
+          "mov     dword ptr [esi], offset ??_7CDShowRenderer@@6B@_1; const CDShowRenderer::`vftable'"
+        ],
+        [
+          "0x100ae669",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100ae66a",
+          "mov     dword ptr [edi+0E0h], offset ??_7CDShowRenderer@@6B@_2; const CDShowRenderer::`vftable'"
+        ],
+        [
+          "0x100ae674",
+          "mov     dword ptr [edi+0E4h], offset ??_7CDShowRenderer@@6B@_3; const CDShowRenderer::`vftable'"
+        ],
+        [
+          "0x100ae67e",
+          "call    ds:InitializeCriticalSection"
+        ],
+        [
+          "0x100ae684",
+          "mov     byte ptr [ebp-4], 4"
+        ],
+        [
+          "0x100ae688",
+          "mov     dword ptr [edi+178h], 0"
+        ],
+        [
+          "0x100ae692",
+          "mov     dword ptr [edi+18Ch], 0"
+        ],
+        [
+          "0x100ae69c",
+          "mov     dword ptr [edi+188h], 0"
+        ],
+        [
+          "0x100ae6a6",
+          "mov     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100ae6ad",
+          "mov     eax, [edi+4]"
+        ],
+        [
+          "0x100ae6b0",
+          "push    eax"
+        ],
+        [
+          "0x100ae6b1",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae6b3",
+          "call    dword ptr [ecx+4]"
+        ],
+        [
+          "0x100ae6b6",
+          "mov     eax, [ebp-78h]"
+        ],
+        [
+          "0x100ae6b9",
+          "mov     byte ptr [ebp-4], 0"
+        ],
+        [
+          "0x100ae6bd",
+          "push    offset aRenderer; \"Renderer\""
+        ],
+        [
+          "0x100ae6c2",
+          "push    esi"
+        ],
+        [
+          "0x100ae6c3",
+          "mov     [eax+24h], edi"
+        ],
+        [
+          "0x100ae6c6",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100ae6c8",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100ae6ca",
+          "push    eax"
+        ],
+        [
+          "0x100ae6cb",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae6cd",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae6d0",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae6d3",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae6d5",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae6db",
+          "mov     edx, [edi+2Ch]"
+        ],
+        [
+          "0x100ae6de",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae6e1",
+          "movups  xmm0, ds:xmmword_100F3AF4"
+        ],
+        [
+          "0x100ae6e8",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae6ea",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae6ec",
+          "push    dword ptr [edi+14h]"
+        ],
+        [
+          "0x100ae6ef",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae6f2",
+          "lea     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100ae6f5",
+          "neg     edx"
+        ],
+        [
+          "0x100ae6f7",
+          "sbb     edx, edx"
+        ],
+        [
+          "0x100ae6f9",
+          "and     edx, eax"
+        ],
+        [
+          "0x100ae6fb",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100ae700",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100ae703",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae706",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae708",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae70e",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100ae715",
+          "mov     edx, [edi+14h]"
+        ],
+        [
+          "0x100ae718",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae71b",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae71d",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae71f",
+          "push    dword ptr [edi+18h]"
+        ],
+        [
+          "0x100ae722",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae725",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100ae72a",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100ae72d",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae730",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae732",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae738",
+          "mov     ecx, [edi+24h]"
+        ],
+        [
+          "0x100ae73b",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae73e",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100ae745",
+          "mov     edx, [edi+18h]"
+        ],
+        [
+          "0x100ae748",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae74a",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae74d",
+          "lea     eax, [ecx+0Ch]"
+        ],
+        [
+          "0x100ae750",
+          "neg     ecx"
+        ],
+        [
+          "0x100ae752",
+          "sbb     ecx, ecx"
+        ],
+        [
+          "0x100ae754",
+          "and     ecx, eax"
+        ],
+        [
+          "0x100ae756",
+          "push    ecx"
+        ],
+        [
+          "0x100ae757",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae759",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100ae75e",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100ae761",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae764",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae766",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae76c",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100ae773",
+          "mov     ecx, [edi+14h]"
+        ],
+        [
+          "0x100ae776",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae779",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae77b",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae77e",
+          "call    sub_100ADF00"
+        ],
+        [
+          "0x100ae783",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100ae786",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae788",
+          "jnz     loc_100AE89A"
+        ],
+        [
+          "0x100ae78e",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae790",
+          "lea     edx, [edi+10h]"
+        ],
+        [
+          "0x100ae793",
+          "push    edx"
+        ],
+        [
+          "0x100ae794",
+          "push    offset unk_100F3C44"
+        ],
+        [
+          "0x100ae799",
+          "push    ecx"
+        ],
+        [
+          "0x100ae79a",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100ae79c",
+          "call    dword ptr [eax]"
+        ],
+        [
+          "0x100ae79e",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae7a1",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae7a3",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae7a9",
+          "lea     eax, [edi+1Ch]"
+        ],
+        [
+          "0x100ae7ac",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100ae7ad",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100ae7b2",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100ae7b4",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100ae7b6",
+          "push    offset stru_100F3B64; rclsid"
+        ],
+        [
+          "0x100ae7bb",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100ae7c1",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae7c4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae7c6",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae7cc",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100ae7ce",
+          "push    offset aMpegAudioDecod; \"MPEG Audio Decoder\""
+        ],
+        [
+          "0x100ae7d3",
+          "push    dword ptr [edi+1Ch]"
+        ],
+        [
+          "0x100ae7d6",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae7d8",
+          "push    eax"
+        ],
+        [
+          "0x100ae7d9",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae7dc",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae7df",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae7e1",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae7e7",
+          "lea     eax, [edi+20h]"
+        ],
+        [
+          "0x100ae7ea",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100ae7eb",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100ae7f0",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100ae7f2",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100ae7f4",
+          "push    offset stru_100F3B94; rclsid"
+        ],
+        [
+          "0x100ae7f9",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100ae7ff",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae802",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae804",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae80a",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100ae80c",
+          "push    offset aDefaultDirects; \"Default DirectSound Device\""
+        ],
+        [
+          "0x100ae811",
+          "push    dword ptr [edi+20h]"
+        ],
+        [
+          "0x100ae814",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae816",
+          "push    eax"
+        ],
+        [
+          "0x100ae817",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100ae81a",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae81d",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae81f",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae825",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100ae82c",
+          "mov     edx, [edi+14h]"
+        ],
+        [
+          "0x100ae82f",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae832",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae834",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae836",
+          "push    dword ptr [edi+1Ch]"
+        ],
+        [
+          "0x100ae839",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae83c",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100ae841",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100ae844",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae847",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae849",
+          "js      loc_100AE8F4"
+        ],
+        [
+          "0x100ae84f",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100ae856",
+          "mov     edx, [edi+1Ch]"
+        ],
+        [
+          "0x100ae859",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100ae85c",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100ae85e",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100ae860",
+          "push    dword ptr [edi+20h]"
+        ],
+        [
+          "0x100ae863",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100ae866",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100ae86b",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100ae86e",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae871",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae873",
+          "js      short loc_100AE8F4"
+        ],
+        [
+          "0x100ae875",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100ae87b",
+          "mov     esi, [edi+10h]"
+        ],
+        [
+          "0x100ae87e",
+          "mov     ecx, [ecx+4954h]"
+        ],
+        [
+          "0x100ae884",
+          "mov     edi, [esi]"
+        ],
+        [
+          "0x100ae886",
+          "call    sub_100B0150"
+        ],
+        [
+          "0x100ae88b",
+          "push    eax"
+        ],
+        [
+          "0x100ae88c",
+          "push    esi"
+        ],
+        [
+          "0x100ae88d",
+          "call    dword ptr [edi+1Ch]"
+        ],
+        [
+          "0x100ae890",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae893",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae895",
+          "js      short loc_100AE8F4"
+        ],
+        [
+          "0x100ae897",
+          "mov     edi, [ebp-78h]"
+        ],
+        [
+          "0x100ae89a",
+          "mov     ecx, [edi+24h]"
+        ],
+        [
+          "0x100ae89d",
+          "push    offset unk_100F3BE4"
+        ],
+        [
+          "0x100ae8a2",
+          "mov     eax, [ecx+194h]"
+        ],
+        [
+          "0x100ae8a8",
+          "mov     [edi+40h], eax"
+        ],
+        [
+          "0x100ae8ab",
+          "mov     eax, [ecx+198h]"
+        ],
+        [
+          "0x100ae8b1",
+          "mov     [edi+44h], eax"
+        ],
+        [
+          "0x100ae8b4",
+          "mov     eax, [edi+0Ch]"
+        ],
+        [
+          "0x100ae8b7",
+          "push    eax"
+        ],
+        [
+          "0x100ae8b8",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae8ba",
+          "call    dword ptr [ecx+24h]"
+        ],
+        [
+          "0x100ae8bd",
+          "mov     eax, [edi+0Ch]"
+        ],
+        [
+          "0x100ae8c0",
+          "lea     edx, [ebp-80h]"
+        ],
+        [
+          "0x100ae8c3",
+          "push    edx"
+        ],
+        [
+          "0x100ae8c4",
+          "push    eax"
+        ],
+        [
+          "0x100ae8c5",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100ae8c7",
+          "call    dword ptr [ecx+28h]"
+        ],
+        [
+          "0x100ae8ca",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100ae8cd",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ae8cf",
+          "js      short loc_100AE8F4"
+        ],
+        [
+          "0x100ae8d1",
+          "push    0"
+        ],
+        [
+          "0x100ae8d3",
+          "push    2710h"
+        ],
+        [
+          "0x100ae8d8",
+          "push    dword ptr [ebp-7Ch]"
+        ],
+        [
+          "0x100ae8db",
+          "mov     dword ptr [edi+34h], 0"
+        ],
+        [
+          "0x100ae8e2",
+          "push    dword ptr [ebp-80h]"
+        ],
+        [
+          "0x100ae8e5",
+          "call    __alldiv"
+        ],
+        [
+          "0x100ae8ea",
+          "mov     [edi+38h], eax"
+        ],
+        [
+          "0x100ae8ed",
+          "mov     esi, 1"
+        ],
+        [
+          "0x100ae8f2",
+          "jmp     short loc_100AE8F6"
+        ],
+        [
+          "0x100ae8f4",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100ae8f6",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100ae8f9",
+          "call    sub_10004B60"
+        ],
+        [
+          "0x100ae8fe",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100ae900",
+          "mov     ecx, [ebp-0Ch]"
+        ],
+        [
+          "0x100ae903",
+          "mov     large fs:0, ecx"
+        ],
+        [
+          "0x100ae90a",
+          "pop     ecx"
+        ],
+        [
+          "0x100ae90b",
+          "pop     edi"
+        ],
+        [
+          "0x100ae90c",
+          "pop     esi"
+        ],
+        [
+          "0x100ae90d",
+          "mov     ecx, [ebp-14h]"
+        ],
+        [
+          "0x100ae910",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100ae912",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100ae917",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ae919",
+          "pop     ebp"
+        ],
+        [
+          "0x100ae91a",
+          "mov     esp, ebx"
+        ],
+        [
+          "0x100ae91c",
+          "pop     ebx"
+        ],
+        [
+          "0x100ae91d",
+          "retn"
+        ],
+        [
+          "0x100ad7a0",
+          "push    ecx; lpCriticalSection"
+        ],
+        [
+          "0x100ad7a1",
+          "call    ds:DeleteCriticalSection"
+        ],
+        [
+          "0x100ad7a7",
+          "retn"
+        ],
+        [
+          "0x100f19e0",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100f19e3",
+          "jmp     sub_10004B60"
+        ],
+        [
+          "0x100f19e8",
+          "push    1E8h"
+        ],
+        [
+          "0x100f19ed",
+          "mov     eax, [ebp-74h]"
+        ],
+        [
+          "0x100f19f0",
+          "push    eax; Block"
+        ],
+        [
+          "0x100f19f1",
+          "call    sub_100CFC25"
+        ],
+        [
+          "0x100f19f6",
+          "add     esp, 8"
+        ],
+        [
+          "0x100f19f9",
+          "retn"
+        ],
+        [
+          "0x100f19fa",
+          "push    1A0h"
+        ],
+        [
+          "0x100f19ff",
+          "mov     eax, [ebp-74h]"
+        ],
+        [
+          "0x100f1a02",
+          "push    eax; Block"
+        ],
+        [
+          "0x100f1a03",
+          "call    sub_100CFC25"
+        ],
+        [
+          "0x100f1a08",
+          "add     esp, 8"
+        ],
+        [
+          "0x100f1a0b",
+          "retn"
+        ],
+        [
+          "0x100f1a0c",
+          "mov     ecx, [ebp-74h]"
+        ],
+        [
+          "0x100f1a0f",
+          "jmp     sub_10005870"
+        ],
+        [
+          "0x100f1a14",
+          "mov     ecx, [ebp-74h]"
+        ],
+        [
+          "0x100f1a17",
+          "add     ecx, 160h"
+        ],
+        [
+          "0x100f1a1d",
+          "jmp     loc_100AD7A0"
+        ],
+        [
+          "0x100f1a22",
+          "mov     edx, [esp+arg_4]"
+        ],
+        [
+          "0x100f1a26",
+          "lea     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100f1a29",
+          "mov     ecx, [edx-80h]"
+        ],
+        [
+          "0x100f1a2c",
+          "xor     ecx, eax; StackCookie"
+        ],
+        [
+          "0x100f1a2e",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100f1a33",
+          "mov     ecx, [edx-8]"
+        ],
+        [
+          "0x100f1a36",
+          "xor     ecx, eax; StackCookie"
+        ],
+        [
+          "0x100f1a38",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100f1a3d",
+          "mov     eax, offset stru_1011BC40"
+        ],
+        [
+          "0x100f1a42",
+          "jmp     ___CxxFrameHandler3_0"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

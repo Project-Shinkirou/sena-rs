@@ -1,0 +1,3621 @@
+{
+  "schema_version": 1,
+  "scope": "Every exported input/button/cursor/touch/gesture function in the three release PAL builds, plus PalSetPow. Native exports and VM adapters remain separate.",
+  "primary_build": "totsulover",
+  "builds": {
+    "totsulover": {
+      "binary": "target/reverse-audit/totsulover/Pal.dll",
+      "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+    },
+    "reference": {
+      "binary": "reverse/PAL.dll",
+      "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+    },
+    "koikake": {
+      "binary": "testcase/dll/Pal.dll",
+      "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+    }
+  },
+  "functions": [
+    {
+      "name": "PalInputGetKeyPush",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw input mask",
+      "behavior": "Returns the stored push word. Bits newly pressed: current & (current XOR previous).",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "Requires initialized PAL context."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace60",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab610",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7000",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetKeyOn",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw input mask",
+      "behavior": "Returns the stored on word. Stable held bits: current & previous; excludes the first sampled press.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "Requires initialized PAL context."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace40",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab5f0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7020",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetKeyPull",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw input mask",
+      "behavior": "Returns the stored pull word. Bits newly released: previous & (current XOR previous).",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "Requires initialized PAL context."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace50",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab600",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7010",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetKeyOnEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw input mask",
+      "behavior": "Returns the stored repeat word. Last newly pressed mask after strictly more than 500 ms while any bit of that mask remains held; otherwise zero. This is a level, not a periodic pulse.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "Requires initialized PAL context."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acdd0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab580",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7090",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetKeyEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw input mask",
+      "behavior": "Returns the stored extended word. Frame-local extended-event word: left/right/middle double-click bits1/2/4 and window-mode-change bit8. Wheel has a separate signed16 latch.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "Requires initialized PAL context."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acdc0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab570",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70a0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputSetKeyOn",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mask",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "C return type unresolved; see per-build machine result",
+      "behavior": "ORs mask into only the stored key on word. Does not change physical sampling history, the other edge words, or repeat history.",
+      "edge_cases": [
+        "No clamping or validation of bits; includes mouse bits23..25."
+      ],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {
+        "koikake": "EAX retains PAL context pointer.",
+        "reference": "EAX echoes mask.",
+        "totsulover": "EAX echoes mask."
+      },
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acde0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab590",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7070",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputSetKeyPush",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mask",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "C return type unresolved; see per-build machine result",
+      "behavior": "ORs mask into only the stored key push word. Does not change physical sampling history, the other edge words, or repeat history.",
+      "edge_cases": [
+        "No clamping or validation of bits; includes mouse bits23..25."
+      ],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {
+        "koikake": "EAX retains PAL context pointer.",
+        "reference": "EAX echoes mask.",
+        "totsulover": "EAX echoes mask."
+      },
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace20",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab5d0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7030",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputSetKeyPull",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mask",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "C return type unresolved; see per-build machine result",
+      "behavior": "ORs mask into only the stored key pull word. Does not change physical sampling history, the other edge words, or repeat history.",
+      "edge_cases": [
+        "No clamping or validation of bits; includes mouse bits23..25."
+      ],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {
+        "koikake": "EAX retains PAL context pointer.",
+        "reference": "EAX echoes mask.",
+        "totsulover": "EAX echoes mask."
+      },
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace00",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab5b0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7050",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputClear",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "C return type unresolved; EAX is PAL context pointer",
+      "behavior": "Zeros four joystick output words and key on/push/pull/repeat outputs. Preserves physical current/previous samples, repeat source/time, mouse position/delta, wheel, extended events and cancel masks.",
+      "edge_cases": [
+        "Held input can return on the next sampling pass without becoming a new push."
+      ],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aca40",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab1f0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b71d0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputKeyRepeatClear",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "C return type unresolved; EAX is PAL context pointer",
+      "behavior": "Zeros repeat output and remembered last-push mask. Does not clear physical held state or the remembered timestamp.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aca20",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab1d0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7260",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputKeyCancel",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "key_mask",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "extended_mask",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "C return type unresolved; EAX is incidental and differs by build",
+      "behavior": "Stores persistent masks. Immediately removes key-mask bits from on/push/pull/repeat; removes extended-mask bits from KeyEx. Extended bit0x10 clears wheel. The sampling pass reapplies both masks.",
+      "edge_cases": [
+        "Passing zero replaces the mask but cannot restore already-cleared events in the same sample.",
+        "The second mask is not a separate mouse-button mask."
+      ],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ac9c0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab170",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7290",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetJoyPush",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw joystick mask",
+      "behavior": "Returns newly pressed joystick bits when joystick-enabled is nonzero, otherwise zero.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acb00",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab2b0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7110",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetJoyOn",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw joystick mask",
+      "behavior": "Returns current & previous joystick bits when joystick-enabled is nonzero, otherwise zero.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acac0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab270",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7170",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetJoyPull",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw joystick mask",
+      "behavior": "Returns newly released joystick bits when joystick-enabled is nonzero, otherwise zero.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acae0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab290",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b7140",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetJoyOnEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw joystick mask",
+      "behavior": "Returns stored extended joystick word; the inspected polling helper does not populate it when joystick-enabled is nonzero, otherwise zero.",
+      "edge_cases": [
+        "No read-to-clear side effect.",
+        "DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acaa0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab250",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b71a0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetMouseX",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t signed coordinate or delta",
+      "behavior": "Returns stored logical cursor x. No coordinate recomputation or consumption occurs in the export.",
+      "edge_cases": [
+        "Inactive/minimized/resize gate sets coordinates -1 and deltas0.",
+        "Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aceb0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab660",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70b0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetMouseY",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t signed coordinate or delta",
+      "behavior": "Returns stored logical cursor y. No coordinate recomputation or consumption occurs in the export.",
+      "edge_cases": [
+        "Inactive/minimized/resize gate sets coordinates -1 and deltas0.",
+        "Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100acea0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab650",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70c0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetMouseMoveX",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t signed coordinate or delta",
+      "behavior": "Returns stored sample-to-sample logical x delta. No coordinate recomputation or consumption occurs in the export.",
+      "edge_cases": [
+        "Inactive/minimized/resize gate sets coordinates -1 and deltas0.",
+        "Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace90",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab640",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70d0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetMouseMoveY",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t signed coordinate or delta",
+      "behavior": "Returns stored sample-to-sample logical y delta. No coordinate recomputation or consumption occurs in the export.",
+      "edge_cases": [
+        "Inactive/minimized/resize gate sets coordinates -1 and deltas0.",
+        "Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace80",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab630",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70e0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalInputGetWheel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int16_t signed result in AX; high EAX bits unspecified",
+      "behavior": "Returns the signed16 wheel latch. Windows positive wheel delta becomes -1; negative becomes +1. The last queued wheel message wins, then the engine clears the latch after its frame callback.",
+      "edge_cases": [
+        "Export itself does not consume the latch.",
+        "Magnitude is normalized by the window procedure; multiple events are not summed.",
+        "A zero Windows delta follows the nonnegative branch and becomes -1."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100ace70",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ab620",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b70f0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonCreate",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "hover_sound",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed for synchronous sound loading",
+          "encoding": "native narrow NUL-terminated resource name"
+        },
+        {
+          "name": "click_sound",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed for synchronous sound loading",
+          "encoding": "native narrow NUL-terminated resource name"
+        }
+      ],
+      "return_contract": "Owned PalButtonGroupOpaque pointer, null on allocation failure",
+      "behavior": "Allocates and zeroes group; loads optional hover and click assets into sound group5. Native filename constructor incorrectly calls SoundCopy on each zeroed destination slot rather than the loaded hover source, so only the first hover slot is normally usable.",
+      "edge_cases": [
+        "Sound-load failure does not reject the button group.",
+        "Release destroys the sound handles and group, never registered sprites."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {
+        "koikake": "Group allocation80 bytes; sound slots+48..64, click+68, synthetic flag+76.",
+        "reference": "84 bytes; sound slots+52..68, click+72, synthetic flag+80.",
+        "totsulover": "Same84-byte group as reference."
+      },
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5650",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5210",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100afc70",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonCreateEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "hover_sound",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "native tagged PAL sound handle"
+        },
+        {
+          "name": "click_sound",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "native tagged PAL sound handle"
+        }
+      ],
+      "return_contract": "Owned PalButtonGroupOpaque pointer, null on allocation failure",
+      "behavior": "Copies hover sound four times into group5, then stores original hover and click handles. Release will release both original handles too: ownership transfers to the group on successful allocation.",
+      "edge_cases": [
+        "Copies may fail independently without rejecting group.",
+        "Allocation failure does not release caller handles.",
+        "Same allocation/layout differences as Create."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a55f0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5040",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100afd30",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonRelease",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        }
+      ],
+      "return_contract": "int32_t:1 released,0 null group",
+      "behavior": "Frees every registration node, releases five hover handles and click handle, then frees group. Registered sprites remain alive.",
+      "edge_cases": [
+        "Caller must not retain/reuse group or nodes after release.",
+        "No validation of dangling nonnull pointers."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5560",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4fb0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100afdb0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonEntry",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "return_contract": "int32_t:1 inserted,0 null group/allocation failure",
+      "behavior": "Allocates24-byte node at list head; enabled=1,reserved=0,base_row=0. flags=1.",
+      "edge_cases": [
+        "Null sprite and duplicate sprites are accepted at insertion.",
+        "Newer insertion is searched first when priorities tie.",
+        "Flags:1 push,2 repeat-or-push when bit1 absent,4 suppress cell changes,0x10000 forwarded to SpriteHit; newer GetReaction also honors8 sound suppression."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5500",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4ed0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100afe30",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonEntryEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "flags",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:1 inserted,0 null group/allocation failure",
+      "behavior": "Allocates24-byte node at list head; enabled=1,reserved=0,base_row=0. Copies all32 flag bits.",
+      "edge_cases": [
+        "Null sprite and duplicate sprites are accepted at insertion.",
+        "Newer insertion is searched first when priorities tie.",
+        "Flags:1 push,2 repeat-or-push when bit1 absent,4 suppress cell changes,0x10000 forwarded to SpriteHit; newer GetReaction also honors8 sound suppression."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a54a0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4df0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100afeb0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonDelete",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "return_contract": "int32_t:1 first match removed,0 missing/null group",
+      "behavior": "Unlinks and frees the first matching registration node only. Does not release sprite, reset pending reaction, or remove duplicate registrations.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5440",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4d90",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100aff30",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonCtrl",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "enabled",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:1 first matching node changed,0 missing/null group/null sprite",
+      "behavior": "Stores raw enabled word in first matching node. Does not change sprite visibility or clear pending reaction.",
+      "edge_cases": [
+        "Disabled front node still occludes lower-priority button nodes during hit selection."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4fd0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4750",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b0340",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonSetPos",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "base_row",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:1 matching node,0 missing/null group",
+      "behavior": "Stores base cell row and calls SpriteRectSetPos(sprite,0,row); this is an image cell, not screen x/y.",
+      "edge_cases": [
+        "A null sprite registration can match and returns1 after native sprite routine reports error6.",
+        "SpriteRectSetPos row clamping is build-specific and belongs to sprite contract."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4f40",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4690",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b03e0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonGetPos",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "return_contract": "int32_t base row; -1 missing/null group/null sprite",
+      "behavior": "Returns node base_row without querying visible sprite cell.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4f10",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonSetReaction",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "return_contract": "int32_t always0",
+      "behavior": "If group exists and no pending sprite, stores requested sprite and sets synthetic flag1. Does not require sprite registration. A pending reaction rejects replacement.",
+      "edge_cases": [
+        "A zero requested sprite still sets synthetic flag but does not enter pending path."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4f80",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4720",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b03a0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonIsProcessing",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        }
+      ],
+      "return_contract": "int32_t normalized0/1",
+      "behavior": "True exactly when group is nonnull and pending sprite field+0x20 is nonzero.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4fb0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonReset",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "return_contract": "int32_t:1 requested sprite disabled,0 missing/null requested sprite",
+      "behavior": "Always clears current/previous12-byte reactions, capture sprite and synthetic flag. If requested sprite exists in list, also sets its enabled word0.",
+      "edge_cases": [
+        "Reset-only with null sprite still resets state but returns0.",
+        "Null group is dereferenced; do not claim null-safe export."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a56d0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5400",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonMode",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mode",
+          "native_type": "uint8_t",
+          "stack_slot_bits": 32,
+          "meaning": "low8 bits of four-byte cdecl slot"
+        }
+      ],
+      "return_contract": "C return type unresolved; EAX is context pointer",
+      "behavior": "Stores zero-extended byte in global button-mode word. Any nonzero mode uses release-style capture processing in GetReaction.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5720",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5450",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonGetHitSprite",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "y",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "Borrowed PalSpriteOpaque pointer, null if no enabled hit",
+      "behavior": "Tests every node with SpriteHit(flags&0x10000). Chooses strictly smallest native sprite priority, retaining first encountered tie. Disabled winner produces null and occludes rear nodes. Then confirms enabled registration.",
+      "edge_cases": [
+        "Null group or negative x/y returnsnull; helper is called before negative-coordinate rejection.",
+        "No sprite ownership transfer or mutation."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5010",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonHitTest",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "y",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t normalized0/1",
+      "behavior": "Returns GetHitSprite(group,x,y)!=null with identical hit/occlusion rules.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5070",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonGetReaction",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "reaction",
+          "native_type": "PalButtonReaction32 *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "caller-owned writable12-byte output; special null-group rule for Ex",
+          "layout": "PalButtonReaction32"
+        }
+      ],
+      "return_contract": "Borrowed completed sprite pointer; null while idle/hovering/pending",
+      "behavior": "Polls shared input and updates group latch. If pending, synthetic flag starts click sound once; otherwise waits until click sound is not playing, then moves pending to completed. If idle, copies current to previous, clears current, finds front hit, updates cells and starts pending click according to mode/flags. Copies {completed,hovered,pending} to optional output.",
+      "edge_cases": [
+        "Null group returns0 and zeroes output if nonnull.",
+        "Even with no click sound, clicked sprite is not returned until a later poll.",
+        "Export does not clear input itself; Game.exe consumer clears input while pending.",
+        "No native callback is invoked; VM wrapper dispatches callbacks using completed and hovered pointers.",
+        "Pending branch bypasses hit testing and cell reset."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {
+        "koikake": "No global release-mode API; push/repeat node flags only. Sound suppression bit8 is ignored.",
+        "reference": "Release mode replaces node flags with2, losing flags4/8/0x10000. Push mode has no sound-suppression-bit8 checks.",
+        "totsulover": "Release mode ORs node flags with2; GetReaction respects sound-suppression bit8, including synthetic reaction using first node flags."
+      },
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a51d0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a49b0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100aff90",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalButtonGetReactionEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "PalButtonGroupOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "y",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "trigger",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "reaction",
+          "native_type": "PalButtonReaction32 *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "caller-owned writable12-byte output; special null-group rule for Ex",
+          "layout": "PalButtonReaction32"
+        }
+      ],
+      "return_contract": "Borrowed completed sprite pointer; null until completion",
+      "behavior": "Same pending/sound-completion latch but uses supplied x/y and nonzero trigger. Ignores global release mode and node push/repeat flags. Applies flag4 cell suppression; does not honor newer flag8 sound suppression.",
+      "edge_cases": [
+        "Null group unconditionally writes12 zero bytes through reaction; output must be nonnull in that case.",
+        "With nonnull group, output may be null.",
+        "Unlike GetReaction, no explicit negative-coordinate rejection follows hit selection.",
+        "Any nonzero trigger starts pending; no normalization of the caller's input source."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/sprite.rs",
+        "crates/pal-vm/src/audio.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5090",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a4790",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b0190",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalCursorSetPos",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "x",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "y",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t Win32 SetCursorPos result",
+      "behavior": "Scales logical coordinates with float32 division/multiplication and truncation to current window/fullscreen viewport, adds screen offsets, stores physical result in input position fields and calls OS cursor warp.",
+      "edge_cases": [
+        "No clamping to logical bounds.",
+        "Stored coordinates temporarily contain physical screen coordinates until next input sample.",
+        "GetMouseX/Y do not independently reproject them."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/app.rs",
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5820",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5510",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b07c0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalCursorSetAutoHideTime",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "milliseconds",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "uint32_t native SetTimer timer-id result or KillTimer BOOL result",
+      "behavior": "Stores duration and enabled=(duration!=0); starts timer id10000 with that duration or kills it for zero. Cursor movement restarts timer; timeout hides cursor subject to client-area/visibility guards.",
+      "edge_cases": [
+        "Setter does not immediately show or hide cursor.",
+        "Native OS timer granularity and ShowCursor count are not portable timing guarantees."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/app.rs",
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a57d0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a54c0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b09f0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalSetCursor",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "name",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call",
+          "meaning": "system resource pointer/lowword integer ID when mode1; resource filename otherwise"
+        },
+        {
+          "name": "mode",
+          "native_type": "uint16_t",
+          "stack_slot_bits": 32,
+          "meaning": "low16 bits; only comparison to1"
+        },
+        {
+          "name": "hotspot_x",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "hotspot_y",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:0 file-open failure,otherwise1",
+      "behavior": "Mode1 loads system cursor using LoadCursorA(NULL,name). Other modes destroy prior cursor, read resource into shared buffer, decode TGA pixels and construct cursor with supplied hotspots. Stores cursor, installs window-class cursor, posts deferred SetCursor message.",
+      "edge_cases": [
+        "Mode1 overwrites previous handle without first destroying it.",
+        "Decode/OS cursor allocation failure can still result in return1 with null cursor.",
+        "Filename buffer and hotspot values are not range-checked at this boundary."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/app.rs",
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a59b0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a56a0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b06a0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalReleaseCursor",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "C return type unresolved; EAX is incidental context/handle",
+      "behavior": "If stored cursor exists, calls DestroyCursor and clears stored handle. Does not clear window-class cursor or post replacement message.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/app.rs",
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5960",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5650",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b0780",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "?PalDeleteCursor@@YAXXZ",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "void, established by decorated symbol YAXXZ",
+      "behavior": "Sets window-class GCL_HCURSOR(-12) to null; does not destroy stored cursor or clear its ownership field.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/app.rs",
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a5990",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a5680",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100b0bc0",
+          "evidence": [
+            "reverse/evidence/input-koikake-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalIsTouch",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t normalized0/1",
+      "behavior": "Returns whether dynamic RegisterTouchWindow entry exists and IsTouchWindow(engine HWND,NULL) succeeds. This is OS registration state, not physical touch availability or stored mode.",
+      "edge_cases": [
+        "No initialized touch API returns0.",
+        "Assumes companion IsTouchWindow entry was resolved when RegisterTouchWindow is present."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4760",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3f10",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalIsTouchMode",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "uint32_t raw stored mode",
+      "behavior": "Reads stored zero-extended mode byte; no OS query.",
+      "edge_cases": [],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a46d0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3e60",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalTouchMode",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mode",
+          "native_type": "uint8_t",
+          "stack_slot_bits": 32,
+          "meaning": "low8 bits in four-byte slot"
+        }
+      ],
+      "return_contract": "uint32_t:0 if dynamic registration API absent; otherwise zero-extended argument byte",
+      "behavior": "If API exists: nonzero newmode with oldmode0 calls UnregisterTouchWindow. Zero newmode with oldmode0 calls RegisterTouchWindow(HWND,2). Other transitions perform no registration call. Finally stores newmode.",
+      "edge_cases": [
+        "Returning nonzero mode to zero does not re-register in the inspected native branch.",
+        "OS success/failure is ignored; mode is still stored."
+      ],
+      "unresolved": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4670",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3e00",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalTouchEnable",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "enabled",
+          "native_type": "uint8_t",
+          "stack_slot_bits": 32,
+          "meaning": "low8 bits; not normalized"
+        }
+      ],
+      "return_contract": "C return type unresolved; EAX context pointer",
+      "behavior": "Stores independent byte gate for WM_TOUCH and touch-origin right-button handling. Does not call registration functions or change stored touch mode.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4740",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3ef0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalGestureCheck",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t normalized0/1",
+      "behavior": "Scans five48-byte private records and returns1 if any first DWORD is between3 and7 inclusive; otherwise0. No mutation.",
+      "edge_cases": [
+        "Does not inspect the separate48-byte buffer returned by GetGesture."
+      ],
+      "unresolved": [
+        "Gesture-record producer and semantic meaning of remaining record fields are not established; export read behavior is confirmed."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a46e0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3e70",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalGetGesture",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "output",
+          "native_type": "PalGestureOpaque48 *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "caller-owned writable48-byte buffer",
+          "layout": "PalGestureOpaque48"
+        }
+      ],
+      "return_contract": "EAX echoes output pointer; original C return declaration unresolved",
+      "behavior": "Copies exactly48 bytes from private gesture buffer (newctx+0x2A0,reference+0x288) without consuming or clearing it.",
+      "edge_cases": [
+        "Null output is dereferenced.",
+        "Do not substitute Windows GESTUREINFO without proving field equivalence."
+      ],
+      "unresolved": [
+        "No consuming caller established return declaration.",
+        "Only raw48-byte layout and first-word SetGesture write confirmed; remaining fields are opaque."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4710",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3ec0",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalSetGesture",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "value",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "C return type unresolved; EAX context pointer",
+      "behavior": "Writes only first DWORD of the buffer read by GetGesture. Does not update the five records scanned by GestureCheck.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved: EAX contains a context pointer or other incidental register value; callers inspected do not consume it."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/input.rs",
+        "crates/pal-vm/src/runtime.rs",
+        "crates/pal-vm/src/event.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a47a0",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3f50",
+          "evidence": [
+            "reverse/evidence/input-reference-exports.json"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PalSetPow",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "value",
+          "native_type": "uint8_t",
+          "stack_slot_bits": 32,
+          "meaning": "low8 bits of four-byte slot"
+        }
+      ],
+      "return_contract": "AL echoes argument; remaining EAX bits and original C return declaration unresolved",
+      "behavior": "Writes force-power-of-two texture flag through render-context pointer: newrender+0x368,reference+0x358. Nonzero rounds positive NPOT image/create dimensions upward independently of device capability; render-target creation also makes both dimensions the maximum side. Zero permits NPOT only if capability allows it. Existing resources are not resized by setter.",
+      "edge_cases": [],
+      "unresolved": [
+        "Original C return declaration unresolved; do not normalize to BOOL or widen stale high EAX bits."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/renderer/mod.rs",
+        "crates/pal-vm/src/runtime.rs"
+      ],
+      "implementation_parity": "not_certified",
+      "build_differences": {},
+      "abi_evidence_basis": "Reviewed stack/register loads, cleanup, return paths, pointer accesses and caller use; not inferred from the decompiler prototype alone.",
+      "consumer_evidence": {
+        "totsulover": {
+          "addresses": [
+            "0x100cb330",
+            "0x100cb440",
+            "0x100c9d90",
+            "0x100a9240"
+          ],
+          "file": "reverse/evidence/pal-platform/totsulover-consumers.json"
+        },
+        "reference": {
+          "addresses": [
+            "0x100c45a0",
+            "0x100c46b0",
+            "0x100c3260",
+            "0x100a8310"
+          ],
+          "file": "reverse/evidence/pal-platform/reference-consumers.json"
+        }
+      },
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a4780",
+          "evidence": [
+            "reverse/evidence/pal-core-totsulover.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a3f30",
+          "evidence": [
+            "reverse/evidence/input-reference-cursor-touch-extra.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "vm_wrappers": [
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 12,
+      "handler": "0x4237e0",
+      "name": "btn_slide_end",
+      "arguments_pop_order": [
+        "group",
+        "index"
+      ],
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination=-1 on left pull/group-ended,else0; invalid bounds returncontrol1 without destination store",
+      "behavior": "On end sets group-ended1; while active sets task wait-control flag. Separate from8:38.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 17,
+      "handler": "0x423110",
+      "name": "btn_get_push",
+      "arguments_pop_order": [
+        "group"
+      ],
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination=stored last clicked index,or-1 invalid group",
+      "behavior": "Reads group latch; no input poll or pop-from-queue behavior.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 23,
+      "handler": "0x423050",
+      "name": "btn_get_onmouse",
+      "arguments_pop_order": [
+        "group"
+      ],
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination=stored hovered index,or-1 invalid group",
+      "behavior": "Reads group latch without recomputing hit.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 36,
+      "handler": "0x425d90",
+      "name": "btn_mode",
+      "arguments_pop_order": [
+        "mode"
+      ],
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no destination store",
+      "behavior": "Stores normalized task mode byte and calls native PalButtonMode.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 38,
+      "handler": "0x425f20",
+      "name": "btn_get_reaction",
+      "arguments_pop_order": [
+        "group",
+        "index"
+      ],
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination=PalButtonGetReaction!=0;control1 valid,control0 invalidbounds",
+      "behavior": "Checks requested slot exists, but queries whole group's completed reaction, not equality to requested slot. Debug label misleadingly says btn_on_check.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 39,
+      "handler": "0x426080",
+      "name": "btn_get_toggle",
+      "arguments_pop_order": [
+        "group",
+        "index"
+      ],
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination initialized0,then group toggle if requested slot exists; control0 invalidbounds",
+      "behavior": "Stored toggle belongs to group, not individual sprite.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json",
+        "reverse/evidence/button-totsulover-toggle.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 40,
+      "handler": "0x426180",
+      "name": "btn_get_info",
+      "arguments_pop_order": [
+        "group",
+        "index",
+        "temp_base"
+      ],
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "destination1 after6 outputwords,0 invalidgroup/index/base; missing sprite leaves destination unchanged",
+      "behavior": "Requires valid group and slot. A missing sprite leaves destination unchanged; otherwise base<=120 writes wrapper base x/y, sprite cell width/height, and texture width/height into six task work-bank words.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 9,
+      "index": 35,
+      "handler": "0x465860",
+      "name": "input_clear",
+      "arguments_pop_order": [],
+      "arity": 0,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no destination store",
+      "behavior": "Calls native Clear plus RepeatClear and clears task input latch.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/input-totsulover-exe-wrappers.json",
+        "reverse/evidence/input-totsulover-exe-extra.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "handler": "0x428090",
+      "name": "input_clear",
+      "arguments_pop_order": [],
+      "arity": 0,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no destination store",
+      "behavior": "Calls Clear and RepeatClear, then clears the task input latch. Returning1 controls VM execution and is not a destination value.",
+      "registration_evidence": "Data xref at0x478B64; exact category/index retained separately until table basis is checked.",
+      "evidence": [
+        "reverse/evidence/input-koikake-vm-extra.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 0,
+      "handler": "0x40fa40",
+      "name": "btn_init",
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Creates one group and owns five hover sound buffers plus one click buffer; duplicate initialization is a control-success no-op.",
+      "registration_evidence": "Function-table slot at0x478590 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 1,
+      "handler": "0x40f960",
+      "name": "btn_uninit",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Releases group buttons/sprites and sound-owned PAL group.",
+      "registration_evidence": "Function-table slot at0x478594 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 3,
+      "handler": "0x40f450",
+      "name": "btn_set",
+      "arity": 7,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Arguments are group,index,resource,click callback,hover callback,leave callback,raw PAL flags. Flags do not encode visibility. Queued show is separate.",
+      "registration_evidence": "Function-table slot at0x47859c in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 4,
+      "handler": "0x40f230",
+      "name": "btn_hide",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Queues view control false.",
+      "registration_evidence": "Function-table slot at0x4785a0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 5,
+      "handler": "0x40f170",
+      "name": "btn_show",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Queues view control true.",
+      "registration_evidence": "Function-table slot at0x4785a4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 6,
+      "handler": "0x40f0b0",
+      "name": "btn_set_pos",
+      "arity": 4,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Stores wrapper base x/y words.",
+      "registration_evidence": "Function-table slot at0x4785a8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 7,
+      "handler": "0x40ef90",
+      "name": "btn_set_rect",
+      "arity": 6,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Sets source rectangle to(0,0,width,height) then sets two cell-size words.",
+      "registration_evidence": "Function-table slot at0x4785ac in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 8,
+      "handler": "0x40f2f0",
+      "name": "btn_release",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Deletes entry, stops its wrapper and issues hover-leave callback when releasing active hover.",
+      "registration_evidence": "Function-table slot at0x4785b0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 9,
+      "handler": "0x40ed20",
+      "name": "btn_slider_get",
+      "arity": 5,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; explicit destination store via0x4377D0",
+      "behavior": "Returns clamped raw drag offset relative to stored base and half cell size; vertical snap adds the remainder, horizontal branch adds zero; -1 mouse coordinate returns stored offset.",
+      "registration_evidence": "Function-table slot at0x4785b4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 10,
+      "handler": "0x40ec60",
+      "name": "btn_slider_set",
+      "arity": 5,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Stores wrapping product value*travel divided by100 in selected wrapper offset. The PAL setter itself does not clamp.",
+      "registration_evidence": "Function-table slot at0x4785b8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 11,
+      "handler": "0x40ebd0",
+      "name": "btn_slider_begin",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Latches ended when left stable-held bit is absent or pull is present.",
+      "registration_evidence": "Function-table slot at0x4785bc in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 12,
+      "handler": "0x40eb20",
+      "name": "btn_on_check",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; explicit destination store via0x4377D0",
+      "behavior": "Returns-1 on pull/ended latch, otherwise0 and sets the VM yield latch.",
+      "registration_evidence": "Function-table slot at0x4785c0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 13,
+      "handler": "0x40ea50",
+      "name": "btn_set_toggle",
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Queues command0x8000D; consumer0x417EA0 sets base row=raw toggle*3. Automatic button states add0/1/2 to that base.",
+      "registration_evidence": "Function-table slot at0x4785c4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 14,
+      "handler": "0x40e990",
+      "name": "btn_get_pos",
+      "arity": 4,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Writes current wrapper x/y to chosen temporary bank words except destination index-1; no ordinary destination store.",
+      "registration_evidence": "Function-table slot at0x4785c8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 15,
+      "handler": "0x40e890",
+      "name": "btn_enable",
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Calls PalButtonCtrl only; does not alter alpha or sprite cell.",
+      "registration_evidence": "Function-table slot at0x4785cc in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 16,
+      "handler": "0x40e7e0",
+      "name": "btn_set_alpha",
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Stores low8 bits of alpha in wrapper color, preserving RGB, and clears alpha-action word.",
+      "registration_evidence": "Function-table slot at0x4785d0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 17,
+      "handler": "0x40e770",
+      "name": "btn_get_push",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; explicit destination store via0x4377D0",
+      "behavior": "Reads stored click callback index without clearing it.",
+      "registration_evidence": "Function-table slot at0x4785d4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 18,
+      "handler": "0x40e580",
+      "name": "btn_expansion",
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Assigns special skip/auto/backlog/button group indices according to mode.",
+      "registration_evidence": "Function-table slot at0x4785d8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 19,
+      "handler": "0x40e4f0",
+      "name": "btn_lock",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Sets group lock and raw unsigned duration/start; zero duration is indefinite.",
+      "registration_evidence": "Function-table slot at0x4785dc in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 20,
+      "handler": "0x40e480",
+      "name": "btn_unlock",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Clears group lock,duration,start words.",
+      "registration_evidence": "Function-table slot at0x4785e0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 21,
+      "handler": "0x40e2c0",
+      "name": "btn_set_anim",
+      "arity": 4,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Loads named wrapper animation and queues its play command.",
+      "registration_evidence": "Function-table slot at0x4785e4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 22,
+      "handler": "0x40e220",
+      "name": "btn_set_hit",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Sets synthetic PAL reaction if entry exists. Native group starts sound on next poll and completes after sound stops.",
+      "registration_evidence": "Function-table slot at0x4785e8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 23,
+      "handler": "0x40e700",
+      "name": "btn_get_onmouse",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; explicit destination store via0x4377D0",
+      "behavior": "Reads stored hover callback index without polling or clearing.",
+      "registration_evidence": "Function-table slot at0x4785ec in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 24,
+      "handler": "0x40e190",
+      "name": "btn_anim_clear",
+      "arity": 2,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Stops wrapper animation if entry exists.",
+      "registration_evidence": "Function-table slot at0x4785f0 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 25,
+      "handler": "0x40e690",
+      "name": "btn_get_offmouse",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; explicit destination store via0x4377D0",
+      "behavior": "Reads stored hover-leave index without polling or clearing.",
+      "registration_evidence": "Function-table slot at0x4785f4 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "koikake",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "category": 8,
+      "index": 26,
+      "handler": "0x40e100",
+      "name": "btn_onmouse_clear",
+      "arity": 1,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no ordinary destination store",
+      "behavior": "Calls active hover-leave callback, writes off index and clears active hover/backup identity.",
+      "registration_evidence": "Function-table slot at0x4785f8 in verified button table0x478590. Adjacent unrelated tables excluded.",
+      "evidence": [
+        "reverse/evidence/button-koikake-vm-table.json",
+        "reverse/evidence/button-koikake-hover-context.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "category": 8,
+      "index": 13,
+      "handler": "0x423630",
+      "name": "btn_set_toggle",
+      "arguments_pop_order": [
+        "group",
+        "index",
+        "toggle"
+      ],
+      "arity": 3,
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "return_contract": "control1; no destination store",
+      "behavior": "When the exact slot exists, stores the raw toggle word in the group latch and queues command0x8000D, whose consumer applies three times the word as the button base row.",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/button-totsulover-toggle.json"
+      ]
+    }
+  ],
+  "shared_layouts": [
+    {
+      "name": "PalButtonReaction32",
+      "size": 12,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "completed_sprite",
+          "offset": 0,
+          "native_type": "PalSpriteOpaque *"
+        },
+        {
+          "name": "hovered_sprite",
+          "offset": 4,
+          "native_type": "PalSpriteOpaque *"
+        },
+        {
+          "name": "pending_sprite",
+          "offset": 8,
+          "native_type": "PalSpriteOpaque *"
+        }
+      ],
+      "ownership": "Caller-owned output; all three words are borrowed native pointers, not portable arena handles."
+    },
+    {
+      "name": "PalGestureOpaque48",
+      "size": 48,
+      "alignment": "No alignment check; new build uses unaligned SSE loads/stores",
+      "fields": [
+        {
+          "name": "value",
+          "offset": 0,
+          "native_type": "uint32_t"
+        },
+        {
+          "name": "opaque",
+          "offset": 4,
+          "native_type": "uint8_t[44]"
+        }
+      ],
+      "ownership": "Caller-owned writable output; no transferred pointers can be asserted for opaque bytes."
+    }
+  ],
+  "private_layouts": {
+    "button_node": {
+      "size": 24,
+      "fields": {
+        "0": "borrowed sprite",
+        "4": "enabled word",
+        "8": "initialized0, consumer unresolved",
+        "12": "base cell row",
+        "16": "flags",
+        "20": "next owned node"
+      }
+    },
+    "button_group": {
+      "size": {
+        "koikake": 80,
+        "reference": 84,
+        "totsulover": 84
+      },
+      "common_fields": {
+        "20": "head",
+        "24": "completed",
+        "28": "hovered",
+        "32": "pending",
+        "36": "previous completed",
+        "40": "previous hovered",
+        "44": "previous pending"
+      },
+      "new_fields": {
+        "48": "release capture",
+        "52": "five owned hover sound handles",
+        "72": "owned click sound",
+        "80": "synthetic reaction flag"
+      }
+    }
+  },
+  "unresolved": [
+    "Behavior review covers export branches and documented consumers, not OS-device certification or all thread interleavings.",
+    "Several void-like setters have build-dependent incidental EAX values. They are not confirmed C scalar returns.",
+    "Gesture opaque record fields/producer remain unresolved; PalSetPow consumers are covered by the graphics audit evidence.",
+    "Portable delayed sound-backed button reactions and hover/click callback chains are implemented. Native per-group concurrent polling, joystick/extended-event device delivery, focus/cursor/touch mapping and exact slider-wrapper composition still need integration review."
+  ]
+}

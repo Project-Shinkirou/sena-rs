@@ -1,0 +1,654 @@
+{
+  "functions": [
+    {
+      "ea": "0x100bdc90",
+      "name": "PalSystemPathSet",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSystemPathSet(LPCSTR lpString)\n{\n  LPCSTR v1; // esi\n  int v2; // ebx\n  size_t v3; // edi\n  CHAR v4; // al\n  CHAR *v5; // eax\n  CHAR *v6; // edi\n  int v7; // ecx\n  CHAR v8; // al\n  _DWORD *v9; // esi\n  CHAR **v10; // eax\n\n  v1 = lpString;\n  v2 = 0;\n  v3 = lstrlenA(lpString) + 1;\n  v4 = lpString[1];\n  if ( (v4 != 58 || lpString[2] != 92) && (*lpString != 92 || v4 != 92) )\n  {\n    v2 = 1;\n    v3 += lstrlenA(pszPath) + 1;\n  }\n  v5 = (CHAR *)PalMemoryAlloc(v3, 1);\n  v6 = v5;\n  if ( !v5 )\n    return 0;\n  if ( v2 )\n  {\n    wsprintfA(v5, \"%s\\\\%s\", pszPath, lpString);\n  }\n  else\n  {\n    v7 = v5 - lpString;\n    do\n    {\n      v8 = *v1++;\n      v1[v7 - 1] = v8;\n    }\n    while ( v8 );\n  }\n  v9 = dword_1013390C;\n  if ( dword_1013390C )\n  {\n    v10 = (CHAR **)PalMemoryAlloc(0xCu, 1);\n    if ( v10 )\n    {\n      *v10 = v6;\n      v10[1] = (CHAR *)-2;\n      v10[2] = (CHAR *)v9[2];\n      v9[2] = v10;\n    }\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100bdc90",
+          "push    ebp"
+        ],
+        [
+          "0x100bdc91",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100bdc93",
+          "push    ebx"
+        ],
+        [
+          "0x100bdc94",
+          "push    esi"
+        ],
+        [
+          "0x100bdc95",
+          "mov     esi, [ebp+lpString]"
+        ],
+        [
+          "0x100bdc98",
+          "push    edi"
+        ],
+        [
+          "0x100bdc99",
+          "push    esi; lpString"
+        ],
+        [
+          "0x100bdc9a",
+          "call    ds:lstrlenA"
+        ],
+        [
+          "0x100bdca0",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x100bdca2",
+          "lea     edi, [eax+1]"
+        ],
+        [
+          "0x100bdca5",
+          "mov     al, [esi+1]"
+        ],
+        [
+          "0x100bdca8",
+          "cmp     al, 3Ah ; ':'"
+        ],
+        [
+          "0x100bdcaa",
+          "jnz     short loc_100BDCB2"
+        ],
+        [
+          "0x100bdcac",
+          "cmp     byte ptr [esi+2], 5Ch ; '\\'"
+        ],
+        [
+          "0x100bdcb0",
+          "jz      short loc_100BDCCE"
+        ],
+        [
+          "0x100bdcb2",
+          "cmp     byte ptr [esi], 5Ch ; '\\'"
+        ],
+        [
+          "0x100bdcb5",
+          "jnz     short loc_100BDCBB"
+        ],
+        [
+          "0x100bdcb7",
+          "cmp     al, 5Ch ; '\\'"
+        ],
+        [
+          "0x100bdcb9",
+          "jz      short loc_100BDCCE"
+        ],
+        [
+          "0x100bdcbb",
+          "push    offset pszPath; lpString"
+        ],
+        [
+          "0x100bdcc0",
+          "call    ds:lstrlenA"
+        ],
+        [
+          "0x100bdcc6",
+          "inc     edi"
+        ],
+        [
+          "0x100bdcc7",
+          "mov     ebx, 1"
+        ],
+        [
+          "0x100bdccc",
+          "add     edi, eax"
+        ],
+        [
+          "0x100bdcce",
+          "push    1; char"
+        ],
+        [
+          "0x100bdcd0",
+          "push    edi; Size"
+        ],
+        [
+          "0x100bdcd1",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100bdcd6",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100bdcd8",
+          "add     esp, 8"
+        ],
+        [
+          "0x100bdcdb",
+          "test    edi, edi"
+        ],
+        [
+          "0x100bdcdd",
+          "jz      short loc_100BDD43"
+        ],
+        [
+          "0x100bdcdf",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100bdce1",
+          "jz      short loc_100BDCFA"
+        ],
+        [
+          "0x100bdce3",
+          "push    esi"
+        ],
+        [
+          "0x100bdce4",
+          "push    offset pszPath"
+        ],
+        [
+          "0x100bdce9",
+          "push    offset aSS_0; \"%s\\\\%s\""
+        ],
+        [
+          "0x100bdcee",
+          "push    edi; LPSTR"
+        ],
+        [
+          "0x100bdcef",
+          "call    ds:wsprintfA"
+        ],
+        [
+          "0x100bdcf5",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100bdcf8",
+          "jmp     short loc_100BDD0D"
+        ],
+        [
+          "0x100bdcfa",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bdcfc",
+          "sub     ecx, esi"
+        ],
+        [
+          "0x100bdcfe",
+          "xchg    ax, ax"
+        ],
+        [
+          "0x100bdd00",
+          "mov     al, [esi]"
+        ],
+        [
+          "0x100bdd02",
+          "lea     esi, [esi+1]"
+        ],
+        [
+          "0x100bdd05",
+          "mov     [ecx+esi-1], al"
+        ],
+        [
+          "0x100bdd09",
+          "test    al, al"
+        ],
+        [
+          "0x100bdd0b",
+          "jnz     short loc_100BDD00"
+        ],
+        [
+          "0x100bdd0d",
+          "mov     esi, dword_1013390C"
+        ],
+        [
+          "0x100bdd13",
+          "test    esi, esi"
+        ],
+        [
+          "0x100bdd15",
+          "jz      short loc_100BDD39"
+        ],
+        [
+          "0x100bdd17",
+          "push    1; char"
+        ],
+        [
+          "0x100bdd19",
+          "push    0Ch; Size"
+        ],
+        [
+          "0x100bdd1b",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100bdd20",
+          "add     esp, 8"
+        ],
+        [
+          "0x100bdd23",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bdd25",
+          "jz      short loc_100BDD39"
+        ],
+        [
+          "0x100bdd27",
+          "mov     [eax], edi"
+        ],
+        [
+          "0x100bdd29",
+          "mov     dword ptr [eax+4], 0FFFFFFFEh"
+        ],
+        [
+          "0x100bdd30",
+          "mov     ecx, [esi+8]"
+        ],
+        [
+          "0x100bdd33",
+          "mov     [eax+8], ecx"
+        ],
+        [
+          "0x100bdd36",
+          "mov     [esi+8], eax"
+        ],
+        [
+          "0x100bdd39",
+          "pop     edi"
+        ],
+        [
+          "0x100bdd3a",
+          "pop     esi"
+        ],
+        [
+          "0x100bdd3b",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100bdd40",
+          "pop     ebx"
+        ],
+        [
+          "0x100bdd41",
+          "pop     ebp"
+        ],
+        [
+          "0x100bdd42",
+          "retn"
+        ],
+        [
+          "0x100bdd43",
+          "pop     edi"
+        ],
+        [
+          "0x100bdd44",
+          "pop     esi"
+        ],
+        [
+          "0x100bdd45",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100bdd47",
+          "pop     ebx"
+        ],
+        [
+          "0x100bdd48",
+          "pop     ebp"
+        ],
+        [
+          "0x100bdd49",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100bdd50",
+      "name": "PalSystemPathClear",
+      "xrefs": [
+        {
+          "from": "0x100a3065",
+          "function": "PalUninit"
+        },
+        {
+          "from": "0x100bddd0",
+          "function": "PalSystemPathUninit"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int PalSystemPathClear()\n{\n  void **v0; // esi\n  void **v2; // eax\n  _DWORD *v3; // ecx\n  void *v4; // edi\n  void *v5; // ebx\n\n  v0 = (void **)dword_1013390C;\n  if ( !dword_1013390C )\n    return 0;\n  while ( 1 )\n  {\n    v2 = (void **)v0[2];\n    if ( !v2 )\n      break;\n    while ( v2[1] != (void *)-2 )\n    {\n      v0 = v2;\n      v2 = (void **)v2[2];\n      if ( !v2 )\n        return 1;\n    }\n    v3 = v0[2];\n    v4 = *v2;\n    v5 = (void *)v3[2];\n    if ( v3 )\n    {\n      if ( dword_101336F4 )\n        --*((_DWORD *)dword_101336F4 + 82);\n      j___free_base(v3);\n    }\n    v0[2] = v5;\n    if ( !v4 )\n      break;\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v4);\n    v0 = (void **)dword_1013390C;\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100bdd50",
+          "push    esi"
+        ],
+        [
+          "0x100bdd51",
+          "mov     esi, dword_1013390C"
+        ],
+        [
+          "0x100bdd57",
+          "test    esi, esi"
+        ],
+        [
+          "0x100bdd59",
+          "jnz     short loc_100BDD5F"
+        ],
+        [
+          "0x100bdd5b",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100bdd5d",
+          "pop     esi"
+        ],
+        [
+          "0x100bdd5e",
+          "retn"
+        ],
+        [
+          "0x100bdd5f",
+          "push    ebx"
+        ],
+        [
+          "0x100bdd60",
+          "push    edi"
+        ],
+        [
+          "0x100bdd61",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x100bdd64",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bdd66",
+          "jz      short loc_100BDD77"
+        ],
+        [
+          "0x100bdd68",
+          "cmp     dword ptr [eax+4], 0FFFFFFFEh"
+        ],
+        [
+          "0x100bdd6c",
+          "jz      short loc_100BDD80"
+        ],
+        [
+          "0x100bdd6e",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100bdd70",
+          "mov     eax, [eax+8]"
+        ],
+        [
+          "0x100bdd73",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bdd75",
+          "jnz     short loc_100BDD68"
+        ],
+        [
+          "0x100bdd77",
+          "pop     edi"
+        ],
+        [
+          "0x100bdd78",
+          "pop     ebx"
+        ],
+        [
+          "0x100bdd79",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100bdd7e",
+          "pop     esi"
+        ],
+        [
+          "0x100bdd7f",
+          "retn"
+        ],
+        [
+          "0x100bdd80",
+          "mov     ecx, [esi+8]"
+        ],
+        [
+          "0x100bdd83",
+          "mov     edi, [eax]"
+        ],
+        [
+          "0x100bdd85",
+          "mov     ebx, [ecx+8]"
+        ],
+        [
+          "0x100bdd88",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bdd8a",
+          "jz      short loc_100BDDA4"
+        ],
+        [
+          "0x100bdd8c",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bdd91",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bdd93",
+          "jz      short loc_100BDD9B"
+        ],
+        [
+          "0x100bdd95",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bdd9b",
+          "push    ecx; Block"
+        ],
+        [
+          "0x100bdd9c",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bdda1",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bdda4",
+          "mov     [esi+8], ebx"
+        ],
+        [
+          "0x100bdda7",
+          "test    edi, edi"
+        ],
+        [
+          "0x100bdda9",
+          "jz      short loc_100BDD77"
+        ],
+        [
+          "0x100bddab",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bddb0",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bddb2",
+          "jz      short loc_100BDDBA"
+        ],
+        [
+          "0x100bddb4",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bddba",
+          "push    edi; Block"
+        ],
+        [
+          "0x100bddbb",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bddc0",
+          "mov     esi, dword_1013390C"
+        ],
+        [
+          "0x100bddc6",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bddc9",
+          "jmp     short loc_100BDD61"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100bde00",
+      "name": "PalSystemPathInit",
+      "xrefs": [
+        {
+          "from": "0x100a3e2a",
+          "function": "sub_100A34F0"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "BOOL PalSystemPathInit()\n{\n  _DWORD *v0; // eax\n\n  if ( !pszPath[0] )\n  {\n    memset(pszPath, 0, sizeof(pszPath));\n    GetModuleFileNameA(0, pszPath, 0x104u);\n    PathRemoveFileSpecA(pszPath);\n  }\n  v0 = (_DWORD *)PalMemoryAlloc(0xCu, 1);\n  if ( v0 )\n    v0[2] = 0;\n  dword_1013390C = v0;\n  return v0 != 0;\n}\n",
+      "disassembly": [
+        [
+          "0x100bde00",
+          "push    ecx"
+        ],
+        [
+          "0x100bde01",
+          "cmp     pszPath, 0"
+        ],
+        [
+          "0x100bde08",
+          "jnz     short loc_100BDE3B"
+        ],
+        [
+          "0x100bde0a",
+          "push    104h; Size"
+        ],
+        [
+          "0x100bde0f",
+          "push    0; Val"
+        ],
+        [
+          "0x100bde11",
+          "push    offset pszPath; void *"
+        ],
+        [
+          "0x100bde16",
+          "call    _memset"
+        ],
+        [
+          "0x100bde1b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100bde1e",
+          "push    104h; nSize"
+        ],
+        [
+          "0x100bde23",
+          "push    offset pszPath; lpFilename"
+        ],
+        [
+          "0x100bde28",
+          "push    0; hModule"
+        ],
+        [
+          "0x100bde2a",
+          "call    ds:GetModuleFileNameA"
+        ],
+        [
+          "0x100bde30",
+          "push    offset pszPath; pszPath"
+        ],
+        [
+          "0x100bde35",
+          "call    ds:PathRemoveFileSpecA"
+        ],
+        [
+          "0x100bde3b",
+          "push    1; char"
+        ],
+        [
+          "0x100bde3d",
+          "push    0Ch; Size"
+        ],
+        [
+          "0x100bde3f",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100bde44",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100bde46",
+          "add     esp, 8"
+        ],
+        [
+          "0x100bde49",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bde4b",
+          "jz      short loc_100BDE54"
+        ],
+        [
+          "0x100bde4d",
+          "mov     dword ptr [ecx+8], 0"
+        ],
+        [
+          "0x100bde54",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100bde56",
+          "mov     dword_1013390C, ecx"
+        ],
+        [
+          "0x100bde5c",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bde5e",
+          "setnz   al"
+        ],
+        [
+          "0x100bde61",
+          "pop     ecx"
+        ],
+        [
+          "0x100bde62",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Pal.dll",
+  "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

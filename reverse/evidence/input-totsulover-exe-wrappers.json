@@ -1,0 +1,3377 @@
+{
+  "functions": [
+    {
+      "ea": "0x467390",
+      "name": "sub_467390",
+      "xrefs": [
+        {
+          "from": "0x476e28",
+          "function": "sub_476BA0"
+        },
+        {
+          "from": "0x476ee1",
+          "function": "sub_476BA0"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_467390(_DWORD *this)\n{\n  _DWORD *v1; // ebx\n  int TaskData; // eax\n  int (*v3)(void); // ecx\n  _DWORD *v4; // eax\n  int v5; // esi\n  _DWORD *v6; // edi\n  int KeyPull; // eax\n  int v8; // ebx\n  bool v9; // zf\n  int v10; // eax\n  int v11; // ecx\n  int result; // eax\n  _DWORD *v14; // [esp+10h] [ebp-4h]\n\n  v1 = this;\n  if ( this[2] || (PalInputGetKeyOn() & 0xFFFFF87F) != 0 )\n    return 0;\n  TaskData = PalTaskGetTaskData(0);\n  v3 = PalInputGetKeyPush;\n  v4 = (_DWORD *)(TaskData + 824);\n  v14 = v4;\n  v5 = 0;\n  while ( 1 )\n  {\n    v6 = &v1[4 * v5 + 18212];\n    if ( *v6 )\n    {\n      if ( v6[1] )\n        break;\n    }\nLABEL_41:\n    if ( ++v5 >= 32 )\n      return 0;\n  }\n  if ( (!v5 || v5 == 3) && *((_BYTE *)v4 + 12936) )\n    KeyPull = PalInputGetKeyPull(v3);\n  else\n    KeyPull = v3();\n  v8 = v6[2] & PalInputGetKeyOnEx() | KeyPull;\n  switch ( v5 )\n  {\n    case 0:\n      v9 = (v8 & 0x1000000) == 0;\n      goto LABEL_39;\n    case 1:\n      if ( (PalInputGetWheel() & 0x8000u) != 0 )\n        goto LABEL_14;\n      goto LABEL_40;\n    case 2:\n      if ( (__int16)PalInputGetWheel() <= 0 )\n        goto LABEL_40;\n      goto LABEL_14;\n    case 3:\n      v9 = (v8 & 0x40800000) == 0;\n      goto LABEL_39;\n    case 4:\n      v9 = (v8 & 0x800) == 0;\n      goto LABEL_39;\n    case 5:\n      v9 = (v8 & 0x1000) == 0;\n      goto LABEL_39;\n    case 6:\n      v9 = (v8 & 0x2000) == 0;\n      goto LABEL_39;\n    case 7:\n      v9 = (v8 & 0x4000) == 0;\n      goto LABEL_39;\n    case 8:\n      v9 = (v8 & 0x8000) == 0;\n      goto LABEL_39;\n    case 9:\n      v9 = (v8 & 0x10000) == 0;\n      goto LABEL_39;\n    case 10:\n      v9 = (v8 & 0x20000) == 0;\n      goto LABEL_39;\n    case 11:\n      v9 = (v8 & 0x40000) == 0;\n      goto LABEL_39;\n    case 12:\n      v9 = (v8 & 0x80000) == 0;\n      goto LABEL_39;\n    case 13:\n      v9 = (v8 & 0x100000) == 0;\n      goto LABEL_39;\n    case 14:\n      v9 = (v8 & 0x200000) == 0;\n      goto LABEL_39;\n    case 15:\n      v9 = ((unsigned int)&_ImageBase & v8) == 0;\n      goto LABEL_39;\n    case 16:\n      v9 = (v8 & 1) == 0;\n      goto LABEL_39;\n    case 17:\n      if ( (v8 & 0x80u) == 0 )\n        goto LABEL_40;\n      goto LABEL_14;\n    case 18:\n      v9 = (v8 & 0x100) == 0;\n      goto LABEL_39;\n    case 19:\n      v9 = (v8 & 0x200) == 0;\n      goto LABEL_39;\n    case 20:\n      v9 = (v8 & 0x400) == 0;\nLABEL_39:\n      if ( !v9 )\n        goto LABEL_14;\nLABEL_40:\n      v4 = v14;\n      v1 = this;\n      v3 = PalInputGetKeyPush;\n      goto LABEL_41;\n    default:\nLABEL_14:\n      v10 = v6[3];\n      if ( !v10 )\n        return 0;\n      PalDebugPrintf(10, 0, \"system btn[%d][%d] ret / %d\", v5, v10, v14[87975]);\n      sub_47D680(v14[87975], 1);\n      v14[87975] = v6[3] + v14[87976];\n      if ( !sub_47CD50(v11) )\n      {\n        this[1] = PaltimeGetTime();\n        this[2] = 50;\n      }\n      v14[1048] = 0;\n      result = 1;\n      break;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x467390",
+          "push    ebp"
+        ],
+        [
+          "0x467391",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x467393",
+          "sub     esp, 8"
+        ],
+        [
+          "0x467396",
+          "push    ebx"
+        ],
+        [
+          "0x467397",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x467399",
+          "push    esi"
+        ],
+        [
+          "0x46739a",
+          "push    edi"
+        ],
+        [
+          "0x46739b",
+          "mov     [ebp+var_8], ebx"
+        ],
+        [
+          "0x46739e",
+          "cmp     dword ptr [ebx+8], 0"
+        ],
+        [
+          "0x4673a2",
+          "jnz     loc_467582"
+        ],
+        [
+          "0x4673a8",
+          "call    __imp_PalInputGetKeyOn"
+        ],
+        [
+          "0x4673ae",
+          "test    eax, 0FFFFF87Fh"
+        ],
+        [
+          "0x4673b3",
+          "jnz     loc_467582"
+        ],
+        [
+          "0x4673b9",
+          "push    0"
+        ],
+        [
+          "0x4673bb",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x4673c1",
+          "mov     ecx, __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x4673c7",
+          "add     eax, 338h"
+        ],
+        [
+          "0x4673cc",
+          "add     esp, 4"
+        ],
+        [
+          "0x4673cf",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x4673d2",
+          "xor     esi, esi"
+        ],
+        [
+          "0x4673d4",
+          "lea     edi, [esi+11C9h]"
+        ],
+        [
+          "0x4673da",
+          "shl     edi, 4"
+        ],
+        [
+          "0x4673dd",
+          "add     edi, ebx"
+        ],
+        [
+          "0x4673df",
+          "cmp     dword ptr [edi], 0"
+        ],
+        [
+          "0x4673e2",
+          "jz      loc_467578"
+        ],
+        [
+          "0x4673e8",
+          "cmp     dword ptr [edi+4], 0"
+        ],
+        [
+          "0x4673ec",
+          "jz      loc_467578"
+        ],
+        [
+          "0x4673f2",
+          "test    esi, esi"
+        ],
+        [
+          "0x4673f4",
+          "jz      short loc_4673FF"
+        ],
+        [
+          "0x4673f6",
+          "cmp     esi, 3"
+        ],
+        [
+          "0x4673f9",
+          "jz      short loc_4673FF"
+        ],
+        [
+          "0x4673fb",
+          "call    ecx ; __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x4673fd",
+          "jmp     short loc_467412"
+        ],
+        [
+          "0x4673ff",
+          "cmp     byte ptr [eax+3288h], 0"
+        ],
+        [
+          "0x467406",
+          "jnz     short loc_46740C"
+        ],
+        [
+          "0x467408",
+          "call    ecx ; __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x46740a",
+          "jmp     short loc_467412"
+        ],
+        [
+          "0x46740c",
+          "call    __imp_PalInputGetKeyPull"
+        ],
+        [
+          "0x467412",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x467414",
+          "call    __imp_PalInputGetKeyOnEx"
+        ],
+        [
+          "0x46741a",
+          "and     eax, [edi+8]"
+        ],
+        [
+          "0x46741d",
+          "or      ebx, eax"
+        ],
+        [
+          "0x46741f",
+          "cmp     esi, 14h; switch 21 cases"
+        ],
+        [
+          "0x467422",
+          "ja      short def_467424; jumptable 00467424 default case"
+        ],
+        [
+          "0x467424",
+          "jmp     ds:jpt_467424[esi*4]; switch jump"
+        ],
+        [
+          "0x46742b",
+          "test    ebx, 1000000h; jumptable 00467424 case 0"
+        ],
+        [
+          "0x467431",
+          "jmp     loc_467566"
+        ],
+        [
+          "0x467436",
+          "call    __imp_PalInputGetWheel; jumptable 00467424 case 1"
+        ],
+        [
+          "0x46743c",
+          "test    ax, ax"
+        ],
+        [
+          "0x46743f",
+          "jns     loc_46756C"
+        ],
+        [
+          "0x467445",
+          "mov     eax, [edi+0Ch]; jumptable 00467424 default case"
+        ],
+        [
+          "0x467448",
+          "test    eax, eax"
+        ],
+        [
+          "0x46744a",
+          "jz      loc_467582"
+        ],
+        [
+          "0x467450",
+          "mov     ebx, [ebp+var_4]"
+        ],
+        [
+          "0x467453",
+          "push    dword ptr [ebx+55E9Ch]"
+        ],
+        [
+          "0x467459",
+          "push    eax"
+        ],
+        [
+          "0x46745a",
+          "push    esi"
+        ],
+        [
+          "0x46745b",
+          "push    offset aSystemBtnDDRet; \"system btn[%d][%d] ret / %d\""
+        ],
+        [
+          "0x467460",
+          "push    0"
+        ],
+        [
+          "0x467462",
+          "push    0Ah"
+        ],
+        [
+          "0x467464",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x46746a",
+          "push    1"
+        ],
+        [
+          "0x46746c",
+          "push    dword ptr [ebx+55E9Ch]"
+        ],
+        [
+          "0x467472",
+          "mov     edx, 2"
+        ],
+        [
+          "0x467477",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x467479",
+          "call    sub_47D680"
+        ],
+        [
+          "0x46747e",
+          "mov     eax, [ebx+55EA0h]"
+        ],
+        [
+          "0x467484",
+          "add     esp, 20h"
+        ],
+        [
+          "0x467487",
+          "add     eax, [edi+0Ch]"
+        ],
+        [
+          "0x46748a",
+          "mov     [ebx+55E9Ch], eax"
+        ],
+        [
+          "0x467490",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x467495",
+          "test    eax, eax"
+        ],
+        [
+          "0x467497",
+          "jnz     short loc_4674AC"
+        ],
+        [
+          "0x467499",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x46749f",
+          "mov     ecx, [ebp+var_8]"
+        ],
+        [
+          "0x4674a2",
+          "mov     [ecx+4], eax"
+        ],
+        [
+          "0x4674a5",
+          "mov     dword ptr [ecx+8], 32h ; '2'"
+        ],
+        [
+          "0x4674ac",
+          "pop     edi"
+        ],
+        [
+          "0x4674ad",
+          "pop     esi"
+        ],
+        [
+          "0x4674ae",
+          "mov     dword ptr [ebx+1060h], 0"
+        ],
+        [
+          "0x4674b8",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4674bd",
+          "pop     ebx"
+        ],
+        [
+          "0x4674be",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x4674c0",
+          "pop     ebp"
+        ],
+        [
+          "0x4674c1",
+          "retn"
+        ],
+        [
+          "0x4674c2",
+          "call    __imp_PalInputGetWheel; jumptable 00467424 case 2"
+        ],
+        [
+          "0x4674c8",
+          "test    ax, ax"
+        ],
+        [
+          "0x4674cb",
+          "jg      def_467424; jumptable 00467424 default case"
+        ],
+        [
+          "0x4674d1",
+          "jmp     loc_46756C"
+        ],
+        [
+          "0x4674d6",
+          "test    ebx, 40800000h; jumptable 00467424 case 3"
+        ],
+        [
+          "0x4674dc",
+          "jmp     loc_467566"
+        ],
+        [
+          "0x4674e1",
+          "test    ebx, 800h; jumptable 00467424 case 4"
+        ],
+        [
+          "0x4674e7",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x4674e9",
+          "test    ebx, 1000h; jumptable 00467424 case 5"
+        ],
+        [
+          "0x4674ef",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x4674f1",
+          "test    ebx, 2000h; jumptable 00467424 case 6"
+        ],
+        [
+          "0x4674f7",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x4674f9",
+          "test    ebx, 4000h; jumptable 00467424 case 7"
+        ],
+        [
+          "0x4674ff",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467501",
+          "test    ebx, 8000h; jumptable 00467424 case 8"
+        ],
+        [
+          "0x467507",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467509",
+          "test    ebx, 10000h; jumptable 00467424 case 9"
+        ],
+        [
+          "0x46750f",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467511",
+          "test    ebx, 20000h; jumptable 00467424 case 10"
+        ],
+        [
+          "0x467517",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467519",
+          "test    ebx, 40000h; jumptable 00467424 case 11"
+        ],
+        [
+          "0x46751f",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467521",
+          "test    ebx, 80000h; jumptable 00467424 case 12"
+        ],
+        [
+          "0x467527",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467529",
+          "test    ebx, 100000h; jumptable 00467424 case 13"
+        ],
+        [
+          "0x46752f",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467531",
+          "test    ebx, 200000h; jumptable 00467424 case 14"
+        ],
+        [
+          "0x467537",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467539",
+          "test    ebx, offset __ImageBase; jumptable 00467424 case 15"
+        ],
+        [
+          "0x46753f",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467541",
+          "test    bl, 1; jumptable 00467424 case 16"
+        ],
+        [
+          "0x467544",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467546",
+          "test    bl, bl; jumptable 00467424 case 17"
+        ],
+        [
+          "0x467548",
+          "js      def_467424; jumptable 00467424 default case"
+        ],
+        [
+          "0x46754e",
+          "jmp     short loc_46756C"
+        ],
+        [
+          "0x467550",
+          "test    ebx, 100h; jumptable 00467424 case 18"
+        ],
+        [
+          "0x467556",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467558",
+          "test    ebx, 200h; jumptable 00467424 case 19"
+        ],
+        [
+          "0x46755e",
+          "jmp     short loc_467566"
+        ],
+        [
+          "0x467560",
+          "test    ebx, 400h; jumptable 00467424 case 20"
+        ],
+        [
+          "0x467566",
+          "jnz     def_467424; jumptable 00467424 default case"
+        ],
+        [
+          "0x46756c",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x46756f",
+          "mov     ebx, [ebp+var_8]"
+        ],
+        [
+          "0x467572",
+          "mov     ecx, __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x467578",
+          "inc     esi"
+        ],
+        [
+          "0x467579",
+          "cmp     esi, 20h ; ' '"
+        ],
+        [
+          "0x46757c",
+          "jl      loc_4673D4"
+        ],
+        [
+          "0x467582",
+          "pop     edi"
+        ],
+        [
+          "0x467583",
+          "pop     esi"
+        ],
+        [
+          "0x467584",
+          "xor     eax, eax"
+        ],
+        [
+          "0x467586",
+          "pop     ebx"
+        ],
+        [
+          "0x467587",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x467589",
+          "pop     ebp"
+        ],
+        [
+          "0x46758a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x4217b0",
+      "name": "sub_4217B0",
+      "xrefs": [
+        {
+          "from": "0x476dd5",
+          "function": "sub_476BA0"
+        },
+        {
+          "from": "0x476e92",
+          "function": "sub_476BA0"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_4217B0(int *this)\n{\n  _DWORD *v1; // esi\n  int result; // eax\n  int *v3; // ebx\n  int i; // ecx\n  int Time; // eax\n  int v6; // edi\n  int Reaction; // eax\n  int v8; // ecx\n  int v9; // edi\n  _DWORD *v10; // esi\n  int v11; // eax\n  _DWORD *v12; // esi\n  int v13; // edx\n  int v14; // eax\n  _DWORD *v15; // ecx\n  _DWORD **v16; // eax\n  int v17; // edi\n  _DWORD *v18; // esi\n  int v19; // eax\n  _DWORD *v20; // ecx\n  int v21; // ecx\n  int v22; // ecx\n  int v23; // [esp+4h] [ebp-24h]\n  _DWORD *v25; // [esp+Ch] [ebp-1Ch]\n  int v26; // [esp+10h] [ebp-18h]\n  int v27; // [esp+14h] [ebp-14h]\n  char v28[4]; // [esp+18h] [ebp-10h] BYREF\n  int v29; // [esp+1Ch] [ebp-Ch]\n  int v30; // [esp+20h] [ebp-8h]\n\n  v26 = 0;\n  v1 = (_DWORD *)(PalTaskGetTaskData(0) + 824);\n  result = 0;\n  v25 = v1;\n  if ( this[2] )\n    return result;\n  v3 = this + 12;\n  v27 = 0;\n  for ( i = 0; i < 16; v27 = i )\n  {\n    if ( !*(v3 - 8) )\n      goto LABEL_52;\n    if ( *(v3 - 5) )\n    {\n      if ( *(v3 - 4) )\n      {\n        Time = PaltimeGetTime();\n        v6 = v26;\n        i = v27;\n        if ( Time - *(v3 - 3) >= (unsigned int)*(v3 - 4) )\n          *(v3 - 5) = 0;\n        goto LABEL_53;\n      }\n      goto LABEL_52;\n    }\n    Reaction = PalButtonGetReaction(v3[1], v28);\n    v8 = Reaction;\n    v23 = Reaction;\n    if ( v30 )\n    {\n      v6 = 1;\n      v26 = 1;\n      PalInputClear();\n      i = v27;\n      goto LABEL_53;\n    }\n    if ( !Reaction )\n    {\n      v16 = (_DWORD **)v3[2];\n      if ( v29 )\n      {\n        if ( v16 )\n        {\n          if ( v29 != **v16 )\n          {\n            sub_4216E0(v3 - 8);\n            sub_421710(v1, v3[2]);\n            v3[2] = 0;\n            v3[1029] = 0;\n          }\n        }\n        else\n        {\n          v17 = 127;\n          v18 = v3 + 1021;\n          while ( 1 )\n          {\n            if ( *v18 && v29 == *(_DWORD *)*v18 )\n            {\n              v19 = v18[2];\n              if ( !v19 )\n                goto LABEL_46;\n              if ( (v18[7] & 1) == 0 )\n                break;\n            }\n            v18 -= 8;\n            if ( --v17 < 0 )\n            {\n              v1 = v25;\n              goto LABEL_51;\n            }\n          }\n          PalDebugPrintf(10, 0, \"on btn[%d][%d] [%d] ret / %d / stack(%d)\", v27, v17, v19, v25[87975], v25[71588]);\n          sub_47D680(v25[87975], 0);\n          v25[87975] = v25[87976] + v18[2];\n          *(v3 - 1) = v17;\n          v3[2] = (int)v18;\n          v20 = (_DWORD *)*v18;\n          v3[1029] = *v18;\n          PalSpriteGetInfo(*v20, v3 + 1030);\n          if ( !sub_47CD50(v21) )\n          {\n            this[1] = PaltimeGetTime();\n            this[2] = 50;\n          }\nLABEL_46:\n          v1 = v25;\n        }\n      }\n      else if ( v16 )\n      {\n        if ( **v16 )\n        {\n          sub_4216E0(v3 - 8);\n          sub_421710(v1, v3[2]);\n          v3[2] = 0;\n          v3[1029] = 0;\n          if ( !sub_47CD50(v22) )\n          {\n            this[1] = PaltimeGetTime();\n            this[2] = 50;\n          }\n        }\n      }\nLABEL_51:\n      i = v27;\nLABEL_52:\n      v6 = v26;\n      goto LABEL_53;\n    }\n    v9 = 127;\n    v10 = v3 + 1021;\n    while ( 1 )\n    {\n      if ( !*v10 || v8 != *(_DWORD *)*v10 )\n        goto LABEL_17;\n      v11 = v10[1];\n      if ( v11 )\n        break;\n      v8 = 0;\n      v23 = 0;\nLABEL_17:\n      v10 -= 8;\n      if ( --v9 < 0 )\n        goto LABEL_24;\n    }\n    if ( (v10[7] & 1) != 0 )\n      goto LABEL_17;\n    PalDebugPrintf(10, 0, \"click btn[%d][%d] [%d] ret / %d\", v27, v9, v11, v25[87975]);\n    sub_47D680(v25[87975], 1);\n    v25[87975] = v10[1] + v25[87976];\n    *(v3 - 2) = v9;\n    if ( !sub_47CD50(v25) )\n    {\n      this[1] = PaltimeGetTime();\n      this[2] = 100;\n    }\n    v12 = &v25[137107 * v25[91517] + 91550];\n    if ( *v12 )\n      sub_418C60(v12);\n    memset(v12, 0, 0x85E4Cu);\n    sub_4194C0(v25 + 91517);\nLABEL_24:\n    v13 = v3[2];\n    if ( v13 && v23 )\n    {\n      v14 = 127;\n      v15 = v3 + 1021;\n      while ( v15 != (_DWORD *)v13 )\n      {\n        v15 -= 8;\n        if ( --v14 < 0 )\n          goto LABEL_31;\n      }\n      *v3 = v14;\nLABEL_31:\n      v1 = v25;\n      sub_421710(v25, v13);\n      i = v27;\n      v6 = 1;\n      v3[2] = 0;\n      v3[1029] = 0;\n      v26 = 1;\n    }\n    else\n    {\n      v1 = v25;\n      v6 = 1;\n      i = v27;\n      v26 = 1;\n    }\nLABEL_53:\n    ++i;\n    v3 += 1138;\n  }\n  if ( v6 )\n    v1[1048] = 0;\n  return v6;\n}\n",
+      "disassembly": [
+        [
+          "0x4217b0",
+          "push    ebp"
+        ],
+        [
+          "0x4217b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x4217b3",
+          "sub     esp, 24h"
+        ],
+        [
+          "0x4217b6",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x4217bb",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x4217bd",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x4217c0",
+          "push    esi"
+        ],
+        [
+          "0x4217c1",
+          "push    0"
+        ],
+        [
+          "0x4217c3",
+          "mov     [ebp+var_20], ecx"
+        ],
+        [
+          "0x4217c6",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x4217cc",
+          "mov     ecx, [ebp+var_20]"
+        ],
+        [
+          "0x4217cf",
+          "add     esp, 4"
+        ],
+        [
+          "0x4217d2",
+          "mov     [ebp+var_18], 0"
+        ],
+        [
+          "0x4217d9",
+          "lea     esi, [eax+338h]"
+        ],
+        [
+          "0x4217df",
+          "xor     eax, eax"
+        ],
+        [
+          "0x4217e1",
+          "mov     [ebp+var_1C], esi"
+        ],
+        [
+          "0x4217e4",
+          "cmp     [ecx+8], eax"
+        ],
+        [
+          "0x4217e7",
+          "jnz     loc_421B40"
+        ],
+        [
+          "0x4217ed",
+          "push    ebx"
+        ],
+        [
+          "0x4217ee",
+          "lea     ebx, [ecx+30h]"
+        ],
+        [
+          "0x4217f1",
+          "mov     [ebp+var_14], eax"
+        ],
+        [
+          "0x4217f4",
+          "push    edi"
+        ],
+        [
+          "0x4217f5",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x4217f7",
+          "nop     word ptr [eax+eax+00000000h]"
+        ],
+        [
+          "0x421800",
+          "cmp     dword ptr [ebx-20h], 0"
+        ],
+        [
+          "0x421804",
+          "jz      loc_421B18"
+        ],
+        [
+          "0x42180a",
+          "cmp     dword ptr [ebx-14h], 0"
+        ],
+        [
+          "0x42180e",
+          "jz      short loc_42183E"
+        ],
+        [
+          "0x421810",
+          "cmp     dword ptr [ebx-10h], 0"
+        ],
+        [
+          "0x421814",
+          "jz      loc_421B18"
+        ],
+        [
+          "0x42181a",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x421820",
+          "sub     eax, [ebx-0Ch]"
+        ],
+        [
+          "0x421823",
+          "mov     edi, [ebp+var_18]"
+        ],
+        [
+          "0x421826",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x421829",
+          "cmp     eax, [ebx-10h]"
+        ],
+        [
+          "0x42182c",
+          "jb      loc_421B1B"
+        ],
+        [
+          "0x421832",
+          "mov     dword ptr [ebx-14h], 0"
+        ],
+        [
+          "0x421839",
+          "jmp     loc_421B1B"
+        ],
+        [
+          "0x42183e",
+          "lea     eax, [ebp+var_10]"
+        ],
+        [
+          "0x421841",
+          "push    eax"
+        ],
+        [
+          "0x421842",
+          "push    dword ptr [ebx+4]"
+        ],
+        [
+          "0x421845",
+          "call    __imp_PalButtonGetReaction"
+        ],
+        [
+          "0x42184b",
+          "add     esp, 8"
+        ],
+        [
+          "0x42184e",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x421850",
+          "cmp     [ebp+var_8], 0"
+        ],
+        [
+          "0x421854",
+          "mov     [ebp+var_24], ecx"
+        ],
+        [
+          "0x421857",
+          "jz      short loc_42186F"
+        ],
+        [
+          "0x421859",
+          "mov     edi, 1"
+        ],
+        [
+          "0x42185e",
+          "mov     [ebp+var_18], edi"
+        ],
+        [
+          "0x421861",
+          "call    __imp_PalInputClear"
+        ],
+        [
+          "0x421867",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x42186a",
+          "jmp     loc_421B1B"
+        ],
+        [
+          "0x42186f",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x421871",
+          "jz      loc_4219BE"
+        ],
+        [
+          "0x421877",
+          "mov     edi, 7Fh"
+        ],
+        [
+          "0x42187c",
+          "lea     esi, [ebx+0FF4h]"
+        ],
+        [
+          "0x421882",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x421884",
+          "test    eax, eax"
+        ],
+        [
+          "0x421886",
+          "jz      short loc_4218A0"
+        ],
+        [
+          "0x421888",
+          "cmp     ecx, [eax]"
+        ],
+        [
+          "0x42188a",
+          "jnz     short loc_4218A0"
+        ],
+        [
+          "0x42188c",
+          "mov     eax, [esi+4]"
+        ],
+        [
+          "0x42188f",
+          "test    eax, eax"
+        ],
+        [
+          "0x421891",
+          "jnz     short loc_42189A"
+        ],
+        [
+          "0x421893",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x421895",
+          "mov     [ebp+var_24], ecx"
+        ],
+        [
+          "0x421898",
+          "jmp     short loc_4218A0"
+        ],
+        [
+          "0x42189a",
+          "test    byte ptr [esi+1Ch], 1"
+        ],
+        [
+          "0x42189e",
+          "jz      short loc_4218AD"
+        ],
+        [
+          "0x4218a0",
+          "sub     esi, 20h ; ' '"
+        ],
+        [
+          "0x4218a3",
+          "sub     edi, 1"
+        ],
+        [
+          "0x4218a6",
+          "jns     short loc_421882"
+        ],
+        [
+          "0x4218a8",
+          "jmp     loc_421954"
+        ],
+        [
+          "0x4218ad",
+          "mov     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x4218b0",
+          "push    dword ptr [ecx+55E9Ch]"
+        ],
+        [
+          "0x4218b6",
+          "push    eax"
+        ],
+        [
+          "0x4218b7",
+          "mov     eax, [ebp+var_14]"
+        ],
+        [
+          "0x4218ba",
+          "push    edi"
+        ],
+        [
+          "0x4218bb",
+          "push    eax"
+        ],
+        [
+          "0x4218bc",
+          "push    offset aClickBtnDDDRet; \"click btn[%d][%d] [%d] ret / %d\""
+        ],
+        [
+          "0x4218c1",
+          "push    0"
+        ],
+        [
+          "0x4218c3",
+          "push    0Ah"
+        ],
+        [
+          "0x4218c5",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4218cb",
+          "mov     eax, [ebp+var_1C]"
+        ],
+        [
+          "0x4218ce",
+          "mov     edx, 2"
+        ],
+        [
+          "0x4218d3",
+          "push    1"
+        ],
+        [
+          "0x4218d5",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x4218d7",
+          "push    dword ptr [eax+55E9Ch]"
+        ],
+        [
+          "0x4218dd",
+          "call    sub_47D680"
+        ],
+        [
+          "0x4218e2",
+          "mov     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x4218e5",
+          "add     esp, 24h"
+        ],
+        [
+          "0x4218e8",
+          "mov     eax, [ecx+55EA0h]"
+        ],
+        [
+          "0x4218ee",
+          "add     eax, [esi+4]"
+        ],
+        [
+          "0x4218f1",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x4218f3",
+          "mov     [esi+55E9Ch], eax"
+        ],
+        [
+          "0x4218f9",
+          "mov     [ebx-8], edi"
+        ],
+        [
+          "0x4218fc",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x421901",
+          "test    eax, eax"
+        ],
+        [
+          "0x421903",
+          "jnz     short loc_421919"
+        ],
+        [
+          "0x421905",
+          "mov     eax, __imp_PaltimeGetTime"
+        ],
+        [
+          "0x42190a",
+          "call    eax ; __imp_PaltimeGetTime"
+        ],
+        [
+          "0x42190c",
+          "mov     ecx, [ebp+var_20]"
+        ],
+        [
+          "0x42190f",
+          "mov     [ecx+4], eax"
+        ],
+        [
+          "0x421912",
+          "mov     dword ptr [ecx+8], 64h ; 'd'"
+        ],
+        [
+          "0x421919",
+          "imul    eax, [esi+595F4h], 85E4Ch"
+        ],
+        [
+          "0x421923",
+          "lea     edi, [esi+595F4h]"
+        ],
+        [
+          "0x421929",
+          "add     esi, 59678h"
+        ],
+        [
+          "0x42192f",
+          "add     esi, eax"
+        ],
+        [
+          "0x421931",
+          "cmp     dword ptr [esi], 0"
+        ],
+        [
+          "0x421934",
+          "jz      short loc_42193D"
+        ],
+        [
+          "0x421936",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x421938",
+          "call    sub_418C60"
+        ],
+        [
+          "0x42193d",
+          "push    85E4Ch; Size"
+        ],
+        [
+          "0x421942",
+          "push    0; Val"
+        ],
+        [
+          "0x421944",
+          "push    esi; void *"
+        ],
+        [
+          "0x421945",
+          "call    _memset"
+        ],
+        [
+          "0x42194a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x42194d",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x42194f",
+          "call    sub_4194C0"
+        ],
+        [
+          "0x421954",
+          "mov     edx, [ebx+8]"
+        ],
+        [
+          "0x421957",
+          "test    edx, edx"
+        ],
+        [
+          "0x421959",
+          "jz      short loc_4219AB"
+        ],
+        [
+          "0x42195b",
+          "cmp     [ebp+var_24], 0"
+        ],
+        [
+          "0x42195f",
+          "jz      short loc_4219AB"
+        ],
+        [
+          "0x421961",
+          "mov     eax, 7Fh"
+        ],
+        [
+          "0x421966",
+          "lea     ecx, [ebx+0FF4h]"
+        ],
+        [
+          "0x42196c",
+          "nop     dword ptr [eax+00h]"
+        ],
+        [
+          "0x421970",
+          "cmp     ecx, edx"
+        ],
+        [
+          "0x421972",
+          "jz      short loc_42197E"
+        ],
+        [
+          "0x421974",
+          "sub     ecx, 20h ; ' '"
+        ],
+        [
+          "0x421977",
+          "sub     eax, 1"
+        ],
+        [
+          "0x42197a",
+          "jns     short loc_421970"
+        ],
+        [
+          "0x42197c",
+          "jmp     short loc_421980"
+        ],
+        [
+          "0x42197e",
+          "mov     [ebx], eax"
+        ],
+        [
+          "0x421980",
+          "mov     esi, [ebp+var_1C]"
+        ],
+        [
+          "0x421983",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x421985",
+          "call    sub_421710"
+        ],
+        [
+          "0x42198a",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x42198d",
+          "mov     edi, 1"
+        ],
+        [
+          "0x421992",
+          "mov     dword ptr [ebx+8], 0"
+        ],
+        [
+          "0x421999",
+          "mov     dword ptr [ebx+1014h], 0"
+        ],
+        [
+          "0x4219a3",
+          "mov     [ebp+var_18], edi"
+        ],
+        [
+          "0x4219a6",
+          "jmp     loc_421B1B"
+        ],
+        [
+          "0x4219ab",
+          "mov     esi, [ebp+var_1C]"
+        ],
+        [
+          "0x4219ae",
+          "mov     edi, 1"
+        ],
+        [
+          "0x4219b3",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x4219b6",
+          "mov     [ebp+var_18], edi"
+        ],
+        [
+          "0x4219b9",
+          "jmp     loc_421B1B"
+        ],
+        [
+          "0x4219be",
+          "mov     edx, [ebp+var_C]"
+        ],
+        [
+          "0x4219c1",
+          "mov     eax, [ebx+8]"
+        ],
+        [
+          "0x4219c4",
+          "test    edx, edx"
+        ],
+        [
+          "0x4219c6",
+          "jz      loc_421ACA"
+        ],
+        [
+          "0x4219cc",
+          "test    eax, eax"
+        ],
+        [
+          "0x4219ce",
+          "jz      short loc_421A02"
+        ],
+        [
+          "0x4219d0",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x4219d2",
+          "cmp     edx, [eax]"
+        ],
+        [
+          "0x4219d4",
+          "jz      loc_421B15"
+        ],
+        [
+          "0x4219da",
+          "lea     ecx, [ebx-20h]"
+        ],
+        [
+          "0x4219dd",
+          "call    sub_4216E0"
+        ],
+        [
+          "0x4219e2",
+          "mov     edx, [ebx+8]"
+        ],
+        [
+          "0x4219e5",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x4219e7",
+          "call    sub_421710"
+        ],
+        [
+          "0x4219ec",
+          "mov     dword ptr [ebx+8], 0"
+        ],
+        [
+          "0x4219f3",
+          "mov     dword ptr [ebx+1014h], 0"
+        ],
+        [
+          "0x4219fd",
+          "jmp     loc_421B15"
+        ],
+        [
+          "0x421a02",
+          "mov     edi, 7Fh"
+        ],
+        [
+          "0x421a07",
+          "lea     esi, [ebx+0FF4h]"
+        ],
+        [
+          "0x421a0d",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x421a10",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x421a12",
+          "test    eax, eax"
+        ],
+        [
+          "0x421a14",
+          "jz      short loc_421A2B"
+        ],
+        [
+          "0x421a16",
+          "cmp     edx, [eax]"
+        ],
+        [
+          "0x421a18",
+          "jnz     short loc_421A2B"
+        ],
+        [
+          "0x421a1a",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x421a1d",
+          "test    eax, eax"
+        ],
+        [
+          "0x421a1f",
+          "jz      loc_421AC5"
+        ],
+        [
+          "0x421a25",
+          "test    byte ptr [esi+1Ch], 1"
+        ],
+        [
+          "0x421a29",
+          "jz      short loc_421A3B"
+        ],
+        [
+          "0x421a2b",
+          "sub     esi, 20h ; ' '"
+        ],
+        [
+          "0x421a2e",
+          "sub     edi, 1"
+        ],
+        [
+          "0x421a31",
+          "jns     short loc_421A10"
+        ],
+        [
+          "0x421a33",
+          "mov     esi, [ebp+var_1C]"
+        ],
+        [
+          "0x421a36",
+          "jmp     loc_421B15"
+        ],
+        [
+          "0x421a3b",
+          "mov     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x421a3e",
+          "push    dword ptr [ecx+45E90h]"
+        ],
+        [
+          "0x421a44",
+          "push    dword ptr [ecx+55E9Ch]"
+        ],
+        [
+          "0x421a4a",
+          "push    eax"
+        ],
+        [
+          "0x421a4b",
+          "mov     eax, [ebp+var_14]"
+        ],
+        [
+          "0x421a4e",
+          "push    edi"
+        ],
+        [
+          "0x421a4f",
+          "push    eax"
+        ],
+        [
+          "0x421a50",
+          "push    offset aOnBtnDDDRetDSt; \"on btn[%d][%d] [%d] ret / %d / stack(%d\"..."
+        ],
+        [
+          "0x421a55",
+          "push    0"
+        ],
+        [
+          "0x421a57",
+          "push    0Ah"
+        ],
+        [
+          "0x421a59",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x421a5f",
+          "mov     eax, [ebp+var_1C]"
+        ],
+        [
+          "0x421a62",
+          "mov     edx, 2"
+        ],
+        [
+          "0x421a67",
+          "push    0"
+        ],
+        [
+          "0x421a69",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x421a6b",
+          "push    dword ptr [eax+55E9Ch]"
+        ],
+        [
+          "0x421a71",
+          "call    sub_47D680"
+        ],
+        [
+          "0x421a76",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x421a79",
+          "mov     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x421a7c",
+          "add     eax, [ecx+55EA0h]"
+        ],
+        [
+          "0x421a82",
+          "mov     [ecx+55E9Ch], eax"
+        ],
+        [
+          "0x421a88",
+          "lea     eax, [ebx+1018h]"
+        ],
+        [
+          "0x421a8e",
+          "mov     [ebx-4], edi"
+        ],
+        [
+          "0x421a91",
+          "mov     [ebx+8], esi"
+        ],
+        [
+          "0x421a94",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x421a96",
+          "push    eax"
+        ],
+        [
+          "0x421a97",
+          "mov     [ebx+1014h], ecx"
+        ],
+        [
+          "0x421a9d",
+          "push    dword ptr [ecx]"
+        ],
+        [
+          "0x421a9f",
+          "call    __imp_PalSpriteGetInfo"
+        ],
+        [
+          "0x421aa5",
+          "add     esp, 30h"
+        ],
+        [
+          "0x421aa8",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x421aad",
+          "test    eax, eax"
+        ],
+        [
+          "0x421aaf",
+          "jnz     short loc_421AC5"
+        ],
+        [
+          "0x421ab1",
+          "mov     eax, __imp_PaltimeGetTime"
+        ],
+        [
+          "0x421ab6",
+          "call    eax ; __imp_PaltimeGetTime"
+        ],
+        [
+          "0x421ab8",
+          "mov     ecx, [ebp+var_20]"
+        ],
+        [
+          "0x421abb",
+          "mov     [ecx+4], eax"
+        ],
+        [
+          "0x421abe",
+          "mov     dword ptr [ecx+8], 32h ; '2'"
+        ],
+        [
+          "0x421ac5",
+          "mov     esi, [ebp+var_1C]"
+        ],
+        [
+          "0x421ac8",
+          "jmp     short loc_421B15"
+        ],
+        [
+          "0x421aca",
+          "test    eax, eax"
+        ],
+        [
+          "0x421acc",
+          "jz      short loc_421B15"
+        ],
+        [
+          "0x421ace",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x421ad0",
+          "cmp     dword ptr [eax], 0"
+        ],
+        [
+          "0x421ad3",
+          "jz      short loc_421B15"
+        ],
+        [
+          "0x421ad5",
+          "lea     ecx, [ebx-20h]"
+        ],
+        [
+          "0x421ad8",
+          "call    sub_4216E0"
+        ],
+        [
+          "0x421add",
+          "mov     edx, [ebx+8]"
+        ],
+        [
+          "0x421ae0",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x421ae2",
+          "call    sub_421710"
+        ],
+        [
+          "0x421ae7",
+          "mov     dword ptr [ebx+8], 0"
+        ],
+        [
+          "0x421aee",
+          "mov     dword ptr [ebx+1014h], 0"
+        ],
+        [
+          "0x421af8",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x421afd",
+          "test    eax, eax"
+        ],
+        [
+          "0x421aff",
+          "jnz     short loc_421B15"
+        ],
+        [
+          "0x421b01",
+          "mov     eax, __imp_PaltimeGetTime"
+        ],
+        [
+          "0x421b06",
+          "call    eax ; __imp_PaltimeGetTime"
+        ],
+        [
+          "0x421b08",
+          "mov     ecx, [ebp+var_20]"
+        ],
+        [
+          "0x421b0b",
+          "mov     [ecx+4], eax"
+        ],
+        [
+          "0x421b0e",
+          "mov     dword ptr [ecx+8], 32h ; '2'"
+        ],
+        [
+          "0x421b15",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x421b18",
+          "mov     edi, [ebp+var_18]"
+        ],
+        [
+          "0x421b1b",
+          "inc     ecx"
+        ],
+        [
+          "0x421b1c",
+          "add     ebx, 11C8h"
+        ],
+        [
+          "0x421b22",
+          "mov     [ebp+var_14], ecx"
+        ],
+        [
+          "0x421b25",
+          "cmp     ecx, 10h"
+        ],
+        [
+          "0x421b28",
+          "jl      loc_421800"
+        ],
+        [
+          "0x421b2e",
+          "test    edi, edi"
+        ],
+        [
+          "0x421b30",
+          "jz      short loc_421B3C"
+        ],
+        [
+          "0x421b32",
+          "mov     dword ptr [esi+1060h], 0"
+        ],
+        [
+          "0x421b3c",
+          "mov     eax, edi"
+        ],
+        [
+          "0x421b3e",
+          "pop     edi"
+        ],
+        [
+          "0x421b3f",
+          "pop     ebx"
+        ],
+        [
+          "0x421b40",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x421b43",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x421b45",
+          "pop     esi"
+        ],
+        [
+          "0x421b46",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x421b4b",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x421b4d",
+          "pop     ebp"
+        ],
+        [
+          "0x421b4e",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x425f20",
+      "name": "sub_425F20",
+      "xrefs": [
+        {
+          "from": "0x427546",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaae8",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_425F20(int a1)\n{\n  int v1; // ecx\n  int v2; // ecx\n  unsigned int v3; // edx\n  int v4; // eax\n  BOOL v5; // ecx\n  unsigned int v6; // ebx\n  int result; // eax\n  int Reaction; // eax\n  BOOL v9; // [esp+Ch] [ebp-1Ch]\n  unsigned int v10; // [esp+10h] [ebp-18h]\n  _BYTE v11[12]; // [esp+18h] [ebp-10h] BYREF\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  v2 = v1 - 1;\n  *(_DWORD *)(a1 + 286352) = v2;\n  v3 = *(_DWORD *)(a1 + 4 * v2 + 258424);\n  v10 = v3;\n  if ( v2 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v2 = *(_DWORD *)(a1 + 286352);\n    v3 = v10;\n  }\n  v4 = v2 - 1;\n  v5 = 0;\n  *(_DWORD *)(a1 + 286352) = v4;\n  v6 = *(_DWORD *)(a1 + 4 * v4 + 258424);\n  v9 = 0;\n  if ( v3 < 0x10 )\n  {\n    if ( v6 < 0x80 )\n    {\n      if ( *(_DWORD *)(32 * v6 + a1 + 4552 * v3 + 12952 + 52) )\n      {\n        Reaction = PalButtonGetReaction(*(_DWORD *)(a1 + 4552 * v3 + 12952 + 36), v11);\n        v3 = v10;\n        v5 = Reaction != 0;\n        v9 = v5;\n      }\n      PalDebugPrintf(10, 0, \"[%d]btn_on_check  %d, %d\", v5, v3, v6);\n      result = 1;\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v9;\n    }\n    else\n    {\n      PalDebugPrintf(0, 0, \"btn count over error : %d\", v6);\n      return 0;\n    }\n  }\n  else\n  {\n    PalDebugPrintf(0, 0, \"btn group over error : %d\", v3);\n    return 0;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x425f20",
+          "push    ebp"
+        ],
+        [
+          "0x425f21",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x425f23",
+          "sub     esp, 1Ch"
+        ],
+        [
+          "0x425f26",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x425f2b",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x425f2d",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x425f30",
+          "push    ebx"
+        ],
+        [
+          "0x425f31",
+          "push    esi"
+        ],
+        [
+          "0x425f32",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x425f35",
+          "push    edi"
+        ],
+        [
+          "0x425f36",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425f3c",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x425f42",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x425f45",
+          "test    eax, eax"
+        ],
+        [
+          "0x425f47",
+          "jns     short loc_425F5D"
+        ],
+        [
+          "0x425f49",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x425f4e",
+          "push    0"
+        ],
+        [
+          "0x425f50",
+          "push    0"
+        ],
+        [
+          "0x425f52",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425f54",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x425f5a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x425f5d",
+          "dec     ecx"
+        ],
+        [
+          "0x425f5e",
+          "mov     [esi+45E90h], ecx"
+        ],
+        [
+          "0x425f64",
+          "mov     edx, [esi+ecx*4+3F178h]"
+        ],
+        [
+          "0x425f6b",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x425f6e",
+          "mov     [ebp+var_18], edx"
+        ],
+        [
+          "0x425f71",
+          "test    eax, eax"
+        ],
+        [
+          "0x425f73",
+          "jns     short loc_425F8C"
+        ],
+        [
+          "0x425f75",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x425f7a",
+          "push    0"
+        ],
+        [
+          "0x425f7c",
+          "push    0"
+        ],
+        [
+          "0x425f7e",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425f80",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x425f86",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x425f89",
+          "mov     edx, [ebp+var_18]"
+        ],
+        [
+          "0x425f8c",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x425f8f",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x425f91",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x425f97",
+          "mov     ebx, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x425f9e",
+          "mov     [ebp+var_1C], ecx"
+        ],
+        [
+          "0x425fa1",
+          "cmp     edx, 10h"
+        ],
+        [
+          "0x425fa4",
+          "jb      short loc_425FC6"
+        ],
+        [
+          "0x425fa6",
+          "push    edx"
+        ],
+        [
+          "0x425fa7",
+          "push    offset aBtnGroupOverEr; \"btn group over error : %d\""
+        ],
+        [
+          "0x425fac",
+          "push    ecx"
+        ],
+        [
+          "0x425fad",
+          "push    ecx"
+        ],
+        [
+          "0x425fae",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425fb0",
+          "add     esp, 10h"
+        ],
+        [
+          "0x425fb3",
+          "xor     eax, eax"
+        ],
+        [
+          "0x425fb5",
+          "pop     edi"
+        ],
+        [
+          "0x425fb6",
+          "pop     esi"
+        ],
+        [
+          "0x425fb7",
+          "pop     ebx"
+        ],
+        [
+          "0x425fb8",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x425fbb",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x425fbd",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x425fc2",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x425fc4",
+          "pop     ebp"
+        ],
+        [
+          "0x425fc5",
+          "retn"
+        ],
+        [
+          "0x425fc6",
+          "cmp     ebx, 80h"
+        ],
+        [
+          "0x425fcc",
+          "jb      short loc_425FF0"
+        ],
+        [
+          "0x425fce",
+          "push    ebx"
+        ],
+        [
+          "0x425fcf",
+          "push    offset aBtnCountOverEr; \"btn count over error : %d\""
+        ],
+        [
+          "0x425fd4",
+          "push    0"
+        ],
+        [
+          "0x425fd6",
+          "push    0"
+        ],
+        [
+          "0x425fd8",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425fda",
+          "add     esp, 10h"
+        ],
+        [
+          "0x425fdd",
+          "xor     eax, eax"
+        ],
+        [
+          "0x425fdf",
+          "pop     edi"
+        ],
+        [
+          "0x425fe0",
+          "pop     esi"
+        ],
+        [
+          "0x425fe1",
+          "pop     ebx"
+        ],
+        [
+          "0x425fe2",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x425fe5",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x425fe7",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x425fec",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x425fee",
+          "pop     ebp"
+        ],
+        [
+          "0x425fef",
+          "retn"
+        ],
+        [
+          "0x425ff0",
+          "imul    eax, edx, 11C8h"
+        ],
+        [
+          "0x425ff6",
+          "add     eax, 3298h"
+        ],
+        [
+          "0x425ffb",
+          "add     eax, esi"
+        ],
+        [
+          "0x425ffd",
+          "mov     [ebp+var_14], eax"
+        ],
+        [
+          "0x426000",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x426002",
+          "mov     edi, [ebp+var_14]"
+        ],
+        [
+          "0x426005",
+          "shl     eax, 5"
+        ],
+        [
+          "0x426008",
+          "cmp     [eax+edi+34h], ecx"
+        ],
+        [
+          "0x42600c",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x426012",
+          "jz      short loc_426039"
+        ],
+        [
+          "0x426014",
+          "lea     eax, [ebp+var_10]"
+        ],
+        [
+          "0x426017",
+          "push    eax"
+        ],
+        [
+          "0x426018",
+          "mov     eax, [ebp+var_14]"
+        ],
+        [
+          "0x42601b",
+          "push    dword ptr [eax+24h]"
+        ],
+        [
+          "0x42601e",
+          "call    __imp_PalButtonGetReaction"
+        ],
+        [
+          "0x426024",
+          "mov     edx, [ebp+var_18]"
+        ],
+        [
+          "0x426027",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x426029",
+          "add     esp, 8"
+        ],
+        [
+          "0x42602c",
+          "test    eax, eax"
+        ],
+        [
+          "0x42602e",
+          "mov     eax, 1"
+        ],
+        [
+          "0x426033",
+          "cmovnz  ecx, eax"
+        ],
+        [
+          "0x426036",
+          "mov     [ebp+var_1C], ecx"
+        ],
+        [
+          "0x426039",
+          "push    ebx"
+        ],
+        [
+          "0x42603a",
+          "push    edx"
+        ],
+        [
+          "0x42603b",
+          "push    ecx"
+        ],
+        [
+          "0x42603c",
+          "cmp     ebx, 1000h"
+        ],
+        [
+          "0x426042",
+          "jge     short loc_42604B"
+        ],
+        [
+          "0x426044",
+          "push    offset aDBtnOnCheckDD; \"[%d]btn_on_check  %d, %d\""
+        ],
+        [
+          "0x426049",
+          "jmp     short loc_426050"
+        ],
+        [
+          "0x42604b",
+          "push    offset aDBtnOnCheckD0x; \"[%d]btn_on_check  %d, 0x%x\""
+        ],
+        [
+          "0x426050",
+          "push    0"
+        ],
+        [
+          "0x426052",
+          "push    0Ah"
+        ],
+        [
+          "0x426054",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x426056",
+          "mov     ecx, [esi+45E94h]"
+        ],
+        [
+          "0x42605c",
+          "add     esp, 18h"
+        ],
+        [
+          "0x42605f",
+          "mov     edx, [ebp+var_1C]"
+        ],
+        [
+          "0x426062",
+          "mov     eax, 1"
+        ],
+        [
+          "0x426067",
+          "mov     [esi+ecx*4+3F278h], edx"
+        ],
+        [
+          "0x42606e",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x426071",
+          "pop     edi"
+        ],
+        [
+          "0x426072",
+          "pop     esi"
+        ],
+        [
+          "0x426073",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x426075",
+          "pop     ebx"
+        ],
+        [
+          "0x426076",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x42607b",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x42607d",
+          "pop     ebp"
+        ],
+        [
+          "0x42607e",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x425d90",
+      "name": "sub_425D90",
+      "xrefs": [
+        {
+          "from": "0x427524",
+          "function": "sub_4272D0"
+        },
+        {
+          "from": "0x4eaae0",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_425D90(int a1)\n{\n  int v1; // ecx\n  int v2; // eax\n  int v3; // esi\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  v2 = v1 - 1;\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v3 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  LOBYTE(v2) = v3 != 0;\n  *(_BYTE *)(a1 + 12936) = v3 != 0;\n  PalButtonMode(v2);\n  PalDebugPrintf(10, 0, \"btn_mode  %d\", v3);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x425d90",
+          "push    ebp"
+        ],
+        [
+          "0x425d91",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x425d93",
+          "push    ebx"
+        ],
+        [
+          "0x425d94",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425d9a",
+          "push    esi"
+        ],
+        [
+          "0x425d9b",
+          "push    edi"
+        ],
+        [
+          "0x425d9c",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x425d9f",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x425da5",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x425da8",
+          "test    eax, eax"
+        ],
+        [
+          "0x425daa",
+          "jns     short loc_425DC0"
+        ],
+        [
+          "0x425dac",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x425db1",
+          "push    0"
+        ],
+        [
+          "0x425db3",
+          "push    0"
+        ],
+        [
+          "0x425db5",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425db7",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x425dbd",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x425dc0",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x425dc3",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x425dc9",
+          "mov     esi, [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x425dd0",
+          "test    esi, esi"
+        ],
+        [
+          "0x425dd2",
+          "setnz   al"
+        ],
+        [
+          "0x425dd5",
+          "push    eax"
+        ],
+        [
+          "0x425dd6",
+          "mov     [edi+3288h], al"
+        ],
+        [
+          "0x425ddc",
+          "call    __imp_PalButtonMode"
+        ],
+        [
+          "0x425de2",
+          "push    esi"
+        ],
+        [
+          "0x425de3",
+          "push    offset aBtnModeD; \"btn_mode  %d\""
+        ],
+        [
+          "0x425de8",
+          "push    0"
+        ],
+        [
+          "0x425dea",
+          "push    0Ah"
+        ],
+        [
+          "0x425dec",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x425dee",
+          "add     esp, 14h"
+        ],
+        [
+          "0x425df1",
+          "mov     eax, 1"
+        ],
+        [
+          "0x425df6",
+          "pop     edi"
+        ],
+        [
+          "0x425df7",
+          "pop     esi"
+        ],
+        [
+          "0x425df8",
+          "pop     ebx"
+        ],
+        [
+          "0x425df9",
+          "pop     ebp"
+        ],
+        [
+          "0x425dfa",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x465860",
+      "name": "sub_465860",
+      "xrefs": [
+        {
+          "from": "0x467114",
+          "function": "sub_466EC0"
+        },
+        {
+          "from": "0x4eb34c",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_465860(int a1)\n{\n  PalInputClear();\n  PalInputKeyRepeatClear();\n  *(_DWORD *)(a1 + 4192) = 0;\n  PalDebugPrintf(10, 0, \"input_clear\");\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x465860",
+          "push    ebp"
+        ],
+        [
+          "0x465861",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x465863",
+          "call    __imp_PalInputClear"
+        ],
+        [
+          "0x465869",
+          "call    __imp_PalInputKeyRepeatClear"
+        ],
+        [
+          "0x46586f",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x465872",
+          "push    offset aInputClear; \"input_clear\""
+        ],
+        [
+          "0x465877",
+          "push    0"
+        ],
+        [
+          "0x465879",
+          "push    0Ah"
+        ],
+        [
+          "0x46587b",
+          "mov     dword ptr [eax+1060h], 0"
+        ],
+        [
+          "0x465885",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x46588b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x46588e",
+          "mov     eax, 1"
+        ],
+        [
+          "0x465893",
+          "pop     ebp"
+        ],
+        [
+          "0x465894",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x47cd50",
+      "name": "sub_47CD50",
+      "xrefs": [
+        {
+          "from": "0x408d11",
+          "function": "sub_408CE0"
+        },
+        {
+          "from": "0x409d13",
+          "function": "sub_409D00"
+        },
+        {
+          "from": "0x417c87",
+          "function": "sub_417C60"
+        },
+        {
+          "from": "0x418d7d",
+          "function": "sub_418C60"
+        },
+        {
+          "from": "0x4190b6",
+          "function": "sub_419050"
+        },
+        {
+          "from": "0x41960d",
+          "function": "sub_4194C0"
+        },
+        {
+          "from": "0x419d2d",
+          "function": "sub_419BE0"
+        },
+        {
+          "from": "0x41b9fe",
+          "function": "sub_41B990"
+        },
+        {
+          "from": "0x41bc2d",
+          "function": "sub_41BAE0"
+        },
+        {
+          "from": "0x41be27",
+          "function": "sub_41BD90"
+        },
+        {
+          "from": "0x41be75",
+          "function": "sub_41BD90"
+        },
+        {
+          "from": "0x41bf40",
+          "function": "sub_41BED0"
+        },
+        {
+          "from": "0x41c287",
+          "function": "sub_41C1B0"
+        },
+        {
+          "from": "0x41c3a3",
+          "function": "sub_41C2F0"
+        },
+        {
+          "from": "0x41dbd0",
+          "function": "sub_41DAB0"
+        },
+        {
+          "from": "0x41ddeb",
+          "function": "sub_41DD60"
+        },
+        {
+          "from": "0x41e194",
+          "function": "sub_41DEB0"
+        },
+        {
+          "from": "0x41e2e3",
+          "function": "sub_41E220"
+        },
+        {
+          "from": "0x4218fc",
+          "function": "sub_4217B0"
+        },
+        {
+          "from": "0x421aa8",
+          "function": "sub_4217B0"
+        },
+        {
+          "from": "0x421af8",
+          "function": "sub_4217B0"
+        },
+        {
+          "from": "0x428a49",
+          "function": "sub_428970"
+        },
+        {
+          "from": "0x428c4d",
+          "function": "sub_428B50"
+        },
+        {
+          "from": "0x428d6f",
+          "function": "sub_428D00"
+        },
+        {
+          "from": "0x429423",
+          "function": "sub_429360"
+        },
+        {
+          "from": "0x42955f",
+          "function": "sub_429360"
+        },
+        {
+          "from": "0x429815",
+          "function": "sub_429780"
+        },
+        {
+          "from": "0x42e943",
+          "function": "sub_42E940"
+        },
+        {
+          "from": "0x42febe",
+          "function": "sub_42FDC0"
+        },
+        {
+          "from": "0x438f4b",
+          "function": "sub_438F10"
+        },
+        {
+          "from": "0x438fdf",
+          "function": "sub_438F10"
+        },
+        {
+          "from": "0x443210",
+          "function": "sub_443120"
+        },
+        {
+          "from": "0x443355",
+          "function": "sub_4432B0"
+        },
+        {
+          "from": "0x443afa",
+          "function": "sub_443A80"
+        },
+        {
+          "from": "0x443b1c",
+          "function": "sub_443A80"
+        },
+        {
+          "from": "0x444286",
+          "function": null
+        },
+        {
+          "from": "0x4442d6",
+          "function": "sub_4442D0"
+        },
+        {
+          "from": "0x444316",
+          "function": "sub_444310"
+        },
+        {
+          "from": "0x444359",
+          "function": "sub_444350"
+        },
+        {
+          "from": "0x4443ca",
+          "function": "sub_4443B0"
+        },
+        {
+          "from": "0x44445c",
+          "function": "sub_444450"
+        },
+        {
+          "from": "0x444573",
+          "function": "sub_444510"
+        },
+        {
+          "from": "0x444620",
+          "function": null
+        },
+        {
+          "from": "0x444636",
+          "function": null
+        },
+        {
+          "from": "0x444686",
+          "function": "sub_444680"
+        },
+        {
+          "from": "0x444733",
+          "function": "sub_4446D0"
+        },
+        {
+          "from": "0x444863",
+          "function": "sub_444800"
+        },
+        {
+          "from": "0x444ab1",
+          "function": "sub_444A50"
+        },
+        {
+          "from": "0x444bc1",
+          "function": "sub_444B60"
+        },
+        {
+          "from": "0x444c79",
+          "function": "sub_444C70"
+        },
+        {
+          "from": "0x444cd6",
+          "function": "sub_444CD0"
+        },
+        {
+          "from": "0x444d22",
+          "function": "sub_444D10"
+        },
+        {
+          "from": "0x444d56",
+          "function": "sub_444D50"
+        },
+        {
+          "from": "0x444da2",
+          "function": "sub_444D90"
+        },
+        {
+          "from": "0x444dd9",
+          "function": "sub_444DD0"
+        },
+        {
+          "from": "0x444e82",
+          "function": "sub_444E70"
+        },
+        {
+          "from": "0x4466bf",
+          "function": "sub_446280"
+        },
+        {
+          "from": "0x4467a8",
+          "function": "sub_446280"
+        },
+        {
+          "from": "0x446965",
+          "function": "sub_446280"
+        },
+        {
+          "from": "0x4474aa",
+          "function": "sub_447460"
+        },
+        {
+          "from": "0x4476d4",
+          "function": "sub_4475D0"
+        },
+        {
+          "from": "0x44861b",
+          "function": "sub_4484F0"
+        },
+        {
+          "from": "0x44958f",
+          "function": "sub_449300"
+        },
+        {
+          "from": "0x449dd5",
+          "function": "sub_449B90"
+        },
+        {
+          "from": "0x44a9c1",
+          "function": "sub_44A910"
+        },
+        {
+          "from": "0x44aa0f",
+          "function": "sub_44A910"
+        },
+        {
+          "from": "0x44beac",
+          "function": "sub_44BDE0"
+        },
+        {
+          "from": "0x44c590",
+          "function": "sub_44C180"
+        },
+        {
+          "from": "0x44d50c",
+          "function": "sub_44D490"
+        },
+        {
+          "from": "0x44d866",
+          "function": "sub_44D7B0"
+        },
+        {
+          "from": "0x44d9d0",
+          "function": "sub_44D900"
+        },
+        {
+          "from": "0x44e39c",
+          "function": "sub_44E330"
+        },
+        {
+          "from": "0x44e48b",
+          "function": "sub_44E400"
+        },
+        {
+          "from": "0x44f540",
+          "function": "sub_44F480"
+        },
+        {
+          "from": "0x44f5ed",
+          "function": "sub_44F5B0"
+        },
+        {
+          "from": "0x44f9fe",
+          "function": "sub_44F960"
+        },
+        {
+          "from": "0x4503b9",
+          "function": "sub_450330"
+        },
+        {
+          "from": "0x45b4bc",
+          "function": "sub_45B490"
+        },
+        {
+          "from": "0x45b55e",
+          "function": "sub_45B490"
+        },
+        {
+          "from": "0x45b89b",
+          "function": "sub_45B5D0"
+        },
+        {
+          "from": "0x45b8de",
+          "function": "sub_45B5D0"
+        },
+        {
+          "from": "0x45ba01",
+          "function": "sub_45B940"
+        },
+        {
+          "from": "0x45cc8d",
+          "function": "sub_45CC70"
+        },
+        {
+          "from": "0x461aa3",
+          "function": "sub_461A60"
+        },
+        {
+          "from": "0x461ab4",
+          "function": "sub_461A60"
+        },
+        {
+          "from": "0x461feb",
+          "function": "sub_461F90"
+        },
+        {
+          "from": "0x461ffd",
+          "function": "sub_461F90"
+        },
+        {
+          "from": "0x462911",
+          "function": "sub_462830"
+        },
+        {
+          "from": "0x462b89",
+          "function": "sub_462990"
+        },
+        {
+          "from": "0x462c62",
+          "function": "sub_462990"
+        },
+        {
+          "from": "0x462c74",
+          "function": "sub_462990"
+        },
+        {
+          "from": "0x462df1",
+          "function": "sub_462CF0"
+        },
+        {
+          "from": "0x462e85",
+          "function": "sub_462CF0"
+        },
+        {
+          "from": "0x4635ae",
+          "function": "sub_463360"
+        },
+        {
+          "from": "0x4636d0",
+          "function": "sub_463360"
+        },
+        {
+          "from": "0x4636e2",
+          "function": "sub_463360"
+        },
+        {
+          "from": "0x4640ac",
+          "function": "sub_464060"
+        },
+        {
+          "from": "0x464161",
+          "function": "sub_464120"
+        },
+        {
+          "from": "0x464436",
+          "function": "sub_464120"
+        },
+        {
+          "from": "0x464d02",
+          "function": "sub_464670"
+        },
+        {
+          "from": "0x466c34",
+          "function": "sub_466C30"
+        },
+        {
+          "from": "0x467490",
+          "function": "sub_467390"
+        },
+        {
+          "from": "0x467cb3",
+          "function": null
+        },
+        {
+          "from": "0x467e37",
+          "function": "sub_467CD0"
+        },
+        {
+          "from": "0x467fa6",
+          "function": "sub_467F40"
+        },
+        {
+          "from": "0x468909",
+          "function": "sub_468900"
+        },
+        {
+          "from": "0x468b21",
+          "function": "sub_468B10"
+        },
+        {
+          "from": "0x46a49a",
+          "function": "sub_46A400"
+        },
+        {
+          "from": "0x46abb4",
+          "function": "sub_46AB70"
+        },
+        {
+          "from": "0x46be84",
+          "function": "sub_46BE30"
+        },
+        {
+          "from": "0x46c091",
+          "function": "sub_46C060"
+        },
+        {
+          "from": "0x46c297",
+          "function": null
+        },
+        {
+          "from": "0x46c342",
+          "function": "sub_46C300"
+        },
+        {
+          "from": "0x46c476",
+          "function": "sub_46C300"
+        },
+        {
+          "from": "0x46c4b0",
+          "function": "sub_46C300"
+        },
+        {
+          "from": "0x46c538",
+          "function": "sub_46C300"
+        },
+        {
+          "from": "0x46c997",
+          "function": "sub_46C940"
+        },
+        {
+          "from": "0x46c9bc",
+          "function": "sub_46C940"
+        },
+        {
+          "from": "0x46c9db",
+          "function": "sub_46C940"
+        },
+        {
+          "from": "0x46d8e3",
+          "function": "sub_46D8B0"
+        },
+        {
+          "from": "0x46d908",
+          "function": "sub_46D8B0"
+        },
+        {
+          "from": "0x46d975",
+          "function": "sub_46D8B0"
+        },
+        {
+          "from": "0x46dae2",
+          "function": "sub_46DAA0"
+        },
+        {
+          "from": "0x46dba2",
+          "function": "sub_46DB60"
+        },
+        {
+          "from": "0x46dc33",
+          "function": null
+        },
+        {
+          "from": "0x46df05",
+          "function": "sub_46DC50"
+        },
+        {
+          "from": "0x46e2d1",
+          "function": "sub_46DF80"
+        },
+        {
+          "from": "0x46e674",
+          "function": "sub_46E330"
+        },
+        {
+          "from": "0x46ea04",
+          "function": "sub_46E6D0"
+        },
+        {
+          "from": "0x46eebe",
+          "function": "sub_46EA60"
+        },
+        {
+          "from": "0x46f18a",
+          "function": "sub_46EF10"
+        },
+        {
+          "from": "0x46f373",
+          "function": "sub_46F1F0"
+        },
+        {
+          "from": "0x46f4a9",
+          "function": "sub_46F3D0"
+        },
+        {
+          "from": "0x46ffeb",
+          "function": "sub_46FB90"
+        },
+        {
+          "from": "0x4702e2",
+          "function": "sub_470030"
+        },
+        {
+          "from": "0x470344",
+          "function": "sub_470030"
+        },
+        {
+          "from": "0x472b0d",
+          "function": "sub_472AB0"
+        },
+        {
+          "from": "0x472b84",
+          "function": "sub_472AB0"
+        },
+        {
+          "from": "0x473593",
+          "function": "sub_473560"
+        },
+        {
+          "from": "0x473f0e",
+          "function": "sub_473E70"
+        },
+        {
+          "from": "0x474131",
+          "function": "sub_473F80"
+        },
+        {
+          "from": "0x4741ef",
+          "function": "sub_4741A0"
+        },
+        {
+          "from": "0x47422e",
+          "function": "sub_4741A0"
+        },
+        {
+          "from": "0x4752c9",
+          "function": "sub_475130"
+        },
+        {
+          "from": "0x475340",
+          "function": null
+        },
+        {
+          "from": "0x475b43",
+          "function": null
+        },
+        {
+          "from": "0x475da5",
+          "function": "sub_475D20"
+        },
+        {
+          "from": "0x475de6",
+          "function": "sub_475D20"
+        },
+        {
+          "from": "0x475e62",
+          "function": "sub_475E50"
+        },
+        {
+          "from": "0x475eab",
+          "function": "sub_475E50"
+        },
+        {
+          "from": "0x475f9c",
+          "function": "sub_475E50"
+        },
+        {
+          "from": "0x475faf",
+          "function": "sub_475E50"
+        },
+        {
+          "from": "0x475fe3",
+          "function": "sub_475FD0"
+        },
+        {
+          "from": "0x476009",
+          "function": "sub_475FD0"
+        },
+        {
+          "from": "0x47602e",
+          "function": "sub_475FD0"
+        },
+        {
+          "from": "0x476080",
+          "function": "sub_475FD0"
+        },
+        {
+          "from": "0x476098",
+          "function": "sub_475FD0"
+        },
+        {
+          "from": "0x476256",
+          "function": "sub_476220"
+        },
+        {
+          "from": "0x476422",
+          "function": "sub_476220"
+        },
+        {
+          "from": "0x476435",
+          "function": "sub_476220"
+        },
+        {
+          "from": "0x4769c0",
+          "function": null
+        },
+        {
+          "from": "0x477067",
+          "function": "sub_476F80"
+        },
+        {
+          "from": "0x4789d2",
+          "function": "sub_478160"
+        },
+        {
+          "from": "0x4792f4",
+          "function": "sub_4790D0"
+        },
+        {
+          "from": "0x479934",
+          "function": "sub_479900"
+        },
+        {
+          "from": "0x47ba93",
+          "function": null
+        },
+        {
+          "from": "0x47bae3",
+          "function": "sub_47BAE0"
+        },
+        {
+          "from": "0x47bb32",
+          "function": "sub_47BB20"
+        },
+        {
+          "from": "0x47bb82",
+          "function": "sub_47BB70"
+        },
+        {
+          "from": "0x47c34e",
+          "function": "sub_47C240"
+        },
+        {
+          "from": "0x47d0c6",
+          "function": "sub_47CE90"
+        }
+      ],
+      "pseudocode": "int sub_47CD50()\n{\n  int TaskData; // eax\n  int v1; // esi\n  int v2; // ebx\n  int v3; // ecx\n  int KeyPull; // eax\n  char KeyOn; // al\n  int v6; // ecx\n  int v7; // edx\n  int v8; // eax\n  int v9; // ecx\n\n  TaskData = PalTaskGetTaskData(0);\n  v1 = TaskData + 824;\n  if ( *(_DWORD *)(TaskData + 352920) )\n    return -33;\n  if ( *(_DWORD *)(TaskData + 352928) )\n    return -17;\n  v2 = *(_BYTE *)(TaskData + 352912) != 0;\n  if ( (__int16)PalInputGetWheel() > 0 )\n    v2 |= 8u;\n  if ( *(_BYTE *)(v1 + 12936) )\n    KeyPull = PalInputGetKeyPull(v3);\n  else\n    KeyPull = PalInputGetKeyPush();\n  if ( (KeyPull & 0x800006) != 0 && (PalInputGetKeyOn() & 0x20) == 0 )\n  {\n    v2 |= 8u;\n    if ( *(_DWORD *)(v1 + 352180) )\n      *(_DWORD *)(v1 + 352184) |= 8u;\n  }\n  KeyOn = PalInputGetKeyOn();\n  v6 = v2 | 4;\n  if ( (KeyOn & 8) == 0 )\n    v6 = v2;\n  if ( dword_6F97FC )\n  {\n    v8 = 0;\n  }\n  else\n  {\n    if ( (_DWORD)xmmword_4EB658 )\n      v7 = v6 & 8 | DWORD1(xmmword_4EB658);\n    else\n      v7 = 0;\n    v8 = 0;\n    DWORD1(xmmword_4EB658) = v7;\n    if ( DWORD2(xmmword_4EB658) && (_DWORD)xmmword_4EB658 )\n      v8 = v7;\n  }\n  v9 = v8 | v6;\n  if ( *(_DWORD *)(v1 + 352180) )\n    return *(_DWORD *)(v1 + 352184) | v9;\n  return v9;\n}\n",
+      "disassembly": [
+        [
+          "0x47cd50",
+          "push    esi"
+        ],
+        [
+          "0x47cd51",
+          "push    0"
+        ],
+        [
+          "0x47cd53",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x47cd59",
+          "add     esp, 4"
+        ],
+        [
+          "0x47cd5c",
+          "cmp     dword ptr [eax+56298h], 0"
+        ],
+        [
+          "0x47cd63",
+          "lea     esi, [eax+338h]"
+        ],
+        [
+          "0x47cd69",
+          "jnz     loc_47CE3B"
+        ],
+        [
+          "0x47cd6f",
+          "cmp     dword ptr [esi+55F68h], 0"
+        ],
+        [
+          "0x47cd76",
+          "jnz     loc_47CE34"
+        ],
+        [
+          "0x47cd7c",
+          "push    ebx"
+        ],
+        [
+          "0x47cd7d",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x47cd7f",
+          "cmp     [esi+55F58h], bl"
+        ],
+        [
+          "0x47cd85",
+          "push    edi"
+        ],
+        [
+          "0x47cd86",
+          "setnz   bl"
+        ],
+        [
+          "0x47cd89",
+          "call    __imp_PalInputGetWheel"
+        ],
+        [
+          "0x47cd8f",
+          "test    ax, ax"
+        ],
+        [
+          "0x47cd92",
+          "jle     short loc_47CD97"
+        ],
+        [
+          "0x47cd94",
+          "or      ebx, 8"
+        ],
+        [
+          "0x47cd97",
+          "cmp     byte ptr [esi+3288h], 0"
+        ],
+        [
+          "0x47cd9e",
+          "jnz     short loc_47CDA8"
+        ],
+        [
+          "0x47cda0",
+          "call    __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x47cda6",
+          "jmp     short loc_47CDAE"
+        ],
+        [
+          "0x47cda8",
+          "call    __imp_PalInputGetKeyPull"
+        ],
+        [
+          "0x47cdae",
+          "mov     edi, __imp_PalInputGetKeyOn"
+        ],
+        [
+          "0x47cdb4",
+          "test    eax, 800006h"
+        ],
+        [
+          "0x47cdb9",
+          "jz      short loc_47CDD4"
+        ],
+        [
+          "0x47cdbb",
+          "call    edi ; __imp_PalInputGetKeyOn"
+        ],
+        [
+          "0x47cdbd",
+          "test    al, 20h"
+        ],
+        [
+          "0x47cdbf",
+          "jnz     short loc_47CDD4"
+        ],
+        [
+          "0x47cdc1",
+          "or      ebx, 8"
+        ],
+        [
+          "0x47cdc4",
+          "cmp     dword ptr [esi+55FB4h], 0"
+        ],
+        [
+          "0x47cdcb",
+          "jz      short loc_47CDD4"
+        ],
+        [
+          "0x47cdcd",
+          "or      dword ptr [esi+55FB8h], 8"
+        ],
+        [
+          "0x47cdd4",
+          "call    edi ; __imp_PalInputGetKeyOn"
+        ],
+        [
+          "0x47cdd6",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x47cdd8",
+          "or      ecx, 4"
+        ],
+        [
+          "0x47cddb",
+          "and     al, 8"
+        ],
+        [
+          "0x47cddd",
+          "cmovz   ecx, ebx"
+        ],
+        [
+          "0x47cde0",
+          "cmp     dword_6F97FC, 0"
+        ],
+        [
+          "0x47cde7",
+          "jnz     short loc_47CE1B"
+        ],
+        [
+          "0x47cde9",
+          "mov     edi, dword ptr xmmword_4EB658"
+        ],
+        [
+          "0x47cdef",
+          "test    edi, edi"
+        ],
+        [
+          "0x47cdf1",
+          "jz      short loc_47CE02"
+        ],
+        [
+          "0x47cdf3",
+          "mov     edx, dword ptr xmmword_4EB658+4"
+        ],
+        [
+          "0x47cdf9",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x47cdfb",
+          "and     eax, 8"
+        ],
+        [
+          "0x47cdfe",
+          "or      edx, eax"
+        ],
+        [
+          "0x47ce00",
+          "jmp     short loc_47CE04"
+        ],
+        [
+          "0x47ce02",
+          "xor     edx, edx"
+        ],
+        [
+          "0x47ce04",
+          "xor     eax, eax"
+        ],
+        [
+          "0x47ce06",
+          "mov     dword ptr xmmword_4EB658+4, edx"
+        ],
+        [
+          "0x47ce0c",
+          "cmp     dword ptr xmmword_4EB658+8, eax"
+        ],
+        [
+          "0x47ce12",
+          "jz      short loc_47CE1D"
+        ],
+        [
+          "0x47ce14",
+          "test    edi, edi"
+        ],
+        [
+          "0x47ce16",
+          "cmovnz  eax, edx"
+        ],
+        [
+          "0x47ce19",
+          "jmp     short loc_47CE1D"
+        ],
+        [
+          "0x47ce1b",
+          "xor     eax, eax"
+        ],
+        [
+          "0x47ce1d",
+          "or      ecx, eax"
+        ],
+        [
+          "0x47ce1f",
+          "cmp     dword ptr [esi+55FB4h], 0"
+        ],
+        [
+          "0x47ce26",
+          "pop     edi"
+        ],
+        [
+          "0x47ce27",
+          "pop     ebx"
+        ],
+        [
+          "0x47ce28",
+          "jz      short loc_47CE30"
+        ],
+        [
+          "0x47ce2a",
+          "or      ecx, [esi+55FB8h]"
+        ],
+        [
+          "0x47ce30",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x47ce32",
+          "pop     esi"
+        ],
+        [
+          "0x47ce33",
+          "retn"
+        ],
+        [
+          "0x47ce34",
+          "mov     eax, 0FFFFFFEFh"
+        ],
+        [
+          "0x47ce39",
+          "pop     esi"
+        ],
+        [
+          "0x47ce3a",
+          "retn"
+        ],
+        [
+          "0x47ce3b",
+          "mov     eax, 0FFFFFFDFh"
+        ],
+        [
+          "0x47ce40",
+          "pop     esi"
+        ],
+        [
+          "0x47ce41",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

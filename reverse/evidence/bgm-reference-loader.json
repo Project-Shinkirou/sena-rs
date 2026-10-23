@@ -1,0 +1,332 @@
+{
+  "functions": [
+    {
+      "ea": "0x4024d0",
+      "name": "VmSnd_LoadOgg",
+      "xrefs": [
+        {
+          "from": "0x40badf",
+          "function": null
+        },
+        {
+          "from": "0x40c6fc",
+          "function": "VmExtcall_BgmPlay"
+        },
+        {
+          "from": "0x40caaa",
+          "function": "VmExtcall_BgmLoad"
+        },
+        {
+          "from": "0x40d4ad",
+          "function": "sub_40D3A0"
+        },
+        {
+          "from": "0x40fd95",
+          "function": "VmExtcall_BtnInit"
+        },
+        {
+          "from": "0x42c22d",
+          "function": "VmExtcall_SpSetFontAdj"
+        },
+        {
+          "from": "0x42c274",
+          "function": "VmExtcall_SpSetFontAdj"
+        },
+        {
+          "from": "0x42c3d1",
+          "function": "sub_42C360"
+        },
+        {
+          "from": "0x42f37f",
+          "function": "VmScriptState_SaveHistory"
+        },
+        {
+          "from": "0x42f513",
+          "function": "VmScriptState_SaveHistory"
+        },
+        {
+          "from": "0x42f61b",
+          "function": "VmScriptState_SaveHistory"
+        },
+        {
+          "from": "0x434380",
+          "function": null
+        },
+        {
+          "from": "0x4350fb",
+          "function": "VmOpc_SePlayExCh"
+        },
+        {
+          "from": "0x4354f3",
+          "function": "VmOpc_SeLoad"
+        },
+        {
+          "from": "0x442ac5",
+          "function": null
+        },
+        {
+          "from": "0x442dbf",
+          "function": "VmVoice_StartPlay"
+        },
+        {
+          "from": "0x442f43",
+          "function": "VmVoice_StartPlay"
+        },
+        {
+          "from": "0x443777",
+          "function": "VmExtcall_VoicePlayEx"
+        }
+      ],
+      "pseudocode": "int __fastcall VmSnd_LoadOgg(const char *name, int flags, int loop)\n{\n  const char *v4; // eax\n  int v5; // edi\n  int v6; // esi\n  int result; // eax\n  CHAR v9[260]; // [esp+14h] [ebp-108h] BYREF\n\n  if ( (VmGetTaskSchedulingState() & 0x30) != 0 )\n    return 0;\n  v4 = \".ogg\";\n  v5 = 0;\n  if ( !\".ogg\" )\n  {\nLABEL_7:\n    if ( flags != 1 )\n      PalDebugPrintf(0, 0, \"sound load error [%s]\", name);\n    return 0;\n  }\n  v6 = 0;\n  while ( 1 )\n  {\n    wsprintfA(v9, \"%s%s\", name, v4);\n    result = PalSoundLoad(v9, flags, loop);\n    if ( result )\n      return result;\n    if ( (&off_49BE44)[v6] )\n    {\n      v6 = ++v5;\n      v4 = off_49BE40[v5];\n      if ( v4 )\n        continue;\n    }\n    goto LABEL_7;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x4024d0",
+          "push    ebp"
+        ],
+        [
+          "0x4024d1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x4024d3",
+          "sub     esp, 110h"
+        ],
+        [
+          "0x4024d9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x4024de",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x4024e0",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x4024e3",
+          "mov     eax, [ebp+loop]"
+        ],
+        [
+          "0x4024e6",
+          "push    ebx"
+        ],
+        [
+          "0x4024e7",
+          "push    esi"
+        ],
+        [
+          "0x4024e8",
+          "push    edi"
+        ],
+        [
+          "0x4024e9",
+          "mov     [ebp+var_10C], edx"
+        ],
+        [
+          "0x4024ef",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x4024f1",
+          "mov     [ebp+var_110], eax"
+        ],
+        [
+          "0x4024f7",
+          "call    VmGetTaskSchedulingState; Returns VM scheduling/input state bitmask. Bit 4 (0x10)=skip mode active. Bit 5 (0x20)=auto mode active. Bit 3 (0x08)=advance key pressed or mousewheel. Bit 2 (0x04)=confirm key on. Wait handlers check (result&0x30) to skip waits in skip/auto mode. Main loop checks (result&0x10/0x20) to control execution cadence."
+        ],
+        [
+          "0x4024fc",
+          "test    al, 30h"
+        ],
+        [
+          "0x4024fe",
+          "jnz     short loc_40257A"
+        ],
+        [
+          "0x402500",
+          "mov     eax, ds:off_49BE40; \".ogg\""
+        ],
+        [
+          "0x402505",
+          "xor     edi, edi"
+        ],
+        [
+          "0x402507",
+          "test    eax, eax"
+        ],
+        [
+          "0x402509",
+          "jz      short loc_40255E"
+        ],
+        [
+          "0x40250b",
+          "xor     esi, esi"
+        ],
+        [
+          "0x40250d",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x402510",
+          "push    eax"
+        ],
+        [
+          "0x402511",
+          "push    ebx"
+        ],
+        [
+          "0x402512",
+          "lea     eax, [ebp+var_108]"
+        ],
+        [
+          "0x402518",
+          "push    offset aSS; \"%s%s\""
+        ],
+        [
+          "0x40251d",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x40251e",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x402524",
+          "push    [ebp+var_110]"
+        ],
+        [
+          "0x40252a",
+          "lea     eax, [ebp+var_108]"
+        ],
+        [
+          "0x402530",
+          "push    [ebp+var_10C]"
+        ],
+        [
+          "0x402536",
+          "push    eax"
+        ],
+        [
+          "0x402537",
+          "call    __imp_PalSoundLoad"
+        ],
+        [
+          "0x40253d",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x402540",
+          "test    eax, eax"
+        ],
+        [
+          "0x402542",
+          "jnz     short loc_40257C"
+        ],
+        [
+          "0x402544",
+          "cmp     ds:off_49BE44[esi], eax; \".wav\""
+        ],
+        [
+          "0x40254a",
+          "jz      short loc_40255E"
+        ],
+        [
+          "0x40254c",
+          "inc     edi"
+        ],
+        [
+          "0x40254d",
+          "lea     esi, ds:0[edi*4]"
+        ],
+        [
+          "0x402554",
+          "mov     eax, ds:off_49BE40[esi]; \".ogg\""
+        ],
+        [
+          "0x40255a",
+          "test    eax, eax"
+        ],
+        [
+          "0x40255c",
+          "jnz     short loc_402510"
+        ],
+        [
+          "0x40255e",
+          "cmp     [ebp+var_10C], 1"
+        ],
+        [
+          "0x402565",
+          "jz      short loc_40257A"
+        ],
+        [
+          "0x402567",
+          "push    ebx"
+        ],
+        [
+          "0x402568",
+          "push    offset aSoundLoadError; \"sound load error [%s]\""
+        ],
+        [
+          "0x40256d",
+          "push    0"
+        ],
+        [
+          "0x40256f",
+          "push    0"
+        ],
+        [
+          "0x402571",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x402577",
+          "add     esp, 10h"
+        ],
+        [
+          "0x40257a",
+          "xor     eax, eax"
+        ],
+        [
+          "0x40257c",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x40257f",
+          "pop     edi"
+        ],
+        [
+          "0x402580",
+          "pop     esi"
+        ],
+        [
+          "0x402581",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x402583",
+          "pop     ebx"
+        ],
+        [
+          "0x402584",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x402589",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x40258b",
+          "pop     ebp"
+        ],
+        [
+          "0x40258c",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/Game.exe",
+  "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e"
+}

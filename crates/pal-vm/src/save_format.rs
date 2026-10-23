@@ -2,7 +2,9 @@
 //!
 //! In the observed 128x72 saves, the native image continues after the pixels
 //! with fixed blocks through `0x13338` and a variable-length subsystem section.
-//! This module only models the common header. `SENARSAV` immediately after the
+//! This module models the common header and an audited sprite value layout;
+//! runtime/native_save.rs reads the exact Koikake subsystem stream.
+//! `SENARSAV` immediately after the
 //! pixels is a portable sena-rs extension, not a native image. `thumbnail_set` reads RGBA at
 //! `0x224`; `save_lock` reads and writes the first dword.
 
@@ -18,8 +20,9 @@ pub const RESUME_PC_OFFSET: usize = 0x20C;
 /// `c20+0x38`: secondary script position (park/return address written by
 /// `set_load_after_process`; constant per game).
 pub const SECONDARY_PC_OFFSET: usize = 0x210;
-/// Current text value (string id) inside the fixed `wrapper+0x22A44` block
-/// (file offset 0x12A30 + 0x0C; koikake save010 = 6557, save005 = 6649).
+/// Historical text-value heuristic for 128x72 thumbnail images. This is the
+/// fourth word of the saved operand buffer, not a dedicated current-text
+/// field. Exact Koikake imports reconstruct the line from saved history text.
 pub const TEXT_VALUE_OFFSET: usize = 0x12A3C;
 pub const THUMB_WIDTH_OFFSET: usize = 0x214;
 pub const THUMB_HEIGHT_OFFSET: usize = 0x218;
@@ -34,6 +37,49 @@ pub const LOAD_THUMBNAIL_CAPTURE_SENTINEL: i32 = 0x0FFF_FFFF;
 /// Thumbnail RGBA larger than this is rejected instead of being read into memory.
 pub const MAX_THUMB_BYTES: usize = 8 * 1024 * 1024;
 const SNAPSHOT_MAGIC: &[u8] = b"SENARSAV";
+
+/// Audited Koikake PAL sprite info record. Later builds have other layouts.
+/// See reverse/abi/save32.json and PAL.dll 0x100C29D0/0x100C2B00.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
+pub struct PalSpriteInfoKoikake32 {
+    pub visible: u32,
+    pub color: u32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub offset_x: i32,
+    pub offset_y: i32,
+    pub texture_width: u32,
+    pub texture_height: u32,
+    pub cell_width: u32,
+    pub cell_height: u32,
+    pub center_x: i32,
+    pub center_y: i32,
+    pub priority: i32,
+    pub scale: f32,
+    pub rotation_x: f32,
+    pub rotation_y: f32,
+    pub rotation_z: f32,
+    pub render_mode: u32,
+}
+
+const _: () = {
+    use std::mem::{align_of, offset_of, size_of};
+    assert!(size_of::<PalSpriteInfoKoikake32>() == 76);
+    assert!(align_of::<PalSpriteInfoKoikake32>() == 4);
+    assert!(offset_of!(PalSpriteInfoKoikake32, visible) == 0);
+    assert!(offset_of!(PalSpriteInfoKoikake32, color) == 4);
+    assert!(offset_of!(PalSpriteInfoKoikake32, x) == 8);
+    assert!(offset_of!(PalSpriteInfoKoikake32, offset_x) == 20);
+    assert!(offset_of!(PalSpriteInfoKoikake32, texture_width) == 28);
+    assert!(offset_of!(PalSpriteInfoKoikake32, cell_width) == 36);
+    assert!(offset_of!(PalSpriteInfoKoikake32, center_x) == 44);
+    assert!(offset_of!(PalSpriteInfoKoikake32, priority) == 52);
+    assert!(offset_of!(PalSpriteInfoKoikake32, scale) == 56);
+    assert!(offset_of!(PalSpriteInfoKoikake32, rotation_x) == 60);
+    assert!(offset_of!(PalSpriteInfoKoikake32, render_mode) == 72);
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OriginalSavePrefix {
@@ -65,7 +111,7 @@ impl OriginalSavePrefix {
 }
 
 pub fn original_save_filename(slot: i32) -> String {
-    if slot < 0 {
+    if slot == -1 {
         "continue.dat".to_owned()
     } else {
         format!("save{slot:03}.dat")
@@ -168,8 +214,8 @@ pub fn read_lock_dword(bytes: &[u8]) -> i32 {
     read_i32(bytes, 0).unwrap_or(0)
 }
 
-/// Current text value (string id) stored in the fixed `wrapper+0x22A44`
-/// block of an original save image.
+/// Historical operand-buffer text heuristic used only by the compatibility
+/// fallback. The complete Koikake reader does not depend on this word.
 pub fn read_original_text_value(bytes: &[u8]) -> Option<i32> {
     if bytes.starts_with(SNAPSHOT_MAGIC) {
         return None;

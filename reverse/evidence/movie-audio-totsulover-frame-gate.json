@@ -1,0 +1,1796 @@
+{
+  "functions": [
+    {
+      "ea": "0x476f80",
+      "name": "sub_476F80",
+      "xrefs": [
+        {
+          "from": "0x413aed",
+          "function": "sub_413AE0"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_476F80(_DWORD *this)\n{\n  _DWORD *v2; // esi\n  int Key; // ebx\n  int TaskData; // eax\n  BOOL v5; // ebx\n  _DWORD *v6; // eax\n  int result; // eax\n  int KeyPush; // esi\n  int i; // esi\n  int (__cdecl *v10)(_DWORD); // ecx\n  _DWORD *v11; // esi\n  int v12; // edi\n  int v13; // edi\n  _DWORD *v14; // esi\n  _DWORD *v15; // eax\n  int v16; // ebx\n  _DWORD *v17; // esi\n  int v18; // ecx\n  _DWORD *v19; // esi\n  int v20; // edi\n  int j; // ebx\n  _DWORD *v22; // esi\n  int v23; // edi\n  _DWORD *v24; // ecx\n  int v25; // ebx\n  int *v26; // esi\n  unsigned __int16 v27; // dx\n  int Time; // eax\n  bool v29; // zf\n  _DWORD *v30; // ecx\n  int v31; // edx\n  _DWORD *v32; // ebx\n  _DWORD *v33; // esi\n  int v34; // edi\n  int v35; // ecx\n  int *v36; // ebx\n  int v37; // esi\n  int v38; // ecx\n  int v39; // edx\n  char *v40; // edx\n  int v41; // edi\n  int v42; // esi\n  int v43; // [esp-Ch] [ebp-138h]\n  _DWORD *v45; // [esp+Ch] [ebp-120h]\n  int v46; // [esp+10h] [ebp-11Ch]\n  int v47; // [esp+10h] [ebp-11Ch]\n  _SYSTEMTIME SystemTime; // [esp+14h] [ebp-118h] BYREF\n  CHAR v49[260]; // [esp+24h] [ebp-108h] BYREF\n\n  v2 = (_DWORD *)(PalTaskGetTaskData(0) + 824);\n  Key = PalInputGetKeyEx();\n  if ( Key )\n  {\n    TaskData = PalTaskGetTaskData(0);\n    if ( (Key & 8) != 0 )\n    {\n      v5 = *(_DWORD *)(TaskData + 8) == 0;\n      v6 = (_DWORD *)PalTaskGetTaskData(0);\n      v6[2285496] = v5;\n      v6[2285495] = 1;\n      v6[2285493] = 1;\n    }\n  }\n  if ( v2[2285288] && v2[2285287] )\n  {\n    sub_47D680(v2[87975], 2);\n    v2[87975] = v2[2285288] + v2[87976];\n    v2[2285287] = 0;\n    return sub_47C240(this + 87973);\n  }\n  result = IsMovie();\n  if ( !result )\n  {\n    if ( sub_47CD50() )\n      PalFrameRateSet(-1);\n    else\n      PalFrameRateSet(60);\n    this[88021] |= PalInputGetKeyPush();\n    if ( PalDebugIs() )\n    {\n      if ( !PalEffectIs() )\n      {\n        KeyPush = PalInputGetKeyPush();\n        if ( (PalInputGetKeyOn() & 0x10) != 0 && ((unsigned int)&unk_500000 & KeyPush) != 0 )\n        {\n          GetLocalTime(&SystemTime);\n          if ( ((unsigned int)&_ImageBase & KeyPush) != 0 )\n            wsprintfA(\n              v49,\n              \"%s\\\\SS_%04d-%02d-%02d %02d-%02d-%02d.%04d.jpg\",\n              &DirectoryName,\n              SystemTime.wYear,\n              SystemTime.wMonth,\n              SystemTime.wDay,\n              SystemTime.wHour,\n              SystemTime.wMinute,\n              SystemTime.wSecond,\n              SystemTime.wMilliseconds);\n          else\n            wsprintfA(\n              v49,\n              \"%s\\\\SS_%04d-%02d-%02d %02d-%02d-%02d.%04d.png\",\n              &DirectoryName,\n              SystemTime.wYear,\n              SystemTime.wMonth,\n              SystemTime.wDay,\n              SystemTime.wHour,\n              SystemTime.wMinute,\n              SystemTime.wSecond,\n              SystemTime.wMilliseconds);\n        }\n      }\n    }\n    for ( i = dword_652108; i; i = *(_DWORD *)(i + 616) )\n      memset((void *)(i + 168), 0, 0x98u);\n    sub_476BA0(this);\n    v10 = PalSoundPlayIs;\n    v11 = this + 38294;\n    v12 = 16;\n    do\n    {\n      if ( *v11 && (v11[2] & 0x20000000) == 0 )\n      {\n        if ( !v10(*v11) )\n        {\n          PalSoundRelease(*v11);\n          memset(v11, 0, 0x40u);\n        }\n        v10 = PalSoundPlayIs;\n      }\n      v11 += 16;\n      --v12;\n    }\n    while ( v12 );\n    v13 = 2;\n    v14 = this + 38550;\n    do\n    {\n      if ( *v14 && (v14[2] & 0x20000000) == 0 )\n      {\n        if ( v10(*v14) )\n        {\n          if ( (v14[2] & 0x40020000) != 0 )\n            sub_41D210(v14);\n        }\n        else\n        {\n          PalSoundRelease(*v14);\n          memset(v14, 0, 0x5Cu);\n        }\n      }\n      v10 = PalSoundPlayIs;\n      v14 += 23;\n      --v13;\n    }\n    while ( v13 );\n    v15 = this;\n    v46 = 1;\n    if ( !byte_6F97D2 )\n    {\n      v16 = 0;\n      v17 = this + 38596;\n      while ( 1 )\n      {\n        if ( *v17 )\n        {\n          if ( PalSoundPlayIs(*v17) )\n          {\n            v18 = 0;\n            v46 = 0;\n            if ( !this[39915] || v17[15] != 2 )\n              goto LABEL_46;\n            sub_472C60(v17 + 12);\n          }\n          else\n          {\n            if ( v16 != 8 )\n              sub_472BD0(this + 38287, 0);\n            PalSoundRelease(*v17);\n            *v17 = 0;\n          }\n        }\n        v18 = v46;\nLABEL_46:\n        ++v16;\n        v17 += 17;\n        if ( v16 >= 9 )\n        {\n          if ( v18 && this[39195] )\n            PalSoundSetVolume(this[39094] * this[39101], 3);\n          v19 = this + 38749;\n          v20 = 8;\n          do\n          {\n            if ( *v19 && !PalSoundPlayIs(*v19) && !v19[14] && !(v19[13] | v19[2] & 1) )\n            {\n              PalSoundRelease(*v19);\n              memset(v19, 0, 0x30u);\n            }\n            v19 += 23;\n            --v20;\n          }\n          while ( v20 );\n          v15 = this;\n          break;\n        }\n      }\n    }\n    sub_419050(v15 + 91517);\n    for ( j = dword_4F44A0; j; j = *(_DWORD *)(j + 80) )\n    {\n      v22 = (_DWORD *)(j + 44);\n      v23 = 8;\n      do\n      {\n        if ( *v22 && !((int (*)(void))sub_478AC0)() )\n        {\n          PalMemoryFree(*(_DWORD *)(*v22 + 16));\n          PalMemoryFree(*v22);\n          *v22 = 0;\n        }\n        ++v22;\n        --v23;\n      }\n      while ( v23 );\n      if ( !sub_478AC0(j) )\n      {\n        j = *(_DWORD *)(j + 76);\n        sub_478CD0(*(void **)(j + 80));\n      }\n    }\n    v24 = this;\n    v25 = 128;\n    v45 = this + 41141;\n    v26 = v24 + 41157;\n    do\n    {\n      if ( *(v26 - 16) )\n      {\n        if ( (*(v26 - 13) & 0x80000) != 0 && PaltimeGetTime() - *v26 > (unsigned int)v26[1] )\n        {\n          v27 = (unsigned __int16)(*((_WORD *)v26 + 4) + 1) % 3u;\n          v43 = *(v26 - 1);\n          *((_WORD *)v26 + 4) = v27;\n          PalSpriteRectSetPos(v43, 0, v27);\n          PalCopySpriteToSpriteRectRGB(*(_DWORD *)*(v26 - 16), *(v26 - 1));\n          Time = PaltimeGetTime();\n          v29 = *((_WORD *)v26 + 4) == 0;\n          *v26 = Time;\n          if ( v29 )\n            v26[1] = PaltimeGetTime() % 0x2710u + 200;\n          else\n            v26[1] = 10;\n        }\n        if ( (*(v26 - 13) & 0x200000) != 0 )\n          sub_445010(v26 - 16);\n        if ( PalSpriteGetTransitionState(*(v26 - 10)) == 2 )\n        {\n          PalSpriteCancelTransition(*(v26 - 10));\n          if ( *(v26 - 12) == 1 )\n          {\n            *(_DWORD *)*(v26 - 16) = 0;\n            sub_445360(v26 - 16);\n          }\n          *(v26 - 12) = 0;\n        }\n      }\n      v26 += 183;\n      --v25;\n    }\n    while ( v25 );\n    v30 = v45;\n    v31 = 64;\n    v32 = v45;\n    v47 = 64;\n    do\n    {\n      if ( *v32 )\n      {\n        v33 = v32 + 23;\n        if ( (~v32[3] & 0x40000) == 0 )\n        {\n          v34 = 8;\n          do\n          {\n            if ( (*(v33 - 1) & 0x10000000) != 0 )\n            {\n              v35 = v30[183 * *v33];\n              if ( v35 )\n                sub_47A310(v35, *v32);\n              v30 = v45;\n            }\n            v33 += 20;\n            --v34;\n          }\n          while ( v34 );\n          v31 = v47;\n        }\n      }\n      v32 += 183;\n      v47 = --v31;\n    }\n    while ( v31 );\n    v36 = &dword_4ED6E0;\n    while ( 1 )\n    {\n      if ( !*v36 )\n        goto LABEL_99;\n      v37 = v36[1];\n      if ( !v37 )\n        goto LABEL_99;\n      PalTaskGetTaskData(0);\n      v38 = (unsigned __int16)v37;\n      v39 = v37 & 0xF000000;\n      if ( (v37 & 0xF000000) != 0 )\n      {\n        if ( v39 != 0x1000000 )\n        {\n          if ( v39 != 0x2000000 )\n          {\n            PalDebugPrintf(0, 0, \"fail original image no : 0x%08X\", v37);\n            v40 = 0;\n            goto LABEL_98;\n          }\n          v38 = (((v37 >> 20) & 0xF) << 7) + (unsigned __int16)v37 + 144;\n        }\n      }\n      else\n      {\n        v38 = (unsigned __int16)v37 + 16;\n      }\n      v40 = (char *)&unk_4F44B0 + 656 * v38;\nLABEL_98:\n      v41 = *v36;\n      v42 = *(_DWORD *)(*v36 + 100);\n      sub_47A310(*v36, v40);\n      *(_DWORD *)(v41 + 100) = v42;\nLABEL_99:\n      v36 += 2;\n      if ( (int)v36 >= (int)&hLibModule )\n        return sub_47B3C0();\n    }\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x476f80",
+          "push    ebp"
+        ],
+        [
+          "0x476f81",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x476f83",
+          "sub     esp, 120h"
+        ],
+        [
+          "0x476f89",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x476f8e",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x476f90",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x476f93",
+          "push    ebx"
+        ],
+        [
+          "0x476f94",
+          "push    esi"
+        ],
+        [
+          "0x476f95",
+          "push    edi"
+        ],
+        [
+          "0x476f96",
+          "mov     edi, ecx"
+        ],
+        [
+          "0x476f98",
+          "push    0"
+        ],
+        [
+          "0x476f9a",
+          "mov     [ebp+var_120], edi"
+        ],
+        [
+          "0x476fa0",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x476fa6",
+          "add     esp, 4"
+        ],
+        [
+          "0x476fa9",
+          "lea     esi, [eax+338h]"
+        ],
+        [
+          "0x476faf",
+          "call    __imp_PalInputGetKeyEx"
+        ],
+        [
+          "0x476fb5",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x476fb7",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x476fb9",
+          "jz      short loc_476FF8"
+        ],
+        [
+          "0x476fbb",
+          "push    0"
+        ],
+        [
+          "0x476fbd",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x476fc3",
+          "add     esp, 4"
+        ],
+        [
+          "0x476fc6",
+          "test    bl, 8"
+        ],
+        [
+          "0x476fc9",
+          "jz      short loc_476FF8"
+        ],
+        [
+          "0x476fcb",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x476fcd",
+          "cmp     [eax+8], ebx"
+        ],
+        [
+          "0x476fd0",
+          "push    0"
+        ],
+        [
+          "0x476fd2",
+          "setz    bl"
+        ],
+        [
+          "0x476fd5",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x476fdb",
+          "add     esp, 4"
+        ],
+        [
+          "0x476fde",
+          "mov     [eax+8B7EE0h], ebx"
+        ],
+        [
+          "0x476fe4",
+          "mov     dword ptr [eax+8B7EDCh], 1"
+        ],
+        [
+          "0x476fee",
+          "mov     dword ptr [eax+8B7ED4h], 1"
+        ],
+        [
+          "0x476ff8",
+          "cmp     dword ptr [esi+8B7BA0h], 0"
+        ],
+        [
+          "0x476fff",
+          "jz      short loc_477059"
+        ],
+        [
+          "0x477001",
+          "cmp     dword ptr [esi+8B7B9Ch], 0"
+        ],
+        [
+          "0x477008",
+          "jz      short loc_477059"
+        ],
+        [
+          "0x47700a",
+          "push    2"
+        ],
+        [
+          "0x47700c",
+          "push    dword ptr [esi+55E9Ch]"
+        ],
+        [
+          "0x477012",
+          "mov     edx, 2"
+        ],
+        [
+          "0x477017",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x477019",
+          "call    sub_47D680"
+        ],
+        [
+          "0x47701e",
+          "mov     eax, [esi+55EA0h]"
+        ],
+        [
+          "0x477024",
+          "lea     ecx, [edi+55E94h]"
+        ],
+        [
+          "0x47702a",
+          "add     eax, [esi+8B7BA0h]"
+        ],
+        [
+          "0x477030",
+          "add     esp, 8"
+        ],
+        [
+          "0x477033",
+          "mov     [esi+55E9Ch], eax"
+        ],
+        [
+          "0x477039",
+          "mov     dword ptr [esi+8B7B9Ch], 0"
+        ],
+        [
+          "0x477043",
+          "call    sub_47C240"
+        ],
+        [
+          "0x477048",
+          "pop     edi"
+        ],
+        [
+          "0x477049",
+          "pop     esi"
+        ],
+        [
+          "0x47704a",
+          "pop     ebx"
+        ],
+        [
+          "0x47704b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x47704e",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x477050",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x477055",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x477057",
+          "pop     ebp"
+        ],
+        [
+          "0x477058",
+          "retn"
+        ],
+        [
+          "0x477059",
+          "call    __imp_IsMovie"
+        ],
+        [
+          "0x47705f",
+          "test    eax, eax"
+        ],
+        [
+          "0x477061",
+          "jnz     loc_477571"
+        ],
+        [
+          "0x477067",
+          "call    sub_47CD50"
+        ],
+        [
+          "0x47706c",
+          "test    eax, eax"
+        ],
+        [
+          "0x47706e",
+          "jz      short loc_477074"
+        ],
+        [
+          "0x477070",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x477072",
+          "jmp     short loc_477076"
+        ],
+        [
+          "0x477074",
+          "push    3Ch ; '<'"
+        ],
+        [
+          "0x477076",
+          "call    __imp_PalFrameRateSet"
+        ],
+        [
+          "0x47707c",
+          "mov     esi, __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x477082",
+          "add     esp, 4"
+        ],
+        [
+          "0x477085",
+          "call    esi ; __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x477087",
+          "or      [edi+55F54h], eax"
+        ],
+        [
+          "0x47708d",
+          "call    __imp_PalDebugIs"
+        ],
+        [
+          "0x477093",
+          "test    eax, eax"
+        ],
+        [
+          "0x477095",
+          "jz      loc_47712D"
+        ],
+        [
+          "0x47709b",
+          "call    __imp_PalEffectIs"
+        ],
+        [
+          "0x4770a1",
+          "test    eax, eax"
+        ],
+        [
+          "0x4770a3",
+          "jnz     loc_47712D"
+        ],
+        [
+          "0x4770a9",
+          "call    esi ; __imp_PalInputGetKeyPush"
+        ],
+        [
+          "0x4770ab",
+          "mov     esi, eax"
+        ],
+        [
+          "0x4770ad",
+          "call    __imp_PalInputGetKeyOn"
+        ],
+        [
+          "0x4770b3",
+          "test    al, 10h"
+        ],
+        [
+          "0x4770b5",
+          "jz      short loc_47712D"
+        ],
+        [
+          "0x4770b7",
+          "test    esi, offset unk_500000"
+        ],
+        [
+          "0x4770bd",
+          "jz      short loc_47712D"
+        ],
+        [
+          "0x4770bf",
+          "lea     eax, [ebp+SystemTime]"
+        ],
+        [
+          "0x4770c5",
+          "push    eax; lpSystemTime"
+        ],
+        [
+          "0x4770c6",
+          "call    ds:__imp_GetLocalTime"
+        ],
+        [
+          "0x4770cc",
+          "movzx   eax, [ebp+SystemTime.wMilliseconds]"
+        ],
+        [
+          "0x4770d3",
+          "push    eax"
+        ],
+        [
+          "0x4770d4",
+          "movzx   eax, [ebp+SystemTime.wSecond]"
+        ],
+        [
+          "0x4770db",
+          "push    eax"
+        ],
+        [
+          "0x4770dc",
+          "movzx   eax, [ebp+SystemTime.wMinute]"
+        ],
+        [
+          "0x4770e3",
+          "push    eax"
+        ],
+        [
+          "0x4770e4",
+          "movzx   eax, [ebp+SystemTime.wHour]"
+        ],
+        [
+          "0x4770eb",
+          "push    eax"
+        ],
+        [
+          "0x4770ec",
+          "movzx   eax, [ebp+SystemTime.wDay]"
+        ],
+        [
+          "0x4770f3",
+          "push    eax"
+        ],
+        [
+          "0x4770f4",
+          "movzx   eax, [ebp+SystemTime.wMonth]"
+        ],
+        [
+          "0x4770fb",
+          "push    eax"
+        ],
+        [
+          "0x4770fc",
+          "movzx   eax, [ebp+SystemTime.wYear]"
+        ],
+        [
+          "0x477103",
+          "push    eax"
+        ],
+        [
+          "0x477104",
+          "lea     eax, [ebp+var_108]"
+        ],
+        [
+          "0x47710a",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x47710f",
+          "test    esi, offset __ImageBase"
+        ],
+        [
+          "0x477115",
+          "jz      short loc_47711E"
+        ],
+        [
+          "0x477117",
+          "push    offset aSSs04d02d02d02; \"%s\\\\SS_%04d-%02d-%02d %02d-%02d-%02d.%0\"..."
+        ],
+        [
+          "0x47711c",
+          "jmp     short loc_477123"
+        ],
+        [
+          "0x47711e",
+          "push    offset aSSs04d02d02d02_0; \"%s\\\\SS_%04d-%02d-%02d %02d-%02d-%02d.%0\"..."
+        ],
+        [
+          "0x477123",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x477124",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x47712a",
+          "add     esp, 28h"
+        ],
+        [
+          "0x47712d",
+          "mov     esi, dword_652108"
+        ],
+        [
+          "0x477133",
+          "test    esi, esi"
+        ],
+        [
+          "0x477135",
+          "jz      short loc_477160"
+        ],
+        [
+          "0x477137",
+          "nop     word ptr [eax+eax+00000000h]"
+        ],
+        [
+          "0x477140",
+          "push    98h; Size"
+        ],
+        [
+          "0x477145",
+          "lea     eax, [esi+0A8h]"
+        ],
+        [
+          "0x47714b",
+          "push    0; Val"
+        ],
+        [
+          "0x47714d",
+          "push    eax; void *"
+        ],
+        [
+          "0x47714e",
+          "call    _memset"
+        ],
+        [
+          "0x477153",
+          "mov     esi, [esi+268h]"
+        ],
+        [
+          "0x477159",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x47715c",
+          "test    esi, esi"
+        ],
+        [
+          "0x47715e",
+          "jnz     short loc_477140"
+        ],
+        [
+          "0x477160",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x477162",
+          "call    sub_476BA0"
+        ],
+        [
+          "0x477167",
+          "mov     ecx, __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x47716d",
+          "lea     esi, [edi+25658h]"
+        ],
+        [
+          "0x477173",
+          "mov     ebx, __imp_PalSoundRelease"
+        ],
+        [
+          "0x477179",
+          "mov     edi, 10h"
+        ],
+        [
+          "0x47717e",
+          "xchg    ax, ax"
+        ],
+        [
+          "0x477180",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x477182",
+          "test    eax, eax"
+        ],
+        [
+          "0x477184",
+          "jz      short loc_4771B0"
+        ],
+        [
+          "0x477186",
+          "test    dword ptr [esi+8], 20000000h"
+        ],
+        [
+          "0x47718d",
+          "jnz     short loc_4771B0"
+        ],
+        [
+          "0x47718f",
+          "push    eax"
+        ],
+        [
+          "0x477190",
+          "call    ecx ; __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x477192",
+          "add     esp, 4"
+        ],
+        [
+          "0x477195",
+          "test    eax, eax"
+        ],
+        [
+          "0x477197",
+          "jnz     short loc_4771AA"
+        ],
+        [
+          "0x477199",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x47719b",
+          "call    ebx ; __imp_PalSoundRelease"
+        ],
+        [
+          "0x47719d",
+          "push    40h ; '@'; Size"
+        ],
+        [
+          "0x47719f",
+          "push    0; Val"
+        ],
+        [
+          "0x4771a1",
+          "push    esi; void *"
+        ],
+        [
+          "0x4771a2",
+          "call    _memset"
+        ],
+        [
+          "0x4771a7",
+          "add     esp, 10h"
+        ],
+        [
+          "0x4771aa",
+          "mov     ecx, __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x4771b0",
+          "add     esi, 40h ; '@'"
+        ],
+        [
+          "0x4771b3",
+          "sub     edi, 1"
+        ],
+        [
+          "0x4771b6",
+          "jnz     short loc_477180"
+        ],
+        [
+          "0x4771b8",
+          "mov     esi, [ebp+var_120]"
+        ],
+        [
+          "0x4771be",
+          "mov     edi, 2"
+        ],
+        [
+          "0x4771c3",
+          "add     esi, 25A58h"
+        ],
+        [
+          "0x4771c9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x4771d0",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x4771d2",
+          "test    eax, eax"
+        ],
+        [
+          "0x4771d4",
+          "jz      short loc_47720C"
+        ],
+        [
+          "0x4771d6",
+          "test    dword ptr [esi+8], 20000000h"
+        ],
+        [
+          "0x4771dd",
+          "jnz     short loc_47720C"
+        ],
+        [
+          "0x4771df",
+          "push    eax"
+        ],
+        [
+          "0x4771e0",
+          "call    ecx ; __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x4771e2",
+          "add     esp, 4"
+        ],
+        [
+          "0x4771e5",
+          "test    eax, eax"
+        ],
+        [
+          "0x4771e7",
+          "jnz     short loc_4771FC"
+        ],
+        [
+          "0x4771e9",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x4771eb",
+          "call    ebx ; __imp_PalSoundRelease"
+        ],
+        [
+          "0x4771ed",
+          "push    5Ch ; '\\'; Size"
+        ],
+        [
+          "0x4771ef",
+          "push    0; Val"
+        ],
+        [
+          "0x4771f1",
+          "push    esi; void *"
+        ],
+        [
+          "0x4771f2",
+          "call    _memset"
+        ],
+        [
+          "0x4771f7",
+          "add     esp, 10h"
+        ],
+        [
+          "0x4771fa",
+          "jmp     short loc_47720C"
+        ],
+        [
+          "0x4771fc",
+          "test    dword ptr [esi+8], 40020000h"
+        ],
+        [
+          "0x477203",
+          "jz      short loc_47720C"
+        ],
+        [
+          "0x477205",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x477207",
+          "call    sub_41D210"
+        ],
+        [
+          "0x47720c",
+          "mov     ecx, __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x477212",
+          "add     esi, 5Ch ; '\\'"
+        ],
+        [
+          "0x477215",
+          "sub     edi, 1"
+        ],
+        [
+          "0x477218",
+          "jnz     short loc_4771D0"
+        ],
+        [
+          "0x47721a",
+          "cmp     byte_6F97D2, 0"
+        ],
+        [
+          "0x477221",
+          "mov     eax, [ebp+var_120]"
+        ],
+        [
+          "0x477227",
+          "mov     [ebp+var_11C], 1"
+        ],
+        [
+          "0x477231",
+          "lea     edi, [eax+2563Ch]"
+        ],
+        [
+          "0x477237",
+          "jnz     loc_477327"
+        ],
+        [
+          "0x47723d",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x47723f",
+          "lea     esi, [edi+4D4h]"
+        ],
+        [
+          "0x477245",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x477247",
+          "test    eax, eax"
+        ],
+        [
+          "0x477249",
+          "jz      short loc_47729D"
+        ],
+        [
+          "0x47724b",
+          "push    eax"
+        ],
+        [
+          "0x47724c",
+          "call    __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x477252",
+          "add     esp, 4"
+        ],
+        [
+          "0x477255",
+          "test    eax, eax"
+        ],
+        [
+          "0x477257",
+          "jnz     short loc_477277"
+        ],
+        [
+          "0x477259",
+          "cmp     ebx, 8"
+        ],
+        [
+          "0x47725c",
+          "jz      short loc_477267"
+        ],
+        [
+          "0x47725e",
+          "xor     edx, edx"
+        ],
+        [
+          "0x477260",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x477262",
+          "call    sub_472BD0"
+        ],
+        [
+          "0x477267",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x477269",
+          "call    __imp_PalSoundRelease"
+        ],
+        [
+          "0x47726f",
+          "mov     dword ptr [esi], 0"
+        ],
+        [
+          "0x477275",
+          "jmp     short loc_47729A"
+        ],
+        [
+          "0x477277",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x477279",
+          "mov     [ebp+var_11C], ecx"
+        ],
+        [
+          "0x47727f",
+          "cmp     [edi+1970h], ecx"
+        ],
+        [
+          "0x477285",
+          "jz      short loc_4772A3"
+        ],
+        [
+          "0x477287",
+          "cmp     dword ptr [esi+3Ch], 2"
+        ],
+        [
+          "0x47728b",
+          "lea     eax, [esi+30h]"
+        ],
+        [
+          "0x47728e",
+          "jnz     short loc_4772A3"
+        ],
+        [
+          "0x477290",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x477292",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x477294",
+          "push    eax"
+        ],
+        [
+          "0x477295",
+          "call    sub_472C60"
+        ],
+        [
+          "0x47729a",
+          "add     esp, 4"
+        ],
+        [
+          "0x47729d",
+          "mov     ecx, [ebp+var_11C]"
+        ],
+        [
+          "0x4772a3",
+          "inc     ebx"
+        ],
+        [
+          "0x4772a4",
+          "add     esi, 44h ; 'D'"
+        ],
+        [
+          "0x4772a7",
+          "cmp     ebx, 9"
+        ],
+        [
+          "0x4772aa",
+          "jl      short loc_477245"
+        ],
+        [
+          "0x4772ac",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x4772ae",
+          "jz      short loc_4772D2"
+        ],
+        [
+          "0x4772b0",
+          "cmp     dword ptr [edi+0E30h], 0"
+        ],
+        [
+          "0x4772b7",
+          "jz      short loc_4772D2"
+        ],
+        [
+          "0x4772b9",
+          "mov     eax, [edi+0CB8h]"
+        ],
+        [
+          "0x4772bf",
+          "imul    eax, [edi+0C9Ch]"
+        ],
+        [
+          "0x4772c6",
+          "push    3"
+        ],
+        [
+          "0x4772c8",
+          "push    eax"
+        ],
+        [
+          "0x4772c9",
+          "call    __imp_PalSoundSetVolume"
+        ],
+        [
+          "0x4772cf",
+          "add     esp, 8"
+        ],
+        [
+          "0x4772d2",
+          "lea     esi, [edi+738h]"
+        ],
+        [
+          "0x4772d8",
+          "mov     edi, 8"
+        ],
+        [
+          "0x4772dd",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x4772e0",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x4772e2",
+          "test    eax, eax"
+        ],
+        [
+          "0x4772e4",
+          "jz      short loc_477319"
+        ],
+        [
+          "0x4772e6",
+          "push    eax"
+        ],
+        [
+          "0x4772e7",
+          "call    __imp_PalSoundPlayIs"
+        ],
+        [
+          "0x4772ed",
+          "add     esp, 4"
+        ],
+        [
+          "0x4772f0",
+          "test    eax, eax"
+        ],
+        [
+          "0x4772f2",
+          "jnz     short loc_477319"
+        ],
+        [
+          "0x4772f4",
+          "cmp     [esi+38h], eax"
+        ],
+        [
+          "0x4772f7",
+          "jnz     short loc_477319"
+        ],
+        [
+          "0x4772f9",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x4772fc",
+          "and     eax, 1"
+        ],
+        [
+          "0x4772ff",
+          "or      eax, [esi+34h]"
+        ],
+        [
+          "0x477302",
+          "jnz     short loc_477319"
+        ],
+        [
+          "0x477304",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x477306",
+          "call    __imp_PalSoundRelease"
+        ],
+        [
+          "0x47730c",
+          "push    30h ; '0'; Size"
+        ],
+        [
+          "0x47730e",
+          "push    0; Val"
+        ],
+        [
+          "0x477310",
+          "push    esi; void *"
+        ],
+        [
+          "0x477311",
+          "call    _memset"
+        ],
+        [
+          "0x477316",
+          "add     esp, 10h"
+        ],
+        [
+          "0x477319",
+          "add     esi, 5Ch ; '\\'"
+        ],
+        [
+          "0x47731c",
+          "sub     edi, 1"
+        ],
+        [
+          "0x47731f",
+          "jnz     short loc_4772E0"
+        ],
+        [
+          "0x477321",
+          "mov     eax, [ebp+var_120]"
+        ],
+        [
+          "0x477327",
+          "lea     ecx, [eax+595F4h]"
+        ],
+        [
+          "0x47732d",
+          "call    sub_419050"
+        ],
+        [
+          "0x477332",
+          "mov     ebx, dword_4F44A0"
+        ],
+        [
+          "0x477338",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x47733a",
+          "jz      short loc_477398"
+        ],
+        [
+          "0x47733c",
+          "nop     dword ptr [eax+00h]"
+        ],
+        [
+          "0x477340",
+          "lea     esi, [ebx+2Ch]"
+        ],
+        [
+          "0x477343",
+          "mov     edi, 8"
+        ],
+        [
+          "0x477348",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x47734a",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x47734c",
+          "jz      short loc_477373"
+        ],
+        [
+          "0x47734e",
+          "call    sub_478AC0"
+        ],
+        [
+          "0x477353",
+          "test    eax, eax"
+        ],
+        [
+          "0x477355",
+          "jnz     short loc_477373"
+        ],
+        [
+          "0x477357",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x477359",
+          "push    dword ptr [eax+10h]"
+        ],
+        [
+          "0x47735c",
+          "call    __imp_PalMemoryFree"
+        ],
+        [
+          "0x477362",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x477364",
+          "call    __imp_PalMemoryFree"
+        ],
+        [
+          "0x47736a",
+          "add     esp, 8"
+        ],
+        [
+          "0x47736d",
+          "mov     dword ptr [esi], 0"
+        ],
+        [
+          "0x477373",
+          "add     esi, 4"
+        ],
+        [
+          "0x477376",
+          "sub     edi, 1"
+        ],
+        [
+          "0x477379",
+          "jnz     short loc_477348"
+        ],
+        [
+          "0x47737b",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x47737d",
+          "call    sub_478AC0"
+        ],
+        [
+          "0x477382",
+          "test    eax, eax"
+        ],
+        [
+          "0x477384",
+          "jnz     short loc_477391"
+        ],
+        [
+          "0x477386",
+          "mov     ebx, [ebx+4Ch]"
+        ],
+        [
+          "0x477389",
+          "mov     ecx, [ebx+50h]; void *"
+        ],
+        [
+          "0x47738c",
+          "call    sub_478CD0"
+        ],
+        [
+          "0x477391",
+          "mov     ebx, [ebx+50h]"
+        ],
+        [
+          "0x477394",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x477396",
+          "jnz     short loc_477340"
+        ],
+        [
+          "0x477398",
+          "mov     ecx, [ebp+var_120]"
+        ],
+        [
+          "0x47739e",
+          "mov     ebx, 80h"
+        ],
+        [
+          "0x4773a3",
+          "lea     eax, [ecx+282D4h]"
+        ],
+        [
+          "0x4773a9",
+          "mov     [ebp+var_120], eax"
+        ],
+        [
+          "0x4773af",
+          "lea     esi, [ecx+28314h]"
+        ],
+        [
+          "0x4773b5",
+          "cmp     dword ptr [esi-40h], 0"
+        ],
+        [
+          "0x4773b9",
+          "jz      loc_477487"
+        ],
+        [
+          "0x4773bf",
+          "test    dword ptr [esi-34h], 80000h"
+        ],
+        [
+          "0x4773c6",
+          "jz      short loc_47743B"
+        ],
+        [
+          "0x4773c8",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x4773ce",
+          "sub     eax, [esi]"
+        ],
+        [
+          "0x4773d0",
+          "cmp     eax, [esi+4]"
+        ],
+        [
+          "0x4773d3",
+          "jbe     short loc_47743B"
+        ],
+        [
+          "0x4773d5",
+          "mov     ax, [esi+8]"
+        ],
+        [
+          "0x4773d9",
+          "xor     edx, edx"
+        ],
+        [
+          "0x4773db",
+          "inc     ax"
+        ],
+        [
+          "0x4773dd",
+          "mov     ecx, 3"
+        ],
+        [
+          "0x4773e2",
+          "movzx   eax, ax"
+        ],
+        [
+          "0x4773e5",
+          "div     ecx"
+        ],
+        [
+          "0x4773e7",
+          "movzx   eax, dx"
+        ],
+        [
+          "0x4773ea",
+          "push    eax"
+        ],
+        [
+          "0x4773eb",
+          "push    0"
+        ],
+        [
+          "0x4773ed",
+          "push    dword ptr [esi-4]"
+        ],
+        [
+          "0x4773f0",
+          "mov     [esi+8], ax"
+        ],
+        [
+          "0x4773f4",
+          "call    __imp_PalSpriteRectSetPos"
+        ],
+        [
+          "0x4773fa",
+          "mov     eax, [esi-40h]"
+        ],
+        [
+          "0x4773fd",
+          "push    dword ptr [esi-4]"
+        ],
+        [
+          "0x477400",
+          "push    dword ptr [eax]"
+        ],
+        [
+          "0x477402",
+          "call    __imp_PalCopySpriteToSpriteRectRGB"
+        ],
+        [
+          "0x477408",
+          "add     esp, 14h"
+        ],
+        [
+          "0x47740b",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x477411",
+          "cmp     word ptr [esi+8], 0"
+        ],
+        [
+          "0x477416",
+          "mov     [esi], eax"
+        ],
+        [
+          "0x477418",
+          "jz      short loc_477423"
+        ],
+        [
+          "0x47741a",
+          "mov     dword ptr [esi+4], 0Ah"
+        ],
+        [
+          "0x477421",
+          "jmp     short loc_47743B"
+        ],
+        [
+          "0x477423",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x477429",
+          "xor     edx, edx"
+        ],
+        [
+          "0x47742b",
+          "mov     ecx, 2710h"
+        ],
+        [
+          "0x477430",
+          "div     ecx"
+        ],
+        [
+          "0x477432",
+          "add     edx, 0C8h"
+        ],
+        [
+          "0x477438",
+          "mov     [esi+4], edx"
+        ],
+        [
+          "0x47743b",
+          "test    dword ptr [esi-34h], 200000h"
+        ],
+        [
+          "0x477442",
+          "jz      short loc_47744C"
+        ],
+        [
+          "0x477444",
+          "lea     ecx, [esi-40h]"
+        ],
+        [
+          "0x477447",
+          "call    sub_445010"
+        ],
+        [
+          "0x47744c",
+          "push    dword ptr [esi-28h]"
+        ],
+        [
+          "0x47744f",
+          "call    __imp_PalSpriteGetTransitionState"
+        ],
+        [
+          "0x477455",
+          "add     esp, 4"
+        ],
+        [
+          "0x477458",
+          "cmp     eax, 2"
+        ],
+        [
+          "0x47745b",
+          "jnz     short loc_477487"
+        ],
+        [
+          "0x47745d",
+          "push    dword ptr [esi-28h]"
+        ],
+        [
+          "0x477460",
+          "call    __imp_PalSpriteCancelTransition"
+        ],
+        [
+          "0x477466",
+          "add     esp, 4"
+        ],
+        [
+          "0x477469",
+          "cmp     dword ptr [esi-30h], 1"
+        ],
+        [
+          "0x47746d",
+          "jnz     short loc_477480"
+        ],
+        [
+          "0x47746f",
+          "mov     eax, [esi-40h]"
+        ],
+        [
+          "0x477472",
+          "lea     ecx, [esi-40h]; void *"
+        ],
+        [
+          "0x477475",
+          "mov     dword ptr [eax], 0"
+        ],
+        [
+          "0x47747b",
+          "call    sub_445360"
+        ],
+        [
+          "0x477480",
+          "mov     dword ptr [esi-30h], 0"
+        ],
+        [
+          "0x477487",
+          "add     esi, 2DCh"
+        ],
+        [
+          "0x47748d",
+          "sub     ebx, 1"
+        ],
+        [
+          "0x477490",
+          "jnz     loc_4773B5"
+        ],
+        [
+          "0x477496",
+          "mov     ecx, [ebp+var_120]"
+        ],
+        [
+          "0x47749c",
+          "mov     edx, 40h ; '@'"
+        ],
+        [
+          "0x4774a1",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x4774a3",
+          "mov     [ebp+var_11C], edx"
+        ],
+        [
+          "0x4774a9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x4774b0",
+          "cmp     dword ptr [ebx], 0"
+        ],
+        [
+          "0x4774b3",
+          "jz      short loc_477501"
+        ],
+        [
+          "0x4774b5",
+          "mov     eax, [ebx+0Ch]"
+        ],
+        [
+          "0x4774b8",
+          "lea     esi, [ebx+5Ch]"
+        ],
+        [
+          "0x4774bb",
+          "not     eax"
+        ],
+        [
+          "0x4774bd",
+          "test    eax, 40000h"
+        ],
+        [
+          "0x4774c2",
+          "jnz     short loc_477501"
+        ],
+        [
+          "0x4774c4",
+          "mov     edi, 8"
+        ],
+        [
+          "0x4774c9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x4774d0",
+          "test    dword ptr [esi-4], 10000000h"
+        ],
+        [
+          "0x4774d7",
+          "jz      short loc_4774F3"
+        ],
+        [
+          "0x4774d9",
+          "imul    eax, [esi], 2DCh"
+        ],
+        [
+          "0x4774df",
+          "mov     ecx, [eax+ecx]"
+        ],
+        [
+          "0x4774e2",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x4774e4",
+          "jz      short loc_4774ED"
+        ],
+        [
+          "0x4774e6",
+          "mov     edx, [ebx]"
+        ],
+        [
+          "0x4774e8",
+          "call    sub_47A310"
+        ],
+        [
+          "0x4774ed",
+          "mov     ecx, [ebp+var_120]"
+        ],
+        [
+          "0x4774f3",
+          "add     esi, 50h ; 'P'"
+        ],
+        [
+          "0x4774f6",
+          "sub     edi, 1"
+        ],
+        [
+          "0x4774f9",
+          "jnz     short loc_4774D0"
+        ],
+        [
+          "0x4774fb",
+          "mov     edx, [ebp+var_11C]"
+        ],
+        [
+          "0x477501",
+          "add     ebx, 2DCh"
+        ],
+        [
+          "0x477507",
+          "sub     edx, 1"
+        ],
+        [
+          "0x47750a",
+          "mov     [ebp+var_11C], edx"
+        ],
+        [
+          "0x477510",
+          "jnz     short loc_4774B0"
+        ],
+        [
+          "0x477512",
+          "mov     ebx, offset dword_4ED6E0"
+        ],
+        [
+          "0x477517",
+          "cmp     dword ptr [ebx], 0"
+        ],
+        [
+          "0x47751a",
+          "jz      short loc_477561"
+        ],
+        [
+          "0x47751c",
+          "mov     esi, [ebx+4]"
+        ],
+        [
+          "0x47751f",
+          "test    esi, esi"
+        ],
+        [
+          "0x477521",
+          "jz      short loc_477561"
+        ],
+        [
+          "0x477523",
+          "push    0"
+        ],
+        [
+          "0x477525",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x47752b",
+          "mov     eax, esi"
+        ],
+        [
+          "0x47752d",
+          "movzx   ecx, si"
+        ],
+        [
+          "0x477530",
+          "sar     eax, 14h"
+        ],
+        [
+          "0x477533",
+          "mov     edx, esi"
+        ],
+        [
+          "0x477535",
+          "add     esp, 4"
+        ],
+        [
+          "0x477538",
+          "and     eax, 0Fh"
+        ],
+        [
+          "0x47753b",
+          "and     edx, 0F000000h"
+        ],
+        [
+          "0x477541",
+          "jnz     short loc_477582"
+        ],
+        [
+          "0x477543",
+          "add     ecx, 10h"
+        ],
+        [
+          "0x477546",
+          "imul    edx, ecx, 290h"
+        ],
+        [
+          "0x47754c",
+          "add     edx, offset unk_4F44B0"
+        ],
+        [
+          "0x477552",
+          "mov     edi, [ebx]"
+        ],
+        [
+          "0x477554",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x477556",
+          "mov     esi, [edi+64h]"
+        ],
+        [
+          "0x477559",
+          "call    sub_47A310"
+        ],
+        [
+          "0x47755e",
+          "mov     [edi+64h], esi"
+        ],
+        [
+          "0x477561",
+          "add     ebx, 8"
+        ],
+        [
+          "0x477564",
+          "cmp     ebx, offset hLibModule"
+        ],
+        [
+          "0x47756a",
+          "jl      short loc_477517"
+        ],
+        [
+          "0x47756c",
+          "call    sub_47B3C0"
+        ],
+        [
+          "0x477571",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x477574",
+          "pop     edi"
+        ],
+        [
+          "0x477575",
+          "pop     esi"
+        ],
+        [
+          "0x477576",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x477578",
+          "pop     ebx"
+        ],
+        [
+          "0x477579",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x47757e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x477580",
+          "pop     ebp"
+        ],
+        [
+          "0x477581",
+          "retn"
+        ],
+        [
+          "0x477582",
+          "cmp     edx, 1000000h"
+        ],
+        [
+          "0x477588",
+          "jz      short loc_477546"
+        ],
+        [
+          "0x47758a",
+          "cmp     edx, 2000000h"
+        ],
+        [
+          "0x477590",
+          "jnz     short loc_47759F"
+        ],
+        [
+          "0x477592",
+          "shl     eax, 7"
+        ],
+        [
+          "0x477595",
+          "add     ecx, 90h"
+        ],
+        [
+          "0x47759b",
+          "add     ecx, eax"
+        ],
+        [
+          "0x47759d",
+          "jmp     short loc_477546"
+        ],
+        [
+          "0x47759f",
+          "push    esi"
+        ],
+        [
+          "0x4775a0",
+          "push    offset aFailOriginalIm; \"fail original image no : 0x%08X\""
+        ],
+        [
+          "0x4775a5",
+          "push    0"
+        ],
+        [
+          "0x4775a7",
+          "push    0"
+        ],
+        [
+          "0x4775a9",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4775af",
+          "add     esp, 10h"
+        ],
+        [
+          "0x4775b2",
+          "xor     edx, edx"
+        ],
+        [
+          "0x4775b4",
+          "jmp     short loc_477552"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

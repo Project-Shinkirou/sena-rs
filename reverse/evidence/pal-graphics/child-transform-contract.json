@@ -1,0 +1,74 @@
+{
+  "interface": "Game.exe VM wrapper and image-wrapper helpers; not native PAL DLL exports",
+  "category": 3,
+  "index": 49,
+  "stack_pop_order": [
+    "parent_slot:i32",
+    "child_slot:i32",
+    "offset_x:i32",
+    "offset_y:i32",
+    "child_lane:i32"
+  ],
+  "writes_destination": false,
+  "builds": {
+    "koikake": {
+      "binary": "testcase/koikake.exe",
+      "setter": "0x41aa50",
+      "walk": "0x41d870",
+      "consumer": "0x435070",
+      "evidence": [
+        "reverse/evidence/pal-graphics/exe-koikake-child-contract.json",
+        "reverse/evidence/pal-graphics/exe-koikake-child-walk.json",
+        "reverse/evidence/pal-graphics/exe-koikake-child-consumer.json",
+        "reverse/evidence/pal-graphics/exe-koikake-wrapper-sums.json"
+      ],
+      "binary_sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b"
+    },
+    "reference": {
+      "binary": "reverse/Game.exe",
+      "setter": "0x424a20",
+      "walk": "0x4240f0",
+      "consumer": "0x448900",
+      "evidence": [
+        "reverse/evidence/pal-graphics/exe-reference-child-contract.json"
+      ],
+      "binary_sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e"
+    },
+    "totsulover": {
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "setter": "0x447860",
+      "walk": "0x476f80",
+      "consumer": "0x47a310",
+      "submit": "0x47b3c0",
+      "evidence": [
+        "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+        "reverse/evidence/pal-graphics/exe-totsulover-child-consumer.json",
+        "reverse/evidence/pal-graphics/exe-totsulover-child-update.json"
+      ],
+      "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+    }
+  },
+  "behavior": [
+    "Legacy parent/child accepted slot range is -1..128 inclusive; newer is -1..127 inclusive. Parent or positive child absent is success1 without mutation.",
+    "Child -1 clears entire parent lane flag and child slot. Other negative child values fail range check.",
+    "Positive child stores high attachment bit0x10000000 on the parent lane, but transform auxiliary storage belongs to the child wrapper; multiple parent lanes share that child bank.",
+    "Store scale delta parent_base*child_base-parent_base, independently for X/Y in newer. Store child-parent rotation difference. Store each child base ARGB byte minus255 as signed16. X/Y offsets store native32bit integers.",
+    "Per tick: parent slots0..63 then child lanes0..7; copies summed parent color/scale/position/rotation to child base. Child keeps its auxiliary bank, so its deltas are added on final PAL submission.",
+    "Center adjustment uses half of PalSpriteGetWidth/Height (cell dimensions), integer center differences and truncation of center_difference*parent_scale before wrapped subtraction. It does not add native sprite image offsets.",
+    "Parent Z replaces child base Z before child auxiliary Z contributions; previous output is not accumulated.",
+    "Native malformed child_lane is not bounded and writes invalid memory; the portable adapter rejects values outside0..7."
+  ],
+  "implementation": "crates/pal-vm/src/runtime/children.rs",
+  "portable_state": "Shared child offsets and ordered parent/lane references persist in portable version13 tail.",
+  "remaining_boundaries": [
+    "Full native image-wrapper auxiliary animation banks remain separate from portable SpriteActionLanes.",
+    "Repeated reattachment after independently changing wrapper base fields needs a complete wrapper base-state representation; attachment captures the current portable base properties.",
+    "The native float-angle mode flag and every integer-angle quantization stage are not separately modeled by this adapter."
+  ],
+  "review_basis": [
+    "Native setter disassembly and exact stack pops",
+    "All three walk order and parent bounds",
+    "Native scalar and SIMD transform consumers",
+    "PAL integer/float rotation exports separately declared in reverse/abi/graphics32.json"
+  ]
+}

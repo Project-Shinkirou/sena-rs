@@ -129,6 +129,10 @@ impl Renderer {
         &self.window
     }
 
+    pub fn uses_gpu(&self) -> bool {
+        matches!(self.backend, Backend::Wgpu(_))
+    }
+
     pub fn size(&self) -> PhysicalSize<u32> {
         self.size
     }
@@ -164,10 +168,8 @@ impl Renderer {
         if self.size.width == 0 || self.size.height == 0 {
             return RenderOutcome::Skipped;
         }
-        self.virtual_size = PhysicalSize::new(
-            scene.logical_width.max(1),
-            scene.logical_height.max(1),
-        );
+        self.virtual_size =
+            PhysicalSize::new(scene.logical_width.max(1), scene.logical_height.max(1));
         let frame_dump = if self.frame_dump_written {
             None
         } else {
@@ -277,18 +279,34 @@ impl SoftwareBackend {
             );
         }
         buffer.fill(clear);
-        for command in &scene.commands {
-            match command {
-                DrawCommand::Sprite(sprite) => draw_sprite(
-                    scene_textures,
-                    &mut buffer,
-                    width,
-                    height,
-                    metrics.scale,
-                    sprite,
-                ),
-                DrawCommand::SolidQuad(quad) => {
-                    draw_solid_quad(&mut buffer, width, height, metrics.scale, *quad)
+        let transformed = scene.raster_stage.is_some() || scene.commands.iter().any(|command| matches!(command,
+            DrawCommand::Sprite(sprite) if sprite.raster_fx.is_some() || sprite.rotation[2].rem_euclid(512.0) != 0.0));
+        if transformed {
+            let rgba = rasterize_scene_rgba(scene);
+            let logical_w = scene.logical_width.max(1) as usize;
+            let logical_h = scene.logical_height.max(1) as usize;
+            for y in 0..height {
+                for x in 0..width {
+                    let offset = ((y * logical_h / height) * logical_w + x * logical_w / width) * 4;
+                    buffer[y * width + x] = ((rgba[offset] as u32) << 16)
+                        | ((rgba[offset + 1] as u32) << 8)
+                        | rgba[offset + 2] as u32;
+                }
+            }
+        } else {
+            for command in &scene.commands {
+                match command {
+                    DrawCommand::Sprite(sprite) => draw_sprite(
+                        scene_textures,
+                        &mut buffer,
+                        width,
+                        height,
+                        metrics.scale,
+                        sprite,
+                    ),
+                    DrawCommand::SolidQuad(quad) => {
+                        draw_solid_quad(&mut buffer, width, height, metrics.scale, *quad)
+                    }
                 }
             }
         }
@@ -425,7 +443,7 @@ struct CachedTexture {
     generation: u64,
     width: u32,
     height: u32,
-    pixels: Arc<[u8]>,
+    pixels: Arc<Vec<u8>>,
 }
 
 impl CachedTexture {
@@ -534,7 +552,8 @@ fn draw_textured_rect(
     {
         return;
     }
-    let tint = sprite.color;
+    let blend_state = sprite.effective_blend_state();
+    let tint = blend_state.modulation(sprite.color);
     for y in y0..y1 {
         let v = ((y as f32 + 0.5 - dst_rect.y) / dst_rect.h).clamp(0.0, 1.0);
         for x in x0..x1 {
@@ -567,11 +586,18 @@ fn draw_textured_rect(
             let g = (sample[1] as f32 * tint[1].clamp(0.0, 1.0)) as u8;
             let b = (sample[2] as f32 * tint[2].clamp(0.0, 1.0)) as u8;
             let a = (sample[3] as f32 * tint[3].clamp(0.0, 1.0)) as u8;
-            if a == 0 {
+            if a == 0 && !blend_state.blend_disabled && matches!(sprite.render_mode, 0..=2) {
                 continue;
             }
             let dst_index = y as usize * width + x as usize;
-            dst[dst_index] = blend_over(dst[dst_index], r, g, b, a);
+            let old = dst[dst_index];
+            let rgb = blend_state.blend_rgb(
+                sprite.render_mode,
+                [(old >> 16) as u8, (old >> 8) as u8, old as u8],
+                [r as f32, g as f32, b as f32, a as f32],
+            );
+            dst[dst_index] =
+                (u32::from(rgb[0]) << 16) | (u32::from(rgb[1]) << 8) | u32::from(rgb[2]);
         }
     }
 }
@@ -759,6 +785,8 @@ mod tests {
             rotation: [0.0; 3],
             center_offset: [0.0; 2],
             render_mode: 0,
+            blend_state: crate::scene::blend::NativeDrawState::default(),
+            raster_fx: None,
         }
     }
 

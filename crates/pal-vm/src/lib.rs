@@ -3,7 +3,9 @@
 //! This crate is the integration layer above `pal-asset` and `pal-script`.
 //! It owns the window/event loop boundary, the wgpu renderer, and the VM runtime.
 
+pub mod abi;
 pub mod animation;
+#[cfg(feature = "desktop")]
 pub mod app;
 pub mod assets;
 pub mod audio;
@@ -14,12 +16,14 @@ pub mod engine;
 pub mod event;
 pub mod ffi;
 pub mod font;
+pub mod fx;
 pub mod image;
 pub mod input;
 pub mod list;
 pub mod memory;
 pub mod msprite;
 pub mod platform_time;
+#[cfg(feature = "desktop")]
 pub mod renderer;
 pub mod runtime;
 mod save_format;
@@ -28,13 +32,14 @@ pub mod sprite;
 pub mod system;
 pub mod task;
 
-#[cfg(all(target_arch = "wasm32", target_os = "unknown"))]
+#[cfg(all(feature = "desktop", target_arch = "wasm32", target_os = "unknown"))]
 pub mod wasm_entry;
 
 pub use animation::{
     AnimationFrameRecord, AnimationHandle, PalAnimationFrameRecord, PalSequenceAnimationDesc,
     PalSheetAnimationDesc, SequenceAnimationDesc, SheetAnimationAxis, SheetAnimationDesc,
 };
+#[cfg(feature = "desktop")]
 pub use app::{
     run_sena, run_sena_headless, DiagnosticAutoAdvance, DiagnosticClick,
     DiagnosticClickWhenHitEnabled, DiagnosticKeyEvent, DiagnosticPngAt, DiagnosticWheelEvent,
@@ -53,14 +58,15 @@ pub use debug::{
 pub use effect::{PalEffectState, PalEffectSystem};
 pub use engine::{Engine, EngineConfig, EngineFrame, FrameTiming, TraceConfig};
 pub use event::{InputEvent, MouseButton, PalEvent};
-pub use font::{PalFontFallback, PalFontSystem};
+pub use font::{PalBitmapFontMetricsFooter32, PalBitmapGlyphRecord32, PalDrawTextRect32, PalFontFallback, PalFontProfile, PalFontSystem};
 pub use input::{PalInputState, PalKey, PalMouseButton};
 pub use list::{PalListHandle, PalListSystem};
 pub use memory::{PalMemoryHandle, PalMemorySystem};
 pub use msprite::{
     MSpriteFrameUpdate, MSpriteHandle, MSpriteSystem, MoviePlayback, MSPRITE_STATE_FINISHED,
-    MSPRITE_STATE_LOCKED, MSPRITE_STATE_LOOP, MSPRITE_STATE_PLAYING,
+    MSPRITE_STATE_STOPPED, MSPRITE_STATE_LOOP, MSPRITE_STATE_PLAYING,
 };
+#[cfg(feature = "desktop")]
 pub use renderer::{
     pal_device_rect_to_clip_quad, scaled_rect, sprite_transform_debug, RenderOutcome,
     RenderTargetMetrics, Renderer, RendererConfig, ShaderProgram, SpriteTransformDebug,

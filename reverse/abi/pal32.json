@@ -1,0 +1,2088 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalEffect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "effect_id",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/effect.rs::PalEffectSystem::effect",
+      "notes": "Returns 0 on failure, 1 on success. The portable adapter supplies the cached PAL time separately.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b2460",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a82b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a91e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalEffectEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "effect_id",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "cancel_on_click",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "wait",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/effect.rs::PalEffectSystem::effect_ex",
+      "notes": "Returns 0 on failure and 1 on success, including disabled/id-zero no-ops. All four arguments occupy 32-bit stack slots. Flags are Win32 integer flags, not Rust bool. Duration is retained as raw signed bits; callback arithmetic may reinterpret it as unsigned. The accepted effect-id range differs by build (Koikake 0..29, reference 0..49, totsulover 0..99).",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b2480",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a8140",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a9050",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteRectSetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "cell_x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "cell_y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::rect_set_pos",
+      "notes": "Indices are full 32-bit signed words and products wrap at 32 bits. Koikake/reference clamp unsigned products against texture dimensions. Totsulover instead compares signed indices against the dimension/cell quotient, preserves negative indices, and handles a one-pixel remainder specially. Invalid sprite sets Win32 error 6 and returns 0.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c2300",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b4590",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100b8dc0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetRect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "rect",
+          "type": "const PalRect32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_rect",
+      "notes": "Returns 1 on success. Null rect resets the source rectangle to the full texture. Copies four 32-bit words; does not retain the input pointer. Null sprite sets error 6 and returns 0.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c2230",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b4630",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100b8ea0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteGetRect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "out_rect",
+          "type": "PalRect32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::PalSprite::source_rect",
+      "notes": "Writes exactly 16 bytes into caller-owned out_rect and returns 1. Null sprite or output pointer sets error 6 and returns 0. The output pointer is not retained.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c22a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b4600",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100b8e70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetColor",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "argb",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_color",
+      "notes": "Copies the complete ARGB word and returns 1; the signedness of the original typedef is not recoverable from this bitwise copy. Null sprite sets error 6 and returns 0.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c23a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b4560",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100b8d90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSetFxEffect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "const int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "effect_type_flags",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "action",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source",
+          "type": "const void *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::start_global_raster / stop_global_raster / set_sprite_fx_effect_with_source",
+      "notes": "Returns 0 on failure, 1 otherwise. target points to one 32-bit word: signed priority for global flag 0x10000000, otherwise a native sprite address. It must be valid on paths that dereference it. The low 28 bits select the source layout; only type 0 is represented by PalRasterSource32. Starting copies source bytes and requires a valid source; clear/stop do not read source. Allocation failure sets error 6. The portable mapping covers type 0 and is not full behavioral parity. Sprite owners are allocated before checking the action, including clear/stop/unknown actions. Global clear/stop/completion retain the render attachment until PalReleaseFxEffect; a second start fails while attached.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b3b10",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a8b90",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a9910",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetFxEffect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "effect_type",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "action",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source",
+          "type": "const void *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_sprite_fx_effect_with_source",
+      "notes": "Requires a non-null native sprite address. Returns 0 on allocation/start failure and 1 otherwise; allocation failure sets error 6. Source bytes are copied on start; clear/stop do not read source. Action 0 clears, 1 starts, 2 stops; other actions return 1 without changing an existing effect. Unlike PalSetFxEffect, this entry passes the complete effect type to the factory without masking flags. The owner is allocated before action dispatch, including clear/stop/unknown actions. Clear retains that owner; stop accepts an owner without a source. The portable type-0 adapter safely avoids rendering a source-free stop, whereas the native renderer assumes valid payloads. Other FX source layouts are unsupported.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c47c0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b1fe0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100b4dc0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-contracts.json"
+        }
+      }
+    },
+    {
+      "name": "PalRandomEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/system.rs::PalRandomState::random_ex",
+      "notes": "Returns the current signed 32-bit seed entry, then advances the ring cursor.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100bc5b0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100adba0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100af470",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalRandomGetSeed",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "out_seeds",
+          "type": "int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "count",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/system.rs::PalRandomState::get_seed",
+      "notes": "Count is a number of 32-bit elements, not bytes, capped to the context ring capacity. Returns the copied count; out_seeds is caller-owned and not retained. A nonzero effective count requires a valid writable buffer; zero permits null.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100bc620",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100adb60",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100af430",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalRandomSetSeed",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "seeds",
+          "type": "const int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "count",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/system.rs::PalRandomState::set_seed",
+      "notes": "Resets the cursor and copies at most the ring capacity. Returns copied_count - 1, including -1 for zero elements. A nonzero effective count requires a valid readable source; zero permits null. Does not retain the input pointer.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100bc690",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-abi-koikake.json"
+        },
+        "reference": {
+          "address": "0x100adb10",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-abi-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100af3e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalReleaseFxEffect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "const int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "effect_flags",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::release_sprite_fx_effect / release_global_raster",
+      "notes": "Global flag 0x10000000 ignores target (null permitted) and releases the render attachment plus state. Reference global release requires a valid attached render context. Otherwise target borrows one native sprite-address word; returns 0 for no owner, 1 after freeing payloads and owner. Successful native release clears Win32 last error; the portable adapter has no Win32 error store.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b3c30",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-fx-lifecycle-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a8aa0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-fx-lifecycle-reference.json"
+        }
+      }
+    },
+    {
+      "name": "PalGetFxEffectState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "const int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "effect_flags",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::sprite_fx_effect_state / global_raster_state",
+      "notes": "Returns the owner state (0 idle, 1 entering/running, 2 stopping), including 0 for absent sprite owner. Global flag 0x10000000 ignores target (null permitted). Otherwise target borrows one valid native sprite-address word.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b3d20",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-fx-lifecycle-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a8a70",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-fx-lifecycle-reference.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteGetFxEffectState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::sprite_fx_effect_state",
+      "notes": "Requires a valid sprite with an allocated FX owner; the native body dereferences both without checking. Returns the owner state as a 32-bit word. The portable getter safely returns 0 for missing handles/owners; this is not a native null-pointer guarantee.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c4880",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-fx-lifecycle-koikake.json"
+        },
+        "reference": {
+          "address": "0x100b1fd0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-fx-lifecycle-reference.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteLoad",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteOpaque *",
+      "parameters": [
+        {
+          "name": "render",
+          "type": "PalRenderOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "priority",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem::load_movie / crates/pal-vm/src/runtime.rs::ScriptRuntime::ext_msp_set_loop_sp_ep",
+      "notes": "Creates a native movie sprite and inserts it in the supplied render tree, or returns null on failure. Filename is a readable null-terminated narrow string consumed by the common movie loader; accepted containers are not restricted to WMV. Render and returned sprite pointers are native objects, never portable arena handles. Filename retention after this call is not established.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aed90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-msprite-contract.json"
+        }
+      }
+    },
+    {
+      "name": "PalGetChangeWindowModeTime",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/runtime.rs::ScriptRuntime::observe_window_geometry / dispatch_extcall",
+      "notes": "Returns the stored wrapping 32-bit millisecond timestamp, without changing it. This query has no arguments; the modern VM wrapper is 18:127. The portable host records a fullscreen-mode observation using its PAL clock; identical clock epoch and all native setter call sites remain unverified.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a0390",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-platform-scalars.json"
+        }
+      }
+    },
+    {
+      "name": "Pal3DIs",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/runtime.rs::ScriptRuntime::set_host_gpu_renderer / dispatch_extcall",
+      "notes": "Returns native render context flags masked with 8: 0 for software, 8 for the hardware renderer. The portable window reports its actual wgpu/software selection using the same values; this does not imply every native hardware effect has been ported. Headless CPU rendering returns 0.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a05a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-platform-scalars.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundPlay",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "looping",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::play",
+      "notes": "Two cdecl stack words; the decompiler spuriously invents an EDI input from an indirect COM call. Returns 0 for a null/unloaded handle, 1 for scheduled playback.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2600",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundPlayFade",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "looping",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::play_fade",
+      "notes": "Schedules a fade from silence. Returns 0 for null/unloaded handles and 1 on scheduling.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2520",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundStop",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::stop",
+      "notes": "Returns 0 for a null/unloaded/nonplaying handle and 1 after the worker accepts the stop.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2440",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundStopFade",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::stop_fade",
+      "notes": "Returns integer success. An already fading channel with nonzero requested duration is accepted without restarting the fade.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2380",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetVolume",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "volume",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "group",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_group_volume",
+      "notes": "Volume precedes group. Group must be 0..6; volume is clamped to 0..10000. Returns integer success.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2020",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetVolumeChannel",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "volume",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_channel_volume",
+      "notes": "Native stores the raw channel volume without clamping; portable PalVolume currently clamps. Returns integer success; full out-of-range behavior is not equivalent.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1f00",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetFreq",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "frequency_hz",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_channel_frequency",
+      "notes": "For a loaded handle forwards raw frequency to DirectSound and returns 1 even if the driver rejects it; null/unloaded returns 0.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b37b0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetFreq",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::channel_frequency",
+      "notes": "Returns DirectSound frequency, or -1 for null/API failure. The unloaded-handle path depends on the helper-preserved EDX value.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b37e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetPanChannel",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "pan",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_channel_pan",
+      "notes": "Forwards raw pan to DirectSound. Loaded handle returns 1 regardless of driver result; null/unloaded returns 0.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1e60",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundRelease",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::release",
+      "notes": "Handles are encoded 32-bit integers, not native pointers. Returns 0 for null/unloaded and 1 after release scheduling.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b27a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundLoad",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "range",
+          "type": "const PalSoundLoadRange32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::load_static_from_resource",
+      "notes": "Returns encoded native handle or zero. The third argument is a nullable borrowed four-DWORD range descriptor, consumed only by group 3: enabled, initial start, loop start and loop end in decoded PCM bytes; end zero selects decoded size. WAV seeks data-relative bytes; the native Ogg path converts bytes to stereo PCM16 frames with >>2. Portable sample-index loops require explicit conversion and are not native descriptor addresses.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2e20",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundLoadEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "range",
+          "type": "const PalSoundLoadRange32 *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "gain",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::load_static_data_ex",
+      "notes": "Returns encoded native handle or zero. The third argument is a nullable borrowed four-DWORD range descriptor, consumed only by group 3: enabled, initial start, loop start and loop end in decoded PCM bytes; end zero selects decoded size. WAV seeks data-relative bytes; the native Ogg path converts bytes to stereo PCM16 frames with >>2. Portable sample-index loops require explicit conversion and are not native descriptor addresses. The fourth argument is float PCM gain applied at load time with signed-16 saturation.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3060",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/totsulover-pal-audio-abi.json"
+        }
+      }
+    },
+    {
+      "name": "PalVideoPlay",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "playback_flags",
+          "type": "uint16_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs::VmRuntime::ext_movie_play (portable adapter; native flags and graph behavior are not fully mapped)",
+      "notes": "Win32 x86 cdecl; returns 0 on rejected suffix or setup failure, 1 after starting the graph. Filename is read and copied. The second argument occupies a four-byte stack slot; only its low 16 bits are copied to video state +0x5A. Signedness is not observable in the reviewed entry points, so it is declared as opaque uint16_t bits. The three reviewed release builds accept WMV/MPG branches and reject MP4 before graph setup. The distinct debug PAL_d.dll MP4/H.264 branch is incomplete and is not evidence of release support. The VM movie_play second operand is a layer, not this native flag field; the current portable adapter has no movie soundtrack connection.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c8a50",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/mp4-koikake-play.json"
+        },
+        "reference": {
+          "address": "0x100bacb0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/mp4-reference-play.json"
+        },
+        "totsulover": {
+          "address": "0x100c1200",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/mp4-totsulover-play.json"
+        }
+      }
+    },
+    {
+      "name": "PalRandom",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/system.rs::PalRandomState::random",
+      "notes": "When context exists and its debug flag is set, reads the seed ring and advances its cursor. Otherwise tail-calls the bundled CRT rand: state = state * 214013 + 2531011 modulo 2^32, return (state >> 16) & 0x7FFF. The portable adapter owns its stream state; seed-ring values supplied by PalRandomSetSeed remain unrestricted signed DWORDs.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100af4a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteCheck",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "void *",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "32-bit borrowed movie-worker pointer, or null; not normalized BOOL. Reads sprite+0x14. Null sprite returns zero and sets Win32 error 6. Existing nonmovie/info sprite returns null.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aead0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad170",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbfe0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteGetState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "uint32_t raw state word; null/nonmovie returns 0. Reads worker+0x50. Null sprite returns zero and sets Win32 error 6. Initial0; running1; stopped2; natural completion6. High bit preserved.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aec10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad2b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbe90",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteIsLoop",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "uint32_t: worker state & 0x80000000. Reads state high bit, not the loop-mode field. Null sprite returns zero and sets Win32 error 6. No worker returns0; SetLoop alone does not change this result.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aebe0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad280",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbec0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteInfoCreate",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteOpaque *",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "width",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "height",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "priority",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "Owned PalSpriteOpaque information object, null on failure. Null filename uses supplied dimensions; otherwise probes movie dimensions then destroys worker and clears sprite+0x14. Information object is not playable; dimensions remain signed words at ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aecf0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100ad3e0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbcf0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteLock",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:1 if worker exists,0 otherwise. Stores 1 to worker+0x48 and renderer+0x188; no graph pause/stop/seek. Null sprite returns zero and sets Win32 error 6. No observed lock-flag consumer in newer sample-copy path; do not freeze audio/clock.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aeb30",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad1d0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbf80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteUnlock",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:1 if worker exists,0 otherwise. Stores 0 to worker+0x48 and renderer+0x188; no graph pause/stop/seek. Null sprite returns zero and sets Win32 error 6. No observed lock-flag consumer in newer sample-copy path; do not freeze audio/clock.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aeaf0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad190",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbfb0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpritePause",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:nonnull sprite=>1,null=>0. No-op in all three inspected releases. Null sprite returns zero and sets Win32 error 6. Does not inspect worker or pause audio/video.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aec40",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad2e0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/msprite-reference-worker.json"
+        },
+        "koikake": {
+          "address": "0x100bbe60",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/msprite-koikake-worker.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpritePlay",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "loop_mode",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t success; newer version reports start failure; older versions return1 for any nonnull sprite. Stores raw loop mode and runs graph without initial seek. Null sprite returns zero and sets Win32 error 6. Newer version retries after stop on failed start; old waiting can be unbounded. Sets state(old&0x80000000)|1 after start.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aec90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad330",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/msprite-reference-worker.json"
+        },
+        "koikake": {
+          "address": "0x100bbdd0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/msprite-koikake-worker.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteStop",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:nonnull sprite=>1,null=>0; helper failure is ignored. Stops running graph and sets state lowbits2; does not synthesize natural-completion bit4. Null sprite returns zero and sets Win32 error 6. Already nonrunning graph can retain previous state.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aec60",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad300",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/msprite-reference-worker.json"
+        },
+        "koikake": {
+          "address": "0x100bbe20",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/msprite-koikake-worker.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteSetLoop",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "loop_mode",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:worker=>1,otherwise0. Stores raw nonboolean loop mode at worker+0x4C. Null sprite returns zero and sets Win32 error 6. Any nonzero mode repeats at completion; no range clamp.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aebb0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad250",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbf00",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteSetLoopPoint",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "start_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "end_ms",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:worker=>1,otherwise0. Always stores start; only nonzero end overwrites existing end; setter performs no seek. Null sprite returns zero and sets Win32 error 6. Negative inputs preserved; end0 retains duration/previous end. First pass reaches original graph end; later loop seek uses milliseconds*10000.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aeb70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        },
+        "reference": {
+          "address": "0x100ad210",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bbf40",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteSetVolume",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "percent",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:audio interface=>1,otherwise0; ignores COM result. q=master*trunc(percent*group4/100)/10000; convert q to DirectShow hundredths dB. Null sprite returns zero and sets Win32 error 6. No argument clamp; zero q maps-10000; absent audio returns0.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aeec0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        }
+      }
+    },
+    {
+      "name": "PalMSpriteSetVolumeEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "percent",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs::MSpriteSystem (portable handle adapter; see reverse/contracts/audio_video.json)",
+      "notes": "int32_t:audio interface=>1,otherwise0; ignores COM result. q=100*percent*master/10000; bypasses group4; convert q to DirectShow hundredths dB. Null sprite returns zero and sets Win32 error 6. VM wrapper clamps0..100 but native export does not.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aef80",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        }
+      }
+    },
+    {
+      "name": "PalSetVideoVolumeType",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "mode",
+          "type": "uint8_t",
+          "stack_bytes": 4,
+          "consumed_bits": 8,
+          "notes": "Only low2 bits used; occupies four-byte cdecl slot"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/msprite.rs; crates/pal-vm/src/runtime/movies.rs",
+      "notes": "Replaces low2 bits of video-volume selector; no immediate COM volume call. int32_t changed low-bit mask (old XOR new)&3",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100c0880",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/msprite-totsulover-controls.json"
+        }
+      }
+    },
+    {
+      "name": "IsMovie",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/msprite.rs; crates/pal-vm/src/runtime/movies.rs",
+      "notes": "Returns context+0x14, not a normalized boolean. int32_t raw engine movie-state word",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a0490",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/movie-audio-renderer-vtables.json"
+        },
+        "reference": {
+          "address": "0x100a0120",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-ismovie.json"
+        },
+        "koikake": {
+          "address": "0x100ad800",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-ismovie.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundCopy",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Copies private sound record and duplicates DirectSound buffer; source resource pointer cleared in copy. uint32_t new tagged handle,0 no slot/null source. Group field is copied from source, not rewritten to destination group. DuplicateSoundBuffer failure logs but still returns allocated handle. Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b28b0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b06a0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bd320",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetChannelCount",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Counts free entries in requested group; invalid group defaults to group0. int32_t number of free slots. Newer excludes both loaded and reserved slots; older releases only check loaded bit.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1d90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100afd50",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100be0c0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetNowChannel",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Checks playing word of the two group3 records. int32_t first playing group3 channel0/1,else-1. ",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3630",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0f70",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Returns fade-state field; not playing flag or queued command. int32_t fade state0/1/2;null0;unloaded-1. Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2260",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0160",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100be030",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetStatus",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "channel_index",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Reads command from group3 record by unchecked index. int32_t raw group3 command word. Only indices0..1 are valid; no bounds check.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3450",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0ef0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundPlayIs",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Group3 returns stored playing word; other groups query DirectSound status bit1. int32_t playing value;0 null/unloaded. Backend query failure handling is not normalized. Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2290",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0190",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bdfc0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetParam",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "channel_index",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        },
+        {
+          "name": "selector",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Unchecked group3 index; selector map in shared layouts; newer supports0..23,reference supports0..4. int32_t selected group3 field/value. Unknown selector=>0; cursor/elapsed unavailable=>-1; cursor HRESULT failure=>-2.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3600",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0f10",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetParamByType",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        },
+        {
+          "name": "channel_index",
+          "type": "uint32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        },
+        {
+          "name": "selector",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": ""
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Bounds-checks all seven banks then shares newer selector helper. int32_t selected field;0 invalid group/index. Zero is ambiguous between invalid input and legitimate field value.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3650",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundPause",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "pause",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "duration_ms",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs",
+      "notes": "Queues9pause/10resume; nonzero duration schedules fadeout/fadein before command handling. int32_t1 latch changed while loaded+playing,0 otherwise. Same pause value returns0; no buffer-position rewind on resume.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b22d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b01d0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bdaf0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetPrimaryVolume",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::primary_volume",
+      "notes": "int32_t configured raw master word. Reads native master scalar.  The portable method uses typed handles/results; its signature is not the native ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1ef0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100afeb0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bde80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetPrimaryVolume",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "volume",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_primary_volume",
+      "notes": "int32_t1. Stores master without clamp, then reapplies all seven group volumes. Each group setter clamps its group level; existing movie-sprite COM interfaces are not iterated. The portable method uses typed handles/results; its signature is not the native ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b21e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b00e0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bdbc0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetVolume",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "output",
+          "type": "int32_t *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "group",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::group_volume",
+      "notes": "int32_t configured volume; -1 invalid group/null output. Stores and returns selected group level. Groups0..6 only. The portable method uses typed handles/results; its signature is not the native ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1ec0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100afe80",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bde90",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundGetVolumeChannel",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::channel_volume",
+      "notes": "int32_t configured channel level;null0;unloaded-1. Reads channel scalar, not group/master/fade-adjusted gain. Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine. The portable method uses typed handles/results; its signature is not the native ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1e90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100afe50",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100bdee0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetStartEnd",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "loop_start_bytes",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "loop_end_bytes",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_start_end",
+      "notes": "int32_t1 loaded,0 null/unloaded. Stores raw loop byte offsets; no seek or validation. Different units from MSprite millisecond loop points. Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine. The portable method uses typed handles/results; its signature is not the native ABI.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2230",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b0130",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/audio-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100be070",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/audio-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundLoadSetReserved",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "unused_word",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "group",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::load_set_reserved",
+      "notes": "uint32_t reserved group3 handle or0. Argument1 unused; group must3; finds free/unreserved slot and reserves it without loading. The unused first word is retained as an ABI word; its original source pointer type is not asserted. An observed caller pushes an additional ignored third word.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b2da0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSoundSetVolumeRatio",
+      "export_name": "?PalSoundSetVolumeRatio@@YAHJM@Z",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "ratio",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_volume_ratio",
+      "notes": "Newer decorated export stores raw IEEE-754 bits at the loaded sound record offset0x84 and returns1; invalid or unloaded records return0. This setter does not immediately rescale PCM. The ratio remains a separate stored field until a confirmed native consumer applies it.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b1ff0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/audio-totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalGetSoundBufferFormat",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "format",
+          "type": "PalWaveFormatEx32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::sound_buffer_format",
+      "notes": "Newer export resolves a loaded native sound record and copies exactly18 bytes of WAVEFORMATEX into a caller-owned writable nonnull output. No pointer is retained. Returns1 on success and0 for invalid or unloaded sound handles. The packed2 layout preserves the two-byte cbSize tail. Portable adapters return only known source formats; unavailable compressed formats are errors rather than fabricated PCM metadata.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b3820",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/movie-audio-renderer-vtables.json"
+        }
+      }
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "PalRandomReset",
+      "reason": "The fixture leaves the loop count in EAX; the reference leaves the last rand result or a context pointer. Neither establishes a stable source-level return contract. Do not promote an IDA guessed return type to a confirmed ABI."
+    },
+    {
+      "name": "PalSetChangeWindowModeTime",
+      "reason": "The body stores timeGetTime() and leaves its bits in EAX; source-level return intent is unverified."
+    },
+    {
+      "name": "PalTouchEnable",
+      "reason": "The low byte of the cdecl argument is stored but EAX retains a context pointer; the source-level return contract is unverified."
+    },
+    {
+      "name": "PalSoundSetReserved",
+      "reason": "No stable EAX result; declared return contract unresolved",
+      "machine_arguments": [
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "reserved",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/audio.rs::AudioSystem::set_reserved",
+      "behavior": "For group3 and handles0x20000000/1 only, stores reservation word.",
+      "evidence": [
+        "reverse/evidence/audio-totsulover-exports.json"
+      ]
+    }
+  ],
+  "includes": [
+    "animation32.json",
+    "input32.json",
+    "font32.json",
+    "graphics32.json",
+    "task32.json",
+    "save32.json"
+  ]
+}

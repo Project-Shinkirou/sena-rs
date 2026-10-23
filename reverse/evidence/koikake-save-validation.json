@@ -1,0 +1,27 @@
+{
+  "native_binary": {
+    "file": "testcase/koikake.exe",
+    "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b"
+  },
+  "implementation": [
+    "crates/pal-vm/src/runtime/native_save.rs",
+    "crates/pal-vm/src/save_format.rs"
+  ],
+  "validation": {
+    "cargo_check": "cargo check -p pal-vm --no-default-features --lib",
+    "log": "target/reverse-audit/native-save/compile.log",
+    "abi_check": "python3 reverse/abi/generate.py --check",
+    "regression_tests_added": false,
+    "native_save_fixture_exercised": false,
+    "native_writer_acceptance_proved": false
+  },
+  "remaining": [
+    "Native private 0x8004-byte bank and fixed subsystem fields",
+    "Select/effect/child-process restore",
+    "Sprite float position precision, center, rotation, render mode, filters, movie and animation state",
+    "Text icon animation and dynamic/font-resource persistence in portable snapshots",
+    "SE playback and exact BGM/BGV gain, ranges, pause and fade state",
+    "Unknown-build save layout remains a header-only heuristic"
+  ],
+  "notes": "Original game files and save paths were not modified. Native-save acceptance and visual parity are unverified."
+}

@@ -1,0 +1,4082 @@
+{
+  "schema_version": 1,
+  "scope": "Reviewed List, Random, Memory, File, SystemPath and Task export boundaries in three release DLLs. Source-level incidental returns remain unresolved.",
+  "functions": [
+    {
+      "name": "PalFileCreate",
+      "build": "koikake",
+      "address": "0x100b46e0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Delegates to CreateEx with GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING and FILE_FLAG_SEQUENTIAL_SCAN; returns the open OS handle or -1.",
+      "edge_cases": [
+        "Output descriptor must be nonnull; caller closes the returned OS handle."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileCreateEx",
+      "build": "koikake",
+      "address": "0x100b4710",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "desired_access",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "share_mode",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "creation_disposition",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "attributes",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears the 12-byte output, extracts filename+extension, uppercases ASCII while skipping a byte after a negative signed byte, then resolves absolute drive/UNC or registered paths followed by executable directory. Each base tries loose file then base.pac. Descriptor is start, end, size in bytes. Archive success seeks the returned archive handle to start. Failure returns -1.",
+      "edge_cases": [
+        "Archive search reads the first-byte bucket table and binary-searches 40-byte entries (32-byte name, size, offset). It does not validate every read count or archive magic. The output is borrowed, handle ownership transfers to caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileGetFullPath",
+      "build": "koikake",
+      "address": "0x100b4920",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "destination",
+          "carrier": "ptr32<char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "capacity",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Probes file existence by opening and closing a handle; on success formats base plus original supplied name. Rejects only when byte length > capacity, zeroes capacity bytes then copies length bytes. Returns 1 on success, 0 on failure.",
+      "edge_cases": [
+        "Equal length and capacity produces no terminating NUL. Absolute path formatting prepends its directory to the original absolute name. Reference uses only the base list, unlike CreateEx language lists. Koikake empty-list handle is uninitialized; reference initializes it to zero, so its empty-list path can report success without probing the executable directory. These are static observations, not a fault-injection test."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileSetFilePointer",
+      "build": "koikake",
+      "address": "0x100b48d0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "file",
+          "carrier": "handle32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_low",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_high",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "unused",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "origin",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls SetFilePointer with distance high copied into a local, ignores the fourth stack word and API result, then returns 1. Does not add the archive entry start automatically.",
+      "edge_cases": [
+        "Native consumes five stack words."
+      ],
+      "unresolved": [
+        "Source grouping of the two distance words as int64_t versus two DWORD arguments is not established; machine ABI is recorded without inventing grouping."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalListCreate",
+      "build": "koikake",
+      "address": "0x100b80d0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a zeroed 12-byte sentinel. Returns null on allocation failure. The sentinel owns nodes, not payloads.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListDelete",
+      "build": "koikake",
+      "address": "0x100b8160",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Deletes the first node whose data word matches, regardless of tag; frees only its node and returns 1. Returns 0 if absent.",
+      "edge_cases": [
+        "Null list is dereferenced; payload ownership is retained by caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFind",
+      "build": "koikake",
+      "address": "0x100b8340",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the PREDECESSOR of the first node with the requested tag, or null. A first match returns the sentinel itself.",
+      "edge_cases": [
+        "Requires nonnull list. The result is not the matching node or payload."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFindNext",
+      "build": "koikake",
+      "address": "0x100b8390",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "predecessor",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Reads predecessor.next as the current match, obtains its tag, and searches subsequent nodes; returns the predecessor of the next match or null.",
+      "edge_cases": [
+        "Both predecessor and predecessor.next must be valid. Deleting or moving nodes can invalidate a cursor."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetData",
+      "build": "koikake",
+      "address": "0x100b83e0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "index",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the data of the zero-based index among nodes matching tag. Returns 0 when absent.",
+      "edge_cases": [
+        "Requires nonnull list; a zero payload is indistinguishable from absence."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetDataCount",
+      "build": "koikake",
+      "address": "0x100b8450",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Counts nodes with the requested tag. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPop",
+      "build": "koikake",
+      "address": "0x100b8290",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first matching-tag node and returns its data. Missing returns 0; payload is not freed. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPopFirst",
+      "build": "koikake",
+      "address": "0x100b8300",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first node and returns its data; an empty list returns 0.",
+      "edge_cases": [
+        "Reference and Totsulover return 0 for null list; Koikake dereferences null without a guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPush",
+      "build": "koikake",
+      "address": "0x100b81c0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node, copies data/tag and inserts immediately after the sentinel. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPushLast",
+      "build": "koikake",
+      "address": "0x100b8220",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node and traverses to the last next pointer before linking it. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListRelease",
+      "build": "koikake",
+      "address": "0x100b8100",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Frees every node and the sentinel, without freeing payloads. Null list is accepted.",
+      "edge_cases": [
+        "Release invalidates every cursor."
+      ],
+      "unresolved": [
+        "No stable source-level return contract: Koikake retains incidental EAX through free; other releases have no defined value."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalMemoryAlloc",
+      "build": "koikake",
+      "address": "0x100b84f0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls CRT malloc. On success increments the PAL allocation count if initialized, and clears size bytes when flags bit 0 is set. Returns null on failure after a debug diagnostic.",
+      "edge_cases": [
+        "Only low byte flags is consumed; every native argument occupies a four-byte cdecl stack slot. Size zero follows the CRT, without a PAL-specific rejection."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalMemoryFree",
+      "build": "koikake",
+      "address": "0x100b85b0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "allocation",
+          "carrier": "ptr32<void>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null is a no-op. Otherwise decrements the PAL allocation count if initialized and calls CRT free.",
+      "edge_cases": [
+        "Only PAL-compatible allocations may be passed."
+      ],
+      "unresolved": [
+        "No stable source-level return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandom",
+      "build": "koikake",
+      "address": "0x100bc530",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Outside debug mode calls Windows CRT rand. In debug mode returns seed_ring[cursor] then increments and wraps cursor at count. The ring and CRT stream are distinct.",
+      "edge_cases": [
+        "Totsulover permits null context and calls rand; the reference body requires initialized context."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomEx",
+      "build": "koikake",
+      "address": "0x100bc5b0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Always returns the current ring DWORD, increments cursor and wraps only at equality with count.",
+      "edge_cases": [
+        "Requires initialized, nonempty ring; does not mask user-supplied seed words to 15 bits."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomGetSeed",
+      "build": "koikake",
+      "address": "0x100bc620",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed_out",
+          "carrier": "ptr32<i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies min(requested count, ring length) DWORDs from the beginning of the ring and returns number copied. Cursor is unchanged.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomReset",
+      "build": "koikake",
+      "address": "0x100bc710",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets ring cursor to zero and refills configured capacity by calling the existing CRT generator; does not call srand.",
+      "edge_cases": [
+        "Default capacity is 2048. Startup uses low 32 bits of Unix time as CRT seed."
+      ],
+      "unresolved": [
+        "Return differs: Koikake leaves loop count in EAX; reference/newer leave last rand value, or context when capacity is nonpositive. No stable source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomSetSeed",
+      "build": "koikake",
+      "address": "0x100bc690",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed",
+          "carrier": "ptr32<const_i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Resets cursor to zero, copies min(requested count, ring length) DWORDs and leaves the remaining ring unchanged. Returns copied count minus one, so count zero returns -1.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts. Count is bounded unsigned, with signed copy-loop comparison."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathClear",
+      "build": "koikake",
+      "address": "0x100c7960",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Repeatedly pops tag -2 nodes and frees nonzero payloads. Stops a list at the first zero payload. Returns 0 if an expected list is absent, otherwise 1.",
+      "edge_cases": [
+        "Reference clears base and both language lists; Koikake/newer clear their single base list."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathSet",
+      "build": "koikake",
+      "address": "0x100c7870",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "path",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies an absolute drive/UNC path, or prefixes executable directory and a backslash. Pushes the owned string under tag -2 at the head of the search list. Returns 0 only when string allocation fails; otherwise 1.",
+      "edge_cases": [
+        "Does not propagate list-node allocation failure; a null/missing list or failed node insertion can leak the copied string. No existence check or deduplication."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalTaskChangeNext",
+      "build": "koikake",
+      "address": "0x100c7d50",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "If a current task exists, replaces its callback at +8. Does not invoke it until processing resumes.",
+      "edge_cases": [
+        "Null callback is stored and skipped by normal scheduler."
+      ],
+      "unresolved": [
+        "No stable source return established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeNextImm",
+      "build": "koikake",
+      "address": "0x100c7d80",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Changes current callback then immediately calls it cdecl with exactly one stack word: current work pointer. Propagates its raw EAX.",
+      "edge_cases": [
+        "Null task or callback is dereferenced/called without a guard."
+      ],
+      "unresolved": [
+        "Callback source return type is not established; raw EAX forwarding is known."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next_immediate",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeState",
+      "build": "koikake",
+      "address": "0x100c7c80",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "state",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; writes the low byte of state at task+28 without validation.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer set AL to state with incidental upper bits. No common source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_state",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskCreate",
+      "build": "koikake",
+      "address": "0x100c7a10",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "destructor",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_out",
+          "carrier": "ptr32<ptr32<void>>",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "relative_task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "user_data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 28,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<Task>",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears optional work_out, rejects null process, reserves a task and a child sentinel from the pool, allocates zeroed work, stores callbacks/flags/user_data, sets task state 1 and child sentinel state 3. Low flags word 1 inserts after relative task; 2 inserts after its child sentinel. Null relative task uses current task. Other modes leave the task unlinked. Writes work_out and increments live count on success.",
+      "edge_cases": [
+        "Task and sentinel are 44 bytes. Failed pool/work allocation is not transactional; the first pool failure cleanup dereferences address zero in all audited bodies. No native crash is claimed to have been executed."
+      ],
+      "unresolved": [
+        "Callback return type is not established: normal scheduler ignores it, ChangeNextImm propagates raw EAX."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::create_native_task",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskFree",
+      "build": "koikake",
+      "address": "0x100c7bb0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 0 if no task or state is zero. Otherwise replaces current callback with destructor, sets state 2 and recursively marks descendants for destruction; returns 1.",
+      "edge_cases": [
+        "Normal traversal processes children before their parent. After a blocking sibling, the pending-only cleanup branch does not traverse children: it destroys a pending sibling and clears its child sentinel, orphaning any descendants. All three audited builds contain this behavior."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_free; registered callbacks are Rust adapters, not execution of original guest x86 pointers."
+    },
+    {
+      "name": "PalTaskGetMessage",
+      "build": "koikake",
+      "address": "0x100c7e60",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Reads the message DWORD at +16 and clears it to zero.",
+      "edge_cases": [
+        "No current-task null guard; this is destructive read, not peek."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetState",
+      "build": "koikake",
+      "address": "0x100c7cb0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 2 whenever current callback equals destructor, regardless of stored state; otherwise zero-extends state byte.",
+      "edge_cases": [
+        "No current-task null guard. Two null callbacks also compare equal."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetTaskData",
+      "build": "koikake",
+      "address": "0x100c7e00",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Nonzero task returns its work pointer at +0; null uses the separately selected task-data context, not necessarily the currently executing task.",
+      "edge_cases": [
+        "Selected task must exist; no null guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskReProcess",
+      "build": "koikake",
+      "address": "0x100c7c20",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; saves current-task context, runs the scheduler from task.previous so task and subsequent siblings are visited, then restores saved current-task context.",
+      "edge_cases": [
+        "Can process additional siblings, not only the supplied task."
+      ],
+      "unresolved": [
+        "No stable return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::reprocess",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskReset",
+      "build": "koikake",
+      "address": "0x100c7d00",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Marks descendants of the primary root for deferred destruction, processes their callbacks, then runs recursive residual cleanup.",
+      "edge_cases": [
+        "Cleanup helpers contain unsafe residual-node frees/null clears; valid normal shutdown usually leaves no residual nodes. No invalid-state execution is asserted."
+      ],
+      "unresolved": [
+        "No stable source return established; exact malformed scheduler-state outcomes remain native-undefined."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetMessage",
+      "build": "koikake",
+      "address": "0x100c7e30",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "message",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task, then overwrites message DWORD at +16. Messages are a single slot, not a queue.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer leave message. A stable source return is not established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetTaskData",
+      "build": "koikake",
+      "address": "0x100c7dc0",
+      "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets selected task-data context to the supplied task, or current task when null.",
+      "edge_cases": [
+        "Does not overwrite task work bytes."
+      ],
+      "unresolved": [
+        "Incidental EAX varies by build and null branch; no stable return contract."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-koikake-complete.json",
+        "reverse/evidence/pal-core-koikake-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_select_task_data",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalFileCreate",
+      "build": "reference",
+      "address": "0x100a9530",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Delegates to CreateEx with GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING and FILE_FLAG_SEQUENTIAL_SCAN; returns the open OS handle or -1.",
+      "edge_cases": [
+        "Output descriptor must be nonnull; caller closes the returned OS handle."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileCreateEx",
+      "build": "reference",
+      "address": "0x100a92a0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "desired_access",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "share_mode",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "creation_disposition",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "attributes",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears the 12-byte output, extracts filename+extension, uppercases ASCII while skipping a byte after a negative signed byte, then resolves absolute drive/UNC or registered paths followed by executable directory. Each base tries loose file then base.pac. Descriptor is start, end, size in bytes. Archive success seeks the returned archive handle to start. Failure returns -1.",
+      "edge_cases": [
+        "Archive search reads the first-byte bucket table and binary-searches 40-byte entries (32-byte name, size, offset). It does not validate every read count or archive magic. The output is borrowed, handle ownership transfers to caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs",
+      "build_specific_behavior": "Language DWORD ctx[3187] <2 searches list ctx[10] first; ==2 searches ctx[11]; other values skip localized lists. Then searches base list ctx[9] and executable directory."
+    },
+    {
+      "name": "PalFileGetFullPath",
+      "build": "reference",
+      "address": "0x100a9560",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "destination",
+          "carrier": "ptr32<char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "capacity",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Probes file existence by opening and closing a handle; on success formats base plus original supplied name. Rejects only when byte length > capacity, zeroes capacity bytes then copies length bytes. Returns 1 on success, 0 on failure.",
+      "edge_cases": [
+        "Equal length and capacity produces no terminating NUL. Absolute path formatting prepends its directory to the original absolute name. Reference uses only the base list, unlike CreateEx language lists. Koikake empty-list handle is uninitialized; reference initializes it to zero, so its empty-list path can report success without probing the executable directory. These are static observations, not a fault-injection test."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileSetFilePointer",
+      "build": "reference",
+      "address": "0x100a8f70",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "file",
+          "carrier": "handle32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_low",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_high",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "unused",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "origin",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls SetFilePointer with distance high copied into a local, ignores the fourth stack word and API result, then returns 1. Does not add the archive entry start automatically.",
+      "edge_cases": [
+        "Native consumes five stack words."
+      ],
+      "unresolved": [
+        "Source grouping of the two distance words as int64_t versus two DWORD arguments is not established; machine ABI is recorded without inventing grouping."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalListCreate",
+      "build": "reference",
+      "address": "0x100abe90",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a zeroed 12-byte sentinel. Returns null on allocation failure. The sentinel owns nodes, not payloads.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListDelete",
+      "build": "reference",
+      "address": "0x100abdd0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Deletes the first node whose data word matches, regardless of tag; frees only its node and returns 1. Returns 0 if absent.",
+      "edge_cases": [
+        "Null list is dereferenced; payload ownership is retained by caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFind",
+      "build": "reference",
+      "address": "0x100abb40",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the PREDECESSOR of the first node with the requested tag, or null. A first match returns the sentinel itself.",
+      "edge_cases": [
+        "Requires nonnull list. The result is not the matching node or payload."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFindNext",
+      "build": "reference",
+      "address": "0x100abb10",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "predecessor",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Reads predecessor.next as the current match, obtains its tag, and searches subsequent nodes; returns the predecessor of the next match or null.",
+      "edge_cases": [
+        "Both predecessor and predecessor.next must be valid. Deleting or moving nodes can invalidate a cursor."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetData",
+      "build": "reference",
+      "address": "0x100abac0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "index",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the data of the zero-based index among nodes matching tag. Returns 0 when absent.",
+      "edge_cases": [
+        "Requires nonnull list; a zero payload is indistinguishable from absence."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetDataCount",
+      "build": "reference",
+      "address": "0x100aba90",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Counts nodes with the requested tag. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPop",
+      "build": "reference",
+      "address": "0x100abb70",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first matching-tag node and returns its data. Missing returns 0; payload is not freed. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPopFirst",
+      "build": "reference",
+      "address": "0x100abbd0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first node and returns its data; an empty list returns 0.",
+      "edge_cases": [
+        "Reference and Totsulover return 0 for null list; Koikake dereferences null without a guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPush",
+      "build": "reference",
+      "address": "0x100abd00",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node, copies data/tag and inserts immediately after the sentinel. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPushLast",
+      "build": "reference",
+      "address": "0x100abc20",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node and traverses to the last next pointer before linking it. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListRelease",
+      "build": "reference",
+      "address": "0x100abe30",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Frees every node and the sentinel, without freeing payloads. Null list is accepted.",
+      "edge_cases": [
+        "Release invalidates every cursor."
+      ],
+      "unresolved": [
+        "No stable source-level return contract: Koikake retains incidental EAX through free; other releases have no defined value."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalMemoryAlloc",
+      "build": "reference",
+      "address": "0x100abfa0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls CRT malloc. On success increments the PAL allocation count if initialized, and clears size bytes when flags bit 0 is set. Returns null on failure after a debug diagnostic.",
+      "edge_cases": [
+        "Only low byte flags is consumed; every native argument occupies a four-byte cdecl stack slot. Size zero follows the CRT, without a PAL-specific rejection."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalMemoryFree",
+      "build": "reference",
+      "address": "0x100abf70",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "allocation",
+          "carrier": "ptr32<void>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null is a no-op. Otherwise decrements the PAL allocation count if initialized and calls CRT free.",
+      "edge_cases": [
+        "Only PAL-compatible allocations may be passed."
+      ],
+      "unresolved": [
+        "No stable source-level return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandom",
+      "build": "reference",
+      "address": "0x100adbd0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Outside debug mode calls Windows CRT rand. In debug mode returns seed_ring[cursor] then increments and wraps cursor at count. The ring and CRT stream are distinct.",
+      "edge_cases": [
+        "Totsulover permits null context and calls rand; the reference body requires initialized context."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomEx",
+      "build": "reference",
+      "address": "0x100adba0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Always returns the current ring DWORD, increments cursor and wraps only at equality with count.",
+      "edge_cases": [
+        "Requires initialized, nonempty ring; does not mask user-supplied seed words to 15 bits."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomGetSeed",
+      "build": "reference",
+      "address": "0x100adb60",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed_out",
+          "carrier": "ptr32<i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies min(requested count, ring length) DWORDs from the beginning of the ring and returns number copied. Cursor is unchanged.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomReset",
+      "build": "reference",
+      "address": "0x100adad0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets ring cursor to zero and refills configured capacity by calling the existing CRT generator; does not call srand.",
+      "edge_cases": [
+        "Default capacity is 2048. Startup uses low 32 bits of Unix time as CRT seed."
+      ],
+      "unresolved": [
+        "Return differs: Koikake leaves loop count in EAX; reference/newer leave last rand value, or context when capacity is nonpositive. No stable source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomSetSeed",
+      "build": "reference",
+      "address": "0x100adb10",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed",
+          "carrier": "ptr32<const_i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Resets cursor to zero, copies min(requested count, ring length) DWORDs and leaves the remaining ring unchanged. Returns copied count minus one, so count zero returns -1.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts. Count is bounded unsigned, with signed copy-loop comparison."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathClear",
+      "build": "reference",
+      "address": "0x100b79a0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Repeatedly pops tag -2 nodes and frees nonzero payloads. Stops a list at the first zero payload. Returns 0 if an expected list is absent, otherwise 1.",
+      "edge_cases": [
+        "Reference clears base and both language lists; Koikake/newer clear their single base list."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathSet",
+      "build": "reference",
+      "address": "0x100b7580",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "path",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies an absolute drive/UNC path, or prefixes executable directory and a backslash. Pushes the owned string under tag -2 at the head of the search list. Returns 0 only when string allocation fails; otherwise 1.",
+      "edge_cases": [
+        "Does not propagate list-node allocation failure; a null/missing list or failed node insertion can leak the copied string. No existence check or deduplication."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalTaskChangeNext",
+      "build": "reference",
+      "address": "0x100b7eb0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "If a current task exists, replaces its callback at +8. Does not invoke it until processing resumes.",
+      "edge_cases": [
+        "Null callback is stored and skipped by normal scheduler."
+      ],
+      "unresolved": [
+        "No stable source return established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeNextImm",
+      "build": "reference",
+      "address": "0x100b7e80",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Changes current callback then immediately calls it cdecl with exactly one stack word: current work pointer. Propagates its raw EAX.",
+      "edge_cases": [
+        "Null task or callback is dereferenced/called without a guard."
+      ],
+      "unresolved": [
+        "Callback source return type is not established; raw EAX forwarding is known."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next_immediate",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeState",
+      "build": "reference",
+      "address": "0x100b7f00",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "state",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; writes the low byte of state at task+28 without validation.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer set AL to state with incidental upper bits. No common source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_state",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskCreate",
+      "build": "reference",
+      "address": "0x100b8020",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "destructor",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_out",
+          "carrier": "ptr32<ptr32<void>>",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "relative_task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "user_data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 28,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<Task>",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears optional work_out, rejects null process, reserves a task and a child sentinel from the pool, allocates zeroed work, stores callbacks/flags/user_data, sets task state 1 and child sentinel state 3. Low flags word 1 inserts after relative task; 2 inserts after its child sentinel. Null relative task uses current task. Other modes leave the task unlinked. Writes work_out and increments live count on success.",
+      "edge_cases": [
+        "Task and sentinel are 44 bytes. Failed pool/work allocation is not transactional; the first pool failure cleanup dereferences address zero in all audited bodies. No native crash is claimed to have been executed."
+      ],
+      "unresolved": [
+        "Callback return type is not established: normal scheduler ignores it, ChangeNextImm propagates raw EAX."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::create_native_task",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskFree",
+      "build": "reference",
+      "address": "0x100b7fc0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 0 if no task or state is zero. Otherwise replaces current callback with destructor, sets state 2 and recursively marks descendants for destruction; returns 1.",
+      "edge_cases": [
+        "Normal traversal processes children before their parent. After a blocking sibling, the pending-only cleanup branch does not traverse children: it destroys a pending sibling and clears its child sentinel, orphaning any descendants. All three audited builds contain this behavior."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_free; registered callbacks are Rust adapters, not execution of original guest x86 pointers."
+    },
+    {
+      "name": "PalTaskGetMessage",
+      "build": "reference",
+      "address": "0x100b7de0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Reads the message DWORD at +16 and clears it to zero.",
+      "edge_cases": [
+        "No current-task null guard; this is destructive read, not peek."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetState",
+      "build": "reference",
+      "address": "0x100b7ed0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 2 whenever current callback equals destructor, regardless of stored state; otherwise zero-extends state byte.",
+      "edge_cases": [
+        "No current-task null guard. Two null callbacks also compare equal."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetTaskData",
+      "build": "reference",
+      "address": "0x100b7e30",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Nonzero task returns its work pointer at +0; null uses the separately selected task-data context, not necessarily the currently executing task.",
+      "edge_cases": [
+        "Selected task must exist; no null guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskReProcess",
+      "build": "reference",
+      "address": "0x100b7f80",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; saves current-task context, runs the scheduler from task.previous so task and subsequent siblings are visited, then restores saved current-task context.",
+      "edge_cases": [
+        "Can process additional siblings, not only the supplied task."
+      ],
+      "unresolved": [
+        "No stable return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::reprocess",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskReset",
+      "build": "reference",
+      "address": "0x100b7f20",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Marks descendants of the primary root for deferred destruction, processes their callbacks, then runs recursive residual cleanup.",
+      "edge_cases": [
+        "Cleanup helpers contain unsafe residual-node frees/null clears; valid normal shutdown usually leaves no residual nodes. No invalid-state execution is asserted."
+      ],
+      "unresolved": [
+        "No stable source return established; exact malformed scheduler-state outcomes remain native-undefined."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetMessage",
+      "build": "reference",
+      "address": "0x100b7e10",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "message",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task, then overwrites message DWORD at +16. Messages are a single slot, not a queue.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer leave message. A stable source return is not established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetTaskData",
+      "build": "reference",
+      "address": "0x100b7e50",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets selected task-data context to the supplied task, or current task when null.",
+      "edge_cases": [
+        "Does not overwrite task work bytes."
+      ],
+      "unresolved": [
+        "Incidental EAX varies by build and null branch; no stable return contract."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-complete.json",
+        "reverse/evidence/pal-core-reference-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_select_task_data",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalFileCreate",
+      "build": "totsulover",
+      "address": "0x100aa120",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Delegates to CreateEx with GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING and FILE_FLAG_SEQUENTIAL_SCAN; returns the open OS handle or -1.",
+      "edge_cases": [
+        "Output descriptor must be nonnull; caller closes the returned OS handle."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileCreateEx",
+      "build": "totsulover",
+      "address": "0x100a9fa0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "desired_access",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "share_mode",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "creation_disposition",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "attributes",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "range_out",
+          "carrier": "ptr32<FileRange32>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "handle32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears the 12-byte output, extracts filename+extension, uppercases ASCII while skipping a byte after a negative signed byte, then resolves absolute drive/UNC or registered paths followed by executable directory. Each base tries loose file then base.pac. Descriptor is start, end, size in bytes. Archive success seeks the returned archive handle to start. Failure returns -1.",
+      "edge_cases": [
+        "Archive search reads the first-byte bucket table and binary-searches 40-byte entries (32-byte name, size, offset). It does not validate every read count or archive magic. The output is borrowed, handle ownership transfers to caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileGetFullPath",
+      "build": "totsulover",
+      "address": "0x100aa150",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "destination",
+          "carrier": "ptr32<char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "capacity",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "filename",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Probes file existence by opening and closing a handle; on success formats base plus original supplied name. Rejects only when byte length > capacity, zeroes capacity bytes then copies length bytes. Returns 1 on success, 0 on failure.",
+      "edge_cases": [
+        "Equal length and capacity produces no terminating NUL. Absolute path formatting prepends its directory to the original absolute name. Reference uses only the base list, unlike CreateEx language lists. Koikake empty-list handle is uninitialized; reference initializes it to zero, so its empty-list path can report success without probing the executable directory. These are static observations, not a fault-injection test."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalFileSetFilePointer",
+      "build": "totsulover",
+      "address": "0x100a9ca0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "file",
+          "carrier": "handle32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_low",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "distance_high",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "unused",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "origin",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls SetFilePointer with distance high copied into a local, ignores the fourth stack word and API result, then returns 1. Does not add the archive entry start automatically.",
+      "edge_cases": [
+        "Native consumes five stack words."
+      ],
+      "unresolved": [
+        "Source grouping of the two distance words as int64_t versus two DWORD arguments is not established; machine ABI is recorded without inventing grouping."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-asset/src/resource.rs; crates/pal-asset/src/pac.rs; crates/pal-vm/src/runtime.rs"
+    },
+    {
+      "name": "PalListCreate",
+      "build": "totsulover",
+      "address": "0x100ad670",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a zeroed 12-byte sentinel. Returns null on allocation failure. The sentinel owns nodes, not payloads.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListDelete",
+      "build": "totsulover",
+      "address": "0x100ad5b0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Deletes the first node whose data word matches, regardless of tag; frees only its node and returns 1. Returns 0 if absent.",
+      "edge_cases": [
+        "Null list is dereferenced; payload ownership is retained by caller."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFind",
+      "build": "totsulover",
+      "address": "0x100ad3b0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the PREDECESSOR of the first node with the requested tag, or null. A first match returns the sentinel itself.",
+      "edge_cases": [
+        "Requires nonnull list. The result is not the matching node or payload."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListFindNext",
+      "build": "totsulover",
+      "address": "0x100ad380",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "predecessor",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<ListNode>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Reads predecessor.next as the current match, obtains its tag, and searches subsequent nodes; returns the predecessor of the next match or null.",
+      "edge_cases": [
+        "Both predecessor and predecessor.next must be valid. Deleting or moving nodes can invalidate a cursor."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetData",
+      "build": "totsulover",
+      "address": "0x100ad330",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "index",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns the data of the zero-based index among nodes matching tag. Returns 0 when absent.",
+      "edge_cases": [
+        "Requires nonnull list; a zero payload is indistinguishable from absence."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListGetDataCount",
+      "build": "totsulover",
+      "address": "0x100ad300",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Counts nodes with the requested tag. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPop",
+      "build": "totsulover",
+      "address": "0x100ad3e0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first matching-tag node and returns its data. Missing returns 0; payload is not freed. Requires nonnull list.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPopFirst",
+      "build": "totsulover",
+      "address": "0x100ad4d0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Unlinks/frees the first node and returns its data; an empty list returns 0.",
+      "edge_cases": [
+        "Reference and Totsulover return 0 for null list; Koikake dereferences null without a guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPrint",
+      "build": "totsulover",
+      "address": "0x100ad440",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Totsulover-only diagnostic export. Writes a heading containing tag, then prints EVERY node. Payloads are dereferenced as at least two DWORDs; this does not filter by tag.",
+      "edge_cases": [
+        "Requires nonnull list and readable payload addresses."
+      ],
+      "unresolved": [
+        "No source-level return value established by callers."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPush",
+      "build": "totsulover",
+      "address": "0x100ad570",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node, copies data/tag and inserts immediately after the sentinel. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListPushLast",
+      "build": "totsulover",
+      "address": "0x100ad520",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "tag",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Allocates a node and traverses to the last next pointer before linking it. Returns 1 on success, 0 for null list or allocation failure.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalListRelease",
+      "build": "totsulover",
+      "address": "0x100ad610",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "list",
+          "carrier": "ptr32<ListNode>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Frees every node and the sentinel, without freeing payloads. Null list is accepted.",
+      "edge_cases": [
+        "Release invalidates every cursor."
+      ],
+      "unresolved": [
+        "No stable source-level return contract: Koikake retains incidental EAX through free; other releases have no defined value."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/list.rs"
+    },
+    {
+      "name": "PalMemoryAlloc",
+      "build": "totsulover",
+      "address": "0x100ad6e0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Calls CRT malloc. On success increments the PAL allocation count if initialized, and clears size bytes when flags bit 0 is set. Returns null on failure after a debug diagnostic.",
+      "edge_cases": [
+        "Only low byte flags is consumed; every native argument occupies a four-byte cdecl stack slot. Size zero follows the CRT, without a PAL-specific rejection."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalMemoryFree",
+      "build": "totsulover",
+      "address": "0x100ad6b0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "allocation",
+          "carrier": "ptr32<void>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null is a no-op. Otherwise decrements the PAL allocation count if initialized and calls CRT free.",
+      "edge_cases": [
+        "Only PAL-compatible allocations may be passed."
+      ],
+      "unresolved": [
+        "No stable source-level return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandom",
+      "build": "totsulover",
+      "address": "0x100af4a0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Outside debug mode calls Windows CRT rand. In debug mode returns seed_ring[cursor] then increments and wraps cursor at count. The ring and CRT stream are distinct.",
+      "edge_cases": [
+        "Totsulover permits null context and calls rand; the reference body requires initialized context."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomEx",
+      "build": "totsulover",
+      "address": "0x100af470",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Always returns the current ring DWORD, increments cursor and wraps only at equality with count.",
+      "edge_cases": [
+        "Requires initialized, nonempty ring; does not mask user-supplied seed words to 15 bits."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomGetSeed",
+      "build": "totsulover",
+      "address": "0x100af430",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed_out",
+          "carrier": "ptr32<i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies min(requested count, ring length) DWORDs from the beginning of the ring and returns number copied. Cursor is unchanged.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomReset",
+      "build": "totsulover",
+      "address": "0x100af3a0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets ring cursor to zero and refills configured capacity by calling the existing CRT generator; does not call srand.",
+      "edge_cases": [
+        "Default capacity is 2048. Startup uses low 32 bits of Unix time as CRT seed."
+      ],
+      "unresolved": [
+        "Return differs: Koikake leaves loop count in EAX; reference/newer leave last rand value, or context when capacity is nonpositive. No stable source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalRandomSetSeed",
+      "build": "totsulover",
+      "address": "0x100af3e0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "seed",
+          "carrier": "ptr32<const_i32>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "count",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Resets cursor to zero, copies min(requested count, ring length) DWORDs and leaves the remaining ring unchanged. Returns copied count minus one, so count zero returns -1.",
+      "edge_cases": [
+        "Pointer is used only when copying; no null guard for positive counts. Count is bounded unsigned, with signed copy-loop comparison."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathClear",
+      "build": "totsulover",
+      "address": "0x100bdd50",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Repeatedly pops tag -2 nodes and frees nonzero payloads. Stops a list at the first zero payload. Returns 0 if an expected list is absent, otherwise 1.",
+      "edge_cases": [
+        "Reference clears base and both language lists; Koikake/newer clear their single base list."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathInit",
+      "build": "totsulover",
+      "address": "0x100bde00",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Totsulover-only export. Initializes cached executable directory if empty, allocates a new list sentinel, assigns the global list, returns allocation success.",
+      "edge_cases": [
+        "Repeated initialization overwrites an existing list without releasing it."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathSet",
+      "build": "totsulover",
+      "address": "0x100bdc90",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "path",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Copies an absolute drive/UNC path, or prefixes executable directory and a backslash. Pushes the owned string under tag -2 at the head of the search list. Returns 0 only when string allocation fails; otherwise 1.",
+      "edge_cases": [
+        "Does not propagate list-node allocation failure; a null/missing list or failed node insertion can leak the copied string. No existence check or deduplication."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalSystemPathUninit",
+      "build": "totsulover",
+      "address": "0x100bddd0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Totsulover-only export. Calls Clear; on success releases sentinel, sets global list null and returns 1. Returns 0 if Clear failed.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/system.rs"
+    },
+    {
+      "name": "PalTaskChangeNext",
+      "build": "totsulover",
+      "address": "0x100be200",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "If a current task exists, replaces its callback at +8. Does not invoke it until processing resumes.",
+      "edge_cases": [
+        "Null callback is stored and skipped by normal scheduler."
+      ],
+      "unresolved": [
+        "No stable source return established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeNextImm",
+      "build": "totsulover",
+      "address": "0x100be1d0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Changes current callback then immediately calls it cdecl with exactly one stack word: current work pointer. Propagates its raw EAX.",
+      "edge_cases": [
+        "Null task or callback is dereferenced/called without a guard."
+      ],
+      "unresolved": [
+        "Callback source return type is not established; raw EAX forwarding is known."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next_immediate",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskChangeState",
+      "build": "totsulover",
+      "address": "0x100be250",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "state",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; writes the low byte of state at task+28 without validation.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer set AL to state with incidental upper bits. No common source return declared."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_state",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskCreate",
+      "build": "totsulover",
+      "address": "0x100be350",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "destructor",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_out",
+          "carrier": "ptr32<ptr32<void>>",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "relative_task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "user_data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 28,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<Task>",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Clears optional work_out, rejects null process, reserves a task and a child sentinel from the pool, allocates zeroed work, stores callbacks/flags/user_data, sets task state 1 and child sentinel state 3. Low flags word 1 inserts after relative task; 2 inserts after its child sentinel. Null relative task uses current task. Other modes leave the task unlinked. Writes work_out and increments live count on success.",
+      "edge_cases": [
+        "Task and sentinel are 44 bytes. Failed pool/work allocation is not transactional; the first pool failure cleanup dereferences address zero in all audited bodies. No native crash is claimed to have been executed."
+      ],
+      "unresolved": [
+        "Callback return type is not established: normal scheduler ignores it, ChangeNextImm propagates raw EAX."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::create_native_task",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskFree",
+      "build": "totsulover",
+      "address": "0x100be310",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 0 if no task or state is zero. Otherwise replaces current callback with destructor, sets state 2 and recursively marks descendants for destruction; returns 1.",
+      "edge_cases": [
+        "Normal traversal processes children before their parent. After a blocking sibling, the pending-only cleanup branch does not traverse children: it destroys a pending sibling and clears its child sentinel, orphaning any descendants. All three audited builds contain this behavior."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_free; registered callbacks are Rust adapters, not execution of original guest x86 pointers."
+    },
+    {
+      "name": "PalTaskGetMessage",
+      "build": "totsulover",
+      "address": "0x100be130",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Reads the message DWORD at +16 and clears it to zero.",
+      "edge_cases": [
+        "No current-task null guard; this is destructive read, not peek."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetState",
+      "build": "totsulover",
+      "address": "0x100be220",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "u32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task. Returns 2 whenever current callback equals destructor, regardless of stored state; otherwise zero-extends state byte.",
+      "edge_cases": [
+        "No current-task null guard. Two null callbacks also compare equal."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskGetTaskData",
+      "build": "totsulover",
+      "address": "0x100be180",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "ptr32<void>",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Nonzero task returns its work pointer at +0; null uses the separately selected task-data context, not necessarily the currently executing task.",
+      "edge_cases": [
+        "Selected task must exist; no null guard."
+      ],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskReProcess",
+      "build": "totsulover",
+      "address": "0x100be2d0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task; saves current-task context, runs the scheduler from task.previous so task and subsequent siblings are visited, then restores saved current-task context.",
+      "edge_cases": [
+        "Can process additional siblings, not only the supplied task."
+      ],
+      "unresolved": [
+        "No stable return value established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::reprocess",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalTaskReset",
+      "build": "totsulover",
+      "address": "0x100be270",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Marks descendants of the primary root for deferred destruction, processes their callbacks, then runs recursive residual cleanup.",
+      "edge_cases": [
+        "Cleanup helpers contain unsafe residual-node frees/null clears; valid normal shutdown usually leaves no residual nodes. No invalid-state execution is asserted."
+      ],
+      "unresolved": [
+        "No stable source return established; exact malformed scheduler-state outcomes remain native-undefined."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetMessage",
+      "build": "totsulover",
+      "address": "0x100be160",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "message",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Null selects current task, then overwrites message DWORD at +16. Messages are a single slot, not a queue.",
+      "edge_cases": [
+        "No current-task null guard."
+      ],
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer leave message. A stable source return is not established."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs"
+    },
+    {
+      "name": "PalTaskSetTaskData",
+      "build": "totsulover",
+      "address": "0x100be1a0",
+      "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "unresolved",
+      "abi_status": "unresolved",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Sets selected task-data context to the supplied task, or current task when null.",
+      "edge_cases": [
+        "Does not overwrite task work bytes."
+      ],
+      "unresolved": [
+        "Incidental EAX varies by build and null branch; no stable return contract."
+      ],
+      "evidence": [
+        "reverse/evidence/pal-core-totsulover.json",
+        "reverse/evidence/pal-core-totsulover-helpers.json"
+      ],
+      "implementation_parity": "not_certified",
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_select_task_data",
+      "portable_differences": [
+        "Native task pointers require translation to portable generation handles; callback words require explicit Rust registration. Callback return source types remain unresolved. Native pool node/sentinel accounting and invalid-memory behavior are not reproduced."
+      ],
+      "portable_implementation_notes": "The reviewed control flow has explicit registered Rust callback adapters; compile validation does not certify native behavior parity."
+    },
+    {
+      "name": "PalSystemCNPathSet",
+      "build": "reference",
+      "address": "0x100b76e0",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "path",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Same owned-string and head-insertion contract as PalSystemPathSet, using ctx[10] (CN) under tag -2. Returns 0 on string allocation failure and 1 even if the later node insertion fails.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-language.json"
+      ],
+      "portable_mapping": "crates/pal-vm/src/system.rs; crates/pal-asset/src/resource.rs; crates/pal-vm/src/runtime.rs",
+      "implementation_parity": "not_certified"
+    },
+    {
+      "name": "PalSystemTCPathSet",
+      "build": "reference",
+      "address": "0x100b7840",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "path",
+          "carrier": "ptr32<const_char>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Same owned-string and head-insertion contract as PalSystemPathSet, using ctx[11] (TC) under tag -2. Returns 0 on string allocation failure and 1 even if the later node insertion fails.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-language.json"
+      ],
+      "portable_mapping": "crates/pal-vm/src/system.rs; crates/pal-asset/src/resource.rs; crates/pal-vm/src/runtime.rs",
+      "implementation_parity": "not_certified"
+    },
+    {
+      "name": "PalGetLanguage",
+      "build": "reference",
+      "address": "0x100a0240",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Returns 1 when context is null or stored language is zero; otherwise returns the stored raw DWORD ctx[3187].",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-language.json"
+      ],
+      "portable_mapping": "crates/pal-vm/src/system.rs; crates/pal-asset/src/resource.rs; crates/pal-vm/src/runtime.rs",
+      "implementation_parity": "not_certified"
+    },
+    {
+      "name": "PalSetLanguage",
+      "build": "reference",
+      "address": "0x100a8f30",
+      "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "calling_convention": "win32_x86_cdecl",
+      "arguments": [
+        {
+          "name": "language",
+          "carrier": "i32",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "return_carrier": "i32",
+      "abi_status": "reviewed_machine_contract",
+      "behavior_status": "reviewed_export_boundary",
+      "behavior": "Converts input 0 to 1, stores every other value unchanged at ctx[3187], emits a debug log and returns 1. Requires initialized context. This native PAL language field is separate from a VM font-type wrapper with a similar name.",
+      "edge_cases": [],
+      "unresolved": [],
+      "evidence": [
+        "reverse/evidence/pal-core-reference-language.json"
+      ],
+      "portable_mapping": "crates/pal-vm/src/system.rs; crates/pal-asset/src/resource.rs; crates/pal-vm/src/runtime.rs",
+      "implementation_parity": "not_certified"
+    }
+  ],
+  "layouts": {
+    "ListNode32": {
+      "size": 12,
+      "fields": {
+        "data": 0,
+        "tag": 4,
+        "next": 8
+      }
+    },
+    "FileRange32": {
+      "size": 12,
+      "fields": {
+        "start_bytes": 0,
+        "end_bytes": 4,
+        "size_bytes": 8
+      }
+    },
+    "Task32": {
+      "size": 44,
+      "fields": {
+        "work": 0,
+        "work_size": 4,
+        "callback": 8,
+        "destructor": 12,
+        "message": 16,
+        "user_data": 20,
+        "flags": 24,
+        "state_byte": 28,
+        "next": 32,
+        "previous": 36,
+        "child_sentinel": 40
+      }
+    }
+  },
+  "independent_inventory_audit": {
+    "date": "2026-10-23",
+    "method": "Read PE32 export name, ordinal and function RVA arrays directly from all three binary files; independently recomputed SHA-256; compared every domain row and the union of all six domain contracts by exact export name, address and hash.",
+    "domain_export_instances": {
+      "koikake": 36,
+      "reference": 40,
+      "totsulover": 39
+    },
+    "all_domain_named_exports": {
+      "koikake": 262,
+      "reference": 290,
+      "totsulover": 369
+    },
+    "all_domain_missing_export_names": {
+      "koikake": [],
+      "reference": [],
+      "totsulover": []
+    },
+    "limitations": "Complete name/address/hash reconciliation establishes export-boundary inventory coverage only, not downstream behavioral closure or implementation parity."
+  }
+}

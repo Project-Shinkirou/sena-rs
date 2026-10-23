@@ -1,0 +1,556 @@
+{
+  "functions": [
+    {
+      "ea": "0x100ad480",
+      "name": "PalMSpriteLoad",
+      "xrefs": [
+        {
+          "from": "0x10112978",
+          "function": null
+        }
+      ],
+      "pseudocode": "_DWORD *__cdecl PalMSpriteLoad(int a1, int a2, int a3)\n{\n  _DWORD *v3; // esi\n  _DWORD *v4; // eax\n  int v6; // ecx\n  int v7; // edx\n  _DWORD *v8; // eax\n  int v9; // eax\n  int v10; // [esp-4h] [ebp-54h]\n  int v11; // [esp-4h] [ebp-54h]\n  int Value; // [esp+8h] [ebp-48h] BYREF\n  struct _MEMORYSTATUS v13; // [esp+Ch] [ebp-44h] BYREF\n  struct _MEMORYSTATUS Buffer; // [esp+2Ch] [ebp-24h] BYREF\n\n  Value = a2;\n  if ( !a1 )\n    goto LABEL_16;\n  GlobalMemoryStatus(&Buffer);\n  v3 = malloc(0x190u);\n  if ( !v3 )\n  {\n    v13.dwLength = 32;\n    memset(&v13.dwMemoryLoad, 0, 28);\n    GlobalMemoryStatus(&v13);\n    _get_errno(&Value);\n    OutputDebugStringA(\"MemoryAllocFail...\\n\");\nLABEL_16:\n    SetLastError(6u);\n    return 0;\n  }\n  if ( dword_10128698 )\n    ++*((_DWORD *)dword_10128698 + 84);\n  memset(v3, 0, 0x190u);\n  v4 = sub_100ACF50((char *)Value);\n  v3[5] = v4;\n  if ( v4 )\n  {\n    v3[27] = a3;\n    v3[10] = 0;\n    v3[15] = -1;\n    v3[28] = 1065353216;\n    v3[29] = 0;\n    v3[30] = 0;\n    v3[31] = 0;\n    v3[32] = 1;\n    v3[16] = 0;\n    v3[17] = 0;\n    v6 = v4[16];\n    v3[23] = v6;\n    v10 = v4[17];\n    v3[24] = v10;\n    SetRect((LPRECT)(v3 + 11), 0, 0, v6, v10);\n    v11 = v3[24];\n    v7 = v3[23];\n    if ( (*((_BYTE *)dword_10128698 + 1060) & 8) != 0 )\n      v8 = sub_100C6BD0(*(_DWORD **)dword_10128698, v7, v11);\n    else\n      v8 = sub_100C14C0(*((_DWORD **)dword_10128698 + 1), v7, v11);\n    *v3 = v8;\n    v9 = v3[5];\n    if ( v9 )\n      *(_DWORD *)(*(_DWORD *)(v9 + 36) + 376) = v3;\n    v3[8] = PalRenderInsert(a1, (int)v3, (int)sub_100AD050, v3[27]);\n    return v3;\n  }\n  else\n  {\n    if ( dword_10128698 )\n      --*((_DWORD *)dword_10128698 + 84);\n    j___free_base(v3);\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100ad480",
+          "push    ebp"
+        ],
+        [
+          "0x100ad481",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100ad483",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100ad486",
+          "sub     esp, 48h"
+        ],
+        [
+          "0x100ad489",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100ad48e",
+          "xor     eax, esp"
+        ],
+        [
+          "0x100ad490",
+          "mov     [esp+48h+var_4], eax"
+        ],
+        [
+          "0x100ad494",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100ad497",
+          "push    ebx"
+        ],
+        [
+          "0x100ad498",
+          "mov     ebx, [ebp+arg_0]"
+        ],
+        [
+          "0x100ad49b",
+          "mov     [esp+4Ch+Value], eax"
+        ],
+        [
+          "0x100ad49f",
+          "push    esi"
+        ],
+        [
+          "0x100ad4a0",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100ad4a2",
+          "jz      loc_100AD62E"
+        ],
+        [
+          "0x100ad4a8",
+          "lea     eax, [esp+50h+Buffer]"
+        ],
+        [
+          "0x100ad4ac",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100ad4ad",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100ad4b3",
+          "push    190h; Size"
+        ],
+        [
+          "0x100ad4b8",
+          "call    _malloc"
+        ],
+        [
+          "0x100ad4bd",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100ad4bf",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ad4c2",
+          "test    esi, esi"
+        ],
+        [
+          "0x100ad4c4",
+          "jz      loc_100AD5ED"
+        ],
+        [
+          "0x100ad4ca",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100ad4cf",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ad4d1",
+          "jz      short loc_100AD4D9"
+        ],
+        [
+          "0x100ad4d3",
+          "inc     dword ptr [eax+150h]"
+        ],
+        [
+          "0x100ad4d9",
+          "push    190h; Size"
+        ],
+        [
+          "0x100ad4de",
+          "push    0; Val"
+        ],
+        [
+          "0x100ad4e0",
+          "push    esi; void *"
+        ],
+        [
+          "0x100ad4e1",
+          "call    _memset"
+        ],
+        [
+          "0x100ad4e6",
+          "mov     ecx, [esp+5Ch+Value]"
+        ],
+        [
+          "0x100ad4ea",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100ad4ed",
+          "call    sub_100ACF50"
+        ],
+        [
+          "0x100ad4f2",
+          "mov     edx, eax"
+        ],
+        [
+          "0x100ad4f4",
+          "mov     [esi+14h], edx"
+        ],
+        [
+          "0x100ad4f7",
+          "test    edx, edx"
+        ],
+        [
+          "0x100ad4f9",
+          "jnz     short loc_100AD526"
+        ],
+        [
+          "0x100ad4fb",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100ad500",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ad502",
+          "jz      short loc_100AD50A"
+        ],
+        [
+          "0x100ad504",
+          "dec     dword ptr [eax+150h]"
+        ],
+        [
+          "0x100ad50a",
+          "push    esi; Block"
+        ],
+        [
+          "0x100ad50b",
+          "call    j___free_base"
+        ],
+        [
+          "0x100ad510",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ad513",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ad515",
+          "pop     esi"
+        ],
+        [
+          "0x100ad516",
+          "pop     ebx"
+        ],
+        [
+          "0x100ad517",
+          "mov     ecx, [esp+48h+var_4]"
+        ],
+        [
+          "0x100ad51b",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100ad51d",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100ad522",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ad524",
+          "pop     ebp"
+        ],
+        [
+          "0x100ad525",
+          "retn"
+        ],
+        [
+          "0x100ad526",
+          "mov     eax, [ebp+arg_8]"
+        ],
+        [
+          "0x100ad529",
+          "mov     [esi+6Ch], eax"
+        ],
+        [
+          "0x100ad52c",
+          "mov     dword ptr [esi+28h], 0"
+        ],
+        [
+          "0x100ad533",
+          "mov     dword ptr [esi+3Ch], 0FFFFFFFFh"
+        ],
+        [
+          "0x100ad53a",
+          "mov     dword ptr [esi+70h], 3F800000h"
+        ],
+        [
+          "0x100ad541",
+          "mov     dword ptr [esi+74h], 0"
+        ],
+        [
+          "0x100ad548",
+          "mov     dword ptr [esi+78h], 0"
+        ],
+        [
+          "0x100ad54f",
+          "mov     dword ptr [esi+7Ch], 0"
+        ],
+        [
+          "0x100ad556",
+          "mov     dword ptr [esi+80h], 1"
+        ],
+        [
+          "0x100ad560",
+          "mov     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100ad567",
+          "mov     dword ptr [esi+44h], 0"
+        ],
+        [
+          "0x100ad56e",
+          "mov     ecx, [edx+40h]"
+        ],
+        [
+          "0x100ad571",
+          "mov     [esi+5Ch], ecx"
+        ],
+        [
+          "0x100ad574",
+          "mov     eax, [edx+44h]"
+        ],
+        [
+          "0x100ad577",
+          "push    eax; yBottom"
+        ],
+        [
+          "0x100ad578",
+          "push    ecx; xRight"
+        ],
+        [
+          "0x100ad579",
+          "push    0; yTop"
+        ],
+        [
+          "0x100ad57b",
+          "mov     [esi+60h], eax"
+        ],
+        [
+          "0x100ad57e",
+          "lea     eax, [esi+2Ch]"
+        ],
+        [
+          "0x100ad581",
+          "push    0; xLeft"
+        ],
+        [
+          "0x100ad583",
+          "push    eax; lprc"
+        ],
+        [
+          "0x100ad584",
+          "call    ds:SetRect"
+        ],
+        [
+          "0x100ad58a",
+          "mov     ecx, dword_10128698"
+        ],
+        [
+          "0x100ad590",
+          "push    dword ptr [esi+60h]"
+        ],
+        [
+          "0x100ad593",
+          "mov     edx, [esi+5Ch]"
+        ],
+        [
+          "0x100ad596",
+          "test    byte ptr [ecx+424h], 8"
+        ],
+        [
+          "0x100ad59d",
+          "jz      short loc_100AD5A8"
+        ],
+        [
+          "0x100ad59f",
+          "mov     ecx, [ecx]"
+        ],
+        [
+          "0x100ad5a1",
+          "call    sub_100C6BD0"
+        ],
+        [
+          "0x100ad5a6",
+          "jmp     short loc_100AD5B0"
+        ],
+        [
+          "0x100ad5a8",
+          "mov     ecx, [ecx+4]"
+        ],
+        [
+          "0x100ad5ab",
+          "call    sub_100C14C0"
+        ],
+        [
+          "0x100ad5b0",
+          "mov     [esi], eax"
+        ],
+        [
+          "0x100ad5b2",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ad5b5",
+          "mov     eax, [esi+14h]"
+        ],
+        [
+          "0x100ad5b8",
+          "test    eax, eax"
+        ],
+        [
+          "0x100ad5ba",
+          "jz      short loc_100AD5C5"
+        ],
+        [
+          "0x100ad5bc",
+          "mov     eax, [eax+24h]"
+        ],
+        [
+          "0x100ad5bf",
+          "mov     [eax+178h], esi"
+        ],
+        [
+          "0x100ad5c5",
+          "push    dword ptr [esi+6Ch]"
+        ],
+        [
+          "0x100ad5c8",
+          "push    offset sub_100AD050"
+        ],
+        [
+          "0x100ad5cd",
+          "push    esi"
+        ],
+        [
+          "0x100ad5ce",
+          "push    ebx"
+        ],
+        [
+          "0x100ad5cf",
+          "call    PalRenderInsert"
+        ],
+        [
+          "0x100ad5d4",
+          "mov     [esi+20h], eax"
+        ],
+        [
+          "0x100ad5d7",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100ad5da",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100ad5dc",
+          "pop     esi"
+        ],
+        [
+          "0x100ad5dd",
+          "pop     ebx"
+        ],
+        [
+          "0x100ad5de",
+          "mov     ecx, [esp+48h+var_4]"
+        ],
+        [
+          "0x100ad5e2",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100ad5e4",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100ad5e9",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ad5eb",
+          "pop     ebp"
+        ],
+        [
+          "0x100ad5ec",
+          "retn"
+        ],
+        [
+          "0x100ad5ed",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100ad5f0",
+          "mov     [esp+50h+var_44.dwLength], 20h ; ' '"
+        ],
+        [
+          "0x100ad5f8",
+          "lea     eax, [esp+50h+var_44]"
+        ],
+        [
+          "0x100ad5fc",
+          "movq    qword ptr [esp+50h+var_44.dwAvailPageFile], xmm0"
+        ],
+        [
+          "0x100ad602",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100ad603",
+          "movups  xmmword ptr [esp+54h+var_44.dwMemoryLoad], xmm0"
+        ],
+        [
+          "0x100ad608",
+          "mov     [esp+54h+var_44.dwAvailVirtual], 0"
+        ],
+        [
+          "0x100ad610",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100ad616",
+          "lea     eax, [esp+50h+Value]"
+        ],
+        [
+          "0x100ad61a",
+          "push    eax; Value"
+        ],
+        [
+          "0x100ad61b",
+          "call    __get_errno"
+        ],
+        [
+          "0x100ad620",
+          "add     esp, 4"
+        ],
+        [
+          "0x100ad623",
+          "push    offset aMemoryallocfai; \"MemoryAllocFail...\\n\""
+        ],
+        [
+          "0x100ad628",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100ad62e",
+          "push    6; dwErrCode"
+        ],
+        [
+          "0x100ad630",
+          "call    ds:SetLastError"
+        ],
+        [
+          "0x100ad636",
+          "mov     ecx, [esp+50h+var_4]"
+        ],
+        [
+          "0x100ad63a",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100ad63c",
+          "pop     esi"
+        ],
+        [
+          "0x100ad63d",
+          "pop     ebx"
+        ],
+        [
+          "0x100ad63e",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100ad640",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100ad645",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ad647",
+          "pop     ebp"
+        ],
+        [
+          "0x100ad648",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/PAL.dll",
+  "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+}

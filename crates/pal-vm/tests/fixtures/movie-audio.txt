@@ -1,0 +1,11 @@
+Synthetic movie soundtracks generated with FFmpeg; no game assets are included.
+The source video is 32x32 testsrc2 at 25fps for 0.6 seconds. The source audio is
+a mono 440Hz tone at 44100Hz for 0.4 seconds with a requested 120ms input delay.
+Muxer/codec priming changes packet PTS; decoder tests preserve actual container PTS.
+
+ffmpeg -f lavfi -i 'testsrc2=size=32x32:rate=25:duration=0.6' -itsoffset 0.12 -f lavfi -i 'sine=frequency=440:sample_rate=44100:duration=0.4' -map 0:v -map 1:a -c:v mpeg1video -g 5 -bf 0 -c:a mp2 -b:a 128k -muxdelay 0 -f mpeg movie_audio_delayed.mpg
+ffmpeg -f lavfi -i 'testsrc2=size=32x32:rate=25:duration=0.6' -itsoffset 0.12 -f lavfi -i 'sine=frequency=440:sample_rate=44100:duration=0.4' -map 0:v -map 1:a -c:v wmv2 -g 5 -c:a wmav2 -b:a 128k -f asf movie_audio_delayed.wmv
+
+The MPEG video/audio first PTS are 0.540000/0.649089 seconds.
+The ASF video/audio first PTS after preroll are 0/0.074000 seconds.
+No FFmpeg executable or external decoder is used by the tests or runtime.

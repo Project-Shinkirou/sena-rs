@@ -1,0 +1,1079 @@
+{
+  "functions": [
+    {
+      "ea": "0x100b76e0",
+      "name": "PalSystemCNPathSet",
+      "xrefs": [
+        {
+          "from": "0x10112978",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSystemCNPathSet(LPCSTR lpString)\n{\n  LPCSTR v1; // esi\n  size_t v2; // ebx\n  CHAR v3; // al\n  CHAR *v4; // eax\n  CHAR *v5; // edi\n  const char *v6; // ebx\n  CHAR v7; // al\n  int Value; // [esp+Ch] [ebp-4Ch] BYREF\n  size_t Size; // [esp+10h] [ebp-48h]\n  struct _MEMORYSTATUS v11; // [esp+14h] [ebp-44h] BYREF\n  struct _MEMORYSTATUS Buffer; // [esp+34h] [ebp-24h] BYREF\n\n  v1 = lpString;\n  Value = 0;\n  v2 = lstrlenA(lpString) + 1;\n  v3 = lpString[1];\n  Size = v2;\n  if ( (v3 != 58 || lpString[2] != 92) && (*lpString != 92 || v3 != 92) )\n  {\n    Value = 1;\n    v2 += lstrlenA((LPCSTR)dword_10128698 + 52) + 1;\n    Size = v2;\n  }\n  GlobalMemoryStatus(&Buffer);\n  v4 = (CHAR *)malloc(v2);\n  v5 = v4;\n  if ( v4 )\n  {\n    v6 = (const char *)dword_10128698;\n    if ( dword_10128698 )\n      ++*((_DWORD *)dword_10128698 + 84);\n    memset(v4, 0, Size);\n    if ( Value )\n    {\n      wsprintfA(v5, \"%s\\\\%s\", v6 + 52, lpString);\n    }\n    else\n    {\n      do\n      {\n        v7 = *v1++;\n        v1[v5 - lpString - 1] = v7;\n      }\n      while ( v7 );\n    }\n    PalDebugPrintf(0, 0, \"[%s]PalListCNPush\", v5);\n    PalListPush(*((_DWORD *)dword_10128698 + 10), (int)v5, -2);\n    return 1;\n  }\n  else\n  {\n    v11.dwLength = 32;\n    memset(&v11.dwMemoryLoad, 0, 28);\n    GlobalMemoryStatus(&v11);\n    _get_errno(&Value);\n    OutputDebugStringA(\"MemoryAllocFail...\\n\");\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100b76e0",
+          "push    ebp"
+        ],
+        [
+          "0x100b76e1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b76e3",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100b76e6",
+          "sub     esp, 4Ch"
+        ],
+        [
+          "0x100b76e9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100b76ee",
+          "xor     eax, esp"
+        ],
+        [
+          "0x100b76f0",
+          "mov     [esp+4Ch+var_4], eax"
+        ],
+        [
+          "0x100b76f4",
+          "push    ebx"
+        ],
+        [
+          "0x100b76f5",
+          "push    esi"
+        ],
+        [
+          "0x100b76f6",
+          "mov     esi, [ebp+lpString]"
+        ],
+        [
+          "0x100b76f9",
+          "push    edi"
+        ],
+        [
+          "0x100b76fa",
+          "mov     edi, ds:lstrlenA"
+        ],
+        [
+          "0x100b7700",
+          "push    esi; lpString"
+        ],
+        [
+          "0x100b7701",
+          "call    edi ; lstrlenA"
+        ],
+        [
+          "0x100b7703",
+          "mov     [esp+58h+Value], 0"
+        ],
+        [
+          "0x100b770b",
+          "lea     ebx, [eax+1]"
+        ],
+        [
+          "0x100b770e",
+          "mov     al, [esi+1]"
+        ],
+        [
+          "0x100b7711",
+          "mov     [esp+58h+Size], ebx"
+        ],
+        [
+          "0x100b7715",
+          "cmp     al, 3Ah ; ':'"
+        ],
+        [
+          "0x100b7717",
+          "jnz     short loc_100B771F"
+        ],
+        [
+          "0x100b7719",
+          "cmp     byte ptr [esi+2], 5Ch ; '\\'"
+        ],
+        [
+          "0x100b771d",
+          "jz      short loc_100B7742"
+        ],
+        [
+          "0x100b771f",
+          "cmp     byte ptr [esi], 5Ch ; '\\'"
+        ],
+        [
+          "0x100b7722",
+          "jnz     short loc_100B7728"
+        ],
+        [
+          "0x100b7724",
+          "cmp     al, 5Ch ; '\\'"
+        ],
+        [
+          "0x100b7726",
+          "jz      short loc_100B7742"
+        ],
+        [
+          "0x100b7728",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100b772d",
+          "add     eax, 34h ; '4'"
+        ],
+        [
+          "0x100b7730",
+          "push    eax; lpString"
+        ],
+        [
+          "0x100b7731",
+          "call    edi ; lstrlenA"
+        ],
+        [
+          "0x100b7733",
+          "inc     ebx"
+        ],
+        [
+          "0x100b7734",
+          "mov     [esp+58h+Value], 1"
+        ],
+        [
+          "0x100b773c",
+          "add     ebx, eax"
+        ],
+        [
+          "0x100b773e",
+          "mov     [esp+58h+Size], ebx"
+        ],
+        [
+          "0x100b7742",
+          "lea     eax, [esp+58h+Buffer]"
+        ],
+        [
+          "0x100b7746",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100b7747",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100b774d",
+          "push    ebx; Size"
+        ],
+        [
+          "0x100b774e",
+          "call    _malloc"
+        ],
+        [
+          "0x100b7753",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100b7755",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b7758",
+          "test    edi, edi"
+        ],
+        [
+          "0x100b775a",
+          "jz      loc_100B77E6"
+        ],
+        [
+          "0x100b7760",
+          "mov     ebx, dword_10128698"
+        ],
+        [
+          "0x100b7766",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100b7768",
+          "jz      short loc_100B7770"
+        ],
+        [
+          "0x100b776a",
+          "inc     dword ptr [ebx+150h]"
+        ],
+        [
+          "0x100b7770",
+          "push    [esp+58h+Size]; Size"
+        ],
+        [
+          "0x100b7774",
+          "push    0; Val"
+        ],
+        [
+          "0x100b7776",
+          "push    edi; void *"
+        ],
+        [
+          "0x100b7777",
+          "call    _memset"
+        ],
+        [
+          "0x100b777c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100b777f",
+          "cmp     [esp+58h+Value], 0"
+        ],
+        [
+          "0x100b7784",
+          "jz      short loc_100B779C"
+        ],
+        [
+          "0x100b7786",
+          "push    esi"
+        ],
+        [
+          "0x100b7787",
+          "lea     eax, [ebx+34h]"
+        ],
+        [
+          "0x100b778a",
+          "push    eax"
+        ],
+        [
+          "0x100b778b",
+          "push    offset aSS_0; \"%s\\\\%s\""
+        ],
+        [
+          "0x100b7790",
+          "push    edi; LPSTR"
+        ],
+        [
+          "0x100b7791",
+          "call    ds:wsprintfA"
+        ],
+        [
+          "0x100b7797",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100b779a",
+          "jmp     short loc_100B77AD"
+        ],
+        [
+          "0x100b779c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100b779e",
+          "sub     ecx, esi"
+        ],
+        [
+          "0x100b77a0",
+          "mov     al, [esi]"
+        ],
+        [
+          "0x100b77a2",
+          "lea     esi, [esi+1]"
+        ],
+        [
+          "0x100b77a5",
+          "mov     [ecx+esi-1], al"
+        ],
+        [
+          "0x100b77a9",
+          "test    al, al"
+        ],
+        [
+          "0x100b77ab",
+          "jnz     short loc_100B77A0"
+        ],
+        [
+          "0x100b77ad",
+          "push    edi"
+        ],
+        [
+          "0x100b77ae",
+          "push    offset aSPallistcnpush; \"[%s]PalListCNPush\""
+        ],
+        [
+          "0x100b77b3",
+          "push    0"
+        ],
+        [
+          "0x100b77b5",
+          "push    0"
+        ],
+        [
+          "0x100b77b7",
+          "call    PalDebugPrintf"
+        ],
+        [
+          "0x100b77bc",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100b77c1",
+          "push    0FFFFFFFEh"
+        ],
+        [
+          "0x100b77c3",
+          "push    edi"
+        ],
+        [
+          "0x100b77c4",
+          "push    dword ptr [eax+28h]"
+        ],
+        [
+          "0x100b77c7",
+          "call    PalListPush"
+        ],
+        [
+          "0x100b77cc",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x100b77cf",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b77d4",
+          "pop     edi"
+        ],
+        [
+          "0x100b77d5",
+          "pop     esi"
+        ],
+        [
+          "0x100b77d6",
+          "pop     ebx"
+        ],
+        [
+          "0x100b77d7",
+          "mov     ecx, [esp+4Ch+var_4]"
+        ],
+        [
+          "0x100b77db",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100b77dd",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b77e2",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b77e4",
+          "pop     ebp"
+        ],
+        [
+          "0x100b77e5",
+          "retn"
+        ],
+        [
+          "0x100b77e6",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100b77e9",
+          "mov     [esp+58h+var_44.dwLength], 20h ; ' '"
+        ],
+        [
+          "0x100b77f1",
+          "lea     eax, [esp+58h+var_44]"
+        ],
+        [
+          "0x100b77f5",
+          "movq    qword ptr [esp+58h+var_44.dwAvailPageFile], xmm0"
+        ],
+        [
+          "0x100b77fb",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100b77fc",
+          "movups  xmmword ptr [esp+5Ch+var_44.dwMemoryLoad], xmm0"
+        ],
+        [
+          "0x100b7801",
+          "mov     [esp+5Ch+var_44.dwAvailVirtual], 0"
+        ],
+        [
+          "0x100b7809",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100b780f",
+          "lea     eax, [esp+58h+Value]"
+        ],
+        [
+          "0x100b7813",
+          "push    eax; Value"
+        ],
+        [
+          "0x100b7814",
+          "call    __get_errno"
+        ],
+        [
+          "0x100b7819",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b781c",
+          "push    offset aMemoryallocfai; \"MemoryAllocFail...\\n\""
+        ],
+        [
+          "0x100b7821",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100b7827",
+          "mov     ecx, [esp+58h+var_4]"
+        ],
+        [
+          "0x100b782b",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b782d",
+          "pop     edi"
+        ],
+        [
+          "0x100b782e",
+          "pop     esi"
+        ],
+        [
+          "0x100b782f",
+          "pop     ebx"
+        ],
+        [
+          "0x100b7830",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100b7832",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b7837",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b7839",
+          "pop     ebp"
+        ],
+        [
+          "0x100b783a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b7840",
+      "name": "PalSystemTCPathSet",
+      "xrefs": [
+        {
+          "from": "0x10112978",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSystemTCPathSet(LPCSTR lpString)\n{\n  LPCSTR v1; // esi\n  size_t v2; // ebx\n  CHAR v3; // al\n  CHAR *v4; // eax\n  CHAR *v5; // edi\n  const char *v6; // ebx\n  CHAR v7; // al\n  int Value; // [esp+Ch] [ebp-4Ch] BYREF\n  size_t Size; // [esp+10h] [ebp-48h]\n  struct _MEMORYSTATUS v11; // [esp+14h] [ebp-44h] BYREF\n  struct _MEMORYSTATUS Buffer; // [esp+34h] [ebp-24h] BYREF\n\n  v1 = lpString;\n  Value = 0;\n  v2 = lstrlenA(lpString) + 1;\n  v3 = lpString[1];\n  Size = v2;\n  if ( (v3 != 58 || lpString[2] != 92) && (*lpString != 92 || v3 != 92) )\n  {\n    Value = 1;\n    v2 += lstrlenA((LPCSTR)dword_10128698 + 52) + 1;\n    Size = v2;\n  }\n  GlobalMemoryStatus(&Buffer);\n  v4 = (CHAR *)malloc(v2);\n  v5 = v4;\n  if ( v4 )\n  {\n    v6 = (const char *)dword_10128698;\n    if ( dword_10128698 )\n      ++*((_DWORD *)dword_10128698 + 84);\n    memset(v4, 0, Size);\n    if ( Value )\n    {\n      wsprintfA(v5, \"%s\\\\%s\", v6 + 52, lpString);\n    }\n    else\n    {\n      do\n      {\n        v7 = *v1++;\n        v1[v5 - lpString - 1] = v7;\n      }\n      while ( v7 );\n    }\n    PalDebugPrintf(0, 0, \"[%s]PalListTCPush\", v5);\n    PalListPush(*((_DWORD *)dword_10128698 + 11), (int)v5, -2);\n    return 1;\n  }\n  else\n  {\n    v11.dwLength = 32;\n    memset(&v11.dwMemoryLoad, 0, 28);\n    GlobalMemoryStatus(&v11);\n    _get_errno(&Value);\n    OutputDebugStringA(\"MemoryAllocFail...\\n\");\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100b7840",
+          "push    ebp"
+        ],
+        [
+          "0x100b7841",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b7843",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100b7846",
+          "sub     esp, 4Ch"
+        ],
+        [
+          "0x100b7849",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100b784e",
+          "xor     eax, esp"
+        ],
+        [
+          "0x100b7850",
+          "mov     [esp+4Ch+var_4], eax"
+        ],
+        [
+          "0x100b7854",
+          "push    ebx"
+        ],
+        [
+          "0x100b7855",
+          "push    esi"
+        ],
+        [
+          "0x100b7856",
+          "mov     esi, [ebp+lpString]"
+        ],
+        [
+          "0x100b7859",
+          "push    edi"
+        ],
+        [
+          "0x100b785a",
+          "mov     edi, ds:lstrlenA"
+        ],
+        [
+          "0x100b7860",
+          "push    esi; lpString"
+        ],
+        [
+          "0x100b7861",
+          "call    edi ; lstrlenA"
+        ],
+        [
+          "0x100b7863",
+          "mov     [esp+58h+Value], 0"
+        ],
+        [
+          "0x100b786b",
+          "lea     ebx, [eax+1]"
+        ],
+        [
+          "0x100b786e",
+          "mov     al, [esi+1]"
+        ],
+        [
+          "0x100b7871",
+          "mov     [esp+58h+Size], ebx"
+        ],
+        [
+          "0x100b7875",
+          "cmp     al, 3Ah ; ':'"
+        ],
+        [
+          "0x100b7877",
+          "jnz     short loc_100B787F"
+        ],
+        [
+          "0x100b7879",
+          "cmp     byte ptr [esi+2], 5Ch ; '\\'"
+        ],
+        [
+          "0x100b787d",
+          "jz      short loc_100B78A2"
+        ],
+        [
+          "0x100b787f",
+          "cmp     byte ptr [esi], 5Ch ; '\\'"
+        ],
+        [
+          "0x100b7882",
+          "jnz     short loc_100B7888"
+        ],
+        [
+          "0x100b7884",
+          "cmp     al, 5Ch ; '\\'"
+        ],
+        [
+          "0x100b7886",
+          "jz      short loc_100B78A2"
+        ],
+        [
+          "0x100b7888",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100b788d",
+          "add     eax, 34h ; '4'"
+        ],
+        [
+          "0x100b7890",
+          "push    eax; lpString"
+        ],
+        [
+          "0x100b7891",
+          "call    edi ; lstrlenA"
+        ],
+        [
+          "0x100b7893",
+          "inc     ebx"
+        ],
+        [
+          "0x100b7894",
+          "mov     [esp+58h+Value], 1"
+        ],
+        [
+          "0x100b789c",
+          "add     ebx, eax"
+        ],
+        [
+          "0x100b789e",
+          "mov     [esp+58h+Size], ebx"
+        ],
+        [
+          "0x100b78a2",
+          "lea     eax, [esp+58h+Buffer]"
+        ],
+        [
+          "0x100b78a6",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100b78a7",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100b78ad",
+          "push    ebx; Size"
+        ],
+        [
+          "0x100b78ae",
+          "call    _malloc"
+        ],
+        [
+          "0x100b78b3",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100b78b5",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b78b8",
+          "test    edi, edi"
+        ],
+        [
+          "0x100b78ba",
+          "jz      loc_100B7946"
+        ],
+        [
+          "0x100b78c0",
+          "mov     ebx, dword_10128698"
+        ],
+        [
+          "0x100b78c6",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100b78c8",
+          "jz      short loc_100B78D0"
+        ],
+        [
+          "0x100b78ca",
+          "inc     dword ptr [ebx+150h]"
+        ],
+        [
+          "0x100b78d0",
+          "push    [esp+58h+Size]; Size"
+        ],
+        [
+          "0x100b78d4",
+          "push    0; Val"
+        ],
+        [
+          "0x100b78d6",
+          "push    edi; void *"
+        ],
+        [
+          "0x100b78d7",
+          "call    _memset"
+        ],
+        [
+          "0x100b78dc",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100b78df",
+          "cmp     [esp+58h+Value], 0"
+        ],
+        [
+          "0x100b78e4",
+          "jz      short loc_100B78FC"
+        ],
+        [
+          "0x100b78e6",
+          "push    esi"
+        ],
+        [
+          "0x100b78e7",
+          "lea     eax, [ebx+34h]"
+        ],
+        [
+          "0x100b78ea",
+          "push    eax"
+        ],
+        [
+          "0x100b78eb",
+          "push    offset aSS_0; \"%s\\\\%s\""
+        ],
+        [
+          "0x100b78f0",
+          "push    edi; LPSTR"
+        ],
+        [
+          "0x100b78f1",
+          "call    ds:wsprintfA"
+        ],
+        [
+          "0x100b78f7",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100b78fa",
+          "jmp     short loc_100B790D"
+        ],
+        [
+          "0x100b78fc",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100b78fe",
+          "sub     ecx, esi"
+        ],
+        [
+          "0x100b7900",
+          "mov     al, [esi]"
+        ],
+        [
+          "0x100b7902",
+          "lea     esi, [esi+1]"
+        ],
+        [
+          "0x100b7905",
+          "mov     [ecx+esi-1], al"
+        ],
+        [
+          "0x100b7909",
+          "test    al, al"
+        ],
+        [
+          "0x100b790b",
+          "jnz     short loc_100B7900"
+        ],
+        [
+          "0x100b790d",
+          "push    edi"
+        ],
+        [
+          "0x100b790e",
+          "push    offset aSPallisttcpush; \"[%s]PalListTCPush\""
+        ],
+        [
+          "0x100b7913",
+          "push    0"
+        ],
+        [
+          "0x100b7915",
+          "push    0"
+        ],
+        [
+          "0x100b7917",
+          "call    PalDebugPrintf"
+        ],
+        [
+          "0x100b791c",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100b7921",
+          "push    0FFFFFFFEh"
+        ],
+        [
+          "0x100b7923",
+          "push    edi"
+        ],
+        [
+          "0x100b7924",
+          "push    dword ptr [eax+2Ch]"
+        ],
+        [
+          "0x100b7927",
+          "call    PalListPush"
+        ],
+        [
+          "0x100b792c",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x100b792f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b7934",
+          "pop     edi"
+        ],
+        [
+          "0x100b7935",
+          "pop     esi"
+        ],
+        [
+          "0x100b7936",
+          "pop     ebx"
+        ],
+        [
+          "0x100b7937",
+          "mov     ecx, [esp+4Ch+var_4]"
+        ],
+        [
+          "0x100b793b",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100b793d",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b7942",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b7944",
+          "pop     ebp"
+        ],
+        [
+          "0x100b7945",
+          "retn"
+        ],
+        [
+          "0x100b7946",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100b7949",
+          "mov     [esp+58h+var_44.dwLength], 20h ; ' '"
+        ],
+        [
+          "0x100b7951",
+          "lea     eax, [esp+58h+var_44]"
+        ],
+        [
+          "0x100b7955",
+          "movq    qword ptr [esp+58h+var_44.dwAvailPageFile], xmm0"
+        ],
+        [
+          "0x100b795b",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x100b795c",
+          "movups  xmmword ptr [esp+5Ch+var_44.dwMemoryLoad], xmm0"
+        ],
+        [
+          "0x100b7961",
+          "mov     [esp+5Ch+var_44.dwAvailVirtual], 0"
+        ],
+        [
+          "0x100b7969",
+          "call    ds:GlobalMemoryStatus"
+        ],
+        [
+          "0x100b796f",
+          "lea     eax, [esp+58h+Value]"
+        ],
+        [
+          "0x100b7973",
+          "push    eax; Value"
+        ],
+        [
+          "0x100b7974",
+          "call    __get_errno"
+        ],
+        [
+          "0x100b7979",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b797c",
+          "push    offset aMemoryallocfai; \"MemoryAllocFail...\\n\""
+        ],
+        [
+          "0x100b7981",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100b7987",
+          "mov     ecx, [esp+58h+var_4]"
+        ],
+        [
+          "0x100b798b",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b798d",
+          "pop     edi"
+        ],
+        [
+          "0x100b798e",
+          "pop     esi"
+        ],
+        [
+          "0x100b798f",
+          "pop     ebx"
+        ],
+        [
+          "0x100b7990",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100b7992",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b7997",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b7999",
+          "pop     ebp"
+        ],
+        [
+          "0x100b799a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a0240",
+      "name": "PalGetLanguage",
+      "xrefs": [
+        {
+          "from": "0x10112978",
+          "function": null
+        }
+      ],
+      "pseudocode": "int PalGetLanguage()\n{\n  int result; // eax\n\n  if ( !dword_10128698 )\n    return 1;\n  result = *((_DWORD *)dword_10128698 + 3187);\n  if ( !result )\n    return 1;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100a0240",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100a0245",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a0247",
+          "jz      short loc_100A0253"
+        ],
+        [
+          "0x100a0249",
+          "mov     eax, [eax+31CCh]"
+        ],
+        [
+          "0x100a024f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a0251",
+          "jnz     short locret_100A0258"
+        ],
+        [
+          "0x100a0253",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100a0258",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a8f30",
+      "name": "PalSetLanguage",
+      "xrefs": [
+        {
+          "from": "0x10112978",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSetLanguage(int a1)\n{\n  int v1; // esi\n  int result; // eax\n\n  v1 = 1;\n  if ( a1 )\n    v1 = a1;\n  PalDebugPrintf(0, 0, \"PalSetLanguage %d\", v1);\n  result = 1;\n  *((_DWORD *)dword_10128698 + 3187) = v1;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100a8f30",
+          "push    ebp"
+        ],
+        [
+          "0x100a8f31",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100a8f33",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100a8f36",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a8f38",
+          "push    esi"
+        ],
+        [
+          "0x100a8f39",
+          "mov     esi, 1"
+        ],
+        [
+          "0x100a8f3e",
+          "cmovnz  esi, eax"
+        ],
+        [
+          "0x100a8f41",
+          "push    esi"
+        ],
+        [
+          "0x100a8f42",
+          "push    offset aPalsetlanguage_0; \"PalSetLanguage %d\""
+        ],
+        [
+          "0x100a8f47",
+          "push    0"
+        ],
+        [
+          "0x100a8f49",
+          "push    0"
+        ],
+        [
+          "0x100a8f4b",
+          "call    PalDebugPrintf"
+        ],
+        [
+          "0x100a8f50",
+          "mov     ecx, dword_10128698"
+        ],
+        [
+          "0x100a8f56",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100a8f59",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100a8f5e",
+          "mov     [ecx+31CCh], esi"
+        ],
+        [
+          "0x100a8f64",
+          "pop     esi"
+        ],
+        [
+          "0x100a8f65",
+          "pop     ebp"
+        ],
+        [
+          "0x100a8f66",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+  "binary": "reverse/PAL.dll"
+}

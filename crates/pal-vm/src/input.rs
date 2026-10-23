@@ -1,8 +1,7 @@
 use crate::event::{InputEvent, MouseButton};
 
 /// PAL logical key identifiers. These are high-level keys used by game scripts.
-/// The exact PAL virtual-key-to-bit mapping is not yet fully recovered from the binary;
-/// this set covers the keys needed for basic ADV navigation.
+/// Bit positions follow PAL_d.dll's virtual-key table at 0x103CB130.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum PalKey {
     Return,
@@ -38,26 +37,26 @@ pub enum PalMouseButton {
     Middle,
 }
 
-const KEY_RETURN: u32 = 1 << 0;
-const KEY_ESCAPE: u32 = 1 << 1;
-const KEY_SPACE: u32 = 1 << 2;
+const KEY_RETURN: u32 = 1 << 2;
+const KEY_ESCAPE: u32 = 1 << 0;
+const KEY_SPACE: u32 = 1 << 1;
 const KEY_CTRL: u32 = 1 << 3;
-const KEY_UP: u32 = 1 << 4;
-const KEY_DOWN: u32 = 1 << 5;
-const KEY_LEFT: u32 = 1 << 6;
-const KEY_RIGHT: u32 = 1 << 7;
-const KEY_F1: u32 = 1 << 8;
-const KEY_F2: u32 = 1 << 9;
-const KEY_F3: u32 = 1 << 10;
-const KEY_F4: u32 = 1 << 11;
-const KEY_F5: u32 = 1 << 12;
-const KEY_F6: u32 = 1 << 13;
-const KEY_F7: u32 = 1 << 14;
-const KEY_F8: u32 = 1 << 15;
-const KEY_F9: u32 = 1 << 16;
-const KEY_F10: u32 = 1 << 17;
-const KEY_F11: u32 = 1 << 18;
-const KEY_F12: u32 = 1 << 19;
+const KEY_UP: u32 = 1 << 7;
+const KEY_DOWN: u32 = 1 << 8;
+const KEY_LEFT: u32 = 1 << 9;
+const KEY_RIGHT: u32 = 1 << 10;
+const KEY_F1: u32 = 1 << 11;
+const KEY_F2: u32 = 1 << 12;
+const KEY_F3: u32 = 1 << 13;
+const KEY_F4: u32 = 1 << 14;
+const KEY_F5: u32 = 1 << 15;
+const KEY_F6: u32 = 1 << 16;
+const KEY_F7: u32 = 1 << 17;
+const KEY_F8: u32 = 1 << 18;
+const KEY_F9: u32 = 1 << 19;
+const KEY_F10: u32 = 1 << 20;
+const KEY_F11: u32 = 1 << 21;
+const KEY_F12: u32 = 1 << 22;
 
 const MOUSE_LEFT: u8 = 1 << 0;
 const MOUSE_RIGHT: u8 = 1 << 1;
@@ -105,6 +104,14 @@ fn key_name_to_bit(key_name: &str) -> u32 {
         "Escape" => KEY_ESCAPE,
         "Space" | " " => KEY_SPACE,
         "Ctrl" | "Control" | "ControlLeft" | "ControlRight" | "LeftCtrl" | "RightCtrl" => KEY_CTRL,
+        "Shift" | "ShiftLeft" | "ShiftRight" => 1 << 4,
+        "Alt" | "AltLeft" | "AltRight" => 1 << 5,
+        "Tab" => 1 << 6,
+        "y" | "Y" | "KeyY" => 1 << 26,
+        "n" | "N" | "KeyN" => 1 << 27,
+        "z" | "Z" | "KeyZ" => 1 << 28,
+        "x" | "X" | "KeyX" => 1 << 29,
+        "c" | "C" | "KeyC" => 1 << 30,
         "ArrowUp" => KEY_UP,
         "ArrowDown" => KEY_DOWN,
         "ArrowLeft" => KEY_LEFT,
@@ -123,6 +130,28 @@ fn key_name_to_bit(key_name: &str) -> u32 {
         "F12" => KEY_F12,
         _ => 0,
     }
+}
+
+fn key_name_to_vk(name: &str) -> Option<u32> {
+    let bit = key_name_to_bit(name);
+    const VK: [u32; 31] = [
+        0x1b, 0x20, 0x0d, 0x11, 0x10, 0x12, 0x09, 0x26, 0x28, 0x25, 0x27, 0x70, 0x71, 0x72, 0x73,
+        0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 1, 2, 4, 0x59, 0x4e, 0x5a, 0x58, 0x43,
+    ];
+    if bit != 0 {
+        return Some(VK[bit.trailing_zeros() as usize]);
+    }
+    let key = name
+        .strip_prefix("Key")
+        .or_else(|| name.strip_prefix("Digit"))
+        .unwrap_or(name);
+    if key.len() == 1 {
+        let b = key.as_bytes()[0].to_ascii_uppercase();
+        if b.is_ascii_alphanumeric() {
+            return Some(b as u32);
+        }
+    }
+    None
 }
 
 fn winit_mouse_to_pal(button: MouseButton) -> u8 {
@@ -145,11 +174,21 @@ fn winit_mouse_to_pal(button: MouseButton) -> u8 {
 pub struct PalInputState {
     // Keyboard three-state (bitmask over PalKey variants)
     key_on: u32,
+    physical_key_on: u32,
+    stable_key_on: u32,
+    cancel_keys: u32,
+    cancel_extended: u32,
+    physical_virtual: [u64; 4],
     key_push: u32,
     key_pull: u32,
+    repeat_output: u32,
+    repeat_source: u32,
+    repeat_started_ms: u32,
 
     // Mouse button three-state
     mouse_on: u8,
+    physical_mouse_on: u8,
+    stable_mouse_on: u8,
     mouse_push: u8,
     mouse_pull: u8,
 
@@ -175,7 +214,7 @@ pub struct PalInputState {
     logical_width: u32,
     logical_height: u32,
 
-    // Vertical wheel accumulator; cleared by begin_frame.
+    // Last native wheel direction; cleared by begin_frame.
     wheel_delta: f32,
 
     // Tracks whether cursor position has ever been set.
@@ -210,6 +249,10 @@ impl PalInputState {
     /// Clear per-frame transient state: push, pull, move delta, wheel.
     /// Must be called once per frame before new input events are processed.
     pub fn begin_frame(&mut self) {
+        self.key_on = self.physical_key_on;
+        self.stable_key_on = self.physical_key_on;
+        self.mouse_on = self.physical_mouse_on;
+        self.stable_mouse_on = self.physical_mouse_on;
         self.key_push = 0;
         self.key_pull = 0;
         self.mouse_push = 0;
@@ -217,24 +260,87 @@ impl PalInputState {
         self.mouse_move_x = 0;
         self.mouse_move_y = 0;
         self.wheel_delta = 0.0;
+        self.repeat_output = 0;
+    }
+
+    /// Sample PAL's repeat level once after host events and before script input.
+    /// A new push replaces the entire remembered mask. After 500 ms, any
+    /// surviving held bit keeps that whole mask repeating on every sample.
+    pub fn sample_repeat(&mut self, now_ms: u32) {
+        let push = self.key_push | ((self.mouse_push as u32) << 23);
+        let held = self.stable_key_on | ((self.stable_mouse_on as u32) << 23);
+        self.repeat_output = 0;
+        if push != 0 {
+            self.repeat_source = push;
+            self.repeat_started_ms = now_ms;
+        } else if self.repeat_source & held != 0 {
+            if now_ms.wrapping_sub(self.repeat_started_ms) > 500 {
+                self.repeat_output = self.repeat_source & !self.cancel_keys;
+            }
+        } else {
+            self.repeat_source = 0;
+        }
+    }
+
+    /// PalInputKeyRepeatClear preserves physical input and the timer value.
+    pub fn clear_repeat(&mut self) {
+        self.repeat_output = 0;
+        self.repeat_source = 0;
     }
 
     /// Clear PAL's accumulated input masks. Mirrors PalInputClear_0's block reset.
     pub fn clear(&mut self) {
         self.key_on = 0;
+        self.stable_key_on = 0;
         self.key_push = 0;
         self.key_pull = 0;
         self.mouse_on = 0;
+        self.stable_mouse_on = 0;
         self.mouse_push = 0;
         self.mouse_pull = 0;
-        self.mouse_move_x = 0;
-        self.mouse_move_y = 0;
-        self.wheel_delta = 0.0;
+        self.repeat_output = 0;
+    }
+
+    /// Persistent native PalInputKeyCancel masks. The first mask also includes
+    /// mouse buttons (bits 23–25); the second masks key-ex events, including wheel.
+    pub fn set_cancel_masks(&mut self, keys: u32, extended: u32) {
+        self.cancel_keys = keys;
+        self.cancel_extended = extended;
+        self.key_on &= !keys;
+        self.stable_key_on &= !keys;
+        self.key_push &= !keys;
+        self.key_pull &= !keys;
+        self.repeat_output &= !keys;
+        let mouse = !((keys >> 23) as u8);
+        self.mouse_on &= mouse;
+        self.stable_mouse_on &= mouse;
+        self.mouse_push &= mouse;
+        self.mouse_pull &= mouse;
+        if extended & 0x10 != 0 {
+            self.wheel_delta = 0.0;
+        }
+    }
+
+    pub fn async_virtual_key(&self, vk: u32) -> bool {
+        vk < 256 && self.physical_virtual[vk as usize / 64] & (1 << (vk % 64)) != 0
+    }
+
+    fn set_physical_virtual(&mut self, vk: u32, pressed: bool) {
+        if vk >= 256 {
+            return;
+        }
+        let value = &mut self.physical_virtual[vk as usize / 64];
+        if pressed {
+            *value |= 1 << (vk % 64);
+        } else {
+            *value &= !(1 << (vk % 64));
+        }
     }
 
     /// OR raw PAL key bits into the held-key mask.
     pub fn set_key_on_bits(&mut self, bits: u32) {
         self.key_on |= bits;
+        self.stable_key_on |= bits;
     }
 
     /// OR raw PAL key bits into the per-frame push mask.
@@ -249,19 +355,25 @@ impl PalInputState {
 
     /// Process a keyboard event.
     pub fn handle_keyboard_event(&mut self, key_name: &str, pressed: bool) {
+        if let Some(vk) = key_name_to_vk(key_name) {
+            self.set_physical_virtual(vk, pressed);
+        }
         let bit = key_name_to_bit(key_name);
         if bit == 0 {
             return;
         }
         if pressed {
-            if self.key_on & bit == 0 {
+            if self.physical_key_on & bit == 0 {
                 self.key_push |= bit;
             }
+            self.physical_key_on |= bit;
             self.key_on |= bit;
         } else {
-            if self.key_on & bit != 0 {
+            if self.physical_key_on & bit != 0 {
                 self.key_pull |= bit;
             }
+            self.physical_key_on &= !bit;
+            self.stable_key_on &= !bit;
             self.key_on &= !bit;
         }
     }
@@ -269,18 +381,30 @@ impl PalInputState {
     /// Process a mouse button event.
     pub fn handle_mouse_button_event(&mut self, button: MouseButton, pressed: bool) {
         let bit = winit_mouse_to_pal(button);
+        let vk = match button {
+            MouseButton::Left => 1,
+            MouseButton::Right => 2,
+            MouseButton::Middle => 4,
+            _ => 0,
+        };
+        if vk != 0 {
+            self.set_physical_virtual(vk, pressed);
+        }
         if bit == 0 {
             return;
         }
         if pressed {
-            if self.mouse_on & bit == 0 {
+            if self.physical_mouse_on & bit == 0 {
                 self.mouse_push |= bit;
             }
+            self.physical_mouse_on |= bit;
             self.mouse_on |= bit;
         } else {
-            if self.mouse_on & bit != 0 {
+            if self.physical_mouse_on & bit != 0 {
                 self.mouse_pull |= bit;
             }
+            self.physical_mouse_on &= !bit;
+            self.stable_mouse_on &= !bit;
             self.mouse_on &= !bit;
         }
     }
@@ -291,8 +415,16 @@ impl PalInputState {
         self.cursor_raw_y = y;
         let (new_x, new_y) = self.map_physical_to_logical(x, y);
         if self.cursor_initialized {
-            self.mouse_move_x += new_x - self.cursor_prev_x;
-            self.mouse_move_y += new_y - self.cursor_prev_y;
+            self.mouse_move_x = if new_x == -1 {
+                0
+            } else {
+                self.mouse_move_x.wrapping_add(new_x.wrapping_sub(self.cursor_prev_x))
+            };
+            self.mouse_move_y = if new_y == -1 {
+                0
+            } else {
+                self.mouse_move_y.wrapping_add(new_y.wrapping_sub(self.cursor_prev_y))
+            };
         }
         self.cursor_prev_x = new_x;
         self.cursor_prev_y = new_y;
@@ -302,49 +434,50 @@ impl PalInputState {
     }
 
     fn map_physical_to_logical(&self, x: f64, y: f64) -> (i32, i32) {
-        let window_width = self.window_width.max(1) as f64;
-        let window_height = self.window_height.max(1) as f64;
-        let logical_width = self.logical_width.max(1) as f64;
-        let logical_height = self.logical_height.max(1) as f64;
-        (
-            ((x * logical_width) / window_width).round() as i32,
-            ((y * logical_height) / window_height).round() as i32,
-        )
+        fn axis(value: f64, window: u32, logical: u32) -> i32 {
+            if logical == 0 {
+                return value as i32;
+            }
+            let mapped = (value as f32 * (logical as f32 / window.max(1) as f32)) as i32;
+            let extent = logical.min(i32::MAX as u32) as i32;
+            if mapped >= extent || mapped < -extent { -1 } else { mapped }
+        }
+        (axis(x, self.window_width, self.logical_width), axis(y, self.window_height, self.logical_height))
     }
 
     /// Process a mouse wheel event.
     pub fn handle_mouse_wheel(&mut self, _delta_x: f32, delta_y: f32) {
-        self.wheel_delta += delta_y;
+        self.wheel_delta = if delta_y < 0.0 { 1.0 } else { -1.0 };
     }
 
     /// True if the key was pressed this frame (was not held last frame).
     pub fn key_push(&self, key: PalKey) -> bool {
-        self.key_push & pal_key_bit(key) != 0
+        self.raw_key_push() & pal_key_bit(key) != 0
     }
 
     /// True if the key is currently held.
     pub fn key_on(&self, key: PalKey) -> bool {
-        self.key_on & pal_key_bit(key) != 0
+        (self.key_on & !self.cancel_keys) & pal_key_bit(key) != 0
     }
 
     /// True if the key was released this frame.
     pub fn key_pull(&self, key: PalKey) -> bool {
-        self.key_pull & pal_key_bit(key) != 0
+        self.raw_key_pull() & pal_key_bit(key) != 0
     }
 
     /// True if the mouse button was pressed this frame.
     pub fn mouse_push(&self, button: PalMouseButton) -> bool {
-        self.mouse_push & pal_mouse_bit(button) != 0
+        self.raw_mouse_push() & pal_mouse_bit(button) != 0
     }
 
     /// True if the mouse button is currently held.
     pub fn mouse_on(&self, button: PalMouseButton) -> bool {
-        self.mouse_on & pal_mouse_bit(button) != 0
+        self.raw_mouse_on() & pal_mouse_bit(button) != 0
     }
 
     /// True if the mouse button was released this frame.
     pub fn mouse_pull(&self, button: PalMouseButton) -> bool {
-        self.mouse_pull & pal_mouse_bit(button) != 0
+        self.raw_mouse_pull() & pal_mouse_bit(button) != 0
     }
 
     /// Current mouse position in window coordinates.
@@ -357,14 +490,18 @@ impl PalInputState {
         (self.mouse_move_x, self.mouse_move_y)
     }
 
-    /// Vertical wheel delta accumulated this frame.
+    /// Last wheel direction: down is +1, up (including a zero host delta) is -1.
     pub fn wheel_delta(&self) -> f32 {
-        self.wheel_delta
+        if self.cancel_extended & 0x10 != 0 {
+            0.0
+        } else {
+            self.wheel_delta
+        }
     }
 
     /// True if any key, mouse button, or positive mouse wheel input was pushed this frame.
     pub fn any_push(&self) -> bool {
-        self.key_push != 0 || self.mouse_push != 0 || self.wheel_delta > 0.0
+        self.raw_key_push() != 0 || self.wheel_delta() > 0.0
     }
 
     /// True if a push this frame counts as a "click" that completes PAL click
@@ -376,9 +513,9 @@ impl PalInputState {
     /// (Escape, arrows, F-keys, right/middle mouse) never complete click
     /// waits; they reach scripts only through system-button slots.
     pub fn click_push(&self) -> bool {
-        self.key_push & (KEY_SPACE | KEY_RETURN) != 0
-            || self.mouse_push & MOUSE_LEFT != 0
-            || self.wheel_delta > 0.0
+        (self.raw_key_on() & (1 << 5) == 0
+            && self.raw_key_push() & (KEY_SPACE | KEY_RETURN | (1 << 23)) != 0)
+            || self.wheel_delta() > 0.0
     }
 
     /// True while the PAL fast-forward modifier is held.
@@ -388,7 +525,7 @@ impl PalInputState {
     /// path as winit, and wait/text code consumes this held state where the
     /// original engine treats Ctrl as fast-forward.
     pub fn fast_forward_held(&self) -> bool {
-        self.key_on(PalKey::Ctrl)
+        self.raw_key_on() & KEY_CTRL != 0
     }
 
     /// Return a frame-local copy with mouse push edges removed.
@@ -399,6 +536,14 @@ impl PalInputState {
     pub fn without_mouse_push(&self) -> Self {
         let mut copy = self.clone();
         copy.mouse_push = 0;
+        copy
+    }
+
+    /// Remove mouse press/release edges consumed by the button layer while
+    /// preserving held state for slider drags and visual feedback.
+    pub fn without_mouse_edges(&self) -> Self {
+        let mut copy = self.without_mouse_push();
+        copy.mouse_pull = 0;
         copy
     }
 
@@ -417,29 +562,34 @@ impl PalInputState {
 
     /// Raw keyboard push bitmask (for direct PAL API access).
     pub fn raw_key_push(&self) -> u32 {
-        self.key_push
+        (self.key_push | ((self.mouse_push as u32) << 23)) & !self.cancel_keys
     }
 
     /// Raw keyboard on bitmask.
     pub fn raw_key_on(&self) -> u32 {
-        self.key_on
+        (self.stable_key_on | ((self.stable_mouse_on as u32) << 23)) & !self.cancel_keys
+    }
+
+    /// Native PalInputGetKeyOnEx repeat level, distinct from stable held keys.
+    pub fn raw_key_on_ex(&self) -> u32 {
+        self.repeat_output & !self.cancel_keys
     }
 
     /// Raw keyboard pull bitmask.
     pub fn raw_key_pull(&self) -> u32 {
-        self.key_pull
+        (self.key_pull | ((self.mouse_pull as u32) << 23)) & !self.cancel_keys
     }
 
     pub fn raw_mouse_on(&self) -> u8 {
-        self.mouse_on
+        self.mouse_on & !((self.cancel_keys >> 23) as u8)
     }
 
     pub fn raw_mouse_push(&self) -> u8 {
-        self.mouse_push
+        self.mouse_push & !((self.cancel_keys >> 23) as u8)
     }
 
     pub fn raw_mouse_pull(&self) -> u8 {
-        self.mouse_pull
+        self.mouse_pull & !((self.cancel_keys >> 23) as u8)
     }
 
     /// Feed a PalEvent::Input directly. Convenience wrapper for engine.handle_event.
@@ -458,5 +608,98 @@ impl PalInputState {
                 self.handle_mouse_wheel(*delta_x, *delta_y);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod native_input_tests {
+    use super::*;
+
+    #[test]
+    fn native_key_table_and_mouse_bits_match_pal() {
+        let mut input = PalInputState::new();
+        for key in [
+            "Escape",
+            "Space",
+            "Return",
+            "Ctrl",
+            "Shift",
+            "Alt",
+            "Tab",
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "F1",
+            "F12",
+            "Y",
+            "C",
+        ] {
+            input.handle_keyboard_event(key, true);
+        }
+        input.handle_mouse_button_event(MouseButton::Left, true);
+        input.handle_mouse_button_event(MouseButton::Right, true);
+        input.handle_mouse_button_event(MouseButton::Middle, true);
+        let expected = 0xfff | (1 << 22) | (7 << 23) | (1 << 26) | (1 << 30);
+        assert_eq!(input.raw_key_push(), expected);
+        assert_eq!(
+            input.raw_key_on(),
+            0,
+            "native on excludes this sample's new presses"
+        );
+        input.begin_frame();
+        assert_eq!(input.raw_key_on(), expected);
+        input.handle_keyboard_event("Return", false);
+        input.handle_mouse_button_event(MouseButton::Left, false);
+        assert_eq!(input.raw_key_pull(), 4 | (1 << 23));
+    }
+
+    #[test]
+    fn clear_preserves_physical_keys_wheel_and_mouse_coordinates() {
+        let mut input = PalInputState::new();
+        input.set_coordinate_space(1280, 720, 1280, 720);
+        input.handle_cursor_moved(30.0, 40.0);
+        input.handle_keyboard_event("Return", true);
+        input.handle_mouse_button_event(MouseButton::Left, true);
+        input.handle_mouse_wheel(0.0, 2.0);
+        input.clear();
+        assert_eq!(input.raw_key_push(), 0);
+        assert_eq!(input.raw_key_on(), 0);
+        assert_eq!(input.wheel_delta(), -1.0);
+        assert_eq!(input.mouse_position(), (30, 40));
+        assert!(input.async_virtual_key(0x0d));
+        input.handle_keyboard_event("Return", true); // operating-system repeat
+        input.handle_mouse_button_event(MouseButton::Left, true);
+        assert_eq!(
+            input.raw_key_push(),
+            0,
+            "clear cannot manufacture a new edge"
+        );
+        input.begin_frame();
+        assert_eq!(input.raw_key_on(), 4 | (1 << 23));
+        assert_eq!(input.raw_key_push(), 0);
+    }
+
+    #[test]
+    fn cancellation_suppresses_keys_mouse_wheel_without_erasing_physical_state() {
+        let mut input = PalInputState::new();
+        input.handle_keyboard_event("Ctrl", true);
+        input.handle_mouse_button_event(MouseButton::Left, true);
+        input.handle_mouse_wheel(0.0, 1.0);
+        input.set_cancel_masks(8 | (1 << 23), 0x10);
+        assert!(!input.fast_forward_held());
+        assert!(!input.click_push());
+        assert_eq!(input.raw_key_push(), 0);
+        assert!(input.async_virtual_key(0x11));
+        assert!(input.async_virtual_key(1));
+        input.set_cancel_masks(0, 0);
+        assert_eq!(
+            input.raw_key_push(),
+            0,
+            "unmask does not restore consumed edges"
+        );
+        input.begin_frame();
+        assert_eq!(input.raw_key_on(), 8 | (1 << 23));
+        assert_eq!(input.raw_key_push(), 0);
     }
 }

@@ -9,9 +9,9 @@ fn audio_handle_preserves_original_prefixes() {
 }
 
 #[test]
-fn pal_volume_is_clamped_and_converted() {
-    assert_eq!(PalVolume::from_raw(-1).raw(), 0);
-    assert_eq!(PalVolume::from_raw(10001).raw(), 10000);
+fn pal_volume_preserves_native_word_and_explicit_clamping() {
+    assert_eq!(PalVolume::from_raw(-1).raw(), -1);
+    assert_eq!(PalVolume::from_raw(10001).raw(), 10001);
     assert!(PalVolume::from_raw(5000).to_decibels() < 0.0);
 }
 
@@ -31,5 +31,5 @@ fn audio_global_and_unloaded_channel_state_match_pal_failure_shape() {
         .unwrap();
     assert_eq!(audio.group_volume(PalSoundGroup::GROUP1).raw(), 6400);
     assert_eq!(audio.free_channel_count(PalSoundGroup::GROUP1), 16);
-    assert_eq!(audio.sound_param(PalSoundGroup::GROUP3, 0, 99), 0);
+    assert_eq!(audio.sound_param(0, 99, true).unwrap(), 0);
 }

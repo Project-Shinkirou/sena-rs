@@ -1,0 +1,849 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalSpriteCreateTransitionHandle",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteTransition32 *",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::create_transition_handle",
+      "notes": "Caller owns the returned zeroed 32-byte allocation; null/error 5 on allocation failure, otherwise error 0. The portable adapter uses typed arena keys and a render identity; it does not expose native pointers. See reverse/contracts/graphics.json and reverse/pal-graphics-behavior.md for callback evidence and remaining render differences.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b5040",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b22b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c44e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteReleaseTransitionHandle",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "PalSpriteTransition32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::release_transition_handle",
+      "notes": "Releases caller-owned handle; cancels first when state is nonzero, releasing the second sprite. Null returns 0/error 6, success 1/error 0. The portable adapter uses typed arena keys and a render identity; it does not expose native pointers. See reverse/contracts/graphics.json and reverse/pal-graphics-behavior.md for callback evidence and remaining render differences.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b4ff0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b2260",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c4530",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteGetTransitionState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "const PalSpriteTransition32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::transition_state",
+      "notes": "Borrows nullable handle for the call. Null returns 3; allocated or cancelled returns 0, active 1, completed 2. Reads +4 without normalizing state. The portable adapter uses typed arena keys and a render identity; it does not expose native pointers. See reverse/contracts/graphics.json and reverse/pal-graphics-behavior.md for callback evidence and remaining render differences.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b4e80",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b20d0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c4790",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteCancelTransition",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "handle",
+          "type": "PalSpriteTransition32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::cancel_transition",
+      "notes": "Borrows writable handle. Requires nonnull handle and stored render address, otherwise 0/error 6. Retains first sprite and clears its transition field; releases second sprite, unlinks worker, zeroes all 32 bytes. Success 1/error 0. Completion alone does not cancel. The portable adapter uses typed arena keys and a render identity; it does not expose native pointers. See reverse/contracts/graphics.json and reverse/pal-graphics-behavior.md for callback evidence and remaining render differences.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b4ea0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b20f0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c46d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetTransition",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "render",
+          "type": "PalRenderOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "first",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "second",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "transition_type",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "start_time_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "duration_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "handle",
+          "type": "PalSpriteTransition32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_transition",
+      "notes": "Borrows writable handle and render for the transition lifetime. First is a borrowed retained sprite; second ownership transfers to the transition and cancellation releases it. Either sprite may be null, but both-null returns 0/error 1 after writing state 1 and all fields. Null handle returns 0/error 6. Existing nonzero state is cancelled before replacement. Type 1 fades first in, second out, using unsigned wrapping cached_time-start_time clamped to duration; zero duration completes immediately. Unsupported types remain active and draw nothing. Newer insertion is immediately before an involved sprite; old builds use priority insertion. Native pointer words are not portable arena keys. The portable adapter uses typed arena keys and a render identity; it does not expose native pointers. See reverse/contracts/graphics.json and reverse/pal-graphics-behavior.md for callback evidence and remaining render differences.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b4f10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b2190",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c4580",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetScaleLegacy",
+      "export_name": "PalSpriteSetScale",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "scale",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_scale",
+      "notes": "Two stack words only. Stores the same uniform scale in the native sprite; the newer three-argument export is ABI-incompatible. Sprite is borrowed and writable for the call. Null returns 0/error 6; success returns 1/error 0. Portable SpriteHandle is a typed arena key, not a native pointer.",
+      "evidence": {
+        "reference": {
+          "address": "0x100b47a0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c2cf0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetScaleTotsulover",
+      "export_name": "PalSpriteSetScale",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "scale_x",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "scale_y",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_scale_xy",
+      "notes": "Three stack words. Stores scale_x at sprite+112 and scale_y at+116 without range checking or normalization. IEEE-754 bit patterns are preserved in state. The portable renderer rejects non-drawable geometry. Sprite is borrowed and writable for the call. Null returns 0/error 6; success returns 1/error 0. Portable SpriteHandle is a typed arena key, not a native pointer.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b9010",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "x",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "y",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "z",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_pos_float",
+      "notes": "Stores three IEEE-754 floats then reorders the render node using wrapping priority + CVTTSS2SI(z). Returns 1; null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b9110",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b48a0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c2050",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteMovePos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dx",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dy",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dz",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::move_pos",
+      "notes": "Adds float deltas and reorders using priority + truncated resulting z. Returns 1; null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b9080",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b4800",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c2110",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteChangePriority",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "priority",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::change_priority",
+      "notes": "Stores base priority then reorders the render node using that priority alone, unlike SetPos/MovePos which add truncated z. Null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b9160",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b4930",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c2c80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetOffsetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_offset_pos",
+      "notes": "Stores integer draw offsets at +76/+80. Does not mutate the primary float position or priority. Null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b90e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b4860",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c20d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteMoveOffsetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dx",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dy",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::move_offset_pos",
+      "notes": "Adds wrapping 32-bit integer deltas to draw offsets. Null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b9050",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b47d0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c21a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetOffsetRect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "width",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "height",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_offset_rect",
+      "notes": "Sets logical cell width/height only; does not change source rectangle, texture or pixel allocation. Zero and large values are accepted. Null returns 0/error 6. Sprite is borrowed and writable during the call. Success returns 1/error 0. Portable handles are typed arena keys rather than native addresses. Native float-to-integer conversion returns INT_MIN for NaN and out-of-range values; integer priority/offset addition wraps.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b8ef0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b4680",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c21f0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalMixSpriteToSpriteEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "destination",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dst_x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "dst_y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "width",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "height",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "src_x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "src_y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::mix_sprite_to_sprite_ex / blend_pixel",
+      "notes": "Computes retained_alpha=(255-source_alpha)*destination_alpha/255, output_alpha=source_alpha+retained_alpha, and each output channel=(retained_alpha*dst+source_alpha*src)/output_alpha with integer truncation. Zero output alpha yields a zero pixel. Destination and source sprites are borrowed for the call and locked internally; no ownership transfer. Null sprite returns 0/error 6. Lock/clipping failure returns 0. Successful copy unlocks both and returns1. Portable adapter preserves signed extent arguments and safely rejects nonpositive extents. Overlapping surfaces use an immutable source snapshot rather than native in-place pointer aliasing. Integer pixel operations preserve native byte order by mapping BGRA to RGBA channels.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b7320",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetRenderMode",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "mode",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_render_mode; scene::blend; renderer and console GPU backends",
+      "notes": "Borrows writable sprite; null returns 0/error6, success1/error0. Stores complete mode word without validation. Legacy D3D dispatcher recognizes1..4; newer recognizes1..11. Legacy draw restores default blend after non1 modes; unknown inputs therefore use initialized default state. Newer11 disables blending and selects texture RGB; normal render walk does not restore those two states, whereas TargetRenderListDraw restores defaults before each callback. Portable draw commands carry blend_disabled and texture_rgb independently of the unchanged mode word. The ordinary priority-sorted engine walk preserves those states across frames; the target-walk state helper resets before every callback and after the list. CPU, wgpu, Switch deko3d and Vita GXM consume the resolved flags. Native DIB and D3D kernels are distinct; portable software uses recovered D3D RGB equations. See per-build callback/draw/blend evidence under reverse/evidence/pal-graphics.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b5330",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        },
+        "reference": {
+          "address": "0x100b2670",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100c4080",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalChannelCopyEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "destination",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "destination_rect",
+          "type": "const PalRect32 *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "destination_channel",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source_x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source_y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "source_channel",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "operation",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::channel_copy_ex",
+      "notes": "Borrows two sprite pointers and a required readable 16-byte RECT for the call; the first sprite is writable. Null sprites, channels outside 0..3, empty clipped overlap, lock failure or operation outside 0..2 return 0; successful traversal returns 1. RECT null is not checked natively. Channel indices address native BGRA bytes and are mapped explicitly to portable RGBA. Operations are copy, saturated addition and rounded product (257*(destination*source+128))>>16. Clips the destination rectangle then offsets/clips source coordinates. A pointer-identical sprite is locked/unlocked once, and traversal is top-to-bottom/left-to-right with immediate writes, preserving overlapping alias feedback. The portable arena adapter rejects invalid handles and impossible physical dimensions; it models byte operations but does not reproduce driver lock failures or native last-error residue.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100bb070",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteHit",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "const PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "alpha_test",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::hit",
+      "notes": "Borrows nullable sprite; null returns 0/error 6. Hidden sprites return 0. The half-open rectangle uses wrapping x/y minus integer offsets plus CVTTSS2SI position, and selected source-rectangle width/height. Ignores scale, rotation, center offsets and modulation alpha. Any nonzero alpha_test samples the selected source texel and returns whether alpha is nonzero. Pixel lookup failure, absent texture or out-of-range source coordinates yields 0xFFFFFFFF and therefore accepts the hit. The EXE/button caller supplies its own flag-to-alpha_test conversion. The typed arena adapter applies already-scheduled action position deltas and preserves the fail-open missing-texture behavior; it does not simulate GPU lock failures.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c2430",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        },
+        "reference": {
+          "address": "0x100b4370",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "totsulover": {
+          "address": "0x100b8bc0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalTargetRenderListDraw",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/sprite/target_render.rs::SpriteSystem::target_render_list_draw",
+      "notes": "Uses the current core and active render list; no stack arguments. Returns 0/error 6 only when an active list is absent while rendering is enabled, otherwise returns 1, including suspended-render and BeginScene-failure paths. The borrowed target-object collection retains duplicates and null. Clears the temporary target to transparent black, invokes matching render callbacks in target insertion order even for hidden sprites, resets D3D state before each callback and after the walk, removes render nodes whose callback returns zero, restores the main target, and retains the target collection. Portable SpriteSystem models the observed sprite-object callers and renders an RGBA offscreen target on CPU; arbitrary foreign callback pointers and driver failures remain outside its typed arena interface.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100af6d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteRenderCopy",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite/target_render.rs::SpriteSystem::render_copy",
+      "notes": "Borrows writable sprite, null returns 0/error 6; any nonnull pointer returns 1 even when native locking or capture fails. The D3D path locks its texture then copies the temporary render target through 0x100CB700; the software path is a successful no-op. The helper accepts only A8R8G8B8/X8R8G8B8, requires destination dimensions at least the native logical size, copies the centered destination-sized physical target region and preserves all four BGRA bytes. Portable offscreen capture keeps RGBA alpha and centers logical pixels in any larger destination with transparent padding; physical driver padding and failure residue are not simulated.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100b6da0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetRotateEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "z",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_rotate_ex",
+      "notes": "Borrows a writable sprite. Null returns 0 and sets LastError6; success returns1 without clearing the prior error. Signed integer angles are converted to stored IEEE754 floats without normalization; the portable internal method takes already-converted floats. The Game.exe attachment wrapper stores angle differences and adds parent angles before submitting; ABI angles are not pointers or portable handles.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c2d70",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-graphics/koikake-exports.json"
+        },
+        "reference": {
+          "address": "0x100b46b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "totsulover": {
+          "address": "0x100b8f20",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalSpriteSetRotateExFloat",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "x",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "y",
+          "type": "float",
+          "stack_bytes": 4
+        },
+        {
+          "name": "z",
+          "type": "float",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/sprite.rs::SpriteSystem::set_rotate_ex",
+      "notes": "Borrows a writable sprite. Null returns 0 and sets LastError6; success returns1 without clearing the prior error. Copies three IEEE754 float words unchanged into stored rotation, including negative and nonfinite values. This export is absent in Koikake; legacy integer submission is separate. The Game.exe attachment wrapper stores angle differences and adds parent angles before submitting; ABI angles are not pointers or portable handles.",
+      "evidence": {
+        "reference": {
+          "address": "0x100b4700",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-graphics/reference-exports.json"
+        },
+        "totsulover": {
+          "address": "0x100b8f70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-graphics/totsulover-exports.json"
+        }
+      }
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "PalTargetRenderListAdd",
+      "reason": "One cdecl 32-bit borrowed opaque object pointer is confirmed (including null and duplicates); the list-allocation return left in EAX is incidental and the source return type is unresolved. Portable target_render_list_add uses Option<SpriteHandle>, not a native pointer declaration."
+    },
+    {
+      "name": "PalTargetRenderListClear",
+      "reason": "No stack arguments and collection-only node destruction are confirmed, but the thunk/clear-helper leaves incidental EAX. Source-level return type is unresolved. Portable target_render_list_clear has no source-visible return."
+    }
+  ]
+}

@@ -1,7 +1,11 @@
 use std::collections::BTreeMap;
 use std::io::Cursor;
 
-use plmpeg::MpegDecoder;
+mod mpeg;
+mod audio;
+use audio::MovieAudio;
+use crate::audio::{AudioSystem, PalSoundGroup};
+use mpeg::MpegDecoder;
 use wmv_decoder::{AsfWmv2Decoder, YuvFrame};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -12,6 +16,8 @@ pub struct MSpriteSystem {
     next_handle: u32,
     entries: BTreeMap<MSpriteHandle, MSpriteEntry>,
     movie: Option<MoviePlayback>,
+    audio_master: i32,
+    audio_group4: i32,
 }
 
 impl Default for MSpriteSystem {
@@ -26,6 +32,8 @@ impl MSpriteSystem {
             next_handle: 1,
             entries: BTreeMap::new(),
             movie: None,
+            audio_master: 10000,
+            audio_group4: 10000,
         }
     }
 
@@ -45,7 +53,10 @@ impl MSpriteSystem {
                 (info.width.max(1), info.height.max(1), rgba, 0)
             }
         };
-        Ok(self.insert_loaded(name.into(), bytes, source, width, height, rgba, pts_ms))
+        let audio = MovieAudio::decode(&bytes, self.initial_gain());
+        let loaded = self.insert_loaded(name.into(), bytes, source, width, height, rgba, pts_ms);
+        self.entries.get_mut(&loaded.handle).unwrap().audio = audio;
+        Ok(loaded)
     }
 
     pub fn load_movie(
@@ -55,7 +66,9 @@ impl MSpriteSystem {
     ) -> anyhow::Result<LoadedMSprite> {
         match movie_container(&bytes) {
             MovieContainer::Mpeg => self.load_mpeg(name, bytes),
-            MovieContainer::Mp4 => anyhow::bail!("mp4 movie is not decoded"),
+            MovieContainer::Mp4 => {
+                anyhow::bail!("mp4 playback is not supported by the verified PAL profiles")
+            }
             MovieContainer::Wmv | MovieContainer::Unknown => self.load_wmv(name, bytes),
         }
     }
@@ -65,11 +78,12 @@ impl MSpriteSystem {
         name: impl Into<String>,
         bytes: Vec<u8>,
     ) -> anyhow::Result<LoadedMSprite> {
+        let audio = MovieAudio::decode(&bytes, self.initial_gain());
         let mut decoder = MpegDecoder::open(bytes).map_err(|err| anyhow::anyhow!(err))?;
         let Some(frame) = decoder.next_frame().map_err(|err| anyhow::anyhow!(err))? else {
             anyhow::bail!("mpeg stream produced no video frame");
         };
-        Ok(self.insert_loaded(
+        let loaded = self.insert_loaded(
             name.into(),
             Vec::new(),
             FrameSource::Mpeg(decoder),
@@ -77,7 +91,9 @@ impl MSpriteSystem {
             frame.height,
             frame.rgba,
             frame.pts_ms,
-        ))
+        );
+        self.entries.get_mut(&loaded.handle).unwrap().audio = audio;
+        Ok(loaded)
     }
 
     fn insert_loaded(
@@ -101,6 +117,10 @@ impl MSpriteSystem {
                 height,
                 current_rgba: rgba.clone(),
                 current_pts_ms: pts_ms,
+                playback_pts_ms: pts_ms,
+                pending_frame: None,
+                source_ended: false,
+                frame_duration_ms: 1,
                 playing: false,
                 locked: false,
                 loop_mode: 0,
@@ -108,6 +128,9 @@ impl MSpriteSystem {
                 loop_end: 0,
                 finished: false,
                 state_bits: 0,
+                loop_generation: 0,
+                active_end_ms: None,
+                audio: MovieAudio::new(None, self.initial_gain()),
             },
         );
         LoadedMSprite {
@@ -127,6 +150,33 @@ impl MSpriteSystem {
         self.entries.clear();
     }
 
+    /// Snapshot the native master and group gains before a load or setter.
+    pub fn set_audio_levels(&mut self, audio: &AudioSystem) {
+        self.audio_master = audio.primary_volume().raw();
+        self.audio_group4 = audio.group_volume(PalSoundGroup::GROUP4).raw();
+    }
+
+    fn initial_gain(&self) -> i32 {
+        self.audio_group4.wrapping_mul(self.audio_master) / 10000
+    }
+
+    pub fn set_volume(&mut self, handle: MSpriteHandle, percent: i32, bypass_group: bool) -> bool {
+        let raw = if bypass_group { percent.wrapping_mul(100) } else {
+            percent.wrapping_mul(self.audio_group4) / 100
+        };
+        self.set_raw_audio_gain(handle, raw.wrapping_mul(self.audio_master) / 10000)
+    }
+
+    pub fn set_raw_audio_gain(&mut self, handle: MSpriteHandle, gain: i32) -> bool {
+        self.entries.get_mut(&handle).is_some_and(|entry| entry.audio.set_gain(gain))
+    }
+
+    pub fn sync_audio(&mut self, audio: &mut AudioSystem) {
+        for entry in self.entries.values_mut() {
+            entry.audio.sync(audio, entry.playing && !entry.finished, entry.playback_pts_ms, entry.loop_generation);
+        }
+    }
+
     pub fn check(&self, handle: MSpriteHandle) -> bool {
         self.entries.contains_key(&handle)
     }
@@ -138,7 +188,7 @@ impl MSpriteSystem {
         entry.playing = true;
         entry.finished = false;
         entry.loop_mode = loop_mode;
-        entry.state_bits &= !MSPRITE_STATE_FINISHED;
+        entry.state_bits = (entry.state_bits & MSPRITE_STATE_LOOP) | MSPRITE_STATE_PLAYING;
         true
     }
 
@@ -146,18 +196,19 @@ impl MSpriteSystem {
         let Some(entry) = self.entries.get_mut(&handle) else {
             return false;
         };
+        if entry.playing {
+            entry.state_bits = (entry.state_bits & MSPRITE_STATE_LOOP) | MSPRITE_STATE_STOPPED;
+        }
         entry.playing = false;
-        entry.finished = true;
-        entry.state_bits |= MSPRITE_STATE_FINISHED;
+        entry.finished = false;
+        entry.audio.stop();
         true
     }
 
+    /// Native PalMSpritePause accepts a nonnull sprite and otherwise does nothing.
+    /// Portable movie handles represent only sprites with a movie worker.
     pub fn pause(&mut self, handle: MSpriteHandle) -> bool {
-        let Some(entry) = self.entries.get_mut(&handle) else {
-            return false;
-        };
-        entry.playing = false;
-        true
+        self.entries.contains_key(&handle)
     }
 
     pub fn lock(&mut self, handle: MSpriteHandle) -> bool {
@@ -188,35 +239,21 @@ impl MSpriteSystem {
         let Some(entry) = self.entries.get_mut(&handle) else {
             return false;
         };
-        entry.loop_start = start.max(0);
-        entry.loop_end = end.max(0);
+        entry.loop_start = start;
+        if end != 0 {
+            entry.loop_end = end;
+        }
         true
     }
 
+    /// PalMSpriteIsLoop tests bit 31 of the native state word, independently
+    /// of the loop counter set by PalMSpriteSetLoop and PalMSpritePlay.
     pub fn is_loop(&self, handle: MSpriteHandle) -> bool {
-        self.entries
-            .get(&handle)
-            .is_some_and(|entry| entry.loop_mode != 0 || entry.loop_end > entry.loop_start)
+        self.state(handle) & MSPRITE_STATE_LOOP != 0
     }
 
     pub fn state(&self, handle: MSpriteHandle) -> u32 {
-        let Some(entry) = self.entries.get(&handle) else {
-            return 0;
-        };
-        let mut state = entry.state_bits;
-        if entry.playing {
-            state |= MSPRITE_STATE_PLAYING;
-        }
-        if entry.finished {
-            state |= MSPRITE_STATE_FINISHED;
-        }
-        if entry.locked {
-            state |= MSPRITE_STATE_LOCKED;
-        }
-        if self.is_loop(handle) {
-            state |= MSPRITE_STATE_LOOP;
-        }
-        state
+        self.entries.get(&handle).map_or(0, |entry| entry.state_bits)
     }
 
     pub fn advance(&mut self, delta_ms: u32) -> Vec<MSpriteFrameUpdate> {
@@ -226,60 +263,119 @@ impl MSpriteSystem {
             let Some(entry) = self.entries.get_mut(&handle) else {
                 continue;
             };
-            if !entry.playing || entry.locked || entry.finished {
+            if !entry.playing || entry.finished {
                 continue;
             }
-            let target_pts = entry.current_pts_ms.saturating_add(delta_ms);
+            if delta_ms == 0 {
+                continue;
+            }
+            // The presentation clock must advance by elapsed time, not by the
+            // timestamp of the last decoded frame. Otherwise every renderer
+            // tick consumes a frame even when the movie runs at a lower rate.
+            let mut target_pts = entry.playback_pts_ms.saturating_add(delta_ms);
             let mut latest = None;
-            let mut restarts = 0u32;
-            let mut skipped = 0u32;
+            let start = entry.loop_start.max(0) as u32;
+            // Native SetLoopPoint stores a future seek range. Run does not seek:
+            // the first pass ends at stream EOF, and only a loop restart installs
+            // the requested stop position on the graph.
+            let explicit_end = entry.active_end_ms;
+            let mut finish_at_end = false;
+            if let Some(end) = explicit_end.filter(|end| target_pts >= *end) {
+                if entry.loop_mode != 0 {
+                    // Stored points can change while the previous seek range
+                    // is still active. Carry time into the new range only.
+                    let next_end = entry.loop_end.max(0) as u32;
+                    if next_end <= start {
+                        log::warn!("invalid movie loop range: {start}..{next_end}");
+                        finish_entry(entry);
+                        continue;
+                    }
+                    target_pts = start + (target_pts - end) % (next_end - start);
+                    if let Err(err) = rewind_entry(entry) {
+                        log::warn!("[trace-msprite] restart {:?} failed: {err}", entry.name);
+                        finish_entry(entry);
+                        continue;
+                    }
+                } else {
+                    target_pts = end.saturating_sub(1);
+                    finish_at_end = true;
+                }
+            }
+            let mut restarts = 0;
             loop {
-                let pulled = match next_presented(&mut entry.decoder) {
-                    Ok(frame) => frame,
+                if entry.source_ended {
+                    // Keep even a one-picture stream visible for its declared
+                    // duration. There is no observed PTS interval in that case.
+                    let end = explicit_end.unwrap_or_else(|| match &entry.decoder {
+                        FrameSource::Wmv(decoder) => decoder
+                            .duration_ms()
+                            .and_then(|end| u32::try_from(end).ok())
+                            .filter(|&end| end > entry.current_pts_ms)
+                            .unwrap_or_else(|| {
+                                entry.current_pts_ms.saturating_add(entry.frame_duration_ms)
+                            }),
+                        FrameSource::Mpeg(decoder) => entry
+                            .current_pts_ms
+                            .saturating_add(decoder.frame_duration_ms()),
+                        #[cfg(test)]
+                        FrameSource::Frames { .. } => {
+                            entry.current_pts_ms.saturating_add(entry.frame_duration_ms)
+                        }
+                    });
+                    if target_pts < end {
+                        break;
+                    }
+                    if entry.loop_mode == 0 || restarts >= 1 {
+                        finish_entry(entry);
+                        break;
+                    }
+                    let next_end = if entry.loop_end > 0 {
+                        entry.loop_end as u32
+                    } else {
+                        end
+                    };
+                    if next_end <= start {
+                        log::warn!("invalid movie loop range: {start}..{next_end}");
+                        finish_entry(entry);
+                        break;
+                    }
+                    target_pts = start + (target_pts - end) % (next_end - start);
+                    restarts += 1;
+                    if let Err(err) = rewind_entry(entry) {
+                        log::warn!("[trace-msprite] restart {:?} failed: {err}", entry.name);
+                        finish_entry(entry);
+                        break;
+                    }
+                }
+                let pulled = match entry.pending_frame.take() {
+                    Some(frame) => Ok(Some(frame)),
+                    None => next_presented(&mut entry.decoder),
+                };
+                let frame = match pulled {
+                    Ok(Some(frame)) => frame,
+                    Ok(None) => {
+                        entry.source_ended = true;
+                        continue;
+                    }
                     Err(err) => {
                         log::warn!("[trace-msprite] decode {:?} failed: {err}", entry.name);
                         finish_entry(entry);
                         break;
                     }
                 };
-                let Some(frame) = pulled else {
-                    if !restart_playback(entry, &mut restarts, &mut latest, handle, target_pts) {
-                        break;
-                    }
-                    continue;
-                };
-                if frame_inside_preroll(frame.pts_ms, entry.loop_start) {
-                    skipped += 1;
-                    if skipped > 4_000 {
-                        finish_entry(entry);
-                        break;
-                    }
-                    continue;
+                if frame.pts_ms > target_pts {
+                    entry.pending_frame = Some(frame);
+                    break;
                 }
-                match movie_loop_at_frame(
-                    frame.pts_ms,
-                    entry.loop_mode,
-                    entry.loop_start,
-                    entry.loop_end,
-                ) {
-                    MovieLoopAction::Present => {
-                        let reached = frame.pts_ms >= target_pts;
-                        apply_presented(entry, handle, frame, &mut latest);
-                        if reached {
-                            break;
-                        }
-                    }
-                    MovieLoopAction::Finish => {
-                        finish_entry(entry);
-                        break;
-                    }
-                    MovieLoopAction::Restart => {
-                        if !restart_playback(entry, &mut restarts, &mut latest, handle, target_pts)
-                        {
-                            break;
-                        }
-                    }
-                }
+                apply_presented(entry, handle, frame, &mut latest);
+            }
+            entry.playback_pts_ms = if finish_at_end {
+                explicit_end.unwrap()
+            } else {
+                target_pts
+            };
+            if finish_at_end {
+                finish_entry(entry);
             }
             if let Some(update) = latest {
                 updates.push(update);
@@ -289,7 +385,7 @@ impl MSpriteSystem {
             if let Some(handle) = movie.handle {
                 if let Some(entry) = self.entries.get(&handle) {
                     movie.playing = entry.playing && !entry.finished;
-                    movie.elapsed_ms = entry.current_pts_ms;
+                    movie.elapsed_ms = entry.playback_pts_ms;
                 } else {
                     movie.playing = false;
                 }
@@ -298,10 +394,10 @@ impl MSpriteSystem {
         updates
     }
 
-    pub fn start_movie(&mut self, name: impl Into<String>, layer: i32, handle: MSpriteHandle) {
+    pub fn start_movie(&mut self, name: impl Into<String>, flags: u16, handle: MSpriteHandle) {
         self.movie = Some(MoviePlayback {
             name: name.into(),
-            layer,
+            flags,
             playing: true,
             elapsed_ms: 0,
             handle: Some(handle),
@@ -351,7 +447,7 @@ pub struct MSpriteFrameUpdate {
 #[derive(Clone, Debug)]
 pub struct MoviePlayback {
     pub name: String,
-    pub layer: i32,
+    pub flags: u16,
     pub playing: bool,
     pub elapsed_ms: u32,
     pub handle: Option<MSpriteHandle>,
@@ -365,6 +461,10 @@ struct MSpriteEntry {
     height: u32,
     current_rgba: Vec<u8>,
     current_pts_ms: u32,
+    playback_pts_ms: u32,
+    pending_frame: Option<PresentedFrame>,
+    source_ended: bool,
+    frame_duration_ms: u32,
     playing: bool,
     locked: bool,
     loop_mode: i32,
@@ -372,6 +472,9 @@ struct MSpriteEntry {
     loop_end: i32,
     finished: bool,
     state_bits: u32,
+    loop_generation: u64,
+    active_end_ms: Option<u32>,
+    audio: MovieAudio,
 }
 
 impl std::fmt::Debug for MSpriteEntry {
@@ -395,20 +498,19 @@ impl std::fmt::Debug for MSpriteEntry {
 enum FrameSource {
     Wmv(AsfWmv2Decoder<Cursor<Vec<u8>>>),
     Mpeg(MpegDecoder),
+    #[cfg(test)]
+    Frames {
+        frames: Vec<PresentedFrame>,
+        next: usize,
+    },
 }
 
+#[derive(Clone)]
 struct PresentedFrame {
     pts_ms: u32,
     width: u32,
     height: u32,
     rgba: Vec<u8>,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum MovieLoopAction {
-    Present,
-    Restart,
-    Finish,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -420,7 +522,7 @@ enum MovieContainer {
 }
 
 fn movie_container(bytes: &[u8]) -> MovieContainer {
-    if plmpeg::is_mpeg_packet(bytes) {
+    if mpeg::is_mpeg_packet(bytes) {
         MovieContainer::Mpeg
     } else if bytes.len() >= 4 && bytes[..4] == [0x30, 0x26, 0xB2, 0x75] {
         MovieContainer::Wmv
@@ -431,34 +533,12 @@ fn movie_container(bytes: &[u8]) -> MovieContainer {
     }
 }
 
-fn movie_loop_at_frame(
-    pts_ms: u32,
-    loop_mode: i32,
-    loop_start: i32,
-    loop_end: i32,
-) -> MovieLoopAction {
-    let start = u32::try_from(loop_start).unwrap_or(0);
-    let end = u32::try_from(loop_end).unwrap_or(0);
-    if end > start && pts_ms >= end {
-        if loop_mode != 0 {
-            MovieLoopAction::Restart
-        } else {
-            MovieLoopAction::Finish
-        }
-    } else {
-        MovieLoopAction::Present
-    }
-}
-
-fn frame_inside_preroll(pts_ms: u32, loop_start: i32) -> bool {
-    let start = u32::try_from(loop_start).unwrap_or(0);
-    start > 0 && pts_ms < start
-}
-
 fn finish_entry(entry: &mut MSpriteEntry) {
+    entry.audio.stop();
     entry.playing = false;
     entry.finished = true;
-    entry.state_bits |= MSPRITE_STATE_FINISHED;
+    entry.state_bits = (entry.state_bits & MSPRITE_STATE_LOOP)
+        | MSPRITE_STATE_STOPPED | MSPRITE_STATE_FINISHED;
 }
 
 fn apply_presented(
@@ -469,6 +549,9 @@ fn apply_presented(
 ) {
     entry.width = frame.width;
     entry.height = frame.height;
+    if frame.pts_ms > entry.current_pts_ms {
+        entry.frame_duration_ms = frame.pts_ms - entry.current_pts_ms;
+    }
     entry.current_pts_ms = frame.pts_ms;
     entry.current_rgba = frame.rgba.clone();
     *latest = Some(MSpriteFrameUpdate {
@@ -480,50 +563,25 @@ fn apply_presented(
     });
 }
 
-fn restart_playback(
-    entry: &mut MSpriteEntry,
-    restarts: &mut u32,
-    latest: &mut Option<MSpriteFrameUpdate>,
-    handle: MSpriteHandle,
-    target_pts: u32,
-) -> bool {
-    if entry.loop_mode == 0 {
-        finish_entry(entry);
-        return false;
-    }
-    *restarts += 1;
-    if *restarts > 32 {
-        finish_entry(entry);
-        return false;
-    }
-    let restarted = restart_source(&mut entry.decoder, &entry.bytes, entry.loop_start);
-    match restarted {
-        Ok(Some(frame)) => {
-            if movie_loop_at_frame(
-                frame.pts_ms,
-                entry.loop_mode,
-                entry.loop_start,
-                entry.loop_end,
-            ) == MovieLoopAction::Finish
-            {
-                finish_entry(entry);
-                return false;
-            }
-            let reached = frame.pts_ms >= target_pts;
-            apply_presented(entry, handle, frame, latest);
-            !reached
-        }
-        Ok(None) => true,
-        Err(err) => {
-            log::warn!("[trace-msprite] restart {:?} failed: {err}", entry.name);
-            finish_entry(entry);
-            false
-        }
-    }
+fn rewind_entry(entry: &mut MSpriteEntry) -> anyhow::Result<()> {
+    // Native retries a rejected DirectShow seek indefinitely. Reject the invalid
+    // range instead of reproducing that hang on a portable backend.
+    anyhow::ensure!(entry.loop_start >= 0 && entry.loop_end >= 0, "negative movie loop point");
+    entry.active_end_ms = (entry.loop_end > 0).then_some(entry.loop_end as u32);
+    entry.pending_frame = restart_source(&mut entry.decoder, &entry.bytes, entry.loop_start)?;
+    entry.source_ended = false;
+    entry.loop_generation = entry.loop_generation.wrapping_add(1);
+    Ok(())
 }
 
 fn next_presented(source: &mut FrameSource) -> anyhow::Result<Option<PresentedFrame>> {
     match source {
+        #[cfg(test)]
+        FrameSource::Frames { frames, next } => {
+            let frame = frames.get(*next).cloned();
+            *next += usize::from(frame.is_some());
+            Ok(frame)
+        }
         FrameSource::Wmv(decoder) => match decoder.next_frame()? {
             Some(frame) => Ok(Some(PresentedFrame {
                 pts_ms: frame.pts_ms,
@@ -552,56 +610,30 @@ fn restart_source(
     bytes: &[u8],
     loop_start: i32,
 ) -> anyhow::Result<Option<PresentedFrame>> {
-    let start = u32::try_from(loop_start).unwrap_or(0);
+    let _ = loop_start;
     match source {
+        #[cfg(test)]
+        FrameSource::Frames { next, .. } => {
+            *next = 0;
+            Ok(None)
+        }
         FrameSource::Wmv(decoder) => {
             *decoder = AsfWmv2Decoder::open(Cursor::new(bytes.to_vec()))?;
-            if start == 0 {
-                return Ok(None);
-            }
-            let mut skipped = 0u32;
-            loop {
-                match decoder.next_frame()? {
-                    Some(frame) if frame.pts_ms >= start => {
-                        return Ok(Some(PresentedFrame {
-                            pts_ms: frame.pts_ms,
-                            width: frame.frame.width,
-                            height: frame.frame.height,
-                            rgba: yuv420_to_rgba(&frame.frame),
-                        }));
-                    }
-                    Some(_) => {
-                        skipped += 1;
-                        if skipped > 4_000 {
-                            return Ok(None);
-                        }
-                    }
-                    None => return Ok(None),
-                }
-            }
+            // Decode forward on the presentation clock. Preroll must retain
+            // the frame before loop_start until the next frame is due.
+            Ok(None)
         }
         FrameSource::Mpeg(decoder) => {
-            if start == 0 {
-                decoder.rewind();
-                Ok(None)
-            } else {
-                match decoder.seek_ms(start) {
-                    Ok(Some(frame)) => Ok(Some(PresentedFrame {
-                        pts_ms: frame.pts_ms,
-                        width: frame.width,
-                        height: frame.height,
-                        rgba: frame.rgba,
-                    })),
-                    Ok(None) => Ok(None),
-                    Err(err) => Err(anyhow::anyhow!(err)),
-                }
-            }
+            // Rebuild reference pictures from the beginning; advance() prerolls
+            // on its presentation clock and keeps the preceding frame at start.
+            decoder.rewind();
+            Ok(None)
         }
     }
 }
 
 pub const MSPRITE_STATE_PLAYING: u32 = 0x0000_0001;
-pub const MSPRITE_STATE_LOCKED: u32 = 0x0000_0002;
+pub const MSPRITE_STATE_STOPPED: u32 = 0x0000_0002;
 pub const MSPRITE_STATE_FINISHED: u32 = 0x0000_0004;
 pub const MSPRITE_STATE_LOOP: u32 = 0x8000_0000;
 
@@ -647,23 +679,159 @@ mod tests {
             .all(|px| px[0] <= 1 && px[1] <= 1 && px[2] <= 1));
     }
 
+    fn timed_movie() -> (MSpriteSystem, MSpriteHandle) {
+        let mut system = MSpriteSystem::new();
+        let frames = [0, 40, 80]
+            .into_iter()
+            .map(|pts_ms| PresentedFrame {
+                pts_ms,
+                width: 1,
+                height: 1,
+                rgba: vec![pts_ms as u8, 0, 0, 255],
+            })
+            .collect();
+        let loaded = system.insert_loaded(
+            "timed".into(),
+            Vec::new(),
+            FrameSource::Frames { frames, next: 1 },
+            1,
+            1,
+            vec![0, 0, 0, 255],
+            0,
+        );
+        system.play(loaded.handle, 0);
+        (system, loaded.handle)
+    }
+
+    #[cfg(feature = "host-audio")]
     #[test]
-    fn loop_end_restarts_when_looping_and_finishes_when_not() {
-        assert_eq!(
-            movie_loop_at_frame(1_500, 1, 0, 1_000),
-            MovieLoopAction::Restart
-        );
-        assert_eq!(
-            movie_loop_at_frame(1_500, 0, 0, 1_000),
-            MovieLoopAction::Finish
-        );
-        assert_eq!(
-            movie_loop_at_frame(400, 1, 0, 1_000),
-            MovieLoopAction::Present
-        );
-        assert!(frame_inside_preroll(200, 500));
-        assert!(!frame_inside_preroll(500, 500));
-        assert!(!frame_inside_preroll(10, 0));
+    fn decoded_wmv_and_mpeg_tracks_reach_the_host_sink_and_stop_with_the_movie() {
+        for bytes in [
+            include_bytes!("../tests/fixtures/movie_audio_delayed.mpg").as_slice(),
+            include_bytes!("../tests/fixtures/movie_audio_delayed.wmv").as_slice(),
+        ] {
+            let mut audio = crate::audio::AudioSystem::new(crate::audio::AudioConfig { enabled: true }).unwrap();
+            let sink = audio.host_sink();
+            let mut system = MSpriteSystem::new();
+            let movie = system.load_movie("soundtrack", bytes.to_vec()).unwrap();
+            system.play(movie.handle, 0);
+            system.sync_audio(&mut audio);
+            let mut output = vec![0; 48000];
+            sink.render_i16(&mut output);
+            assert!(output.iter().any(|sample| sample.abs() > 50));
+            system.stop(movie.handle);
+            sink.render_i16(&mut output);
+            assert!(output.iter().all(|&sample| sample == 0));
+            system.play(movie.handle, 0);
+            system.sync_audio(&mut audio);
+            sink.render_i16(&mut output);
+            assert!(output.iter().any(|sample| sample.abs() > 50));
+            system.release(movie.handle);
+            sink.render_i16(&mut output);
+            assert!(output.iter().all(|&sample| sample == 0));
+        }
+    }
+
+    #[test]
+    fn movie_sprite_gain_is_a_load_and_set_snapshot() {
+        let mut audio = crate::audio::AudioSystem::new(crate::audio::AudioConfig { enabled: false }).unwrap();
+        audio.set_primary_volume(crate::audio::PalVolume::from_raw(5000)).unwrap();
+        audio.set_group_volume(PalSoundGroup::GROUP4, crate::audio::PalVolume::from_raw(4000)).unwrap();
+        let mut system = MSpriteSystem::new();
+        system.set_audio_levels(&audio);
+        let loaded = system.load_movie("audio", include_bytes!("../tests/fixtures/movie_audio_delayed.mpg").to_vec()).unwrap();
+        assert_eq!(system.entries[&loaded.handle].audio.gain(), 2000);
+        audio.set_primary_volume(crate::audio::PalVolume::from_raw(2500)).unwrap();
+        system.set_audio_levels(&audio);
+        system.play(loaded.handle, 1);
+        system.sync_audio(&mut audio);
+        assert_eq!(system.entries[&loaded.handle].audio.gain(), 2000);
+        assert!(system.set_volume(loaded.handle, 50, false));
+        assert_eq!(system.entries[&loaded.handle].audio.gain(), 500);
+        assert!(system.set_volume(loaded.handle, 50, true));
+        assert_eq!(system.entries[&loaded.handle].audio.gain(), 1250);
+    }
+
+    #[test]
+    fn presentation_waits_for_frame_pts_and_accumulates_small_ticks() {
+        let (mut system, handle) = timed_movie();
+        assert!(system.advance(16).is_empty());
+        assert!(system.advance(16).is_empty());
+        assert_eq!(system.advance(16)[0].rgba[0], 40);
+        assert!(system.advance(16).is_empty());
+        assert_eq!(system.advance(16)[0].rgba[0], 80);
+        assert!(system.advance(39).is_empty());
+        assert_ne!(system.state(handle) & MSPRITE_STATE_PLAYING, 0);
+        assert!(system.advance(1).is_empty());
+        assert_ne!(system.state(handle) & MSPRITE_STATE_FINISHED, 0);
+    }
+
+    #[test]
+    fn native_pause_and_lock_do_not_stop_the_graph_clock() {
+        let (mut system, handle) = timed_movie();
+        assert!(system.advance(0).is_empty());
+        assert!(system.pause(handle));
+        assert_eq!(system.advance(40)[0].rgba[0], 40);
+        assert!(system.lock(handle));
+        assert_eq!(system.state(handle), 1);
+        assert_eq!(system.advance(40)[0].rgba[0], 80);
+        assert!(system.unlock(handle));
+        system.stop(handle);
+        assert_eq!(system.state(handle), 2);
+        assert!(system.advance(1_000).is_empty());
+        system.play(handle, 1);
+        assert_eq!(system.state(handle), 1);
+        assert!(!system.is_loop(handle));
+    }
+
+    #[test]
+    fn loop_wraps_clock_and_keeps_remainder_without_running_to_eof_again() {
+        let (mut system, handle) = timed_movie();
+        system.set_loop(handle, 1);
+        system.start_movie("timed", 0, handle);
+        // Eight complete 120ms loops plus 40ms into the ninth.
+        assert_eq!(system.advance(1_000)[0].rgba[0], 40);
+        assert_eq!(system.movie().unwrap().elapsed_ms, 40);
+        assert!(system.advance(39).is_empty());
+        assert_eq!(system.advance(1)[0].rgba[0], 80);
+        assert_eq!(system.advance(40)[0].rgba[0], 0);
+        assert_ne!(system.state(handle) & MSPRITE_STATE_PLAYING, 0);
+    }
+
+    #[test]
+    fn explicit_loop_points_apply_on_restart_and_stop_at_end() {
+        let (mut system, handle) = timed_movie();
+        system.set_loop_point(handle, 40, 100);
+        system.set_loop(handle, 1);
+        // The intro still plays; loop_start only chooses the restart point.
+        assert!(system.advance(16).is_empty());
+        assert_eq!(system.advance(104)[0].rgba[0], 40);
+        assert_eq!(system.entries[&handle].playback_pts_ms, 40);
+        assert!(system.advance(20).is_empty());
+        assert_eq!(system.advance(20)[0].rgba[0], 80);
+        assert_eq!(system.advance(20)[0].rgba[0], 40);
+
+        let (mut system, handle) = timed_movie();
+        system.set_loop_point(handle, 40, 100);
+        assert_eq!(system.advance(1_000)[0].rgba[0], 80);
+        assert_ne!(system.state(handle) & MSPRITE_STATE_FINISHED, 0);
+    }
+
+    #[test]
+    fn changed_loop_points_replace_the_next_seek_not_the_active_end() {
+        let (mut system, handle) = timed_movie();
+        system.set_loop_point(handle, 0, 40);
+        system.set_loop(handle, 1);
+        system.advance(120);
+        assert_eq!(system.entries[&handle].playback_pts_ms, 0);
+        system.set_loop_point(handle, 80, 120);
+        system.advance(45);
+        assert_eq!(system.entries[&handle].playback_pts_ms, 85);
+        assert_eq!(system.entries[&handle].active_end_ms, Some(120));
+
+        system.set_loop_point(handle, 120, 100);
+        system.advance(40);
+        assert_eq!(system.state(handle), MSPRITE_STATE_STOPPED | MSPRITE_STATE_FINISHED);
     }
 
     #[test]

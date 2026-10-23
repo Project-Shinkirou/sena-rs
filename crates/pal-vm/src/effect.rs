@@ -1,9 +1,14 @@
 use crate::scene::{RectF, SolidQuad};
 
+mod scene_transition;
+pub(crate) use scene_transition::SceneTransition;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PalEffectSystem {
     enabled: bool,
+    max_effect_id: u32,
     active: Option<PalEffectState>,
+    completed_frame: Option<PalEffectState>,
     flash: Option<PalFlashState>,
     shake: Option<PalShakeState>,
 }
@@ -18,7 +23,9 @@ impl PalEffectSystem {
     pub fn new() -> Self {
         Self {
             enabled: true,
+            max_effect_id: 0x31,
             active: None,
+            completed_frame: None,
             flash: None,
             shake: None,
         }
@@ -32,6 +39,17 @@ impl PalEffectSystem {
         self.enabled
     }
 
+    pub(crate) fn set_extended_profile(&mut self, extended: bool) {
+        self.max_effect_id = if extended { 0x31 } else { 0x1d };
+    }
+
+    pub(crate) fn set_registered_profile(&mut self, registered: bool, extended: bool) {
+        self.set_extended_profile(extended);
+        if registered {
+            self.max_effect_id = 99;
+        }
+    }
+
     pub fn active(&self) -> bool {
         self.active.is_some()
     }
@@ -43,16 +61,20 @@ impl PalEffectSystem {
     pub fn stop_selected(&mut self, flags: i32) {
         if (flags & 1) != 0 {
             self.active = None;
+            self.completed_frame = None;
         }
         if (flags & 4) != 0 {
             self.shake = None;
         }
-        if (flags & 8) != 0 || (flags & 0x10) != 0 {
+        if (flags & 8) != 0 {
             self.flash = None;
         }
     }
 
-    /// PalEffectEx(id, duration, arg, wait): id 0 is a no-op, >0x31 fails.
+    /// Portable adapter for `abi::win32::PalEffectEx`. The native duration's
+    /// bits are interpreted as u32, its wait flag is converted to bool, and
+    /// now_ms supplies host context rather than a fifth native argument.
+    /// Id 0 is a no-op; the upper bound depends on the DLL build.
     pub fn effect_ex(
         &mut self,
         effect_id: u32,
@@ -64,7 +86,7 @@ impl PalEffectSystem {
         if !self.enabled || effect_id == 0 {
             return 1;
         }
-        if effect_id > 0x31 || self.active.is_some() {
+        if effect_id > self.max_effect_id || self.active.is_some() {
             return 0;
         }
         self.active = Some(PalEffectState {
@@ -75,9 +97,12 @@ impl PalEffectSystem {
             start_ms: now_ms,
             state: 1,
         });
+        self.completed_frame = None;
         1
     }
 
+    /// Portable adapter for the two-argument `abi::win32::PalEffect`.
+    /// now_ms supplies the PAL context's cached clock.
     pub fn effect(&mut self, effect_id: u32, duration_ms: u32, now_ms: u32) -> i32 {
         self.effect_ex(effect_id, duration_ms, 0, true, now_ms)
     }
@@ -88,6 +113,7 @@ impl PalEffectSystem {
             return;
         };
         if now_ms.wrapping_sub(active.start_ms) >= active.duration_ms {
+            self.completed_frame = self.active;
             self.active = None;
         }
         self.tick_flash_and_shake(now_ms);
@@ -165,31 +191,34 @@ impl PalEffectSystem {
             }
         }
 
-        let active = self.active?;
-        let elapsed = now_ms.wrapping_sub(active.start_ms).min(active.duration_ms);
-        let t = elapsed as f32 / active.duration_ms.max(1) as f32;
-        let alpha = effect_alpha(active.effect_id, t);
-        if alpha <= 0.0 {
-            return None;
-        }
-        let color = if active.arg < 0 {
-            [1.0, 1.0, 1.0, alpha]
-        } else {
-            [0.0, 0.0, 0.0, alpha]
-        };
-        Some(SolidQuad {
-            dst: RectF::new(
-                0.0,
-                0.0,
-                logical_width.max(1) as f32,
-                logical_height.max(1) as f32,
-            ),
-            color,
-        })
+        None
     }
 
     pub fn state(&self) -> Option<PalEffectState> {
         self.active
+    }
+
+    /// Native callbacks draw their terminal frame before releasing the effect.
+    pub(crate) fn render_state(&self) -> Option<PalEffectState> {
+        self.active.or(self.completed_frame)
+    }
+
+    pub(crate) fn frame_presented(&mut self) {
+        self.completed_frame = None;
+    }
+
+    pub(crate) fn finish(&mut self) {
+        self.active = None;
+        self.completed_frame = None;
+    }
+
+    pub(crate) fn cancel_on_click(&mut self, clicked: bool) {
+        if clicked && self.active.is_some_and(|effect| effect.arg != 0) {
+            self.completed_frame = self.active.take();
+            if let Some(effect) = self.completed_frame.as_mut() {
+                effect.state = 2;
+            }
+        }
     }
 
     /// Returns the render-tree translation for the active screen shake.
@@ -255,16 +284,6 @@ fn color_byte_to_unit(value: i32) -> f32 {
     (value.clamp(0, 255) as f32) / 255.0
 }
 
-fn effect_alpha(effect_id: u32, t: f32) -> f32 {
-    let t = t.clamp(0.0, 1.0);
-    match effect_id % 4 {
-        1 => 1.0 - t,
-        2 => t,
-        3 => (1.0 - ((t - 0.5).abs() * 2.0)).clamp(0.0, 1.0),
-        _ => 1.0 - t,
-    }
-}
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PalEffectState {
     pub effect_id: u32,
@@ -294,6 +313,42 @@ pub struct PalShakeState {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn effect_range_tracks_the_inspected_dll_profile() {
+        let mut effects = PalEffectSystem::new();
+        effects.set_extended_profile(false);
+        assert_eq!(effects.effect(30, 100, 0), 0);
+        assert_eq!(effects.effect(29, 100, 0), 1);
+        effects.stop_selected(1);
+        effects.set_extended_profile(true);
+        assert_eq!(effects.effect(49, 100, 0), 1);
+        effects.stop_selected(1);
+        assert_eq!(effects.effect(50, 100, 0), 0);
+    }
+
+    #[test]
+    fn terminal_frame_survives_repeated_clock_updates_until_presented() {
+        let mut effects = PalEffectSystem::new();
+        effects.effect(5, 100, 10);
+        effects.tick(110);
+        effects.tick(110);
+        assert!(!effects.active());
+        assert_eq!(effects.render_state().unwrap().effect_id, 5);
+        effects.frame_presented();
+        assert!(effects.render_state().is_none());
+    }
+
+    #[test]
+    fn nonzero_argument_enables_click_cancel_including_negative_values() {
+        for arg in [-1, 0, 1] {
+            let mut effects = PalEffectSystem::new();
+            effects.effect_ex(1, 100, arg, false, 0);
+            effects.cancel_on_click(true);
+            assert_eq!(effects.active(), arg == 0);
+            assert_eq!(effects.render_state().unwrap().state, if arg == 0 { 1 } else { 2 });
+        }
+    }
 
     #[test]
     fn shake_offset_decays_and_expires() {

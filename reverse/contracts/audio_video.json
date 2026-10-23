@@ -1,0 +1,4301 @@
+{
+  "schema_version": 1,
+  "scope": "Native PAL audio/video exports; VM wrappers recorded separately. No codec expansion in this follow-up.",
+  "primary_build": "totsulover",
+  "builds": {
+    "totsulover": {
+      "binary": "target/reverse-audit/totsulover/Pal.dll",
+      "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+    },
+    "reference": {
+      "binary": "reverse/PAL.dll",
+      "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+    },
+    "koikake": {
+      "binary": "testcase/dll/Pal.dll",
+      "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+    }
+  },
+  "functions": [
+    {
+      "name": "PalMSpriteCheck",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "32-bit borrowed movie-worker pointer, or null; not normalized BOOL",
+      "behavior": "Reads sprite+0x14.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Existing nonmovie/info sprite returns null."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aead0",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad170",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbfe0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteGetState",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "uint32_t raw state word; null/nonmovie returns 0",
+      "behavior": "Reads worker+0x50.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Initial0; running1; stopped2; natural completion6. High bit preserved."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aec10",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad2b0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbe90",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteIsLoop",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "uint32_t: worker state & 0x80000000",
+      "behavior": "Reads state high bit, not the loop-mode field.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "No worker returns0; SetLoop alone does not change this result."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aebe0",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad280",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbec0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteLoad",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "render",
+          "native_type": "PalRenderOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed"
+        },
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call; path content copied or resource opened synchronously",
+          "encoding": "native narrow NUL-terminated resource path"
+        },
+        {
+          "name": "priority",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "Owned PalSpriteOpaque pointer; null on failure; released through sprite lifecycle",
+      "behavior": "Builds MPEG graph with optional audio branch, allocates texture, inserts sprite into render tree; initially not running.",
+      "edge_cases": [
+        "Missing render/allocation failure sets error6; graph failure frees sprite.",
+        "No native audio-silent assumption."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aed90",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-load.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad480",
+          "evidence": [
+            "reverse/evidence/msprite-reference-load.json",
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbb20",
+          "evidence": [
+            "reverse/evidence/msprite-koikake-load.json",
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteInfoCreate",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed for call"
+        },
+        {
+          "name": "width",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "height",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "priority",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "Owned PalSpriteOpaque information object, null on failure",
+      "behavior": "Null filename uses supplied dimensions; otherwise probes movie dimensions then destroys worker and clears sprite+0x14.",
+      "edge_cases": [
+        "Information object is not playable; dimensions remain signed words at ABI."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aecf0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad3e0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbcf0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteLock",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "int32_t:1 if worker exists,0 otherwise",
+      "behavior": "Stores 1 to worker+0x48 and renderer+0x188; no graph pause/stop/seek.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "No observed lock-flag consumer in newer sample-copy path; do not freeze audio/clock."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aeb30",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad1d0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbf80",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteUnlock",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "int32_t:1 if worker exists,0 otherwise",
+      "behavior": "Stores 0 to worker+0x48 and renderer+0x188; no graph pause/stop/seek.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "No observed lock-flag consumer in newer sample-copy path; do not freeze audio/clock."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aeaf0",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad190",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbfb0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpritePause",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "int32_t:nonnull sprite=>1,null=>0",
+      "behavior": "No-op in all three inspected releases.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Does not inspect worker or pause audio/video."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aec40",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad2e0",
+          "evidence": [
+            "reverse/evidence/msprite-reference-worker.json",
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbe60",
+          "evidence": [
+            "reverse/evidence/msprite-koikake-worker.json",
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpritePlay",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        },
+        {
+          "name": "loop_mode",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t success; newer version reports start failure; older versions return1 for any nonnull sprite",
+      "behavior": "Stores raw loop mode and runs graph without initial seek.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Newer version retries after stop on failed start; old waiting can be unbounded.",
+        "Sets state(old&0x80000000)|1 after start."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aec90",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad330",
+          "evidence": [
+            "reverse/evidence/msprite-reference-worker.json",
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbdd0",
+          "evidence": [
+            "reverse/evidence/msprite-koikake-worker.json",
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteStop",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        }
+      ],
+      "return_contract": "int32_t:nonnull sprite=>1,null=>0; helper failure is ignored",
+      "behavior": "Stops running graph and sets state lowbits2; does not synthesize natural-completion bit4.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Already nonrunning graph can retain previous state."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aec60",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad300",
+          "evidence": [
+            "reverse/evidence/msprite-reference-worker.json",
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbe20",
+          "evidence": [
+            "reverse/evidence/msprite-koikake-worker.json",
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteSetLoop",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        },
+        {
+          "name": "loop_mode",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:worker=>1,otherwise0",
+      "behavior": "Stores raw nonboolean loop mode at worker+0x4C.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Any nonzero mode repeats at completion; no range clamp."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aebb0",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad250",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbf00",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteSetLoopPoint",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        },
+        {
+          "name": "start_ms",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "end_ms",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:worker=>1,otherwise0",
+      "behavior": "Always stores start; only nonzero end overwrites existing end; setter performs no seek.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "Negative inputs preserved; end0 retains duration/previous end.",
+        "First pass reaches original graph end; later loop seek uses milliseconds*10000."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aeb70",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100ad210",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bbf40",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteSetVolume",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        },
+        {
+          "name": "percent",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:audio interface=>1,otherwise0; ignores COM result",
+      "behavior": "q=master*trunc(percent*group4/100)/10000; convert q to DirectShow hundredths dB.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "No argument clamp; zero q maps-10000; absent audio returns0."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aeec0",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalMSpriteSetVolumeEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "sprite",
+          "native_type": "PalSpriteOpaque *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; does not transfer ownership"
+        },
+        {
+          "name": "percent",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t:audio interface=>1,otherwise0; ignores COM result",
+      "behavior": "q=100*percent*master/10000; bypasses group4; convert q to DirectShow hundredths dB.",
+      "edge_cases": [
+        "Null sprite returns zero and sets Win32 error 6.",
+        "VM wrapper clamps0..100 but native export does not."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100aef80",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSetVideoVolumeType",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "mode",
+          "native_type": "uint8_t",
+          "stack_slot_bits": 32,
+          "meaning": "Only low2 bits used; occupies four-byte cdecl slot"
+        }
+      ],
+      "return_contract": "int32_t changed low-bit mask (old XOR new)&3",
+      "behavior": "Replaces low2 bits of video-volume selector; no immediate COM volume call.",
+      "edge_cases": [
+        "Other bits retained."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100c0880",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "?PalVideoSaveState@@YAXXZ",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "void (C++ decorated symbol confirms void result)",
+      "behavior": "Copies three private global words for the video state machine; does not save decoder position.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100bea00",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "?PalVideoRestoreState@@YAXXZ",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "void (C++ decorated symbol confirms void result)",
+      "behavior": "Copies three private global words for the video state machine; does not save decoder position.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100bea20",
+          "evidence": [
+            "reverse/evidence/msprite-totsulover-controls.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalVideoPlay",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call; path content copied or resource opened synchronously",
+          "encoding": "native narrow NUL-terminated resource path"
+        },
+        {
+          "name": "playback_flags",
+          "native_type": "uint16_t",
+          "stack_slot_bits": 32,
+          "meaning": "Low16 bits copied; four-byte stack slot"
+        }
+      ],
+      "return_contract": "int32_t:0 rejected/nonzero graph-initializer result;1 playback requested",
+      "behavior": "Synchronously initializes WMV/MPEG graph, applies initial gain, invokes Run without checking its result, stores IsMovie=1, posts window notifications and returns. Does not block until EOF.",
+      "edge_cases": [
+        "Requires initialized PAL context; path copied into private state.",
+        "The second argument is a cancellation-mask selector, not a layer or sprite slot.",
+        "No explicit existing-movie guard is present at this export boundary."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [
+        "No further codec investigation is performed in this follow-up."
+      ],
+      "state_machine": {
+        "scope": "Exact lifecycle helpers traced in newer PAL; asynchronous public start also verified in reference and Koikake exports.",
+        "initialization": "Clear remembered64-bit current/stop positions; copy flags16 and filename; graph initializer requests seeking/audio/control/event/sink interfaces, configures renderer window and notification0x8064, applies selected group/master gain, sets phase1 and duration1000ms.",
+        "running": "Render/input thread keeps sampling input and processing graph cancellation. Generic PAL task traversal remains active; Game.exe normal frame callback gates its scene/script updates on IsMovie.",
+        "cancellation": "flags0 mask0x01000001 (Escape/right mouse); nonzero flags mask0x01800007 (adds Space/Return/left mouse). Simultaneous physical Alt+Enter is excluded. Tests push mask, not wheel, held state or arbitrary click.",
+        "fade_default": "Newer init0x100A34F0 stores context[283]=1; reference init0x100A2C20 stores context[277]=1. No config override observed in those init bodies.",
+        "fade": "When context fade gate and custom renderer exist, enter phase2 using engine clock; for elapsed<duration, percent=100-trunc(float32(elapsed)/duration*100), apply live selected group/master gain times percent and renderer alpha=percent/100. Default duration1000ms. Otherwise phase3 aborts immediately.",
+        "abort_delivery": "After fade/immediate abort, Clear input, send media event2 and sleep100ms. IsMovie remains1 until the window event consumer destroys graph.",
+        "events": "Window message0x8064 drains and frees media-event parameters. Events1(complete) and2(userabort) destroy graph and set IsMovie0. Event3(errorabort) destroys with IsMovie1 and attempts recreation; it is not an ordinary clean finish in this native code.",
+        "cleanup": "Stop graph, release filters/interfaces/custom renderer/resource handles, restore cursor state, set IsMovie to cleanup argument, restore render-thread normal priority. Does not delete or replace ordinary script sprite slots.",
+        "device_reset": "Save three fade globals; destroy graph with IsMovie1; rebuild/retry, restore remembered100ns positions if nonzero, Run and restore fade globals.",
+        "evidence": [
+          "reverse/evidence/movie-audio-totsulover-async-lifecycle.json",
+          "reverse/evidence/movie-audio-totsulover-task-gate.json",
+          "reverse/evidence/movie-audio-totsulover-frame-gate.json",
+          "reverse/evidence/movie-audio-video-clock.json",
+          "reverse/evidence/movie-audio-video-lifecycle.json",
+          "reverse/evidence/pal-platform/totsulover-helpers.json",
+          "reverse/evidence/pal-platform/reference-helpers.json"
+        ]
+      },
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100c1200",
+          "evidence": [
+            "reverse/evidence/mp4-totsulover-play.json",
+            "reverse/evidence/movie-audio-totsulover-async-lifecycle.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100bacb0",
+          "evidence": [
+            "reverse/evidence/mp4-reference-play.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100c8a50",
+          "evidence": [
+            "reverse/evidence/mp4-koikake-play.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "IsMovie",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t raw engine movie-state word",
+      "behavior": "Returns context+0x14, not a normalized boolean.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/msprite.rs",
+        "crates/pal-vm/src/msprite/audio.rs",
+        "crates/pal-vm/src/audio/movie.rs",
+        "crates/pal-vm/src/runtime/movies.rs",
+        "crates/pal-vm/src/engine.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100a0490",
+          "evidence": [
+            "reverse/evidence/movie-audio-renderer-vtables.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100a0120",
+          "evidence": [
+            "reverse/evidence/audio-reference-ismovie.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100ad800",
+          "evidence": [
+            "reverse/evidence/audio-koikake-ismovie.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundLoad",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call; path content copied or resource opened synchronously",
+          "encoding": "native narrow NUL-terminated resource path"
+        },
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "range",
+          "native_type": "const PalSoundLoadRange32 *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed synchronously; not retained",
+          "layout": "PalSoundLoadRange32"
+        }
+      ],
+      "return_contract": "int32_t tagged sound handle;0 failure",
+      "behavior": "Allocates free group record; loads Ogg when suffix matches, otherwise WAV path; group3 may stream and use optional byte-range descriptor.",
+      "edge_cases": [
+        "Groups4/5/6/3/2 select matching banks; other values use bank1 but preserve supplied group field.",
+        "No free slot=>0; malformed input/resource failure=>0.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2e20",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0ad0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bcf30",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundLoadEx",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call; path content copied or resource opened synchronously",
+          "encoding": "native narrow NUL-terminated resource path"
+        },
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "range",
+          "native_type": "const PalSoundLoadRange32 *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed synchronously; not retained",
+          "layout": "PalSoundLoadRange32"
+        },
+        {
+          "name": "gain",
+          "native_type": "float",
+          "stack_slot_bits": 32,
+          "width_bits": 32
+        }
+      ],
+      "return_contract": "int32_t tagged handle;0 failure",
+      "behavior": "Restricted to group4; same load path, then multiplies signed16-bit PCM by gain with truncation/saturation.",
+      "edge_cases": [
+        "Group!=4=>0; gain<=0 or1 skips scaling; even decoded byte size required for scaling path.",
+        "Decoder-buffer lock failure/second-region behavior needs runtime comparison."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3060",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundLoadVerEpeg",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "filename",
+          "native_type": "const char *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for call; path content copied or resource opened synchronously",
+          "encoding": "native narrow NUL-terminated resource path"
+        }
+      ],
+      "return_contract": "int32_t group0 tagged handle;0 open/allocation failure",
+      "behavior": "Allocates one of two group0 records, reads proprietary EPEG header/table and derives streaming byte boundaries.",
+      "edge_cases": [
+        "Division by header count is unchecked; resource-header validity is a caller/data precondition."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [
+        "Proprietary EPEG header semantics beyond observed field arithmetic remain unresolved; portable implementation mapping is missing."
+      ],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2bb0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0980",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd1a0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundCopy",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "uint32_t new tagged handle,0 no slot/null source",
+      "behavior": "Copies private sound record and duplicates DirectSound buffer; source resource pointer cleared in copy.",
+      "edge_cases": [
+        "Group field is copied from source, not rewritten to destination group.",
+        "DuplicateSoundBuffer failure logs but still returns allocated handle.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "Partial: buffer and scalar/loop/source-group state copied with independent transport; DirectSound failures and transient worker latch copying are not emulated.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b28b0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b06a0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd320",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetChannelCount",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t number of free slots",
+      "behavior": "Counts free entries in requested group; invalid group defaults to group0.",
+      "edge_cases": [
+        "Newer excludes both loaded and reserved slots; older releases only check loaded bit."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1d90",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afd50",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100be0c0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetNowChannel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t first playing group3 channel0/1,else-1",
+      "behavior": "Checks playing word of the two group3 records.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3630",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0f70",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetState",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t fade state0/1/2;null0;unloaded-1",
+      "behavior": "Returns fade-state field; not playing flag or queued command.",
+      "edge_cases": [
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2260",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0160",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100be030",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetStatus",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "channel_index",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t raw group3 command word",
+      "behavior": "Reads command from group3 record by unchecked index.",
+      "edge_cases": [
+        "Only indices0..1 are valid; no bounds check."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "Partial: scalar selectors and worker command words follow recovered field meanings. Pending 7/3/9/10 commands acknowledge on portable audio processing; native thread scheduling/timeout cadence differs. Unavailable streaming cursors, unknown source formats and resource addresses return explicit portable errors; no arena address is substituted.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3450",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0ef0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundPlayIs",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t playing value;0 null/unloaded",
+      "behavior": "Group3 returns stored playing word; other groups query DirectSound status bit1.",
+      "edge_cases": [
+        "Backend query failure handling is not normalized.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2290",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0190",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdfc0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetParam",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "channel_index",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "selector",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t selected group3 field/value",
+      "behavior": "Unchecked group3 index; selector map in shared layouts; newer supports0..23,reference supports0..4.",
+      "edge_cases": [
+        "Unknown selector=>0; cursor/elapsed unavailable=>-1; cursor HRESULT failure=>-2."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "Partial: scalar selectors and worker command words follow recovered field meanings. Pending 7/3/9/10 commands acknowledge on portable audio processing; native thread scheduling/timeout cadence differs. Unavailable streaming cursors, unknown source formats and resource addresses return explicit portable errors; no arena address is substituted.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3600",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0f10",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetParamByType",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "channel_index",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "selector",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t selected field;0 invalid group/index",
+      "behavior": "Bounds-checks all seven banks then shares newer selector helper.",
+      "edge_cases": [
+        "Zero is ambiguous between invalid input and legitimate field value."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "Partial: scalar selectors and worker command words follow recovered field meanings. Pending 7/3/9/10 commands acknowledge on portable audio processing; native thread scheduling/timeout cadence differs. Unavailable streaming cursors, unknown source formats and resource addresses return explicit portable errors; no arena address is substituted.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3650",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetPrimaryVolume",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "int32_t configured raw master word",
+      "behavior": "Reads native master scalar.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1ef0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json",
+            "reverse/evidence/movie-audio-totsulover-volume.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afeb0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bde80",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetPrimaryVolume",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "volume",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1",
+      "behavior": "Stores master without clamp, then reapplies all seven group volumes.",
+      "edge_cases": [
+        "Each group setter clamps its group level; existing movie-sprite COM interfaces are not iterated."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b21e0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json",
+            "reverse/evidence/movie-audio-totsulover-volume.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b00e0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdbc0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetVolume",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "output",
+          "native_type": "int32_t *",
+          "stack_slot_bits": 32,
+          "nullable": true,
+          "ownership": "caller-owned output; one word"
+        },
+        {
+          "name": "group",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t configured volume; -1 invalid group/null output",
+      "behavior": "Stores and returns selected group level.",
+      "edge_cases": [
+        "Groups0..6 only."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1ec0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json",
+            "reverse/evidence/movie-audio-totsulover-volume.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afe80",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bde90",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetVolume",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "volume",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "group",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 valid group,0 invalid",
+      "behavior": "Clamps group level0..10000, stores it, and updates loaded nonfading DirectSound records; some streaming command states defer update.",
+      "edge_cases": [
+        "Groups0..6 only; retries backend volume for up to3s engine clock.",
+        "Does not loop through MSprite graphs."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2020",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json",
+            "reverse/evidence/movie-audio-totsulover-volume.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100aff80",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdc20",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetVolumeChannel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t configured channel level;null0;unloaded-1",
+      "behavior": "Reads channel scalar, not group/master/fade-adjusted gain.",
+      "edge_cases": [
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1e90",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afe50",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdee0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetVolumeChannel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "volume",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded",
+      "behavior": "Stores raw level without clamp; if not fading, recomputes group*channel gain and master dB then updates buffer.",
+      "edge_cases": [
+        "During fade, worker uses new level on subsequent tick.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1f00",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afec0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdde0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "?PalSoundSetVolumeRatio@@YAHJM@Z",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "gain",
+          "native_type": "float",
+          "stack_slot_bits": 32,
+          "width_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded",
+      "behavior": "Stores float gain at private record+0x84 only; does not immediately rescale PCM.",
+      "edge_cases": [
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs::AudioSystem::set_volume_ratio"
+      ],
+      "implementation_parity": "Raw float field retained on loaded records and copied independently; setter does not rescale PCM. LoadEx stores its original gain after the verified one-time amplification.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1ff0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetFreq",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "frequency_hz",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded; ignores DirectSound HRESULT",
+      "behavior": "Calls buffer SetFrequency directly.",
+      "edge_cases": [
+        "No clamp or stored rate normalization.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b37b0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetFraquencyChannel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "frequency_hz",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded; ignores DirectSound HRESULT",
+      "behavior": "Calls buffer SetFrequency directly.",
+      "edge_cases": [
+        "No clamp or stored rate normalization.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1e30",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afdf0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdf70",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetFreq",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t frequencyHz; -1 null/unloaded/query failure",
+      "behavior": "Calls DirectSound GetFrequency.",
+      "edge_cases": [
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b37e0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetPanChannel",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "pan",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded; ignores DirectSound HRESULT",
+      "behavior": "Forwards signed native pan word directly to DirectSound.",
+      "edge_cases": [
+        "No native clamp in wrapper; backend scale is hundredths dB, not normalized stereo balance.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1e60",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100afe20",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdf20",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetStartEnd",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "loop_start_bytes",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "loop_end_bytes",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 loaded,0 null/unloaded",
+      "behavior": "Stores raw loop byte offsets; no seek or validation.",
+      "edge_cases": [
+        "Different units from MSprite millisecond loop points.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "Partial: retained source PCM metadata drives initial and loop byte-range seeking. Compressed WAVE alignment, out-of-bounds native seeks, and live nonloop end-boundary extension remain unsupported.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2230",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0130",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100be070",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundPlay",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "loop_mode",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 accepted,0 null/unloaded",
+      "behavior": "Group0/3 queue streaming start/fade command6 with10ms duration; other groups stop prior playback, rewind buffer, start, restore gain, and mark playing.",
+      "edge_cases": [
+        "Raw loop word retained; worker state and backend flags may differ by bank.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2600",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0440",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd770",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundPlayFade",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "loop_mode",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "duration_ms",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 accepted,0 null/unloaded",
+      "behavior": "Queues command6; stores duration,loop,targetgain; waits for worker acceptance.",
+      "edge_cases": [
+        "Elapsed/duration are evaluated as unsigned words by worker; negative durations are not clamped."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2520",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0390",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd8e0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundStop",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t1 when loaded+playing,0 otherwise",
+      "behavior": "Queues command3 and waits; streaming group3 closes source and clears loaded state; other groups retain buffer.",
+      "edge_cases": [
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2440",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b02e0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd990",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundStopFade",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "duration_ms",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 accepted/alreadyfadingout,0 null/unloaded/notplaying",
+      "behavior": "Queues command7 then worker fadeout2 and stop3; alreadyfadeout+nonzeroduration returns1 without restarting.",
+      "edge_cases": [
+        "Zero duration can force immediate stop; negative values retain raw unsigned-duration behavior."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2380",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b0250",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bda30",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundPause",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "pause",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "duration_ms",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 latch changed while loaded+playing,0 otherwise",
+      "behavior": "Queues9pause/10resume; nonzero duration schedules fadeout/fadein before command handling.",
+      "edge_cases": [
+        "Same pause value returns0; no buffer-position rewind on resume."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs",
+        "crates/pal-vm/src/audio/native_sound.rs"
+      ],
+      "implementation_parity": "Partial: amplitude envelopes and transport lifetime corrected; production fades use the shared wrapping engine millisecond clock. Native per-tick integer gain quantization, worker cadence and command acknowledgement timeout behavior remain uncertified.",
+      "notes": [
+        "Worker0x100B07C0 handles fade state before command10. A paused buffer with nonzero resume duration stays stopped during the gain ramp, then resumes without rewind."
+      ],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b22d0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b01d0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bdaf0",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundRelease",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        }
+      ],
+      "return_contract": "int32_t1 accepted,0 null/unloaded",
+      "behavior": "Clears group3 reservation, queuesrelease4, waits for unloaded; ordinary buffers destroyed and private record zeroed.",
+      "edge_cases": [
+        "Worker waits bounded by100000 Sleep(1) iterations in newer build.",
+        "Native resolver performs unchecked indexing for malformed tagged nonzero handles; reviewed success/error cases assume a handle from this engine."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b27a0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b05f0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd580",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundReleaseEx",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "EAX not consistently defined for empty groups; do not treat as success BOOL",
+      "behavior": "Releases every loaded record in selected bank; group3 additionally clears both reservation flags.",
+      "edge_cases": [
+        "Invalid group defaults to group0; observed EAX can be incoming argument/context/lastrelease result."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [
+        "Stack arity/order confirmed; C return type remains unresolved. Requires caller/prototype evidence before ABI declaration."
+      ],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2ab0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        },
+        {
+          "build": "reference",
+          "binary": "reverse/PAL.dll",
+          "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "address": "0x100b08b0",
+          "evidence": [
+            "reverse/evidence/audio-reference-exports.json"
+          ]
+        },
+        {
+          "build": "koikake",
+          "binary": "testcase/dll/Pal.dll",
+          "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "address": "0x100bd620",
+          "evidence": [
+            "reverse/evidence/audio-koikake-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundSetReserved",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "reserved",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "No stable EAX result; declared return contract unresolved",
+      "behavior": "For group3 and handles0x20000000/1 only, stores reservation word.",
+      "edge_cases": [
+        "Other inputs cause no state write; EAX is incidental."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs::AudioSystem::set_reserved",
+        "crates/pal-vm/src/runtime.rs::ext_bgm_stop"
+      ],
+      "implementation_parity": "Reviewed reservation side effects implemented: raw word, allocation exclusion, selector17/18, copy and release. VM scheduling suppression uses per-build masks; reserved PAL records do not store a deferred filename. Native setter EAX remains unresolved.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2d60",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundLoadSetReserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "unused_word",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        },
+        {
+          "name": "group",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "uint32_t reserved group3 handle or0",
+      "behavior": "Argument1 unused; group must3; finds free/unreserved slot and reserves it without loading.",
+      "edge_cases": [
+        "Only two group3 slots; full=>0."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs::AudioSystem::load_set_reserved",
+        "crates/pal-vm/src/runtime.rs::load_bgm_native"
+      ],
+      "implementation_parity": "Reviewed reservation side effects implemented: raw word, allocation exclusion, selector17/18, copy and release. VM scheduling suppression uses per-build masks; reserved PAL records do not store a deferred filename. Native setter EAX remains unresolved.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b2da0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalGetSoundBufferFormat",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "output",
+          "native_type": "PalWaveFormatEx32 *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "caller-owned writable18-byte output",
+          "layout": "PalWaveFormatEx32"
+        }
+      ],
+      "return_contract": "int32_t1 querysuccess,0 invalidresolver/backendfailure",
+      "behavior": "Gets DirectSound WAVEFORMATEX and copies exactly18 bytes.",
+      "edge_cases": [
+        "Output is not null-checked; valid loaded DirectSound handle required."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs::AudioSystem::sound_buffer_format",
+        "crates/pal-vm/src/audio/source_format.rs",
+        "crates/pal-vm/src/abi/mod.rs::PalWaveFormatEx32"
+      ],
+      "implementation_parity": "Reviewed PCM buffer formats implemented: fixed 44100 Hz stereo16 stream banks and original ordinary WAV/Ogg PCM metadata. Mixed, compressed and unsupported format outputs return explicit errors.",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b3820",
+          "evidence": [
+            "reverse/evidence/movie-audio-renderer-vtables.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSoundGetPlayCursorToBuffer",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "handle",
+          "native_type": "int32_t",
+          "stack_slot_bits": 32,
+          "meaning": "Native tagged sound word; no arena-handle substitution at ABI boundary"
+        },
+        {
+          "name": "output",
+          "native_type": "void *",
+          "stack_slot_bits": 32,
+          "nullable": false,
+          "ownership": "caller-owned output, capacity at leastrequested bytes"
+        },
+        {
+          "name": "bytes",
+          "native_type": "uint32_t",
+          "stack_slot_bits": 32
+        }
+      ],
+      "return_contract": "int32_t1 unlocksuccess,0 validation/backendfailure",
+      "behavior": "Reads buffer caps/cursor, locks from play cursor, copies reported locked regions, unlocks.",
+      "edge_cases": [
+        "Zero bytes/null output/nullhandle=>0.",
+        "Lock request is min(requested,buffer_end-cursor); do not assume it always fills requested bytes across wrap."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b38a0",
+          "evidence": [
+            "reverse/evidence/audio-totsulover-exports.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalGetVoiceSpeed",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [],
+      "return_contract": "x87 ST0 holding value loaded from32-bit float global",
+      "behavior": "Returns stored voice-speed setting; no playback consumer found.",
+      "edge_cases": [],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [
+        "Machine return location/value precision confirmed; original C float-vs-double declaration is unresolved without authoritative type/caller evidence."
+      ],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1680",
+          "evidence": [
+            "reverse/evidence/movie-audio-renderer-vtables.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    },
+    {
+      "name": "PalSetVoiceSpeed",
+      "abi_status": "partial",
+      "behavior_status": "reviewed",
+      "calling_convention": "cdecl",
+      "arguments": [
+        {
+          "name": "speed",
+          "native_type": "float",
+          "stack_slot_bits": 32,
+          "width_bits": 32
+        }
+      ],
+      "return_contract": "x87 ST0 previous32-bit float value",
+      "behavior": "Clamps/stores0..200; does not update voices or frequency in reviewed call graph.",
+      "edge_cases": [
+        "NaN fails nonnegative comparison and becomes0; no consumer references found outside getter/setter."
+      ],
+      "implementation_mapping": [
+        "crates/pal-vm/src/audio.rs",
+        "crates/pal-vm/src/runtime/registered_audio.rs"
+      ],
+      "implementation_parity": "not certified; mapping is not proof of equivalent behavior",
+      "notes": [
+        "C return scalar float-vs-double remains unresolved."
+      ],
+      "builds": [
+        {
+          "build": "totsulover",
+          "binary": "target/reverse-audit/totsulover/Pal.dll",
+          "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "address": "0x100b1690",
+          "evidence": [
+            "reverse/evidence/movie-audio-renderer-vtables.json"
+          ]
+        }
+      ],
+      "abi_evidence_basis": "Inspected stack argument loads, caller/callee cleanup, return instructions, and pointed-to memory accesses; IDA prototypes alone are not confirmation."
+    }
+  ],
+  "vm_wrappers": [
+    {
+      "category": 11,
+      "index": 0,
+      "handler": "0x45b940",
+      "name": "movie_play",
+      "build": "totsulover",
+      "arity": 2,
+      "arguments_pop_order": [
+        "filename",
+        "flags_low16"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Filename is first pop; flags are cancellation-input mode, never a sprite layer."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 1,
+      "handler": "0x45b5d0",
+      "name": "msp_set_loop_sp_ep",
+      "build": "totsulover",
+      "arity": 8,
+      "arguments_pop_order": [
+        "filename",
+        "slot",
+        "x",
+        "y",
+        "z",
+        "loop_mode",
+        "start_ms",
+        "end_ms"
+      ],
+      "return_contract": "newer: destination=PALPlayresult; control0 on failure,1 on success; skip overrides success",
+      "notes": [
+        "Delegates first five operands to generic sp_set_ex, then sets loop points and plays."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 2,
+      "handler": "0x45b5a0",
+      "name": "msp_cls",
+      "build": "totsulover",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Delegates one pop to generic sp_cls; slot-1 clears all128 generic sprite slots; other valid slots clear only that slot."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 3,
+      "handler": "0x45b490",
+      "name": "msp_wait",
+      "build": "totsulover",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "One pop on first entry; zero pops while polling stored pointer. Sets loop0. Completes on statebit4 or any nonzero schedulingstate; no Stop call. Otherwise rewinds PC12 when schedulingstate&0x30==0."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 4,
+      "handler": "0x45b220",
+      "name": "msp_lock",
+      "build": "totsulover",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then lock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 5,
+      "handler": "0x45b190",
+      "name": "msp_unlock",
+      "build": "totsulover",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then unlock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 6,
+      "handler": "0x45b0a0",
+      "name": "msp_play",
+      "build": "totsulover",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "loop_mode"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Sets wrapper replay flag0x400000 and stored loop argument; forwards loop to native Play."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 7,
+      "handler": "0x45b010",
+      "name": "msp_stop",
+      "build": "totsulover",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then native Stop; ignores its result; no wrapper replayflag reset observed."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-delegation.json",
+        "reverse/evidence/movie-audio-totsulover-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 0,
+      "handler": "0x42e650",
+      "name": "movie_play",
+      "build": "reference",
+      "arity": 2,
+      "arguments_pop_order": [
+        "filename",
+        "flags_low16"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Filename is first pop; flags are cancellation-input mode, never a sprite layer."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 1,
+      "handler": "0x42e380",
+      "name": "msp_set_loop_sp_ep",
+      "build": "reference",
+      "arity": 8,
+      "arguments_pop_order": [
+        "filename",
+        "slot",
+        "x",
+        "y",
+        "z",
+        "loop_mode",
+        "start_ms",
+        "end_ms"
+      ],
+      "return_contract": "older: no destination store; control0 missing sprite,otherwise1",
+      "notes": [
+        "Delegates first five operands to generic sp_set_ex, then sets loop points and plays."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 2,
+      "handler": "0x42e350",
+      "name": "msp_cls",
+      "build": "reference",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Delegates one pop to generic sp_cls; slot-1 clears all128 generic sprite slots; other valid slots clear only that slot."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 3,
+      "handler": "0x42e240",
+      "name": "msp_wait",
+      "build": "reference",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "One pop on first entry; zero pops while polling stored pointer. Sets loop0. Completes on statebit4 or any nonzero schedulingstate; no Stop call. Otherwise rewinds PC12 when schedulingstate&0x30==0."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 4,
+      "handler": "0x42e1b0",
+      "name": "msp_lock",
+      "build": "reference",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then lock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 5,
+      "handler": "0x42e120",
+      "name": "msp_unlock",
+      "build": "reference",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then unlock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 6,
+      "handler": "0x42e030",
+      "name": "msp_play",
+      "build": "reference",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "loop_mode"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Sets wrapper replay flag0x400000 and stored loop argument; forwards loop to native Play."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 7,
+      "handler": "0x42dfa0",
+      "name": "msp_stop",
+      "build": "reference",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then native Stop; ignores its result; no wrapper replayflag reset observed."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/movie-audio-reference-wrappers.json",
+        "reverse/evidence/movie-audio-reference-delegation.json",
+        "reverse/evidence/movie-audio-reference-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 0,
+      "handler": "0x421bb0",
+      "name": "movie_play",
+      "build": "koikake",
+      "arity": 2,
+      "arguments_pop_order": [
+        "filename",
+        "flags_low16"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Filename is first pop; flags are cancellation-input mode, never a sprite layer."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 1,
+      "handler": "0x421a20",
+      "name": "msp_set_loop_sp_ep",
+      "build": "koikake",
+      "arity": 8,
+      "arguments_pop_order": [
+        "filename",
+        "slot",
+        "x",
+        "y",
+        "z",
+        "loop_mode",
+        "start_ms",
+        "end_ms"
+      ],
+      "return_contract": "older: no destination store; control0 missing sprite,otherwise1",
+      "notes": [
+        "Delegates first five operands to generic sp_set_ex, then sets loop points and plays."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 2,
+      "handler": "0x4219e0",
+      "name": "msp_cls",
+      "build": "koikake",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Delegates one pop to generic sp_cls; slot-1 clears all128 generic sprite slots; other valid slots clear only that slot."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 3,
+      "handler": "0x421890",
+      "name": "msp_wait",
+      "build": "koikake",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "One pop on first entry; zero pops while polling stored pointer. Sets loop0. Completes on statebit4 or any nonzero schedulingstate; no Stop call. Otherwise rewinds PC12 when schedulingstate&0x10==0."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 4,
+      "handler": "0x4217f0",
+      "name": "msp_lock",
+      "build": "koikake",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then lock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 5,
+      "handler": "0x421750",
+      "name": "msp_unlock",
+      "build": "koikake",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then unlock flag call; invalid slot/noimage does nothing."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 6,
+      "handler": "0x421670",
+      "name": "msp_play",
+      "build": "koikake",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "loop_mode"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Sets wrapper replay flag0x400000 and stored loop argument; forwards loop to native Play."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 7,
+      "handler": "0x4215d0",
+      "name": "msp_stop",
+      "build": "koikake",
+      "arity": 1,
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "continue; no destination store",
+      "notes": [
+        "Movie type check then native Stop; ignores its result; no wrapper replayflag reset observed."
+      ],
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/movie-audio-koikake-wrappers.json",
+        "reverse/evidence/movie-audio-koikake-delegation.json",
+        "reverse/evidence/movie-audio-koikake-sprite-delegates.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 8,
+      "handler": "0x45bb00",
+      "name": "movie_set_volume_type",
+      "arity": 1,
+      "build": "totsulover",
+      "arguments_pop_order": [
+        "volume_type"
+      ],
+      "return_contract": "continue; no destination store",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 9,
+      "handler": "0x45bb50",
+      "name": "movie_set_volume",
+      "arity": 1,
+      "build": "totsulover",
+      "arguments_pop_order": [
+        "percent"
+      ],
+      "return_contract": "continue; no destination store",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 10,
+      "handler": "0x45bbd0",
+      "name": "movie_get_volume",
+      "arity": 0,
+      "build": "totsulover",
+      "arguments_pop_order": [],
+      "return_contract": "destination=stored percent",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 11,
+      "handler": "0x45bc20",
+      "name": "movie_mute",
+      "arity": 1,
+      "build": "totsulover",
+      "arguments_pop_order": [
+        "muted"
+      ],
+      "return_contract": "continue; no destination store",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 12,
+      "handler": "0x45b2b0",
+      "name": "msp_get_state",
+      "arity": 1,
+      "build": "totsulover",
+      "arguments_pop_order": [
+        "slot"
+      ],
+      "return_contract": "destination=rawstate/nonmovie0/invalid-1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "category": 11,
+      "index": 13,
+      "handler": "0x45b390",
+      "name": "msp_set_volume",
+      "arity": 2,
+      "build": "totsulover",
+      "arguments_pop_order": [
+        "slot",
+        "percent"
+      ],
+      "return_contract": "destination=movie1/nonmovie0/invalid-1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "evidence": [
+        "reverse/evidence/movie-audio-totsulover-wrappers.json",
+        "reverse/evidence/movie-audio-totsulover-wrappers-extra.json"
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 0,
+      "handler": "0x41deb0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 1,
+      "handler": "0x41dd60",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 9,
+      "handler": "0x41e360",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 10,
+      "handler": "0x41e220",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 0,
+      "handler": "0x40c4b0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 1,
+      "handler": "0x40c380",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 9,
+      "handler": "0x40c8d0",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 10,
+      "handler": "0x40c7a0",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 0,
+      "handler": "0x40d5b0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 1,
+      "handler": "0x40d450",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 9,
+      "handler": "0x40d8b0",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 10,
+      "handler": "0x40d7c0",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 3,
+      "handler": "0x41dd10",
+      "name": "bgm_get_volume",
+      "arity": 0,
+      "arguments_pop_order": [],
+      "writes_destination": true,
+      "return_contract": "destination=100*stored_raw/10000; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-getters.json"
+      ],
+      "notes": [
+        "Zero operands; configured raw group value is returned as percent independently of mute."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 3,
+      "handler": "0x40d400",
+      "name": "bgm_get_volume",
+      "arity": 0,
+      "arguments_pop_order": [],
+      "writes_destination": true,
+      "return_contract": "destination=100*stored_raw/10000; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-getters.json"
+      ],
+      "notes": [
+        "Zero operands; configured raw group value is returned as percent independently of mute."
+      ]
+    }
+  ],
+  "shared_layouts": [
+    {
+      "name": "PalSoundLoadRange32",
+      "size": 16,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "enabled",
+          "offset": 0,
+          "native_type": "uint32_t"
+        },
+        {
+          "name": "initial_start_bytes",
+          "offset": 4,
+          "native_type": "int32_t"
+        },
+        {
+          "name": "loop_start_bytes",
+          "offset": 8,
+          "native_type": "int32_t"
+        },
+        {
+          "name": "loop_end_bytes",
+          "offset": 12,
+          "native_type": "int32_t"
+        }
+      ],
+      "ownership": "Borrowed synchronously by loaders; optional null; native group3 paths dereference only whenenabled.",
+      "evidence": [
+        "reverse/evidence/audio-totsulover-helpers.json",
+        "reverse/evidence/audio-totsulover-streaming.json"
+      ]
+    },
+    {
+      "name": "PalWaveFormatEx32",
+      "size": 18,
+      "alignment": 2,
+      "fields": [
+        {
+          "name": "format_tag",
+          "offset": 0,
+          "native_type": "uint16_t"
+        },
+        {
+          "name": "channels",
+          "offset": 2,
+          "native_type": "uint16_t"
+        },
+        {
+          "name": "samples_per_second",
+          "offset": 4,
+          "native_type": "uint32_t"
+        },
+        {
+          "name": "average_bytes_per_second",
+          "offset": 8,
+          "native_type": "uint32_t"
+        },
+        {
+          "name": "block_align",
+          "offset": 12,
+          "native_type": "uint16_t"
+        },
+        {
+          "name": "bits_per_sample",
+          "offset": 14,
+          "native_type": "uint16_t"
+        },
+        {
+          "name": "extra_size",
+          "offset": 16,
+          "native_type": "uint16_t"
+        }
+      ],
+      "ownership": "Caller-owned writable output; exactly18 bytes copied.",
+      "evidence": [
+        "reverse/evidence/movie-audio-renderer-vtables.json"
+      ]
+    }
+  ],
+  "private_layout_notes": {
+    "sound_record_bytes": {
+      "koikake": 76,
+      "reference": 88,
+      "totsulover": 140
+    },
+    "group_capacity": [
+      2,
+      16,
+      8,
+      2,
+      16,
+      64,
+      16
+    ],
+    "group_handle_tag": [
+      "0x10000000",
+      "0x30000000",
+      "0x70000000",
+      "0x20000000",
+      "0x40000000",
+      "0x50000000",
+      "0x60000000"
+    ],
+    "totsulover_get_param_offsets": {
+      "0": 36,
+      "1": 40,
+      "2": 44,
+      "3": 48,
+      "4": 52,
+      "7": 20,
+      "8": 8,
+      "9": 16,
+      "10": 24,
+      "11": 28,
+      "12": 32,
+      "13": 56,
+      "14": 60,
+      "15": 64,
+      "16": 72,
+      "17": 12,
+      "19": 4,
+      "20": 68,
+      "21": 76,
+      "22": 128,
+      "23": 124
+    },
+    "totsulover_get_param_computed": {
+      "5": "elapsed engineclock sincefade/start, -1 unloaded/notplaying",
+      "6": "DirectSound playcursor, -1 unavailable,-2 queryfailure",
+      "18": "reserved||loaded||playing normalized0/1"
+    },
+    "reference_get_param": "Only selectors0..4 supported; returns record offsets32,36,40,44,48."
+  },
+  "unresolved": [
+    "No hardware listening/device-timing comparison or decoder fidelity certification.",
+    "PalSoundReleaseEx and PalSoundSetReserved stable C return types unresolved.",
+    "Voice-speed exports return x87 values sourced fromfloat; original C return scalar declaration unresolved.",
+    "EPEG stream format outside recovered header arithmetic remains incomplete.",
+    "Malformed tagged handles are natively unchecked; adapter safety policy is separate from semantic parity.",
+    "DirectSound copy/lock failures, out-of-range gain retry timing, source PCM byte metadata, reserved records, and all native race schedules are not runtime-certified."
+  ]
+}

@@ -1,0 +1,750 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalExFontLoad",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "NUL-terminated filename; the export itself does not add .tga."
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::load_extended_font",
+      "notes": "0 on open failure, 1 after read/allocation/copy path. Loads an extended 8-bit glyph strip from TGA-like bytes. Reads width and height u16 at offsets12/14, uses height as square-cell size, skips18-byte header and copies rows in reverse vertical order. Stores allocation byte count=file_size-44. No TGA orientation/type validation is performed. The PAL export alone does not unload an existing strip on open failure. All three Game.exe load_font_ex wrappers call PalExFontUnload first, so a failed VM replacement clears the old strip. Open failure is the sole deliberate error return. After open, ReadFile success and bytes_read, CloseHandle result, allocation failure, and pixel extent are ignored. Allocation byte count is wrapping_u32(file_size-44); width/height can come from stale scratch bytes after a short read. The reverse-row copy uses do-while loops without zero-width/height guards, so zero dimensions can underflow and malformed files or failed allocations can fault. Native returns1 only if execution reaches the final return; there is no reliable malformed-file success contract. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b4f80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aae50",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100ac220",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontBegin",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_begin",
+      "notes": "Returns1 after setting the begun flag; native code does not propagate CreateFont/GetTextMetrics failures. Begins the global font drawing context. A later FontEnd releases transient GDI objects and metrics, not font resource bytes. Exact face selection and bitmap lookup differ by build. Bitmap metrics are the last 56 resource bytes. Native copies all bytes, reads signed32 height and ascent at offsets0/4, computes f32 requested_u16_size/base_height, and truncates scaled height/ascent. It does not infer metrics from glyphs. GDI CreateFont, CreateCompatibleDC, SelectObject and GetTextMetrics results are not checked. Begin marks the context begun and returns1 even if GDI setup failed; later metric reads may use stale or uninitialized data. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b53a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aaa30",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100abb10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontDrawText",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "pixels",
+          "type": "uint32_t *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "Mutable tightly packed BGRA destination, at least width*height words."
+        },
+        {
+          "name": "text",
+          "type": "const void *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "Build-specific NUL-terminated encoded text; reference draws only its first UTF-16LE code unit."
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "width",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "height",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_draw_encoded",
+      "notes": "Returns1 after the draw path, including unsupported effect IDs and no visible glyphs. Does not report clipping or raster errors. Draws into caller memory using current colors, size, type and effect. Automatically begins/ends context if needed. Koikake and totsulover iterate the entire encoded string, process line breaks/spaces/br tags/percent glyphs; reference localized helper renders a single UTF-16LE code unit per call and Game.exe drives the loop. Base glyphs are placed at origin+1,+1. Effect1 ORs the four cardinal neighbors; effect2 stamps a shadow at origin+2,+2; effect3 uses 12 radius2 diamond neighbors centered at origin+2,+2 and shifts the foreground by one extra pixel. Coverage0 skips; nonzero six-bit coverage maps to (4*coverage-1)&255. The color high byte is ORed rather than multiplied. For translucent glyph pixels over a nontransparent destination, each color byte and alpha use a sum with weights alpha and255-alpha then shift right8. Native clipping paths have unsafe negative/zero edge cases; portable validation must not reproduce out-of-bounds accesses. Bitmap glyph record is 24 bytes: u32 black-box width/height, i32 x/y origin, i16 x/y cell increments, then u32 coverage byte count. A zero lookup offset is not a native missing-glyph sentinel: lookup blindly adds it to the loaded resource base. At scale1, metrics and coverage are copied unchanged. Otherwise signed origins and signed16 advances are multiplied by f32 scale and truncated; any resulting zero component is replaced by1. Width/height receive the same truncate-and-minimum1 treatment. Native coverage resizing uses 8-bit fixed-point bilinear interpolation with steps trunc(256/scale). Neighbor pixels beyond the last source row/column are zero, not edge-replicated. Original coverage stride is (bitmap_bytes/original_height)&~3. No source size, division or scratch-capacity checks are present. GetGlyphOutline query/fetch failures are not propagated. Metrics-only paths ignore GDI_ERROR; drawing paths may use stale metrics or the all-ones size on failure. Safe validation/fallback is an intentional difference from native undefined memory access. Foreground directly stores color OR (coverage_alpha<<24) when coverage_alpha==255 or destination alpha==0. Other nonzero coverage blends all four channels with alpha and255-alpha weights divided by256; blended source alpha is255 independent of the color alpha byte. Clipping trims only right/bottom counts using inclusive +1 arithmetic and does not skip the truncated source row tail. Foreground/outline paths do not consistently clamp negative x/y; shadow clamps its destination start only. Outline and MMX loops execute once even with zero dimensions. Safe port clipping must retain in-range arithmetic without recreating these invalid accesses. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b5510",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aa910",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100ab9f0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontGetEffect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint16_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/font.rs::PalFontSystem::effect",
+      "notes": "Returns stored effect low16. EAX upper16 is not part of the return contract; game callers use AX. Reads the current global effect word without initialization or normalization. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b52a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aac00",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100abe10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontGetFontSize",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint16_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/font.rs::PalFontSystem::font_size",
+      "notes": "Returns stored font_size low16. EAX upper16 is not part of the return contract; game callers use AX. Reads the current global font_size word without initialization or normalization. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b5260",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aac30",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100abe40",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontGetSize",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "const void *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "Koikake/totsulover use NUL-terminated Shift-JIS; reference reads UTF-16LE code units."
+        },
+        {
+          "name": "size",
+          "type": "PalTextSize32 *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "Writes two signed32 output words, width then height; not a RECT."
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_measure_encoded",
+      "notes": "Returns1 on normal completion; nested FontBegin/End are automatic when no begun context exists. Measures line widths and full-line height using native glyph metrics, ASCII half spaces, full-width spaces, CR and LF independently, br/BR markup and extended percent glyphs. Keeps maximum line width. Does not wrap. Koikake/reference add2 pixels to final width and height; totsulover adds3 to width and2 to height. Totsulover supports backslash quoting and multi-digit percent indices. Reference uses UTF-16LE but retains partially byte-oriented markup logic. Bitmap glyph record is 24 bytes: u32 black-box width/height, i32 x/y origin, i16 x/y cell increments, then u32 coverage byte count. A zero lookup offset is not a native missing-glyph sentinel: lookup blindly adds it to the loaded resource base. At scale1, metrics and coverage are copied unchanged. Otherwise signed origins and signed16 advances are multiplied by f32 scale and truncated; any resulting zero component is replaced by1. Width/height receive the same truncate-and-minimum1 treatment. Native coverage resizing uses 8-bit fixed-point bilinear interpolation with steps trunc(256/scale). Neighbor pixels beyond the last source row/column are zero, not edge-replicated. Original coverage stride is (bitmap_bytes/original_height)&~3. No source size, division or scratch-capacity checks are present. GetGlyphOutline query/fetch failures are not propagated. Metrics-only paths ignore GDI_ERROR; drawing paths may use stale metrics or the all-ones size on failure. Safe validation/fallback is an intentional difference from native undefined memory access. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b5330",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aa050",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100aace0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontGetType",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint16_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/font.rs::PalFontSystem::font_type",
+      "notes": "Returns stored font_type low16. EAX upper16 is not part of the return contract; game callers use AX. Reads the current global font_type word without initialization or normalization. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b5220",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aac70",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100abe70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontLoad",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "const char *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "NUL-terminated encoded filename; no suffix is added by this export."
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font.rs::PalFontSystem::load_named_bitmap_font",
+      "notes": "0 when the resource cannot be opened; 1 after the load path. Totsulover also returns1 for an already cached filename. Loads raw bitmap-font bytes and sets native scale state to1.0; does not select type4. Open failure preserves existing state. Older builds replace the active pointer without freeing a prior load; newer builds keep a named font cache. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b50f0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aad00",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100ac1e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontSetType",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "font_type",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Comparison against4 uses the full DWORD; successful storage narrows to low16. Thus 0x10004 bypasses the exact==4 gate in Koikake/totsulover yet stores4."
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_set_type",
+      "notes": "Exactly 1 on the documented success path, otherwise 0; this is a native 32-bit integer, not a Rust bool. Koikake/totsulover reject exact argument4 only if the active bitmap pointer is null; otherwise store low16 and return1. Reference replaces exact4 with1 and otherwise stores low16; always returns1. Values outside the intended face table are not validated. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100b51e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100aac80",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100abe80",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontOrgSetLoad",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "char *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed for the call",
+          "notes": "MSVC PAD decoration declares mutable char pointer; the inspected routine borrows the filename and does not modify its bytes."
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font.rs::PalFontSystem::load_named_bitmap_font",
+      "notes": "0 on open failure, 1 on successful load or exact duplicate. Totsulover-only exported C++ helper, also called by PalFontLoad. Checks a vector of 44-byte font entries by exact filename. Duplicate returns1 immediately without selecting that entry. Otherwise allocates/reads data, reads base size at file_size-56, appends the entry, copies it to active font state and returns1. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100abf10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      },
+      "export_name": "?PalFontOrgSetLoad@@YAHPAD@Z"
+    },
+    {
+      "name": "PalDrawTextStepX",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "effect",
+          "type": "uint16_t",
+          "stack_bytes": 4,
+          "consumed_bits": 16
+        }
+      ],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_draw_text_step_x",
+      "notes": "Returns1 for effect0/1/2, 2 for3, otherwise0. Totsulover-only pure lookup. Does not read the current stored effect; caller supplies the low16 value. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ab1f0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalFontHasDrawTextRect",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint8_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/font/native.rs::PalFontSystem::native_has_draw_text_rect",
+      "notes": "0 or1; upper24 bits of EAX are undefined. Totsulover-only flag reset at the beginning of every FontDrawText call and set when a supported effect yields a drawable glyph, space or percent glyph. It does not clear stale rectangle bytes when false. Per-build behavior, owned/borrowed memory and safe-port deviations are detailed in reverse/contracts/text_animation.json.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ab1e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "PalExFontUnload",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/runtime.rs extended-font resource state",
+        "crates/pal-vm/src/font.rs::PalFontSystem::set_ex_font_loaded"
+      ]
+    },
+    {
+      "name": "PalFontEnd",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::end"
+      ]
+    },
+    {
+      "name": "PalFontGetColor",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [
+        {
+          "name": "color",
+          "carrier": "ptr32<u32>",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Writes the primary raw color word when nonnull.",
+          "nullable": true,
+          "ownership": "borrowed for the call"
+        },
+        {
+          "name": "effect_color",
+          "carrier": "ptr32<u32>",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Writes the effect raw color word when nonnull.",
+          "nullable": true,
+          "ownership": "borrowed for the call"
+        }
+      ],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::color"
+      ]
+    },
+    {
+      "name": "PalFontSetColor",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [
+        {
+          "name": "color",
+          "carrier": "u32",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "effect_color",
+          "carrier": "u32",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value.",
+        "observed_eax": "Second color argument in all three bodies; source semantic return still unresolved."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::set_color"
+      ]
+    },
+    {
+      "name": "PalFontSetEffect",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [
+        {
+          "name": "effect",
+          "carrier": "u16",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 16
+        }
+      ],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::set_effect"
+      ]
+    },
+    {
+      "name": "PalFontSetFontSize",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [
+        {
+          "name": "font_size",
+          "carrier": "u16",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 16
+        }
+      ],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::set_font_size"
+      ]
+    },
+    {
+      "name": "PalFontUnload",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value."
+      },
+      "builds": [
+        "koikake",
+        "reference",
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/font.rs::PalFontSystem::unload_bitmap_font"
+      ]
+    },
+    {
+      "name": "PalFontGetDrawTextRect",
+      "calling_convention": "cdecl",
+      "status": "unresolved_source_return",
+      "arguments": [
+        {
+          "name": "rect",
+          "carrier": "ptr32<PalDrawTextRect32>",
+          "stack_slot_bytes": 4,
+          "consumed_bits": 32,
+          "notes": "Writes exactly20 bytes unconditionally; caller should test HasDrawTextRect first.",
+          "nullable": false,
+          "ownership": "borrowed for the call"
+        }
+      ],
+      "observed_return": {
+        "register": "EAX",
+        "width_bits": null,
+        "carrier": null,
+        "meaning": "Source-level return contract unresolved. Observed EAX is incidental; callers do not establish a meaningful return value.",
+        "observed_eax": "Copied fifth word (glyph_width); caller discards it."
+      },
+      "builds": [
+        "totsulover"
+      ],
+      "evidence": "reverse/contracts/text_animation.json",
+      "portable_mapping": [
+        "crates/pal-vm/src/runtime/text_animation.rs::TextThresholdMap"
+      ]
+    }
+  ],
+  "shared_layouts": [
+    {
+      "name": "PalTextSize32",
+      "size": 8,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "width",
+          "offset": 0,
+          "type": "i32"
+        },
+        {
+          "name": "height",
+          "offset": 4,
+          "type": "i32"
+        }
+      ],
+      "ownership": "Caller-owned output, required nonnull for GetSize."
+    },
+    {
+      "name": "PalDrawTextRect32",
+      "size": 20,
+      "alignment": 4,
+      "build": "totsulover",
+      "fields": [
+        {
+          "name": "left",
+          "offset": 0,
+          "type": "i32"
+        },
+        {
+          "name": "top",
+          "offset": 4,
+          "type": "i32"
+        },
+        {
+          "name": "right",
+          "offset": 8,
+          "type": "i32"
+        },
+        {
+          "name": "bottom",
+          "offset": 12,
+          "type": "i32"
+        },
+        {
+          "name": "glyph_width",
+          "offset": 16,
+          "type": "u32"
+        }
+      ],
+      "ownership": "Caller-owned output copied from native global last-glyph state; validity is queried separately."
+    },
+    {
+      "name": "PalBitmapGlyphRecord32",
+      "size": 24,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "black_box_width",
+          "offset": 0,
+          "type": "u32"
+        },
+        {
+          "name": "black_box_height",
+          "offset": 4,
+          "type": "u32"
+        },
+        {
+          "name": "origin_x",
+          "offset": 8,
+          "type": "i32"
+        },
+        {
+          "name": "origin_y",
+          "offset": 12,
+          "type": "i32"
+        },
+        {
+          "name": "cell_inc_x",
+          "offset": 16,
+          "type": "i16"
+        },
+        {
+          "name": "cell_inc_y",
+          "offset": 18,
+          "type": "i16"
+        },
+        {
+          "name": "bitmap_bytes",
+          "offset": 20,
+          "type": "u32"
+        }
+      ],
+      "ownership": "Immutable record in the loaded font resource, followed by bitmap_bytes coverage bytes. Native lookup uses 255*wrapping_u8(high_byte+0x80)+low_byte for nonzero high_byte, otherwise low_byte. Native code does not validate offsets; safe adapters must do so."
+    },
+    {
+      "name": "PalBitmapFontMetricsFooter32",
+      "size": 56,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "height",
+          "offset": 0,
+          "type": "i32"
+        },
+        {
+          "name": "ascent",
+          "offset": 4,
+          "type": "i32"
+        },
+        {
+          "name": "remaining_text_metrics",
+          "offset": 8,
+          "type": "u8[48]"
+        }
+      ],
+      "ownership": "Last 56 bytes of the bitmap font resource copied into native font context. Height defines scale and cache selection; ascent defines the baseline. Remaining fields are preserved native TEXTMETRICA bytes, not required to infer the first two fields."
+    }
+  ],
+  "review_notes": [
+    "A const void pointer deliberately preserves the reference UTF-16LE versus other-profile Shift-JIS argument distinction without imposing one encoding.",
+    "Native bool-like returns are retained as their reviewed integer widths; setter source returns with incidental EAX stay unresolved.",
+    "Safe portable methods do not recreate unchecked file offsets, null GDI objects, unbounded text parser writes or invalid native clipping.",
+    "Portable adapters return Result for checked buffer/resource errors and preserve native signed32/unsigned8 widths on successful scalar returns. This adapter error channel is an explicit safe-port extension, not a recovered native return code."
+  ]
+}

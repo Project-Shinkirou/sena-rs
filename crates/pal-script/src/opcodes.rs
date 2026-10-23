@@ -15993,62 +15993,62 @@ pub fn ext_opcode(category: u16, index: u16) -> Option<ExtOpcode> {
         (17, 0) => Some(ExtOpcode {
             category: 17,
             index: 0,
-            name: Some("action_run_count_over"),
+            name: Some("action_run"),
         }),
         (17, 1) => Some(ExtOpcode {
             category: 17,
             index: 1,
-            name: Some("action_sync_run_count_over"),
+            name: Some("action_sync_run"),
         }),
         (17, 2) => Some(ExtOpcode {
             category: 17,
             index: 2,
-            name: Some("action_loop_run_count_over"),
+            name: Some("action_loop_run"),
         }),
         (17, 3) => Some(ExtOpcode {
             category: 17,
             index: 3,
-            name: Some("action_clear_count_over"),
+            name: Some("action_clear"),
         }),
         (17, 4) => Some(ExtOpcode {
             category: 17,
             index: 4,
-            name: Some("action_sync_wait_count_over"),
+            name: Some("action_sync_wait"),
         }),
         (17, 5) => Some(ExtOpcode {
             category: 17,
             index: 5,
-            name: None,
+            name: Some("action_position"),
         }),
         (17, 6) => Some(ExtOpcode {
             category: 17,
             index: 6,
-            name: None,
+            name: Some("action_move_to"),
         }),
         (17, 7) => Some(ExtOpcode {
             category: 17,
             index: 7,
-            name: None,
+            name: Some("action_shake"),
         }),
         (17, 8) => Some(ExtOpcode {
             category: 17,
             index: 8,
-            name: None,
+            name: Some("action_alpha_delta"),
         }),
         (17, 9) => Some(ExtOpcode {
             category: 17,
             index: 9,
-            name: None,
+            name: Some("action_line_wait"),
         }),
         (17, 10) => Some(ExtOpcode {
             category: 17,
             index: 10,
-            name: None,
+            name: Some("action_rotate"),
         }),
         (17, 11) => Some(ExtOpcode {
             category: 17,
             index: 11,
-            name: None,
+            name: Some("action_scale"),
         }),
         (17, 12) => Some(ExtOpcode {
             category: 17,
@@ -16063,42 +16063,42 @@ pub fn ext_opcode(category: u16, index: u16) -> Option<ExtOpcode> {
         (17, 14) => Some(ExtOpcode {
             category: 17,
             index: 14,
-            name: None,
+            name: Some("action_position_decelerate"),
         }),
         (17, 15) => Some(ExtOpcode {
             category: 17,
             index: 15,
-            name: None,
+            name: Some("action_position_accelerate"),
         }),
         (17, 16) => Some(ExtOpcode {
             category: 17,
             index: 16,
-            name: None,
+            name: Some("action_sound"),
         }),
         (17, 17) => Some(ExtOpcode {
             category: 17,
             index: 17,
-            name: None,
+            name: Some("action_shake_periodic"),
         }),
         (17, 18) => Some(ExtOpcode {
             category: 17,
             index: 18,
-            name: None,
+            name: Some("action_rect_position"),
         }),
         (17, 19) => Some(ExtOpcode {
             category: 17,
             index: 19,
-            name: None,
+            name: Some("action_rect"),
         }),
         (17, 20) => Some(ExtOpcode {
             category: 17,
             index: 20,
-            name: None,
+            name: Some("action_scale_curve"),
         }),
         (17, 21) => Some(ExtOpcode {
             category: 17,
             index: 21,
-            name: None,
+            name: Some("action_rotate_curve"),
         }),
         (17, 23) => Some(ExtOpcode {
             category: 17,
@@ -16128,12 +16128,12 @@ pub fn ext_opcode(category: u16, index: u16) -> Option<ExtOpcode> {
         (17, 28) => Some(ExtOpcode {
             category: 17,
             index: 28,
-            name: Some("action_uninit"),
+            name: Some("action_clear_all"),
         }),
         (17, 29) => Some(ExtOpcode {
             category: 17,
             index: 29,
-            name: None,
+            name: Some("action_position_sine"),
         }),
         (17, 30) => Some(ExtOpcode {
             category: 17,
@@ -18838,7 +18838,7 @@ pub fn ext_opcode(category: u16, index: u16) -> Option<ExtOpcode> {
         (19, 3) => Some(ExtOpcode {
             category: 19,
             index: 3,
-            name: None,
+            name: Some("fx_raster_start"),
         }),
         (19, 5) => Some(ExtOpcode {
             category: 19,
@@ -22898,7 +22898,7 @@ pub fn ext_opcode(category: u16, index: u16) -> Option<ExtOpcode> {
         (22, 7) => Some(ExtOpcode {
             category: 22,
             index: 7,
-            name: None,
+            name: Some("fx_raster_start"),
         }),
         (22, 9) => Some(ExtOpcode {
             category: 22,

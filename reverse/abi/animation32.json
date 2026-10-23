@@ -1,0 +1,496 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalAnimation",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalTaskOpaque *",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "flags",
+          "type": "uint8_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "frame_delay_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/animation.rs::PalSheetAnimation; crates/pal-vm/src/task.rs::TaskSystem::create_animation_sheet",
+      "notes": "Creates a task with zeroed 28-byte data and a child sentinel; stores sprite at +0, delay at +4, flags at +16, running=1 at +20. Does not reset the source rectangle. The first task callback reads the sprite dimensions/cell dimensions, stores their selected-axis quotient in u16 at +14, zeros current u16 at +12 and loop latch u32 at +24, samples cached PAL time into +8, then changes the task callback. Each update, when running and unsigned wrapping(now-last)>=delay, advances exactly one u16 frame. Equality with frame_count resets to zero and sets the loop latch. Updates the selected cell and resets last=now; no catch-up loop or accumulated remainder. Pointer ownership: sprite: borrowed until the animation is released; flags: value; frame_delay_ms: value. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af5f0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4520",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4ce0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalTaskOpaque *",
+      "parameters": [
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "frames",
+          "type": "const PalAnimationFrame32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/animation.rs::PalSequenceAnimation; crates/pal-vm/src/task.rs::TaskSystem::create_animation_sequence",
+      "notes": "Creates 24-byte task data: sprite+0, borrowed frames+4, current_duration+8, last_time+12, current_frame+16, running+20. Sets current_frame=0 and running=1 and immediately applies frame0 rectangle. First task callback copies frame0.duration to current_duration and samples cached PAL time; later callback advances at most once when unsigned elapsed reaches duration. Advance replaces current index with the old record next field, reads next duration before checking next==-1, then applies the new rectangle and resets last time only for nonterminal next. Terminal -1 keeps the last displayed rectangle. Pointer ownership: sprite: borrowed until release; frames: borrowed until release or ResetEx replaces the pointer. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af840",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4170",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4950",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationGetAnimationPoint",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_get_point",
+      "notes": "No task-type check. For Ex this is the signed frame index; for a zero-initialized sheet payload it is the flags byte widened by the three zero padding bytes, not the current u16 sheet frame. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af9e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a3f70",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a47c0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationGetTime",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_get_time",
+      "notes": "For a sheet this is the unmodified 32-bit delay. For Ex it is the native frame-array pointer, not a delay. No task-type check. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af810",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4210",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4a70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationLoopIs",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_take_looped",
+      "notes": "If task and task_data exist and data+24 is nonzero, clear that dword and return1; otherwise return0. This consumes the sheet loop event. Calling it on the 24-byte Ex data reads beyond that payload. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af6a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4340",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4b70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationRelease",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_release",
+      "notes": "Null returns0. Any nonnull task argument returns1 after scheduling task release; this does not destroy or reset the borrowed sprite. Release is deferred through the PAL task system. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af670",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4370",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4ba0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationReset",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/animation.rs::PalSheetAnimation::reset; crates/pal-vm/src/task.rs::TaskSystem::animation_reset",
+      "notes": "Null task or task_data returns0; otherwise select sprite cell(0,0), set last_time=now, current u16=0 and loop latch=0. Does not modify running, delay or frame_count, and does not recompute dimensions. Returns1 even if the internal sprite operation fails. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af6e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a42c0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4b20",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationResetEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "frames",
+          "type": "const PalAnimationFrame32 *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/animation.rs::PalSequenceAnimation::reset_with_frames; crates/pal-vm/src/task.rs::TaskSystem::animation_reset_sequence_with_frames",
+      "notes": "Null task or task_data returns0; otherwise replace borrowed frame pointer, current=0, running=1, apply frame0 rectangle, load its duration and last_time=now. Pointer ownership: animation: borrowed for the call; frames: borrowed until release or another ResetEx. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af8d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a3ff0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4840",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationSetTime",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        },
+        {
+          "name": "frame_delay_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_set_time",
+      "notes": "Null task/data returns0. Otherwise writes the raw second word to data+4 and cached time to data+8; returns1. No task-type check or delay clamp. Pointer ownership: animation: borrowed for the call; frame_delay_ms: value. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af7c0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4230",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4a90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationStart",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_start",
+      "notes": "Null task/data returns0; otherwise writes 1 to task_data+20 and returns1. Sheet and Ex exports perform the same offset write. Does not rebase time; resuming after a long stop may advance immediately. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af780",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4260",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4ac0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationStartEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_start",
+      "notes": "Null task/data returns0; otherwise writes 1 to task_data+20 and returns1. Sheet and Ex exports perform the same offset write. Does not rebase time; resuming after a long stop may advance immediately. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af9a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a3f90",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a47e0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationStop",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_stop",
+      "notes": "Null task/data returns0; otherwise writes 0 to task_data+20 and returns1. Sheet and Ex exports perform the same offset write. Does not rebase time; resuming after a long stop may advance immediately. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af740",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a4290",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4af0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalAnimationStopEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "animation",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::animation_stop",
+      "notes": "Null task/data returns0; otherwise writes 0 to task_data+20 and returns1. Sheet and Ex exports perform the same offset write. Does not rebase time; resuming after a long stop may advance immediately. Pointer ownership: animation: borrowed for the call. Native task pointers are never portable arena keys. See reverse/contracts/text_animation.json for nullability, per-build addresses, callback helpers and typed-adapter safety differences.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100af960",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-text-animation-koikake.json"
+        },
+        "reference": {
+          "address": "0x100a3fc0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-text-animation-reference.json"
+        },
+        "totsulover": {
+          "address": "0x100a4810",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-text-animation-totsulover.json"
+        }
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "name": "PalAnimationFrame32",
+      "size": 24,
+      "alignment": 4,
+      "fields": [
+        {
+          "name": "left",
+          "offset": 0,
+          "type": "i32"
+        },
+        {
+          "name": "top",
+          "offset": 4,
+          "type": "i32"
+        },
+        {
+          "name": "right",
+          "offset": 8,
+          "type": "i32"
+        },
+        {
+          "name": "bottom",
+          "offset": 12,
+          "type": "i32"
+        },
+        {
+          "name": "duration_ms",
+          "offset": 16,
+          "type": "u32"
+        },
+        {
+          "name": "next",
+          "offset": 20,
+          "type": "i32"
+        }
+      ],
+      "ownership": "Array is borrowed and remains live until animation release or replacement; next==-1 is terminal. Native still reads duration at index-1 before testing it.",
+      "portable_mapping": "crates/pal-vm/src/animation.rs::PalAnimationFrameRecord",
+      "gap": "Portable record currently lacks repr(C) assertions and owns the array; a native layout must be declared separately or made shared before adding an ABI adapter."
+    }
+  ],
+  "integration_notes": [
+    "Merge functions into pal32.json and regenerate with the central generator before accepting implementation.",
+    "Generator needs uint8_t, PalTaskOpaque *, const PalAnimationFrame32 *, and a 24-byte PalAnimationFrame32 layout.",
+    "PalAnimationFrameRecord now has repr(C) and compile-time size/alignment/offset checks; ABI module may re-export it as PalAnimationFrame32 to share the actual value layout.",
+    "Task data layouts are opaque: sheet28 bytes: sprite ptr+0,delay u32+4,last u32+8,current u16+12,count u16+14,flags u8+16,pad3,running i32+20,looped i32+24. Ex24 bytes: sprite ptr+0,frames ptr+4,current_duration u32+8,last u32+12,index i32+16,running i32+20."
+  ]
+}

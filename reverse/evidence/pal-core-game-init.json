@@ -1,0 +1,2788 @@
+{
+  "functions": [
+    {
+      "ea": "0x415330",
+      "name": "",
+      "xrefs": [
+        {
+          "from": "0x41532f",
+          "function": "_WinMain@16"
+        }
+      ],
+      "pseudocode": "int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)\n{\n  char v5; // cl\n  CHAR *i; // edx\n  int v7; // eax\n  char *v8; // ecx\n  int v10; // esi\n  signed int v11; // edi\n  signed int v12; // esi\n  bool v13; // cc\n  void (*v14)(LPSTR, LPCSTR, ...); // edi\n  HANDLE FirstFileA; // eax\n  char v16; // si\n  HWND Window; // eax\n  HWND v18; // esi\n  HANDLE FileA; // eax\n  void *v20; // esi\n  int SystemMetrics; // eax\n  int v22; // ecx\n  char *j; // esi\n  const char *v24; // esi\n  void *v25; // eax\n  void *v26; // esi\n  void *v27; // eax\n  void *v28; // esi\n  HWND ActiveWindow; // eax\n  HWND v30; // eax\n  HWND v31; // eax\n  HANDLE v32; // esi\n  HWND v33; // eax\n  DWORD NumberOfBytesRead; // [esp+14h] [ebp-75Ch] BYREF\n  DWORD v35; // [esp+18h] [ebp-758h] BYREF\n  HANDLE hObject; // [esp+1Ch] [ebp-754h]\n  int X[2]; // [esp+20h] [ebp-750h] BYREF\n  HINSTANCE v38; // [esp+28h] [ebp-748h] BYREF\n  WPARAM wParam; // [esp+2Ch] [ebp-744h]\n  int v40; // [esp+30h] [ebp-740h]\n  CHAR *v41; // [esp+34h] [ebp-73Ch]\n  CHAR *v42; // [esp+38h] [ebp-738h]\n  int v43; // [esp+3Ch] [ebp-734h]\n  int v44; // [esp+4Ch] [ebp-724h]\n  HWND hwnd; // [esp+50h] [ebp-720h]\n  UINT message; // [esp+54h] [ebp-71Ch]\n  signed int v47; // [esp+58h] [ebp-718h]\n  LPARAM lParam; // [esp+5Ch] [ebp-714h]\n  int v49; // [esp+60h] [ebp-710h]\n  int v50; // [esp+64h] [ebp-70Ch]\n  int v51; // [esp+68h] [ebp-708h]\n  int v52; // [esp+6Ch] [ebp-704h]\n  int (*v53)(); // [esp+74h] [ebp-6FCh]\n  LONG v54; // [esp+7Ch] [ebp-6F4h]\n  DWORD time; // [esp+84h] [ebp-6ECh]\n  int v56; // [esp+88h] [ebp-6E8h]\n  LONG y; // [esp+8Ch] [ebp-6E4h]\n  int v58; // [esp+90h] [ebp-6E0h]\n  WNDCLASSA WndClass; // [esp+98h] [ebp-6D8h] BYREF\n  _BYTE v60[40]; // [esp+C0h] [ebp-6B0h] BYREF\n  HWND v61; // [esp+E8h] [ebp-688h]\n  UINT v62; // [esp+ECh] [ebp-684h]\n  WPARAM v63; // [esp+F0h] [ebp-680h]\n  LPARAM v64; // [esp+F4h] [ebp-67Ch]\n  LONG v65; // [esp+114h] [ebp-65Ch]\n  DWORD v66; // [esp+11Ch] [ebp-654h]\n  int v67; // [esp+120h] [ebp-650h]\n  LONG v68; // [esp+124h] [ebp-64Ch]\n  int v69; // [esp+128h] [ebp-648h]\n  tagMSG Msg; // [esp+130h] [ebp-640h] BYREF\n  int v71; // [esp+14Ch] [ebp-624h]\n  int v72; // [esp+150h] [ebp-620h]\n  _BYTE Text[520]; // [esp+160h] [ebp-610h] BYREF\n  CHAR Filename[1028]; // [esp+368h] [ebp-408h] BYREF\n\n  v35 = (DWORD)lpCmdLine;\n  memset(Filename, 0, 0x400u);\n  GetModuleFileNameA(hInstance, Filename, 0x400u);\n  if ( (int)strnlen(Filename, 0x400u) >= 260 )\n  {\n    MessageBoxA(0, &byte_4D3EB0, &byte_4D3E9C, 0x40010u);\n    return 1;\n  }\n  PathRemoveFileSpecA(Filename);\n  v5 = Filename[0];\n  for ( i = Filename; v5; i += v7 )\n  {\n    if ( v5 >= -96 && (unsigned __int8)(v5 + 32) > 0xFu )\n    {\n      if ( v5 == 63 )\n      {\n        wsprintfA(Text, &byte_4D3F20, Filename);\n        MessageBoxA(0, Text, &byte_4D3E9C, 0x40010u);\n        return 1;\n      }\n      v7 = 1;\n    }\n    else\n    {\n      v7 = 2;\n    }\n    v5 = i[v7];\n  }\n  GetModuleFileNameA(hInstance, Filename, 0x104u);\n  PathRemoveFileSpecA(Filename);\n  v8 = &Text[519];\n  while ( *++v8 )\n    ;\n  strcpy(v8, \"\\\\dll\\\\PAL.dll\");\n  if ( !LoadLibraryExA(Filename, 0, 8u) )\n  {\n    MessageBoxA(0, aPalDDll, \"DLL NOT FOUND\", 0x10u);\n    return 1;\n  }\n  if ( !sub_414540(hInstance) )\n    return 1;\n  hObject = 0;\n  if ( byte_4ED098 || (hObject = CreateSemaphoreA(0, 0, 1, ClassName), GetLastError() != 183) )\n  {\n    PalDefaultCreate(&v38);\n    v38 = hInstance;\n    v53 = sub_413F20;\n    if ( (unsigned int)dword_4ED6C0 > 8 )\n    {\n      v11 = 1280;\n      v12 = 720;\n      v49 = 1280;\n      v50 = 720;\n    }\n    else\n    {\n      v11 = dword_4D2330[4 * dword_4ED6C0];\n      v12 = dword_4D2334[4 * dword_4ED6C0];\n      v49 = dword_4D2338[4 * dword_4ED6C0];\n      v50 = dword_4D233C[4 * dword_4ED6C0];\n    }\n    lParam = v12;\n    v47 = v11;\n    PalGetDesktopRect(&Msg);\n    v13 = (signed int)(Msg.wParam - (unsigned int)Msg.hwnd) <= v11;\n    v14 = (void (*)(LPSTR, LPCSTR, ...))wsprintfA;\n    if ( v13 || (signed int)(Msg.lParam - Msg.message) <= v12 )\n    {\n      wParam = 1;\n    }\n    else if ( byte_4ED09A )\n    {\n      wParam = 1;\n    }\n    else\n    {\n      memset(&Msg, 0, sizeof(Msg));\n      wsprintfA(Filename, \"%s\\\\%s\", &DirectoryName, \"system.dat\");\n      FirstFileA = FindFirstFileA(Filename, (LPWIN32_FIND_DATAA)Text);\n      if ( FirstFileA == (HANDLE)-1 || (v16 = Text[0], FindClose(FirstFileA), (v16 & 0x10) != 0) )\n      {\n        *(_QWORD *)&WndClass.cbClsExtra = 0LL;\n        memset(&WndClass.hIcon, 0, 16);\n        WndClass.hInstance = hInstance;\n        WndClass.lpszClassName = ClassName;\n        WndClass.lpfnWndProc = sub_47D6E0;\n        WndClass.style = 3;\n        WndClass.hCursor = LoadCursorA(0, (LPCSTR)0x7F00);\n        WndClass.hIcon = LoadIconA(0, (LPCSTR)0x7F00);\n        WndClass.cbWndExtra = 30;\n        WndClass.hbrBackground = (HBRUSH)GetStockObject(5);\n        if ( RegisterClassA(&WndClass) )\n        {\n          PalWindowGetPosCenter(X, 300, 150);\n          Window = CreateWindowExA(\n                     8u,\n                     ClassName,\n                     ClassName,\n                     (DWORD)&_ImageBase,\n                     X[0],\n                     X[1],\n                     300,\n                     150,\n                     0,\n                     0,\n                     hInstance,\n                     0);\n          v18 = Window;\n          if ( Window )\n          {\n            ShowWindow(Window, 5);\n            UpdateWindow(v18);\n            while ( 1 )\n            {\n              do\n              {\n                while ( !PeekMessageA(&Msg, 0, 0, 0, 1u) )\n                  ;\n              }\n              while ( IsDialogMessageA(v18, &Msg) );\n              if ( Msg.message == 18 )\n                break;\n              TranslateMessage(&Msg);\n              DispatchMessageA(&Msg);\n            }\n            UnregisterClassA(ClassName, hInstance);\n            v14 = (void (*)(LPSTR, LPCSTR, ...))wsprintfA;\n            wParam = Msg.wParam;\n          }\n          else\n          {\n            wParam = 0;\n          }\n        }\n        else\n        {\n          wParam = 0;\n        }\n      }\n      else\n      {\n        wParam = 0;\n      }\n    }\n    xRight = v47;\n    yBottom = lParam;\n    v44 = 60;\n    v51 = 1535;\n    v52 = 1535;\n    v41 = ClassName;\n    v42 = ClassName;\n    v43 = 101;\n    v40 = 0;\n    memset(Text, 0, sizeof(Text));\n    v14(Text, \"%s\\\\config.dat\", &DirectoryName);\n    FileA = CreateFileA(Text, 0x80000000, 1u, 0, 3u, 0x80u, 0);\n    v20 = FileA;\n    if ( FileA != (HANDLE)-1\n      && GetFileSize(FileA, 0)\n      && (ReadFile(v20, &Msg, 0x24u, &NumberOfBytesRead, 0), CloseHandle(v20), NumberOfBytesRead == 36) )\n    {\n      hwnd = Msg.hwnd;\n      message = Msg.message;\n      v47 = Msg.wParam;\n      lParam = Msg.lParam;\n      time = Msg.time;\n      y = Msg.pt.y;\n      v56 = v71;\n      v54 = Msg.pt.x;\n      v58 = v72;\n      SystemMetrics = GetSystemMetrics(34);\n      v22 = v47;\n      if ( v47 < SystemMetrics )\n        v22 = xRight;\n      v47 = v22;\n      if ( lParam < GetSystemMetrics(35) )\n        lParam = yBottom;\n    }\n    else\n    {\n      sub_47DB70(Text);\n    }\n    for ( j = strstr((const char *)v35, \"/\"); j; j = strstr(v24, \"/\") )\n    {\n      v24 = j + 1;\n      if ( !strncmp(v24, \"MOVIESKIP\", 9u) )\n      {\n        byte_4ED099 = 1;\n        v24 += 9;\n      }\n      else if ( !strncmp(v24, \"DIB\", 3u) )\n      {\n        v24 += 3;\n        time = ~(~time | 8);\n      }\n      else\n      {\n        if ( !strncmp(v24, \"VS\", 2u) )\n        {\n          v56 = 0;\nLABEL_60:\n          v24 += 2;\n          continue;\n        }\n        if ( !strncmp(v24, \"NA\", 2u) )\n        {\n          time = ~(~time | 1);\n          goto LABEL_60;\n        }\n        if ( !strncmp(v24, \"DX\", 2u) )\n        {\n          time |= 8u;\n          goto LABEL_60;\n        }\n      }\n    }\n    dword_4ED0A0 = 1;\n    dword_4EA8D0 = 1;\n    if ( !PalInit(&v38) )\n    {\nLABEL_84:\n      v10 = 0;\n      goto LABEL_85;\n    }\n    sub_47E1D0(0);\n    v14(Filename, \"%s\\\\%s\", &DirectoryName, \"system.dat\");\n    v25 = (void *)PalFileCreate(Filename, &Msg);\n    v26 = v25;\n    if ( v25 != (void *)-1 )\n    {\n      SetFilePointer(v25, 2, 0, 1u);\n      ReadFile(v26, &NumberOfBytesRead, 4u, &v35, 0);\n      CloseHandle(v26);\n      v27 = (void *)PalFileCreate(\"Script.src\", &Msg);\n      v28 = v27;\n      if ( v27 == (void *)-1\n        || (SetFilePointer(v27, (LONG)(Msg.hwnd + 1), 0, 0),\n            ReadFile(v28, X, 4u, &v35, 0),\n            CloseHandle(v28),\n            NumberOfBytesRead != X[0]) )\n      {\n        if ( byte_4ED09A )\n        {\n          if ( !sub_47DF20() )\n          {\n            ActiveWindow = GetActiveWindow();\n            MessageBoxA(ActiveWindow, &byte_4D3FD4, &byte_4D3FC4, 0x40020u);\nLABEL_69:\n            PalUninit();\n            goto LABEL_84;\n          }\n        }\n        else\n        {\n          v30 = GetActiveWindow();\n          if ( MessageBoxA(v30, &byte_4D4018, &byte_4D400C, 0x40024u) != 6 )\n            goto LABEL_69;\n          if ( !sub_47DF20() )\n          {\n            v31 = GetActiveWindow();\n            MessageBoxA(v31, &byte_4D3FD4, &byte_4D3FC4, 0x40020u);\n            PalUninit();\n            goto LABEL_84;\n          }\n        }\n      }\n    }\n    hLibModule = LoadLibraryA(\"User32.dll\");\n    if ( hLibModule )\n      dword_4F16E4 = (int (__stdcall *)(_DWORD, _DWORD, _DWORD, _DWORD, _DWORD))GetProcAddress(\n                                                                                  hInstance,\n                                                                                  \"GetProductInfo\");\n    if ( PalDebugIs() )\n      sub_4138E0();\n    PalRun();\n    memset(Text, 0, sizeof(Text));\n    wsprintfA(Text, \"%s\\\\config.dat\", &DirectoryName);\n    v32 = CreateFileA(Text, 0x40000000u, 2u, 0, 2u, 0x80u, 0);\n    if ( v32 != (HANDLE)-1 )\n    {\n      PalGetSystemParameters(v60);\n      Msg.hwnd = v61;\n      Msg.message = v62;\n      Msg.wParam = v63;\n      Msg.lParam = v64;\n      Msg.pt.y = v68;\n      v71 = v67;\n      Msg.pt.x = v65;\n      v72 = v69;\n      v66 |= 8u;\n      Msg.time = v66;\n      if ( !WriteFile(v32, &Msg, 0x24u, (LPDWORD)X, 0) )\n      {\n        wsprintfA(Filename, &byte_4DA7F0, Text);\n        v33 = GetActiveWindow();\n        MessageBoxA(v33, Filename, &byte_4DA830, 0x40030u);\n      }\n      CloseHandle(v32);\n    }\n    PalUninit();\n    if ( hLibModule )\n      FreeLibrary(hLibModule);\n    hLibModule = 0;\n    dword_4F16E4 = 0;\n    goto LABEL_84;\n  }\n  v10 = 1;\nLABEL_85:\n  if ( hObject )\n    CloseHandle(hObject);\n  return v10;\n}\n",
+      "disassembly": [
+        [
+          "0x4150e0",
+          "push    ebp"
+        ],
+        [
+          "0x4150e1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x4150e3",
+          "and     esp, 0FFFFFFF0h"
+        ],
+        [
+          "0x4150e6",
+          "sub     esp, 768h"
+        ],
+        [
+          "0x4150ec",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x4150f1",
+          "xor     eax, esp"
+        ],
+        [
+          "0x4150f3",
+          "mov     [esp+768h+var_4], eax"
+        ],
+        [
+          "0x4150fa",
+          "mov     eax, [ebp+lpCmdLine]"
+        ],
+        [
+          "0x4150fd",
+          "push    esi"
+        ],
+        [
+          "0x4150fe",
+          "mov     esi, [ebp+hInstance]"
+        ],
+        [
+          "0x415101",
+          "push    edi"
+        ],
+        [
+          "0x415102",
+          "push    400h; Size"
+        ],
+        [
+          "0x415107",
+          "mov     [esp+774h+var_758], eax"
+        ],
+        [
+          "0x41510b",
+          "lea     eax, [esp+774h+Filename]"
+        ],
+        [
+          "0x415112",
+          "push    0; Val"
+        ],
+        [
+          "0x415114",
+          "push    eax; void *"
+        ],
+        [
+          "0x415115",
+          "mov     [esp+77Ch+hModule], esi"
+        ],
+        [
+          "0x415119",
+          "call    _memset"
+        ],
+        [
+          "0x41511e",
+          "mov     edi, ds:__imp_GetModuleFileNameA"
+        ],
+        [
+          "0x415124",
+          "lea     eax, [esp+77Ch+Filename]"
+        ],
+        [
+          "0x41512b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x41512e",
+          "push    400h; nSize"
+        ],
+        [
+          "0x415133",
+          "push    eax; lpFilename"
+        ],
+        [
+          "0x415134",
+          "push    esi; hModule"
+        ],
+        [
+          "0x415135",
+          "call    edi ; __imp_GetModuleFileNameA"
+        ],
+        [
+          "0x415137",
+          "lea     eax, [esp+770h+Filename]"
+        ],
+        [
+          "0x41513e",
+          "push    400h; MaxCount"
+        ],
+        [
+          "0x415143",
+          "push    eax; String"
+        ],
+        [
+          "0x415144",
+          "call    _strnlen"
+        ],
+        [
+          "0x415149",
+          "add     esp, 8"
+        ],
+        [
+          "0x41514c",
+          "cmp     eax, 104h"
+        ],
+        [
+          "0x415151",
+          "jl      short loc_415185"
+        ],
+        [
+          "0x415153",
+          "push    40010h; uType"
+        ],
+        [
+          "0x415158",
+          "push    offset byte_4D3E9C; lpCaption"
+        ],
+        [
+          "0x41515d",
+          "push    offset byte_4D3EB0; lpText"
+        ],
+        [
+          "0x415162",
+          "push    0; hWnd"
+        ],
+        [
+          "0x415164",
+          "call    ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x41516a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x41516f",
+          "pop     edi"
+        ],
+        [
+          "0x415170",
+          "pop     esi"
+        ],
+        [
+          "0x415171",
+          "mov     ecx, [esp+768h+var_4]"
+        ],
+        [
+          "0x415178",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x41517a",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x41517f",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x415181",
+          "pop     ebp"
+        ],
+        [
+          "0x415182",
+          "retn    10h"
+        ],
+        [
+          "0x415185",
+          "mov     esi, ds:__imp_PathRemoveFileSpecA"
+        ],
+        [
+          "0x41518b",
+          "lea     eax, [esp+770h+Filename]"
+        ],
+        [
+          "0x415192",
+          "push    eax; pszPath"
+        ],
+        [
+          "0x415193",
+          "call    esi ; __imp_PathRemoveFileSpecA"
+        ],
+        [
+          "0x415195",
+          "mov     cl, [esp+770h+Filename]"
+        ],
+        [
+          "0x41519c",
+          "lea     edx, [esp+770h+Filename]"
+        ],
+        [
+          "0x4151a3",
+          "test    cl, cl"
+        ],
+        [
+          "0x4151a5",
+          "jz      short loc_4151D6"
+        ],
+        [
+          "0x4151a7",
+          "cmp     cl, 80h"
+        ],
+        [
+          "0x4151aa",
+          "jb      short loc_4151B1"
+        ],
+        [
+          "0x4151ac",
+          "cmp     cl, 9Fh"
+        ],
+        [
+          "0x4151af",
+          "jbe     short loc_4151B8"
+        ],
+        [
+          "0x4151b1",
+          "lea     eax, [ecx+20h]"
+        ],
+        [
+          "0x4151b4",
+          "cmp     al, 0Fh"
+        ],
+        [
+          "0x4151b6",
+          "ja      short loc_4151BF"
+        ],
+        [
+          "0x4151b8",
+          "mov     eax, 2"
+        ],
+        [
+          "0x4151bd",
+          "jmp     short loc_4151CD"
+        ],
+        [
+          "0x4151bf",
+          "cmp     cl, 3Fh ; '?'"
+        ],
+        [
+          "0x4151c2",
+          "jz      loc_415271"
+        ],
+        [
+          "0x4151c8",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4151cd",
+          "mov     cl, [edx+eax]"
+        ],
+        [
+          "0x4151d0",
+          "add     edx, eax"
+        ],
+        [
+          "0x4151d2",
+          "test    cl, cl"
+        ],
+        [
+          "0x4151d4",
+          "jnz     short loc_4151A7"
+        ],
+        [
+          "0x4151d6",
+          "push    104h; nSize"
+        ],
+        [
+          "0x4151db",
+          "lea     eax, [esp+774h+Filename]"
+        ],
+        [
+          "0x4151e2",
+          "push    eax; lpFilename"
+        ],
+        [
+          "0x4151e3",
+          "push    [esp+778h+hModule]; hModule"
+        ],
+        [
+          "0x4151e7",
+          "call    edi ; __imp_GetModuleFileNameA"
+        ],
+        [
+          "0x4151e9",
+          "lea     eax, [esp+770h+Filename]"
+        ],
+        [
+          "0x4151f0",
+          "push    eax; pszPath"
+        ],
+        [
+          "0x4151f1",
+          "call    esi ; __imp_PathRemoveFileSpecA"
+        ],
+        [
+          "0x4151f3",
+          "lea     ecx, [esp+770h+Filename]"
+        ],
+        [
+          "0x4151fa",
+          "dec     ecx"
+        ],
+        [
+          "0x4151fb",
+          "nop     dword ptr [eax+eax+00h]"
+        ],
+        [
+          "0x415200",
+          "mov     al, [ecx+1]"
+        ],
+        [
+          "0x415203",
+          "lea     ecx, [ecx+1]"
+        ],
+        [
+          "0x415206",
+          "test    al, al"
+        ],
+        [
+          "0x415208",
+          "jnz     short loc_415200"
+        ],
+        [
+          "0x41520a",
+          "mov     eax, ds:dword_4D3E40"
+        ],
+        [
+          "0x41520f",
+          "mov     [ecx], eax"
+        ],
+        [
+          "0x415211",
+          "mov     eax, ds:dword_4D3E44"
+        ],
+        [
+          "0x415216",
+          "mov     [ecx+4], eax"
+        ],
+        [
+          "0x415219",
+          "mov     eax, ds:dword_4D3E48"
+        ],
+        [
+          "0x41521e",
+          "mov     [ecx+8], eax"
+        ],
+        [
+          "0x415221",
+          "mov     al, ds:byte_4D3E4C"
+        ],
+        [
+          "0x415226",
+          "push    8; dwFlags"
+        ],
+        [
+          "0x415228",
+          "mov     [ecx+0Ch], al"
+        ],
+        [
+          "0x41522b",
+          "lea     eax, [esp+774h+Filename]"
+        ],
+        [
+          "0x415232",
+          "push    0; hFile"
+        ],
+        [
+          "0x415234",
+          "push    eax; lpLibFileName"
+        ],
+        [
+          "0x415235",
+          "call    ds:__imp_LoadLibraryExA"
+        ],
+        [
+          "0x41523b",
+          "test    eax, eax"
+        ],
+        [
+          "0x41523d",
+          "jnz     loc_4152C4"
+        ],
+        [
+          "0x415243",
+          "push    10h; uType"
+        ],
+        [
+          "0x415245",
+          "push    offset aDllNotFound; \"DLL NOT FOUND\""
+        ],
+        [
+          "0x41524a",
+          "push    offset aPalDDll; \"pal_d.dll \""
+        ],
+        [
+          "0x41524f",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x415250",
+          "call    ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x415256",
+          "mov     eax, 1"
+        ],
+        [
+          "0x41525b",
+          "pop     edi"
+        ],
+        [
+          "0x41525c",
+          "pop     esi"
+        ],
+        [
+          "0x41525d",
+          "mov     ecx, [esp+768h+var_4]"
+        ],
+        [
+          "0x415264",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x415266",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x41526b",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x41526d",
+          "pop     ebp"
+        ],
+        [
+          "0x41526e",
+          "retn    10h"
+        ],
+        [
+          "0x415271",
+          "lea     eax, [esp+770h+Filename]"
+        ],
+        [
+          "0x415278",
+          "push    eax"
+        ],
+        [
+          "0x415279",
+          "lea     eax, [esp+774h+Text]"
+        ],
+        [
+          "0x415280",
+          "push    offset byte_4D3F20; LPCSTR"
+        ],
+        [
+          "0x415285",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x415286",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x41528c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x41528f",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x415296",
+          "push    40010h; uType"
+        ],
+        [
+          "0x41529b",
+          "push    offset byte_4D3E9C; lpCaption"
+        ],
+        [
+          "0x4152a0",
+          "push    eax; lpText"
+        ],
+        [
+          "0x4152a1",
+          "push    0; hWnd"
+        ],
+        [
+          "0x4152a3",
+          "call    ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x4152a9",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4152ae",
+          "pop     edi"
+        ],
+        [
+          "0x4152af",
+          "pop     esi"
+        ],
+        [
+          "0x4152b0",
+          "mov     ecx, [esp+768h+var_4]"
+        ],
+        [
+          "0x4152b7",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x4152b9",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x4152be",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x4152c0",
+          "pop     ebp"
+        ],
+        [
+          "0x4152c1",
+          "retn    10h"
+        ],
+        [
+          "0x4152c4",
+          "mov     esi, [esp+770h+hModule]"
+        ],
+        [
+          "0x4152c8",
+          "mov     ecx, esi; hModule"
+        ],
+        [
+          "0x4152ca",
+          "call    sub_414540"
+        ],
+        [
+          "0x4152cf",
+          "test    eax, eax"
+        ],
+        [
+          "0x4152d1",
+          "jnz     short loc_4152EE"
+        ],
+        [
+          "0x4152d3",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4152d8",
+          "pop     edi"
+        ],
+        [
+          "0x4152d9",
+          "pop     esi"
+        ],
+        [
+          "0x4152da",
+          "mov     ecx, [esp+768h+var_4]"
+        ],
+        [
+          "0x4152e1",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x4152e3",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x4152e8",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x4152ea",
+          "pop     ebp"
+        ],
+        [
+          "0x4152eb",
+          "retn    10h"
+        ],
+        [
+          "0x4152ee",
+          "cmp     byte_4ED098, 0"
+        ],
+        [
+          "0x4152f5",
+          "mov     [esp+770h+hObject], 0"
+        ],
+        [
+          "0x4152fd",
+          "jnz     short loc_41532B"
+        ],
+        [
+          "0x4152ff",
+          "push    offset ClassName; lpName"
+        ],
+        [
+          "0x415304",
+          "push    1; lMaximumCount"
+        ],
+        [
+          "0x415306",
+          "push    0; lInitialCount"
+        ],
+        [
+          "0x415308",
+          "push    0; lpSemaphoreAttributes"
+        ],
+        [
+          "0x41530a",
+          "call    ds:__imp_CreateSemaphoreA"
+        ],
+        [
+          "0x415310",
+          "mov     [esp+770h+hObject], eax"
+        ],
+        [
+          "0x415314",
+          "call    ds:__imp_GetLastError"
+        ],
+        [
+          "0x41531a",
+          "cmp     eax, 0B7h"
+        ],
+        [
+          "0x41531f",
+          "jnz     short loc_41532B"
+        ],
+        [
+          "0x415321",
+          "mov     esi, 1"
+        ],
+        [
+          "0x415326",
+          "jmp     loc_415B9D"
+        ],
+        [
+          "0x41532b",
+          "lea     eax, [esp+770h+var_748]"
+        ],
+        [
+          "0x41532f",
+          "push    eax"
+        ],
+        [
+          "0x415330",
+          "call    __imp_PalDefaultCreate"
+        ],
+        [
+          "0x415336",
+          "mov     ecx, dword_4ED6C0"
+        ],
+        [
+          "0x41533c",
+          "add     esp, 4"
+        ],
+        [
+          "0x41533f",
+          "mov     [esp+770h+var_748], esi"
+        ],
+        [
+          "0x415343",
+          "mov     [esp+770h+var_6FC], offset sub_413F20"
+        ],
+        [
+          "0x41534b",
+          "cmp     ecx, 8"
+        ],
+        [
+          "0x41534e",
+          "ja      short loc_415375"
+        ],
+        [
+          "0x415350",
+          "shl     ecx, 4"
+        ],
+        [
+          "0x415353",
+          "mov     eax, ds:dword_4D2338[ecx]"
+        ],
+        [
+          "0x415359",
+          "mov     edi, ds:dword_4D2330[ecx]"
+        ],
+        [
+          "0x41535f",
+          "mov     esi, ds:dword_4D2334[ecx]"
+        ],
+        [
+          "0x415365",
+          "mov     [esp+770h+var_710], eax"
+        ],
+        [
+          "0x415369",
+          "mov     eax, ds:dword_4D233C[ecx]"
+        ],
+        [
+          "0x41536f",
+          "mov     [esp+770h+var_70C], eax"
+        ],
+        [
+          "0x415373",
+          "jmp     short loc_415387"
+        ],
+        [
+          "0x415375",
+          "mov     edi, 500h"
+        ],
+        [
+          "0x41537a",
+          "mov     esi, 2D0h"
+        ],
+        [
+          "0x41537f",
+          "mov     [esp+770h+var_710], edi"
+        ],
+        [
+          "0x415383",
+          "mov     [esp+770h+var_70C], esi"
+        ],
+        [
+          "0x415387",
+          "lea     eax, [esp+770h+Msg]"
+        ],
+        [
+          "0x41538e",
+          "mov     [esp+770h+var_714], esi"
+        ],
+        [
+          "0x415392",
+          "push    eax"
+        ],
+        [
+          "0x415393",
+          "mov     [esp+774h+var_718], edi"
+        ],
+        [
+          "0x415397",
+          "call    __imp_PalGetDesktopRect"
+        ],
+        [
+          "0x41539d",
+          "mov     eax, [esp+774h+Msg.wParam]"
+        ],
+        [
+          "0x4153a4",
+          "add     esp, 4"
+        ],
+        [
+          "0x4153a7",
+          "sub     eax, [esp+770h+Msg.hwnd]"
+        ],
+        [
+          "0x4153ae",
+          "cmp     eax, edi"
+        ],
+        [
+          "0x4153b0",
+          "mov     edi, ds:__imp_wsprintfA"
+        ],
+        [
+          "0x4153b6",
+          "jle     loc_4155E7"
+        ],
+        [
+          "0x4153bc",
+          "mov     eax, [esp+770h+Msg.lParam]"
+        ],
+        [
+          "0x4153c3",
+          "sub     eax, [esp+770h+Msg.message]"
+        ],
+        [
+          "0x4153ca",
+          "cmp     eax, esi"
+        ],
+        [
+          "0x4153cc",
+          "jle     loc_4155E7"
+        ],
+        [
+          "0x4153d2",
+          "cmp     byte_4ED09A, 0"
+        ],
+        [
+          "0x4153d9",
+          "jz      short loc_4153E9"
+        ],
+        [
+          "0x4153db",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4153e0",
+          "mov     [esp+770h+var_744], eax"
+        ],
+        [
+          "0x4153e4",
+          "jmp     loc_4155EF"
+        ],
+        [
+          "0x4153e9",
+          "push    offset aSystemDat; \"system.dat\""
+        ],
+        [
+          "0x4153ee",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x4153f3",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x4153f6",
+          "mov     [esp+778h+Msg.pt.y], 0"
+        ],
+        [
+          "0x415401",
+          "lea     eax, [esp+778h+Filename]"
+        ],
+        [
+          "0x415408",
+          "movaps  xmmword ptr [esp+778h+Msg.hwnd], xmm0"
+        ],
+        [
+          "0x415410",
+          "push    offset aSS_0; \"%s\\\\%s\""
+        ],
+        [
+          "0x415415",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x415416",
+          "movq    qword ptr [esp+780h+Msg.time], xmm0"
+        ],
+        [
+          "0x41541f",
+          "call    edi ; __imp_wsprintfA"
+        ],
+        [
+          "0x415421",
+          "add     esp, 10h"
+        ],
+        [
+          "0x415424",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x41542b",
+          "push    eax; lpFindFileData"
+        ],
+        [
+          "0x41542c",
+          "lea     eax, [esp+774h+Filename]"
+        ],
+        [
+          "0x415433",
+          "push    eax; lpFileName"
+        ],
+        [
+          "0x415434",
+          "call    ds:__imp_FindFirstFileA"
+        ],
+        [
+          "0x41543a",
+          "cmp     eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x41543d",
+          "jz      short loc_41545D"
+        ],
+        [
+          "0x41543f",
+          "mov     esi, dword ptr [esp+770h+Text]"
+        ],
+        [
+          "0x415446",
+          "push    eax; hFindFile"
+        ],
+        [
+          "0x415447",
+          "call    ds:__imp_FindClose"
+        ],
+        [
+          "0x41544d",
+          "and     esi, 10h"
+        ],
+        [
+          "0x415450",
+          "jnz     short loc_41545D"
+        ],
+        [
+          "0x415452",
+          "xor     eax, eax"
+        ],
+        [
+          "0x415454",
+          "mov     [esp+770h+var_744], eax"
+        ],
+        [
+          "0x415458",
+          "jmp     loc_4155EF"
+        ],
+        [
+          "0x41545d",
+          "mov     esi, [esp+770h+hModule]"
+        ],
+        [
+          "0x415461",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x415464",
+          "push    7F00h; lpCursorName"
+        ],
+        [
+          "0x415469",
+          "push    0; hInstance"
+        ],
+        [
+          "0x41546b",
+          "movlpd  qword ptr [esp+778h+WndClass.cbClsExtra], xmm0"
+        ],
+        [
+          "0x415474",
+          "movlpd  qword ptr [esp+778h+WndClass.hIcon], xmm0"
+        ],
+        [
+          "0x41547d",
+          "movlpd  qword ptr [esp+778h+WndClass.hbrBackground], xmm0"
+        ],
+        [
+          "0x415486",
+          "mov     [esp+778h+WndClass.hInstance], esi"
+        ],
+        [
+          "0x41548d",
+          "mov     [esp+778h+WndClass.lpszClassName], offset ClassName"
+        ],
+        [
+          "0x415498",
+          "mov     [esp+778h+WndClass.lpfnWndProc], offset sub_47D6E0"
+        ],
+        [
+          "0x4154a3",
+          "mov     [esp+778h+WndClass.style], 3"
+        ],
+        [
+          "0x4154ae",
+          "call    ds:__imp_LoadCursorA"
+        ],
+        [
+          "0x4154b4",
+          "push    7F00h; lpIconName"
+        ],
+        [
+          "0x4154b9",
+          "push    0; hInstance"
+        ],
+        [
+          "0x4154bb",
+          "mov     [esp+778h+WndClass.hCursor], eax"
+        ],
+        [
+          "0x4154c2",
+          "call    ds:__imp_LoadIconA"
+        ],
+        [
+          "0x4154c8",
+          "push    5; i"
+        ],
+        [
+          "0x4154ca",
+          "mov     [esp+774h+WndClass.hIcon], eax"
+        ],
+        [
+          "0x4154d1",
+          "mov     [esp+774h+WndClass.cbWndExtra], 1Eh"
+        ],
+        [
+          "0x4154dc",
+          "call    ds:__imp_GetStockObject"
+        ],
+        [
+          "0x4154e2",
+          "mov     [esp+770h+WndClass.hbrBackground], eax"
+        ],
+        [
+          "0x4154e9",
+          "lea     eax, [esp+770h+WndClass]"
+        ],
+        [
+          "0x4154f0",
+          "push    eax; lpWndClass"
+        ],
+        [
+          "0x4154f1",
+          "call    ds:__imp_RegisterClassA"
+        ],
+        [
+          "0x4154f7",
+          "test    ax, ax"
+        ],
+        [
+          "0x4154fa",
+          "jnz     short loc_415507"
+        ],
+        [
+          "0x4154fc",
+          "xor     eax, eax"
+        ],
+        [
+          "0x4154fe",
+          "mov     [esp+770h+var_744], eax"
+        ],
+        [
+          "0x415502",
+          "jmp     loc_4155EF"
+        ],
+        [
+          "0x415507",
+          "push    96h"
+        ],
+        [
+          "0x41550c",
+          "lea     eax, [esp+774h+X]"
+        ],
+        [
+          "0x415510",
+          "push    12Ch"
+        ],
+        [
+          "0x415515",
+          "push    eax"
+        ],
+        [
+          "0x415516",
+          "call    __imp_PalWindowGetPosCenter"
+        ],
+        [
+          "0x41551c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x41551f",
+          "push    0; lpParam"
+        ],
+        [
+          "0x415521",
+          "push    esi; hInstance"
+        ],
+        [
+          "0x415522",
+          "push    0; hMenu"
+        ],
+        [
+          "0x415524",
+          "push    0; hWndParent"
+        ],
+        [
+          "0x415526",
+          "push    96h; nHeight"
+        ],
+        [
+          "0x41552b",
+          "push    12Ch; nWidth"
+        ],
+        [
+          "0x415530",
+          "push    [esp+788h+Y]; Y"
+        ],
+        [
+          "0x415534",
+          "push    [esp+78Ch+X]; X"
+        ],
+        [
+          "0x415538",
+          "push    offset __ImageBase; dwStyle"
+        ],
+        [
+          "0x41553d",
+          "push    offset ClassName; lpWindowName"
+        ],
+        [
+          "0x415542",
+          "push    offset ClassName; lpClassName"
+        ],
+        [
+          "0x415547",
+          "push    8; dwExStyle"
+        ],
+        [
+          "0x415549",
+          "call    ds:__imp_CreateWindowExA"
+        ],
+        [
+          "0x41554f",
+          "mov     esi, eax"
+        ],
+        [
+          "0x415551",
+          "test    esi, esi"
+        ],
+        [
+          "0x415553",
+          "jnz     short loc_41555E"
+        ],
+        [
+          "0x415555",
+          "mov     [esp+770h+var_744], eax"
+        ],
+        [
+          "0x415559",
+          "jmp     loc_4155EF"
+        ],
+        [
+          "0x41555e",
+          "push    5; nCmdShow"
+        ],
+        [
+          "0x415560",
+          "push    esi; hWnd"
+        ],
+        [
+          "0x415561",
+          "call    ds:__imp_ShowWindow"
+        ],
+        [
+          "0x415567",
+          "push    esi; hWnd"
+        ],
+        [
+          "0x415568",
+          "call    ds:__imp_UpdateWindow"
+        ],
+        [
+          "0x41556e",
+          "mov     edi, ds:__imp_PeekMessageA"
+        ],
+        [
+          "0x415574",
+          "push    1; wRemoveMsg"
+        ],
+        [
+          "0x415576",
+          "push    0; wMsgFilterMax"
+        ],
+        [
+          "0x415578",
+          "push    0; wMsgFilterMin"
+        ],
+        [
+          "0x41557a",
+          "push    0; hWnd"
+        ],
+        [
+          "0x41557c",
+          "lea     eax, [esp+780h+Msg]"
+        ],
+        [
+          "0x415583",
+          "push    eax; lpMsg"
+        ],
+        [
+          "0x415584",
+          "call    edi ; __imp_PeekMessageA"
+        ],
+        [
+          "0x415586",
+          "test    eax, eax"
+        ],
+        [
+          "0x415588",
+          "jz      short loc_415574"
+        ],
+        [
+          "0x41558a",
+          "lea     eax, [esp+770h+Msg]"
+        ],
+        [
+          "0x415591",
+          "push    eax; lpMsg"
+        ],
+        [
+          "0x415592",
+          "push    esi; hDlg"
+        ],
+        [
+          "0x415593",
+          "call    ds:__imp_IsDialogMessageA"
+        ],
+        [
+          "0x415599",
+          "test    eax, eax"
+        ],
+        [
+          "0x41559b",
+          "jnz     short loc_415574"
+        ],
+        [
+          "0x41559d",
+          "cmp     [esp+770h+Msg.message], 12h"
+        ],
+        [
+          "0x4155a5",
+          "jz      short loc_4155C5"
+        ],
+        [
+          "0x4155a7",
+          "lea     eax, [esp+770h+Msg]"
+        ],
+        [
+          "0x4155ae",
+          "push    eax; lpMsg"
+        ],
+        [
+          "0x4155af",
+          "call    ds:__imp_TranslateMessage"
+        ],
+        [
+          "0x4155b5",
+          "lea     eax, [esp+770h+Msg]"
+        ],
+        [
+          "0x4155bc",
+          "push    eax; lpMsg"
+        ],
+        [
+          "0x4155bd",
+          "call    ds:__imp_DispatchMessageA"
+        ],
+        [
+          "0x4155c3",
+          "jmp     short loc_415574"
+        ],
+        [
+          "0x4155c5",
+          "push    [esp+770h+hModule]; hInstance"
+        ],
+        [
+          "0x4155c9",
+          "push    offset ClassName; lpClassName"
+        ],
+        [
+          "0x4155ce",
+          "call    ds:__imp_UnregisterClassA"
+        ],
+        [
+          "0x4155d4",
+          "mov     eax, [esp+770h+Msg.wParam]"
+        ],
+        [
+          "0x4155db",
+          "mov     edi, ds:__imp_wsprintfA"
+        ],
+        [
+          "0x4155e1",
+          "mov     [esp+770h+var_744], eax"
+        ],
+        [
+          "0x4155e5",
+          "jmp     short loc_4155EF"
+        ],
+        [
+          "0x4155e7",
+          "mov     [esp+770h+var_744], 1"
+        ],
+        [
+          "0x4155ef",
+          "mov     eax, [esp+770h+var_718]"
+        ],
+        [
+          "0x4155f3",
+          "mov     xRight, eax"
+        ],
+        [
+          "0x4155f8",
+          "mov     eax, [esp+770h+var_714]"
+        ],
+        [
+          "0x4155fc",
+          "push    208h; Size"
+        ],
+        [
+          "0x415601",
+          "mov     yBottom, eax"
+        ],
+        [
+          "0x415606",
+          "lea     eax, [esp+774h+Text]"
+        ],
+        [
+          "0x41560d",
+          "push    0; Val"
+        ],
+        [
+          "0x41560f",
+          "push    eax; void *"
+        ],
+        [
+          "0x415610",
+          "mov     [esp+77Ch+var_724], 3Ch ; '<'"
+        ],
+        [
+          "0x415618",
+          "mov     [esp+77Ch+var_708], 5FFh"
+        ],
+        [
+          "0x415620",
+          "mov     [esp+77Ch+var_704], 5FFh"
+        ],
+        [
+          "0x415628",
+          "mov     [esp+77Ch+var_73C], offset ClassName"
+        ],
+        [
+          "0x415630",
+          "mov     [esp+77Ch+var_738], offset ClassName"
+        ],
+        [
+          "0x415638",
+          "mov     [esp+77Ch+var_734], 65h ; 'e'"
+        ],
+        [
+          "0x415640",
+          "mov     [esp+77Ch+var_740], 0"
+        ],
+        [
+          "0x415648",
+          "call    _memset"
+        ],
+        [
+          "0x41564d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415650",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x415657",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x41565c",
+          "push    offset aSConfigDat; \"%s\\\\config.dat\""
+        ],
+        [
+          "0x415661",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x415662",
+          "call    edi ; __imp_wsprintfA"
+        ],
+        [
+          "0x415664",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415667",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x41566e",
+          "push    0; hTemplateFile"
+        ],
+        [
+          "0x415670",
+          "push    80h; dwFlagsAndAttributes"
+        ],
+        [
+          "0x415675",
+          "push    3; dwCreationDisposition"
+        ],
+        [
+          "0x415677",
+          "push    0; lpSecurityAttributes"
+        ],
+        [
+          "0x415679",
+          "push    1; dwShareMode"
+        ],
+        [
+          "0x41567b",
+          "push    80000000h; dwDesiredAccess"
+        ],
+        [
+          "0x415680",
+          "push    eax; lpFileName"
+        ],
+        [
+          "0x415681",
+          "call    ds:__imp_CreateFileA"
+        ],
+        [
+          "0x415687",
+          "mov     esi, eax"
+        ],
+        [
+          "0x415689",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x41568c",
+          "jz      loc_41576C"
+        ],
+        [
+          "0x415692",
+          "push    0; lpFileSizeHigh"
+        ],
+        [
+          "0x415694",
+          "push    esi; hFile"
+        ],
+        [
+          "0x415695",
+          "call    ds:__imp_GetFileSize"
+        ],
+        [
+          "0x41569b",
+          "test    eax, eax"
+        ],
+        [
+          "0x41569d",
+          "jz      loc_41576C"
+        ],
+        [
+          "0x4156a3",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x4156a5",
+          "lea     eax, [esp+774h+NumberOfBytesRead]"
+        ],
+        [
+          "0x4156a9",
+          "push    eax; lpNumberOfBytesRead"
+        ],
+        [
+          "0x4156aa",
+          "push    24h ; '$'; nNumberOfBytesToRead"
+        ],
+        [
+          "0x4156ac",
+          "lea     eax, [esp+77Ch+Msg]"
+        ],
+        [
+          "0x4156b3",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x4156b4",
+          "push    esi; hFile"
+        ],
+        [
+          "0x4156b5",
+          "call    ds:__imp_ReadFile"
+        ],
+        [
+          "0x4156bb",
+          "push    esi; hObject"
+        ],
+        [
+          "0x4156bc",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x4156c2",
+          "cmp     [esp+770h+NumberOfBytesRead], 24h ; '$'"
+        ],
+        [
+          "0x4156c7",
+          "jnz     loc_41576C"
+        ],
+        [
+          "0x4156cd",
+          "mov     eax, [esp+770h+Msg.hwnd]"
+        ],
+        [
+          "0x4156d4",
+          "mov     esi, ds:__imp_GetSystemMetrics"
+        ],
+        [
+          "0x4156da",
+          "mov     [esp+770h+var_720], eax"
+        ],
+        [
+          "0x4156de",
+          "mov     eax, [esp+770h+Msg.message]"
+        ],
+        [
+          "0x4156e5",
+          "mov     [esp+770h+var_71C], eax"
+        ],
+        [
+          "0x4156e9",
+          "mov     eax, [esp+770h+Msg.wParam]"
+        ],
+        [
+          "0x4156f0",
+          "mov     [esp+770h+var_718], eax"
+        ],
+        [
+          "0x4156f4",
+          "mov     eax, [esp+770h+Msg.lParam]"
+        ],
+        [
+          "0x4156fb",
+          "mov     [esp+770h+var_714], eax"
+        ],
+        [
+          "0x4156ff",
+          "mov     eax, [esp+770h+Msg.time]"
+        ],
+        [
+          "0x415706",
+          "mov     [esp+770h+var_6EC], eax"
+        ],
+        [
+          "0x41570d",
+          "mov     eax, [esp+770h+Msg.pt.y]"
+        ],
+        [
+          "0x415714",
+          "mov     [esp+770h+var_6E4], eax"
+        ],
+        [
+          "0x41571b",
+          "mov     eax, [esp+770h+var_624]"
+        ],
+        [
+          "0x415722",
+          "mov     [esp+770h+var_6E8], eax"
+        ],
+        [
+          "0x415729",
+          "mov     eax, [esp+770h+Msg.pt.x]"
+        ],
+        [
+          "0x415730",
+          "mov     [esp+770h+var_6F4], eax"
+        ],
+        [
+          "0x415734",
+          "mov     eax, [esp+770h+var_620]"
+        ],
+        [
+          "0x41573b",
+          "push    22h ; '\"'; nIndex"
+        ],
+        [
+          "0x41573d",
+          "mov     [esp+774h+var_6E0], eax"
+        ],
+        [
+          "0x415744",
+          "call    esi ; __imp_GetSystemMetrics"
+        ],
+        [
+          "0x415746",
+          "mov     ecx, [esp+770h+var_718]"
+        ],
+        [
+          "0x41574a",
+          "cmp     ecx, eax"
+        ],
+        [
+          "0x41574c",
+          "push    23h ; '#'; nIndex"
+        ],
+        [
+          "0x41574e",
+          "cmovl   ecx, xRight"
+        ],
+        [
+          "0x415755",
+          "mov     [esp+774h+var_718], ecx"
+        ],
+        [
+          "0x415759",
+          "call    esi ; __imp_GetSystemMetrics"
+        ],
+        [
+          "0x41575b",
+          "cmp     [esp+770h+var_714], eax"
+        ],
+        [
+          "0x41575f",
+          "jge     short loc_41577C"
+        ],
+        [
+          "0x415761",
+          "mov     eax, yBottom"
+        ],
+        [
+          "0x415766",
+          "mov     [esp+770h+var_714], eax"
+        ],
+        [
+          "0x41576a",
+          "jmp     short loc_41577C"
+        ],
+        [
+          "0x41576c",
+          "lea     edx, [esp+770h+var_748]"
+        ],
+        [
+          "0x415770",
+          "lea     ecx, [esp+770h+Text]; lpFileName"
+        ],
+        [
+          "0x415777",
+          "call    sub_47DB70"
+        ],
+        [
+          "0x41577c",
+          "push    offset asc_4D3E7C; \"/\""
+        ],
+        [
+          "0x415781",
+          "push    [esp+774h+var_758]; Str"
+        ],
+        [
+          "0x415785",
+          "call    _strstr"
+        ],
+        [
+          "0x41578a",
+          "mov     esi, eax"
+        ],
+        [
+          "0x41578c",
+          "add     esp, 8"
+        ],
+        [
+          "0x41578f",
+          "test    esi, esi"
+        ],
+        [
+          "0x415791",
+          "jz      loc_415868"
+        ],
+        [
+          "0x415797",
+          "push    9; MaxCount"
+        ],
+        [
+          "0x415799",
+          "inc     esi"
+        ],
+        [
+          "0x41579a",
+          "push    offset Str2; \"MOVIESKIP\""
+        ],
+        [
+          "0x41579f",
+          "push    esi; Str1"
+        ],
+        [
+          "0x4157a0",
+          "call    _strncmp"
+        ],
+        [
+          "0x4157a5",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4157a8",
+          "test    eax, eax"
+        ],
+        [
+          "0x4157aa",
+          "jnz     short loc_4157BB"
+        ],
+        [
+          "0x4157ac",
+          "mov     byte_4ED099, 1"
+        ],
+        [
+          "0x4157b3",
+          "add     esi, 9"
+        ],
+        [
+          "0x4157b6",
+          "jmp     loc_415850"
+        ],
+        [
+          "0x4157bb",
+          "push    3; MaxCount"
+        ],
+        [
+          "0x4157bd",
+          "push    offset aDib; \"DIB\""
+        ],
+        [
+          "0x4157c2",
+          "push    esi; Str1"
+        ],
+        [
+          "0x4157c3",
+          "call    _strncmp"
+        ],
+        [
+          "0x4157c8",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4157cb",
+          "test    eax, eax"
+        ],
+        [
+          "0x4157cd",
+          "jnz     short loc_4157E9"
+        ],
+        [
+          "0x4157cf",
+          "mov     eax, [esp+770h+var_6EC]"
+        ],
+        [
+          "0x4157d6",
+          "not     eax"
+        ],
+        [
+          "0x4157d8",
+          "or      eax, 8"
+        ],
+        [
+          "0x4157db",
+          "add     esi, 3"
+        ],
+        [
+          "0x4157de",
+          "not     eax"
+        ],
+        [
+          "0x4157e0",
+          "mov     [esp+770h+var_6EC], eax"
+        ],
+        [
+          "0x4157e7",
+          "jmp     short loc_415850"
+        ],
+        [
+          "0x4157e9",
+          "push    2; MaxCount"
+        ],
+        [
+          "0x4157eb",
+          "push    offset aVs; \"VS\""
+        ],
+        [
+          "0x4157f0",
+          "push    esi; Str1"
+        ],
+        [
+          "0x4157f1",
+          "call    _strncmp"
+        ],
+        [
+          "0x4157f6",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4157f9",
+          "test    eax, eax"
+        ],
+        [
+          "0x4157fb",
+          "jnz     short loc_415806"
+        ],
+        [
+          "0x4157fd",
+          "mov     [esp+770h+var_6E8], eax"
+        ],
+        [
+          "0x415804",
+          "jmp     short loc_41584D"
+        ],
+        [
+          "0x415806",
+          "push    2; MaxCount"
+        ],
+        [
+          "0x415808",
+          "push    offset aNa; \"NA\""
+        ],
+        [
+          "0x41580d",
+          "push    esi; Str1"
+        ],
+        [
+          "0x41580e",
+          "call    _strncmp"
+        ],
+        [
+          "0x415813",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415816",
+          "test    eax, eax"
+        ],
+        [
+          "0x415818",
+          "jnz     short loc_415831"
+        ],
+        [
+          "0x41581a",
+          "mov     eax, [esp+770h+var_6EC]"
+        ],
+        [
+          "0x415821",
+          "not     eax"
+        ],
+        [
+          "0x415823",
+          "or      eax, 1"
+        ],
+        [
+          "0x415826",
+          "not     eax"
+        ],
+        [
+          "0x415828",
+          "mov     [esp+770h+var_6EC], eax"
+        ],
+        [
+          "0x41582f",
+          "jmp     short loc_41584D"
+        ],
+        [
+          "0x415831",
+          "push    2; MaxCount"
+        ],
+        [
+          "0x415833",
+          "push    offset aDx; \"DX\""
+        ],
+        [
+          "0x415838",
+          "push    esi; Str1"
+        ],
+        [
+          "0x415839",
+          "call    _strncmp"
+        ],
+        [
+          "0x41583e",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415841",
+          "test    eax, eax"
+        ],
+        [
+          "0x415843",
+          "jnz     short loc_415850"
+        ],
+        [
+          "0x415845",
+          "or      [esp+770h+var_6EC], 8"
+        ],
+        [
+          "0x41584d",
+          "add     esi, 2"
+        ],
+        [
+          "0x415850",
+          "push    offset asc_4D3E7C; \"/\""
+        ],
+        [
+          "0x415855",
+          "push    esi; Str"
+        ],
+        [
+          "0x415856",
+          "call    _strstr"
+        ],
+        [
+          "0x41585b",
+          "mov     esi, eax"
+        ],
+        [
+          "0x41585d",
+          "add     esp, 8"
+        ],
+        [
+          "0x415860",
+          "test    esi, esi"
+        ],
+        [
+          "0x415862",
+          "jnz     loc_415797"
+        ],
+        [
+          "0x415868",
+          "lea     eax, [esp+770h+var_748]"
+        ],
+        [
+          "0x41586c",
+          "mov     dword_4ED0A0, 1"
+        ],
+        [
+          "0x415876",
+          "push    eax"
+        ],
+        [
+          "0x415877",
+          "mov     dword_4EA8D0, 1"
+        ],
+        [
+          "0x415881",
+          "call    __imp_PalInit"
+        ],
+        [
+          "0x415887",
+          "add     esp, 4"
+        ],
+        [
+          "0x41588a",
+          "test    eax, eax"
+        ],
+        [
+          "0x41588c",
+          "jz      loc_415B9B"
+        ],
+        [
+          "0x415892",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x415894",
+          "call    sub_47E1D0"
+        ],
+        [
+          "0x415899",
+          "push    offset aSystemDat; \"system.dat\""
+        ],
+        [
+          "0x41589e",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x4158a3",
+          "lea     eax, [esp+778h+Filename]"
+        ],
+        [
+          "0x4158aa",
+          "push    offset aSS_0; \"%s\\\\%s\""
+        ],
+        [
+          "0x4158af",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x4158b0",
+          "call    edi ; __imp_wsprintfA"
+        ],
+        [
+          "0x4158b2",
+          "lea     eax, [esp+780h+Msg]"
+        ],
+        [
+          "0x4158b9",
+          "push    eax"
+        ],
+        [
+          "0x4158ba",
+          "lea     eax, [esp+784h+Filename]"
+        ],
+        [
+          "0x4158c1",
+          "push    eax"
+        ],
+        [
+          "0x4158c2",
+          "call    __imp_PalFileCreate"
+        ],
+        [
+          "0x4158c8",
+          "mov     edi, ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x4158ce",
+          "mov     esi, eax"
+        ],
+        [
+          "0x4158d0",
+          "add     esp, 18h"
+        ],
+        [
+          "0x4158d3",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x4158d6",
+          "jz      loc_4159E2"
+        ],
+        [
+          "0x4158dc",
+          "push    1; dwMoveMethod"
+        ],
+        [
+          "0x4158de",
+          "push    0; lpDistanceToMoveHigh"
+        ],
+        [
+          "0x4158e0",
+          "push    2; lDistanceToMove"
+        ],
+        [
+          "0x4158e2",
+          "push    esi; hFile"
+        ],
+        [
+          "0x4158e3",
+          "call    ds:__imp_SetFilePointer"
+        ],
+        [
+          "0x4158e9",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x4158eb",
+          "lea     eax, [esp+774h+var_758]"
+        ],
+        [
+          "0x4158ef",
+          "push    eax; lpNumberOfBytesRead"
+        ],
+        [
+          "0x4158f0",
+          "push    4; nNumberOfBytesToRead"
+        ],
+        [
+          "0x4158f2",
+          "lea     eax, [esp+77Ch+NumberOfBytesRead]"
+        ],
+        [
+          "0x4158f6",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x4158f7",
+          "push    esi; hFile"
+        ],
+        [
+          "0x4158f8",
+          "call    ds:__imp_ReadFile"
+        ],
+        [
+          "0x4158fe",
+          "push    esi; hObject"
+        ],
+        [
+          "0x4158ff",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x415905",
+          "lea     eax, [esp+770h+Msg]"
+        ],
+        [
+          "0x41590c",
+          "push    eax"
+        ],
+        [
+          "0x41590d",
+          "push    offset aScriptSrc; \"Script.src\""
+        ],
+        [
+          "0x415912",
+          "call    __imp_PalFileCreate"
+        ],
+        [
+          "0x415918",
+          "mov     esi, eax"
+        ],
+        [
+          "0x41591a",
+          "add     esp, 8"
+        ],
+        [
+          "0x41591d",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x415920",
+          "jz      short loc_415962"
+        ],
+        [
+          "0x415922",
+          "mov     ecx, [esp+770h+Msg.hwnd]"
+        ],
+        [
+          "0x415929",
+          "push    0; dwMoveMethod"
+        ],
+        [
+          "0x41592b",
+          "push    0; lpDistanceToMoveHigh"
+        ],
+        [
+          "0x41592d",
+          "add     ecx, 4"
+        ],
+        [
+          "0x415930",
+          "push    ecx; lDistanceToMove"
+        ],
+        [
+          "0x415931",
+          "push    esi; hFile"
+        ],
+        [
+          "0x415932",
+          "call    ds:__imp_SetFilePointer"
+        ],
+        [
+          "0x415938",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x41593a",
+          "lea     eax, [esp+774h+var_758]"
+        ],
+        [
+          "0x41593e",
+          "push    eax; lpNumberOfBytesRead"
+        ],
+        [
+          "0x41593f",
+          "push    4; nNumberOfBytesToRead"
+        ],
+        [
+          "0x415941",
+          "lea     eax, [esp+77Ch+X]"
+        ],
+        [
+          "0x415945",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x415946",
+          "push    esi; hFile"
+        ],
+        [
+          "0x415947",
+          "call    ds:__imp_ReadFile"
+        ],
+        [
+          "0x41594d",
+          "push    esi; hObject"
+        ],
+        [
+          "0x41594e",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x415954",
+          "mov     eax, [esp+770h+NumberOfBytesRead]"
+        ],
+        [
+          "0x415958",
+          "cmp     eax, [esp+770h+X]"
+        ],
+        [
+          "0x41595c",
+          "jz      loc_4159E2"
+        ],
+        [
+          "0x415962",
+          "cmp     byte_4ED09A, 0"
+        ],
+        [
+          "0x415969",
+          "jz      short loc_41599B"
+        ],
+        [
+          "0x41596b",
+          "call    sub_47DF20"
+        ],
+        [
+          "0x415970",
+          "test    eax, eax"
+        ],
+        [
+          "0x415972",
+          "jnz     short loc_4159E2"
+        ],
+        [
+          "0x415974",
+          "push    40020h; uType"
+        ],
+        [
+          "0x415979",
+          "push    offset byte_4D3FC4; lpCaption"
+        ],
+        [
+          "0x41597e",
+          "push    offset byte_4D3FD4; lpText"
+        ],
+        [
+          "0x415983",
+          "call    ds:__imp_GetActiveWindow"
+        ],
+        [
+          "0x415989",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x41598a",
+          "call    ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x415990",
+          "call    __imp_PalUninit"
+        ],
+        [
+          "0x415996",
+          "jmp     loc_415B9B"
+        ],
+        [
+          "0x41599b",
+          "mov     esi, ds:__imp_GetActiveWindow"
+        ],
+        [
+          "0x4159a1",
+          "push    40024h; uType"
+        ],
+        [
+          "0x4159a6",
+          "push    offset byte_4D400C; lpCaption"
+        ],
+        [
+          "0x4159ab",
+          "push    offset byte_4D4018; lpText"
+        ],
+        [
+          "0x4159b0",
+          "call    esi ; __imp_GetActiveWindow"
+        ],
+        [
+          "0x4159b2",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x4159b3",
+          "call    edi ; __imp_MessageBoxA"
+        ],
+        [
+          "0x4159b5",
+          "cmp     eax, 6"
+        ],
+        [
+          "0x4159b8",
+          "jnz     short loc_415990"
+        ],
+        [
+          "0x4159ba",
+          "call    sub_47DF20"
+        ],
+        [
+          "0x4159bf",
+          "test    eax, eax"
+        ],
+        [
+          "0x4159c1",
+          "jnz     short loc_4159E2"
+        ],
+        [
+          "0x4159c3",
+          "push    40020h; uType"
+        ],
+        [
+          "0x4159c8",
+          "push    offset byte_4D3FC4; lpCaption"
+        ],
+        [
+          "0x4159cd",
+          "push    offset byte_4D3FD4; lpText"
+        ],
+        [
+          "0x4159d2",
+          "call    esi ; __imp_GetActiveWindow"
+        ],
+        [
+          "0x4159d4",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x4159d5",
+          "call    edi ; __imp_MessageBoxA"
+        ],
+        [
+          "0x4159d7",
+          "call    __imp_PalUninit"
+        ],
+        [
+          "0x4159dd",
+          "jmp     loc_415B9B"
+        ],
+        [
+          "0x4159e2",
+          "push    offset LibFileName; \"User32.dll\""
+        ],
+        [
+          "0x4159e7",
+          "call    ds:__imp_LoadLibraryA"
+        ],
+        [
+          "0x4159ed",
+          "mov     hLibModule, eax"
+        ],
+        [
+          "0x4159f2",
+          "test    eax, eax"
+        ],
+        [
+          "0x4159f4",
+          "jz      short loc_415A0A"
+        ],
+        [
+          "0x4159f6",
+          "push    offset aGetproductinfo; \"GetProductInfo\""
+        ],
+        [
+          "0x4159fb",
+          "push    [esp+774h+hModule]; hModule"
+        ],
+        [
+          "0x4159ff",
+          "call    ds:__imp_GetProcAddress"
+        ],
+        [
+          "0x415a05",
+          "mov     dword_4F16E4, eax"
+        ],
+        [
+          "0x415a0a",
+          "call    __imp_PalDebugIs"
+        ],
+        [
+          "0x415a10",
+          "test    eax, eax"
+        ],
+        [
+          "0x415a12",
+          "jz      short loc_415A19"
+        ],
+        [
+          "0x415a14",
+          "call    sub_4138E0"
+        ],
+        [
+          "0x415a19",
+          "call    __imp_PalRun"
+        ],
+        [
+          "0x415a1f",
+          "push    208h; Size"
+        ],
+        [
+          "0x415a24",
+          "lea     eax, [esp+774h+Text]"
+        ],
+        [
+          "0x415a2b",
+          "push    0; Val"
+        ],
+        [
+          "0x415a2d",
+          "push    eax; void *"
+        ],
+        [
+          "0x415a2e",
+          "call    _memset"
+        ],
+        [
+          "0x415a33",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415a36",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x415a3d",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x415a42",
+          "push    offset aSConfigDat; \"%s\\\\config.dat\""
+        ],
+        [
+          "0x415a47",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x415a48",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x415a4e",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415a51",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x415a58",
+          "push    0; hTemplateFile"
+        ],
+        [
+          "0x415a5a",
+          "push    80h; dwFlagsAndAttributes"
+        ],
+        [
+          "0x415a5f",
+          "push    2; dwCreationDisposition"
+        ],
+        [
+          "0x415a61",
+          "push    0; lpSecurityAttributes"
+        ],
+        [
+          "0x415a63",
+          "push    2; dwShareMode"
+        ],
+        [
+          "0x415a65",
+          "push    40000000h; dwDesiredAccess"
+        ],
+        [
+          "0x415a6a",
+          "push    eax; lpFileName"
+        ],
+        [
+          "0x415a6b",
+          "call    ds:__imp_CreateFileA"
+        ],
+        [
+          "0x415a71",
+          "mov     esi, eax"
+        ],
+        [
+          "0x415a73",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x415a76",
+          "jz      loc_415B71"
+        ],
+        [
+          "0x415a7c",
+          "lea     eax, [esp+770h+var_6B0]"
+        ],
+        [
+          "0x415a83",
+          "push    eax"
+        ],
+        [
+          "0x415a84",
+          "call    __imp_PalGetSystemParameters"
+        ],
+        [
+          "0x415a8a",
+          "mov     eax, [esp+774h+var_688]"
+        ],
+        [
+          "0x415a91",
+          "add     esp, 4"
+        ],
+        [
+          "0x415a94",
+          "mov     ecx, [esp+770h+var_654]"
+        ],
+        [
+          "0x415a9b",
+          "mov     [esp+770h+Msg.hwnd], eax"
+        ],
+        [
+          "0x415aa2",
+          "or      ecx, 8"
+        ],
+        [
+          "0x415aa5",
+          "mov     eax, [esp+770h+var_684]"
+        ],
+        [
+          "0x415aac",
+          "mov     [esp+770h+Msg.message], eax"
+        ],
+        [
+          "0x415ab3",
+          "mov     eax, [esp+770h+var_680]"
+        ],
+        [
+          "0x415aba",
+          "mov     [esp+770h+Msg.wParam], eax"
+        ],
+        [
+          "0x415ac1",
+          "mov     eax, [esp+770h+var_67C]"
+        ],
+        [
+          "0x415ac8",
+          "mov     [esp+770h+Msg.lParam], eax"
+        ],
+        [
+          "0x415acf",
+          "mov     eax, [esp+770h+var_64C]"
+        ],
+        [
+          "0x415ad6",
+          "mov     [esp+770h+Msg.pt.y], eax"
+        ],
+        [
+          "0x415add",
+          "mov     eax, [esp+770h+var_650]"
+        ],
+        [
+          "0x415ae4",
+          "mov     [esp+770h+var_624], eax"
+        ],
+        [
+          "0x415aeb",
+          "mov     eax, [esp+770h+var_65C]"
+        ],
+        [
+          "0x415af2",
+          "mov     [esp+770h+Msg.pt.x], eax"
+        ],
+        [
+          "0x415af9",
+          "mov     eax, [esp+770h+var_648]"
+        ],
+        [
+          "0x415b00",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x415b02",
+          "mov     [esp+774h+var_620], eax"
+        ],
+        [
+          "0x415b09",
+          "lea     eax, [esp+774h+X]"
+        ],
+        [
+          "0x415b0d",
+          "push    eax; lpNumberOfBytesWritten"
+        ],
+        [
+          "0x415b0e",
+          "push    24h ; '$'; nNumberOfBytesToWrite"
+        ],
+        [
+          "0x415b10",
+          "lea     eax, [esp+77Ch+Msg]"
+        ],
+        [
+          "0x415b17",
+          "mov     [esp+77Ch+var_654], ecx"
+        ],
+        [
+          "0x415b1e",
+          "push    eax; lpBuffer"
+        ],
+        [
+          "0x415b1f",
+          "push    esi; hFile"
+        ],
+        [
+          "0x415b20",
+          "mov     [esp+784h+Msg.time], ecx"
+        ],
+        [
+          "0x415b27",
+          "call    ds:__imp_WriteFile"
+        ],
+        [
+          "0x415b2d",
+          "test    eax, eax"
+        ],
+        [
+          "0x415b2f",
+          "jnz     short loc_415B6A"
+        ],
+        [
+          "0x415b31",
+          "lea     eax, [esp+770h+Text]"
+        ],
+        [
+          "0x415b38",
+          "push    eax"
+        ],
+        [
+          "0x415b39",
+          "lea     eax, [esp+774h+Filename]"
+        ],
+        [
+          "0x415b40",
+          "push    offset byte_4DA7F0; LPCSTR"
+        ],
+        [
+          "0x415b45",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x415b46",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x415b4c",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x415b4f",
+          "lea     eax, [esp+770h+Filename]"
+        ],
+        [
+          "0x415b56",
+          "push    40030h; uType"
+        ],
+        [
+          "0x415b5b",
+          "push    offset byte_4DA830; lpCaption"
+        ],
+        [
+          "0x415b60",
+          "push    eax; lpText"
+        ],
+        [
+          "0x415b61",
+          "call    ds:__imp_GetActiveWindow"
+        ],
+        [
+          "0x415b67",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x415b68",
+          "call    edi ; __imp_MessageBoxA"
+        ],
+        [
+          "0x415b6a",
+          "push    esi; hObject"
+        ],
+        [
+          "0x415b6b",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x415b71",
+          "call    __imp_PalUninit"
+        ],
+        [
+          "0x415b77",
+          "mov     eax, hLibModule"
+        ],
+        [
+          "0x415b7c",
+          "test    eax, eax"
+        ],
+        [
+          "0x415b7e",
+          "jz      short loc_415B87"
+        ],
+        [
+          "0x415b80",
+          "push    eax; hLibModule"
+        ],
+        [
+          "0x415b81",
+          "call    ds:__imp_FreeLibrary"
+        ],
+        [
+          "0x415b87",
+          "mov     hLibModule, 0"
+        ],
+        [
+          "0x415b91",
+          "mov     dword_4F16E4, 0"
+        ],
+        [
+          "0x415b9b",
+          "xor     esi, esi"
+        ],
+        [
+          "0x415b9d",
+          "mov     eax, [esp+770h+hObject]"
+        ],
+        [
+          "0x415ba1",
+          "test    eax, eax"
+        ],
+        [
+          "0x415ba3",
+          "jz      short loc_415BAC"
+        ],
+        [
+          "0x415ba5",
+          "push    eax; hObject"
+        ],
+        [
+          "0x415ba6",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x415bac",
+          "mov     ecx, [esp+770h+var_4]"
+        ],
+        [
+          "0x415bb3",
+          "mov     eax, esi"
+        ],
+        [
+          "0x415bb5",
+          "pop     edi"
+        ],
+        [
+          "0x415bb6",
+          "pop     esi"
+        ],
+        [
+          "0x415bb7",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x415bb9",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x415bbe",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x415bc0",
+          "pop     ebp"
+        ],
+        [
+          "0x415bc1",
+          "retn    10h"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

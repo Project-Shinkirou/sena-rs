@@ -1,0 +1,1050 @@
+{
+  "functions": [
+    {
+      "ea": "0x461320",
+      "name": "sub_461320",
+      "xrefs": [
+        {
+          "from": "0x4618c4",
+          "function": "sub_461670"
+        },
+        {
+          "from": "0x4eb230",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_461320(_DWORD *a1)\n{\n  int v1; // ecx\n  int v2; // eax\n  int v3; // ecx\n  void *v4; // esi\n  int v5; // eax\n  int v6; // ecx\n  int TaskData; // eax\n  int v9; // [esp+Ch] [ebp-428h]\n  int v10; // [esp+10h] [ebp-424h]\n  _BYTE v11[12]; // [esp+14h] [ebp-420h] BYREF\n  CHAR Source[520]; // [esp+20h] [ebp-414h] BYREF\n  char Destination[520]; // [esp+228h] [ebp-20Ch] BYREF\n\n  v1 = a1[71588];\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = a1[71588];\n  }\n  v2 = v1 - 1;\n  v3 = a1[88026];\n  a1[71588] = v2;\n  v10 = v3;\n  v9 = a1[88027];\n  wsprintfA(Source, \"%s\\\\hist%08x.dat\", &DirectoryName, a1[v2 + 64606]);\n  strncpy(Destination, Source, 0x208u);\n  if ( strlen(Source) >= 0x208 || (v4 = (void *)PalFileCreate(Destination, v11), CloseHandle(v4), v4 == (void *)-1) )\n  {\n    PalDebugPrintf(0, 0, \"history_load [%s] - path not enough length or not found\", Destination);\n    a1[a1[71589] + 64670] = 0;\n  }\n  else\n  {\n    PalDebugPrintf(10, 0, \"history_load [%s]\", Destination);\n    sub_47CE90(a1);\n    sub_45DA40(Destination);\n    dword_4ED6DC = 1;\n    sub_45C5F0(a1);\n    v5 = a1[71585];\n    v6 = a1[88033] + 1;\n    dword_4ED6DC = 0;\n    *(_DWORD *)(v5 + 2036) = v6;\n    if ( a1[1051299] )\n      sub_418C60(a1 + 1051299);\n    memset(a1 + 1051299, 0, 0x85E4Cu);\n    if ( *(_DWORD *)((char *)a1 + (_DWORD)&loc_4888D7 + 1) )\n      sub_418C60((char *)a1 + (_DWORD)&loc_4888D7 + 1);\n    memset((char *)a1 + (_DWORD)&loc_4888D7 + 1, 0, 0x85E4Cu);\n    a1[2208] = 0;\n    if ( !a1[2203] )\n    {\n      a1[2195] = a1[87975];\n      a1[2205] = 0;\n      TaskData = PalTaskGetTaskData(0);\n      sub_45CC70((_DWORD *)(TaskData + 824));\n    }\n    a1[3235] = PaltimeGetTime();\n    a1[3236] = 100;\n    a1[88026] = v10;\n    a1[88027] = v9;\n    a1[87981] = 1;\n    PalDebugPrintf(10, 0, \"history_load ok [%s]\", Destination);\n    a1[a1[71589] + 64670] = -1;\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x461320",
+          "push    ebp"
+        ],
+        [
+          "0x461321",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x461323",
+          "sub     esp, 428h"
+        ],
+        [
+          "0x461329",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x46132e",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x461330",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x461333",
+          "push    ebx"
+        ],
+        [
+          "0x461334",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x46133a",
+          "push    esi"
+        ],
+        [
+          "0x46133b",
+          "push    edi"
+        ],
+        [
+          "0x46133c",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x46133f",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x461345",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x461348",
+          "test    eax, eax"
+        ],
+        [
+          "0x46134a",
+          "jns     short loc_461360"
+        ],
+        [
+          "0x46134c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x461351",
+          "push    0"
+        ],
+        [
+          "0x461353",
+          "push    0"
+        ],
+        [
+          "0x461355",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x461357",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x46135d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x461360",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x461363",
+          "mov     ecx, [edi+55F68h]"
+        ],
+        [
+          "0x461369",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x46136f",
+          "push    dword ptr [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x461376",
+          "lea     eax, [ebp+Source]"
+        ],
+        [
+          "0x46137c",
+          "mov     [ebp+var_424], ecx"
+        ],
+        [
+          "0x461382",
+          "mov     ecx, [edi+55F6Ch]"
+        ],
+        [
+          "0x461388",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x46138d",
+          "push    offset aSHist08xDat; \"%s\\\\hist%08x.dat\""
+        ],
+        [
+          "0x461392",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x461393",
+          "mov     [ebp+var_428], ecx"
+        ],
+        [
+          "0x461399",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x46139f",
+          "push    208h; Count"
+        ],
+        [
+          "0x4613a4",
+          "lea     eax, [ebp+Source]"
+        ],
+        [
+          "0x4613aa",
+          "push    eax; Source"
+        ],
+        [
+          "0x4613ab",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x4613b1",
+          "push    eax; Destination"
+        ],
+        [
+          "0x4613b2",
+          "call    _strncpy"
+        ],
+        [
+          "0x4613b7",
+          "lea     ecx, [ebp+Source]"
+        ],
+        [
+          "0x4613bd",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x4613c0",
+          "lea     edx, [ecx+1]"
+        ],
+        [
+          "0x4613c3",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x4613c5",
+          "inc     ecx"
+        ],
+        [
+          "0x4613c6",
+          "test    al, al"
+        ],
+        [
+          "0x4613c8",
+          "jnz     short loc_4613C3"
+        ],
+        [
+          "0x4613ca",
+          "sub     ecx, edx"
+        ],
+        [
+          "0x4613cc",
+          "cmp     ecx, 208h"
+        ],
+        [
+          "0x4613d2",
+          "jnb     loc_461536"
+        ],
+        [
+          "0x4613d8",
+          "lea     eax, [ebp+var_420]"
+        ],
+        [
+          "0x4613de",
+          "push    eax"
+        ],
+        [
+          "0x4613df",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x4613e5",
+          "push    eax"
+        ],
+        [
+          "0x4613e6",
+          "call    __imp_PalFileCreate"
+        ],
+        [
+          "0x4613ec",
+          "add     esp, 8"
+        ],
+        [
+          "0x4613ef",
+          "mov     esi, eax"
+        ],
+        [
+          "0x4613f1",
+          "push    esi; hObject"
+        ],
+        [
+          "0x4613f2",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x4613f8",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x4613fb",
+          "jz      loc_461536"
+        ],
+        [
+          "0x461401",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x461407",
+          "push    eax"
+        ],
+        [
+          "0x461408",
+          "push    offset aHistoryLoadS; \"history_load [%s]\""
+        ],
+        [
+          "0x46140d",
+          "push    0"
+        ],
+        [
+          "0x46140f",
+          "push    0Ah"
+        ],
+        [
+          "0x461411",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x461413",
+          "add     esp, 10h"
+        ],
+        [
+          "0x461416",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x461418",
+          "call    sub_47CE90"
+        ],
+        [
+          "0x46141d",
+          "lea     ecx, [ebp+Destination]; lpFileName"
+        ],
+        [
+          "0x461423",
+          "call    sub_45DA40"
+        ],
+        [
+          "0x461428",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x46142a",
+          "mov     dword_4ED6DC, 1"
+        ],
+        [
+          "0x461434",
+          "call    sub_45C5F0"
+        ],
+        [
+          "0x461439",
+          "mov     ecx, [edi+55F84h]"
+        ],
+        [
+          "0x46143f",
+          "lea     esi, [edi+402A8Ch]"
+        ],
+        [
+          "0x461445",
+          "mov     eax, [edi+45E84h]"
+        ],
+        [
+          "0x46144b",
+          "inc     ecx"
+        ],
+        [
+          "0x46144c",
+          "mov     dword_4ED6DC, 0"
+        ],
+        [
+          "0x461456",
+          "mov     [eax+7F4h], ecx"
+        ],
+        [
+          "0x46145c",
+          "cmp     dword ptr [esi], 0"
+        ],
+        [
+          "0x46145f",
+          "jz      short loc_461468"
+        ],
+        [
+          "0x461461",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x461463",
+          "call    sub_418C60"
+        ],
+        [
+          "0x461468",
+          "push    85E4Ch; Size"
+        ],
+        [
+          "0x46146d",
+          "push    0; Val"
+        ],
+        [
+          "0x46146f",
+          "push    esi; void *"
+        ],
+        [
+          "0x461470",
+          "call    _memset"
+        ],
+        [
+          "0x461475",
+          "lea     esi, (loc_4888D7+1)[edi]"
+        ],
+        [
+          "0x46147b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x46147e",
+          "cmp     dword ptr [esi], 0"
+        ],
+        [
+          "0x461481",
+          "jz      short loc_46148A"
+        ],
+        [
+          "0x461483",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x461485",
+          "call    sub_418C60"
+        ],
+        [
+          "0x46148a",
+          "push    85E4Ch; Size"
+        ],
+        [
+          "0x46148f",
+          "push    0; Val"
+        ],
+        [
+          "0x461491",
+          "push    esi; void *"
+        ],
+        [
+          "0x461492",
+          "call    _memset"
+        ],
+        [
+          "0x461497",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x46149a",
+          "mov     dword ptr [edi+2280h], 0"
+        ],
+        [
+          "0x4614a4",
+          "cmp     dword ptr [edi+226Ch], 0"
+        ],
+        [
+          "0x4614ab",
+          "jnz     short loc_4614D9"
+        ],
+        [
+          "0x4614ad",
+          "mov     eax, [edi+55E9Ch]"
+        ],
+        [
+          "0x4614b3",
+          "push    0"
+        ],
+        [
+          "0x4614b5",
+          "mov     [edi+224Ch], eax"
+        ],
+        [
+          "0x4614bb",
+          "mov     dword ptr [edi+2274h], 0"
+        ],
+        [
+          "0x4614c5",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x4614cb",
+          "add     esp, 4"
+        ],
+        [
+          "0x4614ce",
+          "lea     ecx, [eax+338h]"
+        ],
+        [
+          "0x4614d4",
+          "call    sub_45CC70"
+        ],
+        [
+          "0x4614d9",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x4614df",
+          "mov     [edi+328Ch], eax"
+        ],
+        [
+          "0x4614e5",
+          "mov     eax, [ebp+var_424]"
+        ],
+        [
+          "0x4614eb",
+          "mov     dword ptr [edi+3290h], 64h ; 'd'"
+        ],
+        [
+          "0x4614f5",
+          "mov     [edi+55F68h], eax"
+        ],
+        [
+          "0x4614fb",
+          "mov     eax, [ebp+var_428]"
+        ],
+        [
+          "0x461501",
+          "mov     [edi+55F6Ch], eax"
+        ],
+        [
+          "0x461507",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x46150d",
+          "push    eax"
+        ],
+        [
+          "0x46150e",
+          "push    offset aHistoryLoadOkS; \"history_load ok [%s]\""
+        ],
+        [
+          "0x461513",
+          "push    0"
+        ],
+        [
+          "0x461515",
+          "push    0Ah"
+        ],
+        [
+          "0x461517",
+          "mov     dword ptr [edi+55EB4h], 1"
+        ],
+        [
+          "0x461521",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x461523",
+          "mov     eax, [edi+45E94h]"
+        ],
+        [
+          "0x461529",
+          "mov     dword ptr [edi+eax*4+3F278h], 0FFFFFFFFh"
+        ],
+        [
+          "0x461534",
+          "jmp     short loc_461559"
+        ],
+        [
+          "0x461536",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x46153c",
+          "push    eax"
+        ],
+        [
+          "0x46153d",
+          "push    offset aHistoryLoadSPa; \"history_load [%s] - path not enough len\"..."
+        ],
+        [
+          "0x461542",
+          "push    0"
+        ],
+        [
+          "0x461544",
+          "push    0"
+        ],
+        [
+          "0x461546",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x461548",
+          "mov     eax, [edi+45E94h]"
+        ],
+        [
+          "0x46154e",
+          "mov     dword ptr [edi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x461559",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x46155c",
+          "add     esp, 10h"
+        ],
+        [
+          "0x46155f",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x461561",
+          "mov     eax, 1"
+        ],
+        [
+          "0x461566",
+          "pop     edi"
+        ],
+        [
+          "0x461567",
+          "pop     esi"
+        ],
+        [
+          "0x461568",
+          "pop     ebx"
+        ],
+        [
+          "0x461569",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x46156e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x461570",
+          "pop     ebp"
+        ],
+        [
+          "0x461571",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x461580",
+      "name": "sub_461580",
+      "xrefs": [
+        {
+          "from": "0x4618d5",
+          "function": "sub_461670"
+        },
+        {
+          "from": "0x4eb234",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_461580(int a1)\n{\n  int v1; // ecx\n  BOOL v2; // ecx\n  char *v3; // esi\n  _BYTE v5[12]; // [esp+4h] [ebp-420h] BYREF\n  char Destination[520]; // [esp+10h] [ebp-414h] BYREF\n  CHAR Source[520]; // [esp+218h] [ebp-20Ch] BYREF\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  wsprintfA(Source, \"%s\\\\hist%08x.dat\", &DirectoryName, *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n  strncpy(Destination, Source, 0x208u);\n  if ( strlen(Source) < 0x208 )\n  {\n    v3 = (char *)PalFileCreate(Destination, v5);\n    CloseHandle(v3);\n    v2 = v3 + 1 != 0;\n  }\n  else\n  {\n    v2 = 0;\n  }\n  *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v2;\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x461580",
+          "push    ebp"
+        ],
+        [
+          "0x461581",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x461583",
+          "sub     esp, 420h"
+        ],
+        [
+          "0x461589",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x46158e",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x461590",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x461593",
+          "push    edi"
+        ],
+        [
+          "0x461594",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x461597",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x46159d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4615a0",
+          "test    eax, eax"
+        ],
+        [
+          "0x4615a2",
+          "jns     short loc_4615BC"
+        ],
+        [
+          "0x4615a4",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x4615a9",
+          "push    0"
+        ],
+        [
+          "0x4615ab",
+          "push    0"
+        ],
+        [
+          "0x4615ad",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4615b3",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x4615b9",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x4615bc",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4615bf",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x4615c5",
+          "push    dword ptr [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x4615cc",
+          "lea     eax, [ebp+Source]"
+        ],
+        [
+          "0x4615d2",
+          "push    offset DirectoryName"
+        ],
+        [
+          "0x4615d7",
+          "push    offset aSHist08xDat; \"%s\\\\hist%08x.dat\""
+        ],
+        [
+          "0x4615dc",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x4615dd",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x4615e3",
+          "push    208h; Count"
+        ],
+        [
+          "0x4615e8",
+          "lea     eax, [ebp+Source]"
+        ],
+        [
+          "0x4615ee",
+          "push    eax; Source"
+        ],
+        [
+          "0x4615ef",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x4615f5",
+          "push    eax; Destination"
+        ],
+        [
+          "0x4615f6",
+          "call    _strncpy"
+        ],
+        [
+          "0x4615fb",
+          "lea     ecx, [ebp+Source]"
+        ],
+        [
+          "0x461601",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x461604",
+          "lea     edx, [ecx+1]"
+        ],
+        [
+          "0x461607",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x461609",
+          "inc     ecx"
+        ],
+        [
+          "0x46160a",
+          "test    al, al"
+        ],
+        [
+          "0x46160c",
+          "jnz     short loc_461607"
+        ],
+        [
+          "0x46160e",
+          "sub     ecx, edx"
+        ],
+        [
+          "0x461610",
+          "cmp     ecx, 208h"
+        ],
+        [
+          "0x461616",
+          "jb      short loc_46161C"
+        ],
+        [
+          "0x461618",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x46161a",
+          "jmp     short loc_461646"
+        ],
+        [
+          "0x46161c",
+          "push    esi"
+        ],
+        [
+          "0x46161d",
+          "lea     eax, [ebp+var_420]"
+        ],
+        [
+          "0x461623",
+          "push    eax"
+        ],
+        [
+          "0x461624",
+          "lea     eax, [ebp+Destination]"
+        ],
+        [
+          "0x46162a",
+          "push    eax"
+        ],
+        [
+          "0x46162b",
+          "call    __imp_PalFileCreate"
+        ],
+        [
+          "0x461631",
+          "add     esp, 8"
+        ],
+        [
+          "0x461634",
+          "mov     esi, eax"
+        ],
+        [
+          "0x461636",
+          "push    esi; hObject"
+        ],
+        [
+          "0x461637",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x46163d",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x46163f",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x461642",
+          "pop     esi"
+        ],
+        [
+          "0x461643",
+          "setnz   cl"
+        ],
+        [
+          "0x461646",
+          "mov     eax, [edi+45E94h]"
+        ],
+        [
+          "0x46164c",
+          "mov     [edi+eax*4+3F278h], ecx"
+        ],
+        [
+          "0x461653",
+          "mov     eax, 1"
+        ],
+        [
+          "0x461658",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x46165b",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x46165d",
+          "pop     edi"
+        ],
+        [
+          "0x46165e",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x461663",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x461665",
+          "pop     ebp"
+        ],
+        [
+          "0x461666",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x465070",
+      "name": "sub_465070",
+      "xrefs": [
+        {
+          "from": "0x46728a",
+          "function": "sub_466EC0"
+        },
+        {
+          "from": "0x4eb3a4",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_465070(int a1)\n{\n  int v1; // ecx\n  int v2; // edi\n  int TaskData; // esi\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  TaskData = PalTaskGetTaskData(0);\n  PalDebugPrintf(10, 0, \"history_skip %x\", v2);\n  *(_DWORD *)(TaskData + 352932) = v2;\n  *(_DWORD *)(TaskData + 352928) = 1;\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x465070",
+          "push    ebp"
+        ],
+        [
+          "0x465071",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x465073",
+          "push    esi"
+        ],
+        [
+          "0x465074",
+          "push    edi"
+        ],
+        [
+          "0x465075",
+          "mov     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x465078",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x46507e",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x465081",
+          "test    eax, eax"
+        ],
+        [
+          "0x465083",
+          "jns     short loc_46509D"
+        ],
+        [
+          "0x465085",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x46508a",
+          "push    0"
+        ],
+        [
+          "0x46508c",
+          "push    0"
+        ],
+        [
+          "0x46508e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x465094",
+          "mov     ecx, [edi+45E90h]"
+        ],
+        [
+          "0x46509a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x46509d",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x4650a0",
+          "mov     [edi+45E90h], eax"
+        ],
+        [
+          "0x4650a6",
+          "mov     edi, [edi+eax*4+3F178h]"
+        ],
+        [
+          "0x4650ad",
+          "push    0"
+        ],
+        [
+          "0x4650af",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x4650b5",
+          "push    edi"
+        ],
+        [
+          "0x4650b6",
+          "push    offset aHistorySkipX; \"history_skip %x\""
+        ],
+        [
+          "0x4650bb",
+          "push    0"
+        ],
+        [
+          "0x4650bd",
+          "push    0Ah"
+        ],
+        [
+          "0x4650bf",
+          "mov     esi, eax"
+        ],
+        [
+          "0x4650c1",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x4650c7",
+          "add     esp, 14h"
+        ],
+        [
+          "0x4650ca",
+          "mov     [esi+562A4h], edi"
+        ],
+        [
+          "0x4650d0",
+          "mov     dword ptr [esi+562A0h], 1"
+        ],
+        [
+          "0x4650da",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4650df",
+          "pop     edi"
+        ],
+        [
+          "0x4650e0",
+          "pop     esi"
+        ],
+        [
+          "0x4650e1",
+          "pop     ebp"
+        ],
+        [
+          "0x4650e2",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Game.exe (totsulover)",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

@@ -1,0 +1,69 @@
+[
+  {
+    "path": [
+      10,
+      "BICUBIC",
+      1041
+    ],
+    "rva": "0x11d4",
+    "file_offset": "0x3d4",
+    "size": 1820,
+    "sha256": "1b868c29dad18c49536f144550011a39b73fafe114b49c19e91614f5d6b57bcc"
+  },
+  {
+    "path": [
+      10,
+      "DRAW_PRIMITIVE_UP2D",
+      1041
+    ],
+    "rva": "0x18f0",
+    "file_offset": "0xaf0",
+    "size": 544,
+    "sha256": "0424018fafdd9e4022b534bb8d6711c9c41a4d2fe25a811d5e5fb2353308770c"
+  },
+  {
+    "path": [
+      10,
+      "RADIAL_BLUR",
+      1041
+    ],
+    "rva": "0x1b10",
+    "file_offset": "0xd10",
+    "size": 3076,
+    "sha256": "b1f8ed6227243f06f6f23a7c25bb69e50318bd8acbd853bbf0088dfffe23e6b4"
+  },
+  {
+    "path": [
+      10,
+      "RASTER",
+      1041
+    ],
+    "rva": "0x2714",
+    "file_offset": "0x1914",
+    "size": 3028,
+    "sha256": "cb6db243ddafcedfe30b1b0abf04829e5a9e8c87915d6c97e0c24729cdc54baa"
+  },
+  {
+    "path": [
+      10,
+      "RASTER_SW",
+      1041
+    ],
+    "rva": "0x32e8",
+    "file_offset": "0x24e8",
+    "size": 1490,
+    "sha256": "f0c9c5654f8dad13a488cc34edb08168df8c310411d6e456ddf8eb035c3b7e60",
+    "hlsl": "// An empty material, which simply transforms the vertex and sets the color to white.\r\n\r\n//------------------------------------\r\nsampler SrcSamp : register(s0);\r\n\r\nstatic float PI = 3.141592f;\r\n\r\nfloat offset : register(c0)\r\n<\r\n\tstring UIWidget = \"slider\";\r\n\tfloat UIMin = 0.0;\r\n//\tfloat UIMax = 300.0;\r\n\tfloat UIMax = 1.0;\r\n\tfloat UIStep = 0.01;\r\n\tstring UIName = \"offset\";\r\n> = 0;\r\n\r\nfloat undulate_x : register(c1)\r\n<\r\n\tstring UIWidget = \"slider\";\r\n\tfloat UIMin = 0.00;\r\n\tfloat UIMax = 1.0;\r\n\tfloat UIStep = 0.01;\r\n\tstring UIName = \"undulate_x\";\r\n> = 0.0;\r\n\r\nfloat undulate_y : register(c2)\r\n<\r\n\tstring UIWidget = \"slider\";\r\n\tfloat UIMin = 0.00;\r\n\tfloat UIMax = 1.0;\r\n\tfloat UIStep = 0.01;\r\n\tstring UIName = \"undulate_y\";\r\n> = 0.0;\r\n\r\n//-----------------------------------\r\nfloat4 main( float Color : COLOR, float2 TexCoord : TEXCOORD0 ) : COLOR\r\n{\r\n/*\r\n\tfloat\tval, x, y;\r\n\t\r\n\tx = OUT.Position.x;\r\n\ty = OUT.Position.y;\r\n\r\n\tval = (y * 180) + offset;\r\n\tOUT.Position.x += cos( val * PI / (180 - (150 * undulate_x)) ) * (stretch * undulate_x);\r\n \t\r\n\tval = (x * 180) + offset;\r\n\tOUT.Position.y += cos( val * PI / (180 - (150 * undulate_y)) ) * (stretch * undulate_y);\r\n*/\r\n\r\n// \tIN.Color = float4(1,1,1,1);\r\n\r\n\tfloat2 val, undulate;\r\n\t\r\n\tundulate = float2( undulate_y, undulate_x );\r\n\t\r\n\tval = (TexCoord * 180) + ((360 * (1.0f  - undulate))  * offset);\r\n\t\r\n\r\n\tTexCoord.yx += sin( val * PI / (180 - (180 * undulate)) ) * (0.1f * undulate);\r\n\r\n\treturn tex2D( SrcSamp, TexCoord ) * Color;\r\n}\r\n\r\n"
+  },
+  {
+    "path": [
+      24,
+      2,
+      1033
+    ],
+    "rva": "0x38bc",
+    "file_offset": "0x2abc",
+    "size": 346,
+    "sha256": "49a60be4b95b6d30da355a0c124af82b35000bce8f24f957d1c09ead47544a1e"
+  }
+]

@@ -1,0 +1,889 @@
+{
+  "input": "/Users/xmoe/Documents/projects/sena_rs/target/reverse-audit/action-fixture/koikake.exe",
+  "functions": [
+    {
+      "ea": "0x4241b0",
+      "name": "sub_4241B0",
+      "xrefs": [
+        {
+          "from": "0x4789c0",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_4241B0(int a1)\n{\n  int TaskData; // [esp+0h] [ebp-218h]\n  int v3; // [esp+4h] [ebp-214h]\n  unsigned int v4; // [esp+8h] [ebp-210h]\n  CHAR FileName[520]; // [esp+Ch] [ebp-20Ch] BYREF\n\n  TaskData = PalTaskGetTaskData(0);\n  v4 = sub_437550(a1);\n  v3 = sub_437550(a1);\n  if ( !*(_DWORD *)(a1 + 3164) )\n    return 1;\n  if ( v4 >= 0x3E8 )\n  {\n    PalDebugPrintf(0, 0, \"error : save file no [%d]\", v4);\n  }\n  else\n  {\n    if ( v3 )\n      *(_DWORD *)(TaskData + 24) = v4;\n    wsprintfA(FileName, \"%s\\\\save%03d.dat\", pszPath, v4);\n    sub_424AF0(FileName);\n    PalDebugPrintf(10, 0, \"save  %s\", FileName);\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x4241b0",
+          "push    ebp"
+        ],
+        [
+          "0x4241b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x4241b3",
+          "sub     esp, 218h"
+        ],
+        [
+          "0x4241b9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x4241be",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x4241c0",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x4241c3",
+          "push    0"
+        ],
+        [
+          "0x4241c5",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x4241cb",
+          "add     esp, 4"
+        ],
+        [
+          "0x4241ce",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x4241d4",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x4241d7",
+          "push    eax"
+        ],
+        [
+          "0x4241d8",
+          "call    sub_437550"
+        ],
+        [
+          "0x4241dd",
+          "add     esp, 4"
+        ],
+        [
+          "0x4241e0",
+          "mov     [ebp+var_210], eax"
+        ],
+        [
+          "0x4241e6",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x4241e9",
+          "push    ecx"
+        ],
+        [
+          "0x4241ea",
+          "call    sub_437550"
+        ],
+        [
+          "0x4241ef",
+          "add     esp, 4"
+        ],
+        [
+          "0x4241f2",
+          "mov     [ebp+var_214], eax"
+        ],
+        [
+          "0x4241f8",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x4241fb",
+          "cmp     dword ptr [edx+0C5Ch], 0"
+        ],
+        [
+          "0x424202",
+          "jnz     short loc_42420E"
+        ],
+        [
+          "0x424204",
+          "mov     eax, 1"
+        ],
+        [
+          "0x424209",
+          "jmp     loc_4242A4"
+        ],
+        [
+          "0x42420e",
+          "cmp     [ebp+var_210], 0"
+        ],
+        [
+          "0x424215",
+          "jl      short loc_424286"
+        ],
+        [
+          "0x424217",
+          "cmp     [ebp+var_210], 3E8h"
+        ],
+        [
+          "0x424221",
+          "jge     short loc_424286"
+        ],
+        [
+          "0x424223",
+          "cmp     [ebp+var_214], 0"
+        ],
+        [
+          "0x42422a",
+          "jz      short loc_42423B"
+        ],
+        [
+          "0x42422c",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x424232",
+          "mov     ecx, [ebp+var_210]"
+        ],
+        [
+          "0x424238",
+          "mov     [eax+18h], ecx"
+        ],
+        [
+          "0x42423b",
+          "mov     edx, [ebp+var_210]"
+        ],
+        [
+          "0x424241",
+          "push    edx"
+        ],
+        [
+          "0x424242",
+          "push    offset pszPath"
+        ],
+        [
+          "0x424247",
+          "push    offset aSSave03dDat_6; \"%s\\\\save%03d.dat\""
+        ],
+        [
+          "0x42424c",
+          "lea     eax, [ebp+FileName]"
+        ],
+        [
+          "0x424252",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x424253",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x424259",
+          "add     esp, 10h"
+        ],
+        [
+          "0x42425c",
+          "lea     ecx, [ebp+FileName]"
+        ],
+        [
+          "0x424262",
+          "push    ecx; lpFileName"
+        ],
+        [
+          "0x424263",
+          "call    sub_424AF0"
+        ],
+        [
+          "0x424268",
+          "add     esp, 4"
+        ],
+        [
+          "0x42426b",
+          "lea     edx, [ebp+FileName]"
+        ],
+        [
+          "0x424271",
+          "push    edx"
+        ],
+        [
+          "0x424272",
+          "push    offset aSaveS; \"save  %s\""
+        ],
+        [
+          "0x424277",
+          "push    0"
+        ],
+        [
+          "0x424279",
+          "push    0Ah"
+        ],
+        [
+          "0x42427b",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x424281",
+          "add     esp, 10h"
+        ],
+        [
+          "0x424284",
+          "jmp     short loc_42429F"
+        ],
+        [
+          "0x424286",
+          "mov     eax, [ebp+var_210]"
+        ],
+        [
+          "0x42428c",
+          "push    eax"
+        ],
+        [
+          "0x42428d",
+          "push    offset aErrorSaveFileN; \"error : save file no [%d]\""
+        ],
+        [
+          "0x424292",
+          "push    0"
+        ],
+        [
+          "0x424294",
+          "push    0"
+        ],
+        [
+          "0x424296",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x42429c",
+          "add     esp, 10h"
+        ],
+        [
+          "0x42429f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x4242a4",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x4242a7",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x4242a9",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x4242ae",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x4242b0",
+          "pop     ebp"
+        ],
+        [
+          "0x4242b1",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x425330",
+      "name": "sub_425330",
+      "xrefs": [
+        {
+          "from": "0x424b21",
+          "function": "sub_424AF0"
+        },
+        {
+          "from": "0x424b43",
+          "function": "sub_424AF0"
+        }
+      ],
+      "pseudocode": "void *__cdecl sub_425330(int a1, int a2, void *Src, size_t Size)\n{\n  return memmove((void *)(a2 + *(_DWORD *)(a1 + 68)), Src, Size);\n}\n",
+      "disassembly": [
+        [
+          "0x425330",
+          "push    ebp"
+        ],
+        [
+          "0x425331",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x425333",
+          "mov     eax, [ebp+Size]"
+        ],
+        [
+          "0x425336",
+          "push    eax; Size"
+        ],
+        [
+          "0x425337",
+          "mov     ecx, [ebp+Src]"
+        ],
+        [
+          "0x42533a",
+          "push    ecx; Src"
+        ],
+        [
+          "0x42533b",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x42533e",
+          "mov     eax, [edx+44h]"
+        ],
+        [
+          "0x425341",
+          "add     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x425344",
+          "push    eax; void *"
+        ],
+        [
+          "0x425345",
+          "call    _memmove"
+        ],
+        [
+          "0x42534a",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x42534d",
+          "pop     ebp"
+        ],
+        [
+          "0x42534e",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x433450",
+      "name": "sub_433450",
+      "xrefs": [
+        {
+          "from": "0x409056",
+          "function": "sub_409050"
+        },
+        {
+          "from": "0x410190",
+          "function": "sub_410180"
+        },
+        {
+          "from": "0x4107f9",
+          "function": "sub_4107E0"
+        },
+        {
+          "from": "0x412120",
+          "function": "sub_412110"
+        },
+        {
+          "from": "0x412306",
+          "function": "sub_412300"
+        },
+        {
+          "from": "0x417e84",
+          "function": "___statusfp_sse2"
+        },
+        {
+          "from": "0x418810",
+          "function": "sub_418800"
+        },
+        {
+          "from": "0x41ff46",
+          "function": "sub_41FF40"
+        },
+        {
+          "from": "0x4214c6",
+          "function": "sub_4214C0"
+        },
+        {
+          "from": "0x421594",
+          "function": "sub_421590"
+        },
+        {
+          "from": "0x421e34",
+          "function": "sub_421E30"
+        },
+        {
+          "from": "0x424346",
+          "function": "sub_424340"
+        },
+        {
+          "from": "0x424984",
+          "function": "sub_424980"
+        },
+        {
+          "from": "0x424af6",
+          "function": "sub_424AF0"
+        },
+        {
+          "from": "0x424e7c",
+          "function": "sub_424E50"
+        },
+        {
+          "from": "0x429217",
+          "function": "sub_4291F0"
+        },
+        {
+          "from": "0x42bef4",
+          "function": "sub_42BEF0"
+        },
+        {
+          "from": "0x42cf85",
+          "function": "sub_42CF70"
+        },
+        {
+          "from": "0x42d053",
+          "function": "sub_42D040"
+        },
+        {
+          "from": "0x42d8b4",
+          "function": "sub_42D8A0"
+        },
+        {
+          "from": "0x42eb23",
+          "function": "sub_42EB10"
+        },
+        {
+          "from": "0x42f084",
+          "function": "sub_42F080"
+        },
+        {
+          "from": "0x42f2c2",
+          "function": "sub_42F230"
+        },
+        {
+          "from": "0x4349f6",
+          "function": "sub_4349F0"
+        },
+        {
+          "from": "0x43624d",
+          "function": "sub_436240"
+        },
+        {
+          "from": "0x4363b6",
+          "function": "sub_4363B0"
+        },
+        {
+          "from": "0x436456",
+          "function": "sub_436450"
+        },
+        {
+          "from": "0x4364e6",
+          "function": "sub_4364E0"
+        },
+        {
+          "from": "0x43668a",
+          "function": "sub_436660"
+        },
+        {
+          "from": "0x436964",
+          "function": null
+        },
+        {
+          "from": "0x436f54",
+          "function": "sub_436F50"
+        },
+        {
+          "from": "0x436f86",
+          "function": "sub_436F80"
+        },
+        {
+          "from": "0x437806",
+          "function": "sub_437800"
+        }
+      ],
+      "pseudocode": "int sub_433450()\n{\n  return PalTaskGetTaskData(0) + 824;\n}\n",
+      "disassembly": [
+        [
+          "0x433450",
+          "push    ebp"
+        ],
+        [
+          "0x433451",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x433453",
+          "push    ecx"
+        ],
+        [
+          "0x433454",
+          "push    0"
+        ],
+        [
+          "0x433456",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x43345c",
+          "add     esp, 4"
+        ],
+        [
+          "0x43345f",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x433462",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x433465",
+          "add     eax, 338h"
+        ],
+        [
+          "0x43346a",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x43346c",
+          "pop     ebp"
+        ],
+        [
+          "0x43346d",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x424af0",
+      "name": "sub_424AF0",
+      "xrefs": [
+        {
+          "from": "0x424263",
+          "function": "sub_4241B0"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_424AF0(LPCSTR lpFileName)\n{\n  HWND ActiveWindow; // eax\n  DWORD NumberOfBytesWritten; // [esp+0h] [ebp-Ch] BYREF\n  HANDLE hFile; // [esp+4h] [ebp-8h]\n  int v5; // [esp+8h] [ebp-4h]\n\n  v5 = sub_433450();\n  sub_425330(v5 + 3104, 548, *(void **)(v5 + 3120), *(_DWORD *)(v5 + 3124));\n  sub_425330(v5 + 3104, 8, (void *)(v5 + 3196), 0x200u);\n  hFile = CreateFileA(lpFileName, 0x40000000u, 2u, 0, 2u, 0x80u, 0);\n  if ( hFile == (HANDLE)-1 )\n  {\n    PalDebugPrintf(0, 0, \"save error [%s]\", lpFileName);\n    return 0;\n  }\n  else\n  {\n    WriteFile(hFile, *(LPCVOID *)(v5 + 3172), *(_DWORD *)(v5 + 3176), &NumberOfBytesWritten, 0);\n    CloseHandle(hFile);\n    if ( NumberOfBytesWritten != *(_DWORD *)(v5 + 3176) )\n    {\n      DeleteFileA(lpFileName);\n      ActiveWindow = GetActiveWindow();\n      MessageBoxA(ActiveWindow, &byte_4661D8, Destination, 0x30u);\n    }\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x424af0",
+          "push    ebp"
+        ],
+        [
+          "0x424af1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x424af3",
+          "sub     esp, 0Ch"
+        ],
+        [
+          "0x424af6",
+          "call    sub_433450"
+        ],
+        [
+          "0x424afb",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x424afe",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x424b01",
+          "mov     ecx, [eax+0C34h]"
+        ],
+        [
+          "0x424b07",
+          "push    ecx; Size"
+        ],
+        [
+          "0x424b08",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x424b0b",
+          "mov     eax, [edx+0C30h]"
+        ],
+        [
+          "0x424b11",
+          "push    eax; Src"
+        ],
+        [
+          "0x424b12",
+          "push    224h; int"
+        ],
+        [
+          "0x424b17",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x424b1a",
+          "add     ecx, 0C20h"
+        ],
+        [
+          "0x424b20",
+          "push    ecx; int"
+        ],
+        [
+          "0x424b21",
+          "call    sub_425330"
+        ],
+        [
+          "0x424b26",
+          "add     esp, 10h"
+        ],
+        [
+          "0x424b29",
+          "push    200h; Size"
+        ],
+        [
+          "0x424b2e",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x424b31",
+          "add     edx, 0C7Ch"
+        ],
+        [
+          "0x424b37",
+          "push    edx; Src"
+        ],
+        [
+          "0x424b38",
+          "push    8; int"
+        ],
+        [
+          "0x424b3a",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x424b3d",
+          "add     eax, 0C20h"
+        ],
+        [
+          "0x424b42",
+          "push    eax; int"
+        ],
+        [
+          "0x424b43",
+          "call    sub_425330"
+        ],
+        [
+          "0x424b48",
+          "add     esp, 10h"
+        ],
+        [
+          "0x424b4b",
+          "push    0; hTemplateFile"
+        ],
+        [
+          "0x424b4d",
+          "push    80h; dwFlagsAndAttributes"
+        ],
+        [
+          "0x424b52",
+          "push    2; dwCreationDisposition"
+        ],
+        [
+          "0x424b54",
+          "push    0; lpSecurityAttributes"
+        ],
+        [
+          "0x424b56",
+          "push    2; dwShareMode"
+        ],
+        [
+          "0x424b58",
+          "push    40000000h; dwDesiredAccess"
+        ],
+        [
+          "0x424b5d",
+          "mov     ecx, [ebp+lpFileName]"
+        ],
+        [
+          "0x424b60",
+          "push    ecx; lpFileName"
+        ],
+        [
+          "0x424b61",
+          "call    ds:__imp_CreateFileA"
+        ],
+        [
+          "0x424b67",
+          "mov     [ebp+hFile], eax"
+        ],
+        [
+          "0x424b6a",
+          "cmp     [ebp+hFile], 0FFFFFFFFh"
+        ],
+        [
+          "0x424b6e",
+          "jnz     short loc_424B8A"
+        ],
+        [
+          "0x424b70",
+          "mov     edx, [ebp+lpFileName]"
+        ],
+        [
+          "0x424b73",
+          "push    edx"
+        ],
+        [
+          "0x424b74",
+          "push    offset aSaveErrorS; \"save error [%s]\""
+        ],
+        [
+          "0x424b79",
+          "push    0"
+        ],
+        [
+          "0x424b7b",
+          "push    0"
+        ],
+        [
+          "0x424b7d",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x424b83",
+          "add     esp, 10h"
+        ],
+        [
+          "0x424b86",
+          "xor     eax, eax"
+        ],
+        [
+          "0x424b88",
+          "jmp     short loc_424BEE"
+        ],
+        [
+          "0x424b8a",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x424b8c",
+          "lea     eax, [ebp+NumberOfBytesWritten]"
+        ],
+        [
+          "0x424b8f",
+          "push    eax; lpNumberOfBytesWritten"
+        ],
+        [
+          "0x424b90",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x424b93",
+          "mov     edx, [ecx+0C68h]"
+        ],
+        [
+          "0x424b99",
+          "push    edx; nNumberOfBytesToWrite"
+        ],
+        [
+          "0x424b9a",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x424b9d",
+          "mov     ecx, [eax+0C64h]"
+        ],
+        [
+          "0x424ba3",
+          "push    ecx; lpBuffer"
+        ],
+        [
+          "0x424ba4",
+          "mov     edx, [ebp+hFile]"
+        ],
+        [
+          "0x424ba7",
+          "push    edx; hFile"
+        ],
+        [
+          "0x424ba8",
+          "call    ds:__imp_WriteFile"
+        ],
+        [
+          "0x424bae",
+          "mov     eax, [ebp+hFile]"
+        ],
+        [
+          "0x424bb1",
+          "push    eax; hObject"
+        ],
+        [
+          "0x424bb2",
+          "call    ds:__imp_CloseHandle"
+        ],
+        [
+          "0x424bb8",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x424bbb",
+          "mov     edx, [ebp+NumberOfBytesWritten]"
+        ],
+        [
+          "0x424bbe",
+          "cmp     edx, [ecx+0C68h]"
+        ],
+        [
+          "0x424bc4",
+          "jz      short loc_424BE9"
+        ],
+        [
+          "0x424bc6",
+          "mov     eax, [ebp+lpFileName]"
+        ],
+        [
+          "0x424bc9",
+          "push    eax; lpFileName"
+        ],
+        [
+          "0x424bca",
+          "call    ds:__imp_DeleteFileA"
+        ],
+        [
+          "0x424bd0",
+          "push    30h ; '0'; uType"
+        ],
+        [
+          "0x424bd2",
+          "push    offset Destination; lpCaption"
+        ],
+        [
+          "0x424bd7",
+          "push    offset byte_4661D8; lpText"
+        ],
+        [
+          "0x424bdc",
+          "call    ds:__imp_GetActiveWindow"
+        ],
+        [
+          "0x424be2",
+          "push    eax; hWnd"
+        ],
+        [
+          "0x424be3",
+          "call    ds:__imp_MessageBoxA"
+        ],
+        [
+          "0x424be9",
+          "mov     eax, 1"
+        ],
+        [
+          "0x424bee",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x424bf0",
+          "pop     ebp"
+        ],
+        [
+          "0x424bf1",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/koikake.exe",
+  "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+  "provenance": "Read-only IDAPython disassembly and decompilation from a copied database in target/reverse-audit/native-save; original binary not executed or modified."
+}

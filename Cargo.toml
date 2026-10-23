@@ -2,6 +2,7 @@
 members = [
     "crates/*",
 ]
+exclude = ["vendor/kira"]
 resolver = "2"
 
 [workspace.package]
@@ -22,8 +23,9 @@ pollster = "0.4"
 bytemuck = { version = "1.23", features = ["derive"] }
 log = "0.4"
 env_logger = "0.11"
-kira = "0.12.1"
+kira = { path = "vendor/kira", version = "=0.12.1", default-features = false, features = ["mp3", "ogg", "vorbis", "flac", "wav", "pcm"] }
 ab_glyph = "0.2"
 softbuffer = "0.4.8"
 wmv-decoder = { path = "crates/na_wmv_player", default-features = false, features = ["video-only", "audio"] }
 plmpeg = { path = "crates/plmpeg" }
+na_mpeg2_decoder = { path = "crates/na_mpeg2_decoder" }

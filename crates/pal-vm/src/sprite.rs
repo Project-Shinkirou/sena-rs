@@ -1,5 +1,11 @@
+use crate::fx::RasterSource;
+pub use crate::fx::SpriteFxEffect;
 use std::collections::BTreeMap;
 use std::sync::Arc;
+
+mod channel_copy;
+mod filters;
+mod target_render;
 
 use crate::msprite::MSpriteHandle;
 use crate::scene::{
@@ -30,7 +36,15 @@ pub struct SpriteSystem {
     render_nodes: BTreeMap<RenderNodeId, RenderNode>,
     transitions: BTreeMap<SpriteTransitionHandle, SpriteTransition>,
     fx_effects: BTreeMap<SpriteFxHandle, SpriteFxEffect>,
+    fx_time_ms: u32,
+    fx_phase_start_ms: Option<u32>,
+    global_fx: Option<(i32, SpriteFxEffect)>,
+    global_fx_render_attached: bool,
     motion_entries: BTreeMap<SpriteHandle, SpriteMotionEntry>,
+    option_backups: BTreeMap<SpriteHandle, SpriteSurface>,
+    registered_profile: bool,
+    native_draw_state: crate::scene::blend::NativeDrawState,
+    target_render: target_render::TargetRenderList,
 }
 
 impl SpriteSystem {
@@ -46,7 +60,15 @@ impl SpriteSystem {
             render_nodes: BTreeMap::new(),
             transitions: BTreeMap::new(),
             fx_effects: BTreeMap::new(),
+            fx_time_ms: 0,
+            fx_phase_start_ms: None,
+            global_fx: None,
+            global_fx_render_attached: false,
             motion_entries: BTreeMap::new(),
+            option_backups: BTreeMap::new(),
+            registered_profile: false,
+            native_draw_state: crate::scene::blend::NativeDrawState::default(),
+            target_render: target_render::TargetRenderList::default(),
         }
     }
 
@@ -57,6 +79,17 @@ impl SpriteSystem {
             .checked_add(1)
             .expect("sprite surface id space exhausted");
         id
+    }
+
+    /// The newer PAL keeps signed cell indices and excludes a one-pixel
+    /// texture padding remainder. This is a build-level semantic difference.
+    pub fn set_registered_profile(&mut self, enabled: bool) {
+        if self.registered_profile != enabled {
+            self.registered_profile = enabled;
+            for sprite in self.sprites.values_mut() {
+                sprite.registered_cell_indices = enabled;
+            }
+        }
     }
 
     pub fn insert_texture(&mut self, texture: SceneTexture) -> SpriteSurfaceId {
@@ -84,7 +117,8 @@ impl SpriteSystem {
     pub fn create(&mut self, desc: SpriteDesc) -> SpriteHandle {
         let handle = self.allocate_handle();
         let render_node = self.allocate_render_node();
-        let sprite = PalSprite::new(handle, render_node, desc);
+        let mut sprite = PalSprite::new(handle, render_node, desc);
+        sprite.registered_cell_indices = self.registered_profile;
         let priority = sprite.effective_priority();
         self.render_nodes
             .insert(render_node, RenderNode::new(render_node, handle, priority));
@@ -107,6 +141,24 @@ impl SpriteSystem {
         let surface = SpriteSurface::rgba8(surface_id, 1, width, height, rgba).ok()?;
         self.insert_surface(surface);
         let mut desc = SpriteDesc::new(SceneTextureId(surface_id.0), width, height);
+        desc.position = position;
+        desc.base_priority = priority;
+        desc.visible = true;
+        desc.smooth_upscale = true;
+        desc.source_name = source_name.into();
+        Some(self.create(desc))
+    }
+
+    /// Restore immutable checkpoint pixels without copying a full image again.
+    pub fn create_shared_rgba_sprite(&mut self, width: u32, height: u32,
+        pixels: Arc<Vec<u8>>, position: PalVec3, priority: i32,
+        source_name: impl Into<String>) -> Option<SpriteHandle> {
+        let expected = (width as usize).checked_mul(height as usize)?.checked_mul(4)?;
+        if expected == 0 || pixels.len() != expected { return None; }
+        let id = self.allocate_surface_id();
+        self.insert_texture(SceneTexture { id: SceneTextureId(id.0), generation: 1,
+            width, height, format: SceneTextureFormat::Rgba8, pixels });
+        let mut desc = SpriteDesc::new(SceneTextureId(id.0), width, height);
         desc.position = position;
         desc.base_priority = priority;
         desc.visible = true;
@@ -221,7 +273,11 @@ impl SpriteSystem {
             return false;
         };
         let surface = sprite.surface;
+        if let Some(effect) = sprite.fx_effect {
+            self.fx_effects.remove(&effect);
+        }
         self.motion_entries.remove(&handle);
+        self.option_backups.remove(&handle);
         if let Some(render_node) = sprite.render_node {
             self.render_nodes.remove(&render_node);
         }
@@ -242,7 +298,11 @@ impl SpriteSystem {
     }
 
     pub fn release_transition_handle(&mut self, handle: SpriteTransitionHandle) -> bool {
-        if self.transition_state(handle) != 3 {
+        if self
+            .transitions
+            .get(&handle)
+            .is_some_and(|transition| transition.state != 0)
+        {
             self.cancel_transition(handle);
         }
         self.transitions.remove(&handle).is_some()
@@ -252,61 +312,53 @@ impl SpriteSystem {
         &mut self,
         handle: SpriteTransitionHandle,
         render_id: u32,
-        from: Option<SpriteHandle>,
-        to: Option<SpriteHandle>,
-        transition_id: u32,
+        first: Option<SpriteHandle>,
+        second: Option<SpriteHandle>,
+        transition_id: i32,
+        start_time_ms: u32,
         duration_ms: u32,
-        flags: u32,
     ) -> bool {
         if !self.transitions.contains_key(&handle) {
             return false;
         }
-        if from.is_none() && to.is_none() {
-            return false;
-        }
-        if self.transition_state(handle) != 3 {
+        if self.transition_state(handle) != 0 {
             self.cancel_transition(handle);
         }
-        if let Some(sprite) = from.and_then(|sprite| self.get_mut(sprite)) {
-            sprite.transition_block = transition_id;
+        if let Some(sprite) = first.and_then(|sprite| self.get_mut(sprite)) {
+            sprite.transition_block = transition_id as u32;
         }
-        if let Some(sprite) = to.and_then(|sprite| self.get_mut(sprite)) {
-            sprite.transition_block = transition_id;
+        if let Some(sprite) = second.and_then(|sprite| self.get_mut(sprite)) {
+            sprite.transition_block = transition_id as u32;
         }
         let transition = self.transitions.get_mut(&handle).expect("checked above");
         *transition = SpriteTransition {
             render_id,
             state: 1,
-            from,
-            to,
+            first,
+            second,
             transition_id,
+            start_time_ms,
             duration_ms,
-            flags,
-            current_frame: -1,
+            elapsed_ms: 0,
         };
-        true
+        // Native writes the handle even when no worker can be inserted.
+        first.is_some() || second.is_some()
     }
 
     pub fn cancel_transition(&mut self, handle: SpriteTransitionHandle) -> bool {
         let Some(transition) = self.transitions.get(&handle) else {
             return false;
         };
-        if transition.state == 0 {
+        if transition.render_id == 0 {
             return false;
         }
-        let from = transition.from;
-        let to = transition.to;
-        if let Some(sprite) = from.and_then(|sprite| self.get_mut(sprite)) {
+        let first = transition.first;
+        let second = transition.second;
+        if let Some(sprite) = first.and_then(|sprite| self.get_mut(sprite)) {
             sprite.transition_block = 0;
-            if sprite.source_name.starts_with("screen-copy:") {
-                sprite.visible = false;
-            }
         }
-        if let Some(sprite) = to.and_then(|sprite| self.get_mut(sprite)) {
-            sprite.transition_block = 0;
-            if sprite.source_name.starts_with("screen-copy:") {
-                sprite.visible = false;
-            }
+        if let Some(second) = second {
+            self.release(second);
         }
         if let Some(transition) = self.transitions.get_mut(&handle) {
             *transition = SpriteTransition::default();
@@ -317,32 +369,29 @@ impl SpriteSystem {
     pub fn transition_state(&self, handle: SpriteTransitionHandle) -> i32 {
         self.transitions
             .get(&handle)
-            .map(|transition| {
-                if transition.state != 0 {
-                    transition.state
-                } else {
-                    3
-                }
-            })
+            .map(|transition| transition.state)
             .unwrap_or(3)
     }
 
-    pub fn advance_transitions(&mut self, delta_ms: u32) {
-        let handles = self.transitions.keys().copied().collect::<Vec<_>>();
-        for handle in handles {
-            let Some(transition) = self.transitions.get_mut(&handle) else {
-                continue;
-            };
-            if transition.state == 0 {
+    /// Runs the native type-1 worker at the cached absolute PAL clock.
+    /// Completion leaves the worker and owned second sprite intact. The Game
+    /// wrapper separately cancels completed transitions when it retires images.
+    pub fn advance_transitions(&mut self, now_ms: u32, force_complete: bool) {
+        for transition in self.transitions.values_mut() {
+            if transition.state == 0
+                || transition.transition_id != 1
+                || (transition.first.is_none() && transition.second.is_none())
+            {
                 continue;
             }
-            let next = transition
-                .current_frame
-                .max(0)
-                .saturating_add(delta_ms.min(i32::MAX as u32) as i32);
-            transition.current_frame = next;
-            if next as u32 >= transition.duration_ms.max(1) {
-                self.cancel_transition(handle);
+            let elapsed = now_ms.wrapping_sub(transition.start_time_ms);
+            transition.elapsed_ms = if force_complete {
+                transition.duration_ms
+            } else {
+                elapsed.min(transition.duration_ms)
+            };
+            if transition.elapsed_ms >= transition.duration_ms {
+                transition.state = 2;
             }
         }
     }
@@ -437,32 +486,48 @@ impl SpriteSystem {
     pub fn transition_commands(&self) -> Vec<DrawCommand> {
         let mut commands = Vec::new();
         for transition in self.transitions.values() {
-            if transition.state == 0 {
+            if transition.state == 0 || transition.transition_id != 1 {
                 continue;
             }
-            let progress =
-                transition.current_frame.max(0) as f32 / transition.duration_ms.max(1) as f32;
-            let progress = progress.clamp(0.0, 1.0);
-            let priority = transition
-                .from
-                .and_then(|handle| self.get(handle))
-                .or_else(|| transition.to.and_then(|handle| self.get(handle)))
-                .map(PalSprite::effective_priority)
-                .unwrap_or(0);
-            if let Some(from) = transition.from.and_then(|handle| self.get(handle)) {
-                if let Some(mut command) = from.draw_command_transition(self) {
-                    if let DrawCommand::Sprite(ref mut sprite) = command {
-                        sprite.priority = priority;
-                        sprite.color[3] *= 1.0 - progress;
+            let first = transition.first.and_then(|handle| self.get(handle));
+            let second = transition.second.and_then(|handle| self.get(handle));
+            // The native two-sprite worker rejects the whole draw if either
+            // participating sprite is hidden.
+            if first.is_some_and(|sprite| !sprite.visible)
+                || second.is_some_and(|sprite| !sprite.visible)
+            {
+                continue;
+            }
+            let progress = if transition.duration_ms == 0 {
+                1.0
+            } else {
+                transition.elapsed_ms as f32 / transition.duration_ms as f32
+            };
+            let priority = first.or(second).map_or(0, |sprite| sprite.base_priority);
+            let first_alpha = first.map_or(0, |sprite| sprite.color.alpha());
+            let incoming_alpha = (f32::from(first_alpha) * progress) as u8;
+            let outgoing_alpha = if first.is_some() {
+                first_alpha - incoming_alpha
+            } else {
+                (f32::from(second.map_or(0, |sprite| sprite.color.alpha())) * (1.0 - progress))
+                    as u8
+            };
+            if let Some(second) = second {
+                if transition.duration_ms != 0 {
+                    if let Some(mut command) = second.draw_command_transition(self) {
+                        if let DrawCommand::Sprite(ref mut sprite) = command {
+                            sprite.priority = priority;
+                            sprite.color[3] = f32::from(outgoing_alpha) / 255.0;
+                        }
+                        commands.push(command);
                     }
-                    commands.push(command);
                 }
             }
-            if let Some(to) = transition.to.and_then(|handle| self.get(handle)) {
-                if let Some(mut command) = to.draw_command_transition(self) {
+            if let Some(first) = first {
+                if let Some(mut command) = first.draw_command_transition(self) {
                     if let DrawCommand::Sprite(ref mut sprite) = command {
-                        sprite.priority = priority.saturating_add(1);
-                        sprite.color[3] *= progress.max(0.001);
+                        sprite.priority = priority;
+                        sprite.color[3] = f32::from(incoming_alpha) / 255.0;
                     }
                     commands.push(command);
                 }
@@ -483,63 +548,131 @@ impl SpriteSystem {
         action: u32,
         value: i32,
     ) -> bool {
-        if !self.sprites.contains_key(&handle) {
+        self.set_sprite_fx_effect_with_source(
+            handle,
+            effect_id,
+            action,
+            value,
+            RasterSource::default(),
+        )
+    }
+
+    /// Adapter for `abi::win32::PalSpriteSetFxEffect` and the sprite branch
+    /// of `PalSetFxEffect`. Start supports the verified type-0 source layout.
+    /// Other actions ignore effect_id/source, as the native functions do.
+    pub fn set_sprite_fx_effect_with_source(
+        &mut self,
+        handle: SpriteHandle,
+        effect_id: u32,
+        action: u32,
+        duration_ms: i32,
+        source: RasterSource,
+    ) -> bool {
+        let Some(sprite) = self.sprites.get_mut(&handle) else {
             return false;
-        }
+        };
+        // Native allocates the owner before inspecting the action, including
+        // clear, stop and successful no-op actions. Clear does not release it.
+        let effect_handle = *sprite.fx_effect.get_or_insert_with(|| {
+            let effect = SpriteFxHandle(self.next_fx_handle);
+            self.next_fx_handle = self
+                .next_fx_handle
+                .checked_add(1)
+                .expect("sprite fx handle space exhausted");
+            effect
+        });
+        let effect = self.fx_effects.entry(effect_handle).or_default();
         match action {
-            0 => {
-                if let Some(effect) = self.get(handle).and_then(|sprite| sprite.fx_effect) {
-                    self.fx_effects.remove(&effect);
-                }
-                if let Some(sprite) = self.get_mut(handle) {
-                    sprite.fx_effect = None;
-                }
-                true
-            }
+            0 => effect.clear(),
             1 => {
-                if self
-                    .get(handle)
-                    .and_then(|sprite| sprite.fx_effect)
-                    .and_then(|effect| self.fx_effects.get(&effect))
-                    .is_some_and(|effect| effect.active)
-                {
+                if effect.state != 0 || effect_id != 0 {
                     return false;
                 }
-                let effect = self
-                    .get(handle)
-                    .and_then(|sprite| sprite.fx_effect)
-                    .unwrap_or_else(|| {
-                        let effect = SpriteFxHandle(self.next_fx_handle);
-                        self.next_fx_handle = self
-                            .next_fx_handle
-                            .checked_add(1)
-                            .expect("sprite fx handle space exhausted");
-                        effect
-                    });
-                self.fx_effects.insert(
-                    effect,
-                    SpriteFxEffect {
-                        effect_id,
-                        state: 1,
-                        value,
-                        active: true,
-                    },
-                );
-                if let Some(sprite) = self.get_mut(handle) {
-                    sprite.fx_effect = Some(effect);
-                }
-                true
+                *effect = SpriteFxEffect::start(source, duration_ms as u32, self.fx_time_ms);
             }
-            2 => {
-                if let Some(effect) = self.get(handle).and_then(|sprite| sprite.fx_effect) {
-                    if let Some(effect) = self.fx_effects.get_mut(&effect) {
-                        effect.value = value;
-                        return true;
-                    }
-                }
-                false
+            2 => effect.stop(duration_ms as u32, self.fx_time_ms),
+            _ => {}
+        }
+        true
+    }
+
+    /// Type-0 global start branch of `abi::win32::PalSetFxEffect`.
+    /// The render attachment survives clear and stop until PalReleaseFxEffect.
+    pub fn start_global_raster(
+        &mut self,
+        priority: i32,
+        source: RasterSource,
+        duration_ms: u32,
+    ) -> bool {
+        if self.global_fx_render_attached {
+            return false;
+        }
+        self.global_fx_render_attached = true;
+        let (_, effect) = self
+            .global_fx
+            .get_or_insert((priority, SpriteFxEffect::default()));
+        if effect.state != 0 {
+            return false;
+        }
+        self.global_fx = Some((
+            priority,
+            SpriteFxEffect::start(source, duration_ms, self.fx_time_ms),
+        ));
+        true
+    }
+
+    /// Global action 0 of `abi::win32::PalSetFxEffect` retains the attachment.
+    pub fn clear_global_raster(&mut self) {
+        if let Some((_, effect)) = &mut self.global_fx {
+            effect.clear();
+        }
+    }
+
+    /// Global action 2 does not require a previous successful start.
+    pub fn stop_global_raster(&mut self, duration_ms: u32) {
+        let (_, effect) = self.global_fx.get_or_insert((0, SpriteFxEffect::default()));
+        effect.stop(duration_ms, self.fx_time_ms);
+    }
+
+    /// Global branch of PalReleaseFxEffect: release buffers and the render node.
+    pub fn release_global_raster(&mut self) {
+        self.global_fx = None;
+        self.global_fx_render_attached = false;
+    }
+
+    /// Global branch of PalGetFxEffectState, including source-free stop state.
+    pub fn global_raster_state(&self) -> i32 {
+        self.global_fx
+            .as_ref()
+            .map_or(0, |(_, effect)| effect.state)
+    }
+
+    pub fn global_raster_stage(&self) -> Option<crate::scene::RasterStage> {
+        self.global_fx
+            .filter(|(_, effect)| {
+                self.global_fx_render_attached && effect.active && effect.has_source
+            })
+            .map(|(priority, effect)| crate::scene::RasterStage {
+                priority,
+                uniforms: effect.uniforms,
+            })
+    }
+
+    pub fn set_fx_time(&mut self, now_ms: u32) {
+        self.fx_time_ms = now_ms;
+    }
+
+    /// Advance FX independently of script waits. All raster instances share
+    /// the phase origin, matching fixture PAL.dll sub_100B4180.
+    pub fn tick_fx_effects(&mut self, now_ms: u32) {
+        self.fx_time_ms = now_ms;
+        for effect in self.fx_effects.values_mut() {
+            effect.tick(now_ms, &mut self.fx_phase_start_ms);
+        }
+        if self.global_fx_render_attached {
+            if let Some((_, effect)) = &mut self.global_fx {
+                effect.tick(now_ms, &mut self.fx_phase_start_ms);
             }
-            _ => false,
         }
     }
 
@@ -558,7 +691,7 @@ impl SpriteSystem {
         self.get(handle)
             .and_then(|sprite| sprite.fx_effect)
             .and_then(|effect| self.fx_effects.get(&effect))
-            .map(|effect| if effect.active { effect.state } else { 0 })
+            .map(|effect| effect.state)
             .unwrap_or(0)
     }
 
@@ -584,6 +717,8 @@ impl SpriteSystem {
         self.get(handle).is_some_and(|sprite| sprite.visible)
     }
 
+    /// Portable adapter for `abi::win32::PalSpriteSetColor`; PalColor carries
+    /// the complete native ARGB DWORD. Invalid arena keys return false.
     pub fn set_color(&mut self, handle: SpriteHandle, color: PalColor) -> bool {
         match self.get_mut(handle) {
             Some(sprite) => {
@@ -674,8 +809,8 @@ impl SpriteSystem {
     pub fn move_offset_pos(&mut self, handle: SpriteHandle, dx: i32, dy: i32) -> bool {
         match self.get_mut(handle) {
             Some(sprite) => {
-                sprite.offset.x = sprite.offset.x.saturating_add(dx);
-                sprite.offset.y = sprite.offset.y.saturating_add(dy);
+                sprite.offset.x = sprite.offset.x.wrapping_add(dx);
+                sprite.offset.y = sprite.offset.y.wrapping_add(dy);
                 true
             }
             None => false,
@@ -692,6 +827,8 @@ impl SpriteSystem {
         }
     }
 
+    /// Portable adapter for `abi::win32::PalSpriteSetRect`. None represents
+    /// a null RECT pointer; the shared PalRect32 layout is copied by value.
     pub fn set_rect(&mut self, handle: SpriteHandle, rect: Option<PalRect>) -> bool {
         match self.get_mut(handle) {
             Some(sprite) => {
@@ -702,7 +839,9 @@ impl SpriteSystem {
         }
     }
 
-    pub fn rect_set_pos(&mut self, handle: SpriteHandle, cell_x: u16, cell_y: u16) -> bool {
+    /// Portable adapter for `abi::win32::PalSpriteRectSetPos`; native indices
+    /// are i32. The adapter uses an arena key instead of a native pointer.
+    pub fn rect_set_pos(&mut self, handle: SpriteHandle, cell_x: i32, cell_y: i32) -> bool {
         match self.get_mut(handle) {
             Some(sprite) => {
                 sprite.rect_set_pos(cell_x, cell_y);
@@ -739,7 +878,7 @@ impl SpriteSystem {
     pub fn set_offset_rect(&mut self, handle: SpriteHandle, width: u32, height: u32) -> bool {
         match self.get_mut(handle) {
             Some(sprite) => {
-                sprite.cell_size = PalSize::new(width.max(1), height.max(1));
+                sprite.cell_size = PalSize::new(width, height);
                 true
             }
             None => false,
@@ -747,6 +886,9 @@ impl SpriteSystem {
     }
 
     pub fn set_option(&mut self, handle: SpriteHandle, option_type: u32) -> bool {
+        if !self.apply_surface_option(handle, option_type) {
+            return false;
+        }
         match self.get_mut(handle) {
             Some(sprite) => {
                 sprite.option_type = option_type;
@@ -778,10 +920,23 @@ impl SpriteSystem {
         match self.get_mut(handle) {
             Some(sprite) => {
                 sprite.scale = scale;
+                sprite.scale_y = None;
                 true
             }
             None => false,
         }
+    }
+
+    /// Adapter for the newer three-word PalSpriteSetScale ABI. The legacy
+    /// two-word export remains a separate uniform-scale operation.
+    pub fn set_scale_xy(&mut self, handle: SpriteHandle, scale_x: f32, scale_y: f32) -> bool {
+        if !self.set_scale(handle, scale_x) {
+            return false;
+        }
+        self.get_mut(handle)
+            .expect("set_scale checked the handle")
+            .scale_y = Some(scale_y);
+        true
     }
 
     pub fn set_alpha(&mut self, handle: SpriteHandle, alpha: u8) -> bool {
@@ -875,6 +1030,62 @@ impl SpriteSystem {
         }
     }
 
+    /// PalSpriteHit uses the unscaled selected rectangle. Failed native pixel
+    /// reads return 0xffffffff, so an unavailable texel accepts an alpha hit.
+    pub fn hit(&self, handle: SpriteHandle, x: i32, y: i32, alpha_test: u32) -> i32 {
+        let Some(sprite) = self.get(handle) else {
+            return 0;
+        };
+        if !sprite.visible {
+            return 0;
+        }
+        let sprite = sprite.with_action_lanes_applied();
+        let local_x = x.wrapping_sub(
+            sprite
+                .offset
+                .x
+                .wrapping_add(native_truncate_i32(sprite.position.x)),
+        );
+        let local_y = y.wrapping_sub(
+            sprite
+                .offset
+                .y
+                .wrapping_add(native_truncate_i32(sprite.position.y)),
+        );
+        if local_x < 0
+            || local_y < 0
+            || local_x
+                >= sprite
+                    .source_rect
+                    .right
+                    .wrapping_sub(sprite.source_rect.left)
+            || local_y
+                >= sprite
+                    .source_rect
+                    .bottom
+                    .wrapping_sub(sprite.source_rect.top)
+        {
+            return 0;
+        }
+        if alpha_test == 0 {
+            return 1;
+        }
+        let source_x = sprite.source_rect.left.wrapping_add(local_x);
+        let source_y = sprite.source_rect.top.wrapping_add(local_y);
+        let Some(surface) = self.surface(sprite.surface) else {
+            return 1;
+        };
+        if source_x < 0
+            || source_y < 0
+            || source_x as u32 >= surface.width
+            || source_y as u32 >= surface.height
+        {
+            return 1;
+        }
+        let index = (source_y as usize * surface.width as usize + source_x as usize) * 4 + 3;
+        i32::from(surface.pixels[index] != 0)
+    }
+
     pub fn lock(&mut self, handle: SpriteHandle) -> Option<&mut SpriteSurface> {
         let surface = {
             let sprite = self.sprites.get_mut(&handle)?;
@@ -909,7 +1120,12 @@ impl SpriteSystem {
         let Some(surface) = self.surface_mut(surface_id) else {
             return false;
         };
-        let expected = width as usize * height as usize * 4;
+        let Some(expected) = (width as usize)
+            .checked_mul(height as usize)
+            .and_then(|pixels| pixels.checked_mul(4))
+        else {
+            return false;
+        };
         if rgba.len() < expected {
             return false;
         }
@@ -965,6 +1181,42 @@ impl SpriteSystem {
         let rgba = color.to_rgba_u8();
         let idx = ((y as u32 * surface.width + x as u32) * 4) as usize;
         surface.pixels_mut()[idx..idx + 4].copy_from_slice(&rgba);
+        true
+    }
+
+    /// Replace all pixels in a half-open surface rectangle; a missing rectangle
+    /// paints the complete surface. This is PAL paint, not alpha compositing.
+    pub fn paint_rect(
+        &mut self,
+        handle: SpriteHandle,
+        rect: Option<PalRect>,
+        color: PalColor,
+    ) -> bool {
+        let Some(surface_id) = self.get(handle).map(|sprite| sprite.surface) else {
+            return false;
+        };
+        let Some(surface) = self.surface_mut(surface_id) else {
+            return false;
+        };
+        let width = surface.width;
+        let height = surface.height;
+        let rect = rect.unwrap_or(PalRect::new(0, 0, width as i32, height as i32));
+        let left = rect.left.clamp(0, width as i32) as usize;
+        let right = rect.right.clamp(0, width as i32) as usize;
+        let top = rect.top.clamp(0, height as i32) as usize;
+        let bottom = rect.bottom.clamp(0, height as i32) as usize;
+        if right <= left || bottom <= top {
+            return true;
+        }
+        let rgba = color.to_rgba_u8();
+        let pixels = surface.pixels_mut();
+        for y in top..bottom {
+            let start = (y * width as usize + left) * 4;
+            let end = (y * width as usize + right) * 4;
+            for pixel in pixels[start..end].chunks_exact_mut(4) {
+                pixel.copy_from_slice(&rgba);
+            }
+        }
         true
     }
 
@@ -1054,6 +1306,37 @@ impl SpriteSystem {
         )
     }
 
+    /// Typed arena adapter for PalMixSpriteToSpriteEx's eight native words.
+    /// Invalid negative extents are rejected instead of reproducing native
+    /// invalid-memory access; overlapping surfaces use an immutable source copy.
+    #[allow(clippy::too_many_arguments)]
+    pub fn mix_sprite_to_sprite_ex(
+        &mut self,
+        dst: SpriteHandle,
+        dst_x: i32,
+        dst_y: i32,
+        width: i32,
+        height: i32,
+        src: SpriteHandle,
+        src_x: i32,
+        src_y: i32,
+    ) -> bool {
+        if width <= 0 || height <= 0 {
+            return false;
+        }
+        self.blit_sprite_to_sprite(
+            dst,
+            dst_x,
+            dst_y,
+            src,
+            src_x,
+            src_y,
+            width as u32,
+            height as u32,
+            BlendMode::SourceOver,
+        )
+    }
+
     pub fn copy_sprite_rect_to_sprite_rgb(&mut self, dst: SpriteHandle, src: SpriteHandle) -> bool {
         let Some(src_sprite) = self.get(src) else {
             return false;
@@ -1119,9 +1402,15 @@ impl SpriteSystem {
         nodes
             .into_iter()
             .filter_map(|node| {
-                self.sprites
-                    .get(&node.sprite)
-                    .and_then(|sprite| sprite.draw_command(self))
+                self.sprites.get(&node.sprite).and_then(|sprite| {
+                    let mut command = sprite.draw_command(self)?;
+                    if sprite.action_lanes.position[2] == 0.0 {
+                        if let DrawCommand::Sprite(ref mut draw) = command {
+                            draw.priority = node.priority;
+                        }
+                    }
+                    Some(command)
+                })
             })
             .collect()
     }
@@ -1148,6 +1437,12 @@ impl SpriteSystem {
 
     pub fn motion_entry_count(&self) -> usize {
         self.motion_entries.len()
+    }
+
+    /// Stop the named-ANI motion without committing or resetting its current
+    /// properties. The Game wrapper owns its separate animation bookkeeping.
+    pub fn stop_motion(&mut self, handle: SpriteHandle) -> bool {
+        self.motion_entries.remove(&handle).is_some()
     }
 
     pub fn is_empty(&self) -> bool {
@@ -1181,6 +1476,15 @@ impl SpriteSystem {
                 node.priority = priority;
             }
         }
+    }
+}
+
+/// CVTTSS2SI returns the integer-indefinite value on NaN or overflow.
+fn native_truncate_i32(value: f32) -> i32 {
+    if (-2_147_483_648.0..2_147_483_648.0).contains(&value) {
+        value as i32
+    } else {
+        i32::MIN
     }
 }
 
@@ -1219,7 +1523,7 @@ fn mask_alpha_surface(
     dst_y: i32,
     width: u32,
     height: u32,
-    mask: (u32, u32, Arc<[u8]>),
+    mask: (u32, u32, Arc<Vec<u8>>),
     mask_x: i32,
     mask_y: i32,
 ) -> bool {
@@ -1248,7 +1552,9 @@ fn mask_alpha_surface(
             let dst_col = region.dst_x + col;
             let mask_col = region.src_x + col;
             let dst_idx = ((dst_row * dst_width + dst_col) * 4 + 3) as usize;
-            let mask_idx = ((mask_row * mask_width + mask_col) * 4) as usize;
+            // PalSpriteMaskAlpha consumes native BGRA byte 0 (blue).
+            // Portable surfaces are RGBA, so the matching channel is byte 2.
+            let mask_idx = ((mask_row * mask_width + mask_col) * 4 + 2) as usize;
             dst_pixels[dst_idx] =
                 (((u16::from(dst_pixels[dst_idx])) * u16::from(mask_pixels[mask_idx])) >> 8) as u8;
         }
@@ -1310,15 +1616,17 @@ fn blend_pixel(dst: &mut [u8], src: &[u8], mode: BlendMode) {
         }
         BlendMode::SourceOver => {
             let src_alpha = u32::from(src[3]);
-            if src_alpha == 0 {
+            let dst_alpha = u32::from(dst[3]);
+            let retained_alpha = dst_alpha * (255 - src_alpha) / 255;
+            let out_alpha = src_alpha + retained_alpha;
+            if out_alpha == 0 {
+                dst.fill(0);
                 return;
             }
-            let dst_alpha = u32::from(dst[3]);
-            let out_alpha = src_alpha + (dst_alpha * (255 - src_alpha) + 127) / 255;
             for channel in 0..3 {
-                let numerator = u32::from(src[channel]) * src_alpha * 255
-                    + u32::from(dst[channel]) * dst_alpha * (255 - src_alpha);
-                dst[channel] = ((numerator + out_alpha * 127) / (out_alpha * 255)) as u8;
+                let numerator =
+                    u32::from(src[channel]) * src_alpha + u32::from(dst[channel]) * retained_alpha;
+                dst[channel] = (numerator / out_alpha) as u8;
             }
             dst[3] = out_alpha as u8;
         }
@@ -1417,6 +1725,8 @@ pub struct SpriteDesc {
     pub color: PalColor,
     pub base_priority: i32,
     pub scale: f32,
+    /// Newer PAL's independent Y scale. None retains legacy uniform scaling.
+    pub scale_y: Option<f32>,
     pub center_scale: bool,
     pub rotation: PalVec3,
     pub render_mode: PalRenderMode,
@@ -1444,6 +1754,7 @@ impl SpriteDesc {
             color: PalColor::WHITE,
             base_priority: 0,
             scale: 1.0,
+            scale_y: None,
             center_scale: true,
             rotation: PalVec3::default(),
             render_mode: PalRenderMode::DEFAULT,
@@ -1458,6 +1769,7 @@ impl SpriteDesc {
 
 #[derive(Clone, Debug)]
 pub struct PalSprite {
+    registered_cell_indices: bool,
     pub handle: SpriteHandle,
     pub kind: SpriteKind,
     pub surface: SpriteSurfaceId,
@@ -1467,6 +1779,7 @@ pub struct PalSprite {
     pub fx_effect: Option<SpriteFxHandle>,
     pub locked: bool,
     pub visible: bool,
+    /// Value copied by native `abi::win32::PalSpriteGetRect` to its output.
     pub source_rect: PalRect,
     pub color: PalColor,
     pub position: PalVec3,
@@ -1476,6 +1789,8 @@ pub struct PalSprite {
     pub center_offset: PalPoint2,
     pub base_priority: i32,
     pub scale: f32,
+    /// Newer PAL's independent Y scale. None retains legacy uniform scaling.
+    pub scale_y: Option<f32>,
     pub center_scale: bool,
     pub rotation: PalVec3,
     pub render_mode: PalRenderMode,
@@ -1484,9 +1799,65 @@ pub struct PalSprite {
     pub source_name: String,
     pub native_projection: Option<(f32, f32)>,
     pub smooth_upscale: bool,
+    /// Game action lanes compose with the base sprite properties before projection.
+    pub action_lanes: SpriteActionLanes,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct SpriteActionLanes {
+    pub position: [f32; 3],
+    pub shake: [f32; 2],
+    pub rotation: [f32; 3],
+    pub scale: f32,
+    pub alpha: i16,
+}
+
+impl SpriteActionLanes {
+    pub fn add(&mut self, other: Self) {
+        for axis in 0..3 {
+            self.position[axis] += other.position[axis];
+            self.rotation[axis] += other.rotation[axis];
+        }
+        for axis in 0..2 {
+            self.shake[axis] += other.shake[axis];
+        }
+        self.scale += other.scale;
+        self.alpha = self.alpha.wrapping_add(other.alpha);
+    }
 }
 
 impl PalSprite {
+    pub(crate) fn commit_action_lanes(&mut self, lanes: SpriteActionLanes) {
+        let temporary = std::mem::replace(&mut self.action_lanes, lanes);
+        let composed = self.with_action_lanes_applied();
+        self.position = composed.position;
+        self.rotation = composed.rotation;
+        self.scale = composed.scale;
+        self.scale_y = composed.scale_y;
+        self.color = composed.color;
+        self.action_lanes = temporary;
+    }
+
+    fn with_action_lanes_applied(&self) -> Self {
+        let mut sprite = self.clone();
+        let lanes = std::mem::take(&mut sprite.action_lanes);
+        sprite.position.x += lanes.position[0] + lanes.shake[0];
+        sprite.position.y += lanes.position[1] + lanes.shake[1];
+        sprite.position.z += lanes.position[2];
+        sprite.rotation.x += lanes.rotation[0];
+        sprite.rotation.y += lanes.rotation[1];
+        sprite.rotation.z += lanes.rotation[2];
+        sprite.scale += lanes.scale;
+        if let Some(scale_y) = &mut sprite.scale_y {
+            *scale_y += lanes.scale;
+        }
+        let alpha = i16::from(sprite.color.alpha())
+            .wrapping_add(lanes.alpha)
+            .clamp(0, 255) as u32;
+        sprite.color = PalColor::from_argb((sprite.color.0 & 0x00ff_ffff) | (alpha << 24));
+        sprite
+    }
+
     pub fn new(handle: SpriteHandle, render_node: RenderNodeId, desc: SpriteDesc) -> Self {
         let texture_size = PalSize::new(desc.texture_width.max(1), desc.texture_height.max(1));
         let cell_size = PalSize::new(desc.cell_width.max(1), desc.cell_height.max(1));
@@ -1495,6 +1866,7 @@ impl PalSprite {
             .unwrap_or_else(|| PalRect::new(0, 0, cell_size.width as i32, cell_size.height as i32));
         Self {
             handle,
+            registered_cell_indices: false,
             kind: desc.kind,
             surface: SpriteSurfaceId(desc.texture_id.0),
             render_node: Some(render_node),
@@ -1512,6 +1884,7 @@ impl PalSprite {
             center_offset: desc.center_offset,
             base_priority: desc.base_priority,
             scale: desc.scale,
+            scale_y: desc.scale_y,
             center_scale: desc.center_scale,
             rotation: desc.rotation,
             render_mode: desc.render_mode,
@@ -1520,10 +1893,14 @@ impl PalSprite {
             source_name: desc.source_name,
             native_projection: desc.native_projection,
             smooth_upscale: desc.smooth_upscale,
+            action_lanes: SpriteActionLanes::default(),
         }
     }
 
     pub fn info(&self) -> PalSpriteInfo {
+        if self.action_lanes != SpriteActionLanes::default() {
+            return self.with_action_lanes_applied().info();
+        }
         PalSpriteInfo {
             visible: self.visible,
             color: self.color,
@@ -1534,6 +1911,7 @@ impl PalSprite {
             center_offset: self.center_offset,
             priority: self.base_priority,
             scale: self.scale,
+            scale_y: self.scale_y,
             center_scale: self.center_scale,
             rotation: self.rotation,
             render_mode: self.render_mode,
@@ -1554,6 +1932,7 @@ impl PalSprite {
         self.center_offset = info.center_offset;
         self.base_priority = info.priority;
         self.scale = info.scale;
+        self.scale_y = info.scale_y;
         self.center_scale = info.center_scale;
         self.rotation = info.rotation;
         self.render_mode = info.render_mode;
@@ -1582,23 +1961,44 @@ impl PalSprite {
         });
     }
 
-    pub fn rect_set_pos(&mut self, cell_x: u16, cell_y: u16) {
-        let mut left = u32::from(cell_x).saturating_mul(self.cell_size.width);
-        let mut top = u32::from(cell_y).saturating_mul(self.cell_size.height);
+    pub fn rect_set_pos(&mut self, cell_x: i32, cell_y: i32) {
+        if self.registered_cell_indices {
+            let origin = |index: i32, size: u32, cell: u32| {
+                let cell = cell.max(1);
+                let count = size / cell;
+                if index >= count as i32 {
+                    if size % cell == 1 {
+                        cell.wrapping_mul(count.wrapping_sub(1))
+                    } else {
+                        size.wrapping_sub(cell)
+                    }
+                } else {
+                    (index as u32).wrapping_mul(cell)
+                }
+            };
+            let left = origin(cell_x, self.texture_size.width, self.cell_size.width);
+            let top = origin(cell_y, self.texture_size.height, self.cell_size.height);
+            self.source_rect = PalRect::new(
+                left as i32,
+                top as i32,
+                left.wrapping_add(self.cell_size.width) as i32,
+                top.wrapping_add(self.cell_size.height) as i32,
+            );
+            return;
+        }
+        let mut left = (cell_x as u32).wrapping_mul(self.cell_size.width);
+        let mut top = (cell_y as u32).wrapping_mul(self.cell_size.height);
         if left >= self.texture_size.width {
-            left = self.texture_size.width.saturating_sub(self.cell_size.width);
+            left = self.texture_size.width.wrapping_sub(self.cell_size.width);
         }
         if top >= self.texture_size.height {
-            top = self
-                .texture_size
-                .height
-                .saturating_sub(self.cell_size.height);
+            top = self.texture_size.height.wrapping_sub(self.cell_size.height);
         }
         self.source_rect = PalRect::new(
             left as i32,
             top as i32,
-            left.saturating_add(self.cell_size.width) as i32,
-            top.saturating_add(self.cell_size.height) as i32,
+            left.wrapping_add(self.cell_size.width) as i32,
+            top.wrapping_add(self.cell_size.height) as i32,
         );
     }
 
@@ -1608,37 +2008,60 @@ impl PalSprite {
 
     pub fn effective_position(&self) -> PalPoint2 {
         PalPoint2 {
-            x: self.offset.x.saturating_add(self.position.x as i32),
-            y: self.offset.y.saturating_add(self.position.y as i32),
+            x: self.offset.x.saturating_add(
+                (self.position.x + self.action_lanes.position[0] + self.action_lanes.shake[0])
+                    as i32,
+            ),
+            y: self.offset.y.saturating_add(
+                (self.position.y + self.action_lanes.position[1] + self.action_lanes.shake[1])
+                    as i32,
+            ),
         }
     }
 
     pub fn effective_priority(&self) -> i32 {
-        self.base_priority.saturating_add(self.position.z as i32)
+        self.base_priority.wrapping_add(native_truncate_i32(
+            self.position.z + self.action_lanes.position[2],
+        ))
     }
 
     pub fn draw_command(&self, sprites: &SpriteSystem) -> Option<DrawCommand> {
-        if self.transition_block != 0 || !self.visible || self.locked || self.color.alpha() == 0 {
+        if self.transition_block != 0 || !self.visible || self.locked {
             return None;
         }
         self.draw_command_inner(sprites)
     }
 
     fn draw_command_transition(&self, sprites: &SpriteSystem) -> Option<DrawCommand> {
-        if !self.visible || self.locked || self.color.alpha() == 0 {
+        if !self.visible || self.locked {
             return None;
         }
         self.draw_command_inner(sprites)
     }
 
     fn draw_command_inner(&self, sprites: &SpriteSystem) -> Option<DrawCommand> {
+        if self.action_lanes != SpriteActionLanes::default() {
+            return self.with_action_lanes_applied().draw_command_inner(sprites);
+        }
+        let render_mode = if self.registered_cell_indices || self.render_mode.raw() <= 4 {
+            self.render_mode.raw()
+        } else {
+            1
+        };
         let surface = sprites.surface(self.surface)?;
         let dst_pos = self.effective_position();
         let width = self.source_rect.width() as f32;
         let height = self.source_rect.height() as f32;
         let scale = self.scale.max(0.0);
         let rotation_z = self.rotation.z.rem_euclid(512.0);
-        let draw_scale = pal_scratch_clamped_scale(width, height, scale);
+        let (draw_scale, draw_scale_y) = if let Some(scale_y) = self.scale_y {
+            // Newer D3D sprites carry two independent scale lanes, without the
+            // legacy software renderer's uniform scratch-buffer restriction.
+            (scale, scale_y.max(0.0))
+        } else {
+            let uniform = pal_scratch_clamped_scale(width, height, scale);
+            (uniform, uniform)
+        };
         let mut dst = if self.kind == SpriteKind::SolidLayer {
             RectF::new(0.0, 0.0, surface.width as f32, surface.height as f32)
         } else if rotation_z != 0.0 {
@@ -1651,11 +2074,14 @@ impl PalSprite {
             // centered rectangular scale offset.
             RectF::new(
                 dst_pos.x as f32 - ((width * draw_scale) - width) * 0.5,
-                dst_pos.y as f32 - ((height * draw_scale) - height) * 0.5,
+                dst_pos.y as f32 - ((height * draw_scale_y) - height) * 0.5,
                 width * draw_scale,
-                height * draw_scale,
+                height * draw_scale_y,
             )
-        } else if self.center_scale && (scale - 1.0).abs() > f32::EPSILON {
+        } else if self.center_scale
+            && ((draw_scale - 1.0).abs() > f32::EPSILON
+                || (draw_scale_y - 1.0).abs() > f32::EPSILON)
+        {
             // PAL.dll `sub_1028D740` does not scale from the top-left corner.
             // For scale-only sprites it creates a centered square scratch, but
             // the source pixels are centered within that scratch by
@@ -1663,16 +2089,16 @@ impl PalSprite {
             // the visible scaled width/height offset.
             RectF::new(
                 dst_pos.x as f32 - ((width * draw_scale) - width) * 0.5,
-                dst_pos.y as f32 - ((height * draw_scale) - height) * 0.5,
+                dst_pos.y as f32 - ((height * draw_scale_y) - height) * 0.5,
                 width * draw_scale,
-                height * draw_scale,
+                height * draw_scale_y,
             )
         } else {
             RectF::new(
                 dst_pos.x as f32,
                 dst_pos.y as f32,
                 width * draw_scale,
-                height * draw_scale,
+                height * draw_scale_y,
             )
         };
         if let Some((project_x, project_y)) = self.native_projection {
@@ -1739,7 +2165,13 @@ impl PalSprite {
             scale: self.scale,
             rotation: [self.rotation.x, self.rotation.y, self.rotation.z],
             center_offset: [self.center_offset.x as f32, self.center_offset.y as f32],
-            render_mode: self.render_mode.raw(),
+            render_mode,
+            blend_state: crate::scene::blend::NativeDrawState::default(),
+            raster_fx: self
+                .fx_effect
+                .and_then(|handle| sprites.fx_effects.get(&handle))
+                .filter(|effect| effect.active && effect.has_source)
+                .map(|effect| effect.uniforms),
         }))
     }
 }
@@ -1848,6 +2280,7 @@ pub struct PalSpriteInfo {
     pub center_offset: PalPoint2,
     pub priority: i32,
     pub scale: f32,
+    pub scale_y: Option<f32>,
     pub center_scale: bool,
     pub rotation: PalVec3,
     pub render_mode: PalRenderMode,
@@ -1865,7 +2298,7 @@ pub struct SpriteSurface {
     pub width: u32,
     pub height: u32,
     pub format: SceneTextureFormat,
-    pub pixels: Arc<[u8]>,
+    pub pixels: Arc<Vec<u8>>,
     pub dirty: bool,
 }
 
@@ -1890,7 +2323,13 @@ impl SpriteSurface {
         height: u32,
         pixels: Vec<u8>,
     ) -> anyhow::Result<Self> {
-        let expected = width as usize * height as usize * 4;
+        let expected = (width as usize)
+            .checked_mul(height as usize)
+            .and_then(|pixels| pixels.checked_mul(4))
+            .ok_or_else(|| anyhow::anyhow!("RGBA sprite dimensions overflow: {width}x{height}"))?;
+        if expected == 0 {
+            anyhow::bail!("RGBA sprite dimensions must be nonzero: {width}x{height}");
+        }
         if pixels.len() != expected {
             anyhow::bail!(
                 "RGBA sprite surface {:?} has {} bytes, expected {} for {}x{}",
@@ -1908,7 +2347,7 @@ impl SpriteSurface {
             width,
             height,
             format: SceneTextureFormat::Rgba8,
-            pixels: Arc::from(pixels),
+            pixels: Arc::new(pixels),
             dirty: false,
         })
     }
@@ -1928,7 +2367,7 @@ impl SpriteSurface {
 
     pub fn pixels_mut(&mut self) -> &mut [u8] {
         self.mark_dirty();
-        Arc::make_mut(&mut self.pixels)
+        Arc::make_mut(&mut self.pixels).as_mut_slice()
     }
 
     pub fn to_scene_texture(&self) -> SceneTexture {
@@ -1983,20 +2422,14 @@ pub struct SpriteFxHandle(pub u32);
 pub struct SpriteTransition {
     pub render_id: u32,
     pub state: i32,
-    pub from: Option<SpriteHandle>,
-    pub to: Option<SpriteHandle>,
-    pub transition_id: u32,
+    /// First native sprite is retained and fades in.
+    pub first: Option<SpriteHandle>,
+    /// Second native sprite is owned until cancellation and fades out.
+    pub second: Option<SpriteHandle>,
+    pub transition_id: i32,
+    pub start_time_ms: u32,
     pub duration_ms: u32,
-    pub flags: u32,
-    pub current_frame: i32,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct SpriteFxEffect {
-    pub effect_id: u32,
-    pub state: i32,
-    pub value: i32,
-    pub active: bool,
+    pub elapsed_ms: u32,
 }
 
 /// Portable subset of Game.exe `SpriteMotionEntry`.
@@ -2163,13 +2596,7 @@ impl PalSize {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct PalRect {
-    pub left: i32,
-    pub top: i32,
-    pub right: i32,
-    pub bottom: i32,
-}
+pub use crate::abi::PalRect32 as PalRect;
 
 impl PalRect {
     pub const fn new(left: i32, top: i32, right: i32, bottom: i32) -> Self {
@@ -2240,6 +2667,15 @@ impl PalRenderMode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn rgba_surface_rejects_overflow_and_empty_dimensions() {
+        for (width, height) in [(0x8000_0000, 0x8000_0000), (0, 1), (1, 0)] {
+            assert!(
+                SpriteSurface::rgba8(SpriteSurfaceId(1), 1, width, height, Vec::new()).is_err()
+            );
+        }
+    }
 
     #[test]
     fn copy_sprite_pixels_duplicates_the_source_surface() {

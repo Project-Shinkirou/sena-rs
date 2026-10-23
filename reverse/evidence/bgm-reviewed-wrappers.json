@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "rows": [
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 0,
+      "handler": "0x41deb0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 1,
+      "handler": "0x41dd60",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 9,
+      "handler": "0x41e360",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 10,
+      "handler": "0x41e220",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 0,
+      "handler": "0x40c4b0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 1,
+      "handler": "0x40c380",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 9,
+      "handler": "0x40c8d0",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "reference",
+      "category": 4,
+      "index": 10,
+      "handler": "0x40c7a0",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": true,
+      "return_contract": "destination=slot; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "reverse/Game.exe",
+      "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+      "evidence": [
+        "reverse/evidence/bgm-reference-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 0,
+      "handler": "0x40d5b0",
+      "name": "bgm_play",
+      "arity": 7,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_units",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Play flags&0x10 enables a borrowed native four-DWORD range; final three values are PCM bytes, not volume or samples.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 1,
+      "handler": "0x40d450",
+      "name": "bgm_stop",
+      "arity": 2,
+      "arguments_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Stop accepts -1 for both channels; already-fading-out plus nonzero duration does not restart the fade.",
+        "Nonzero scheduling state shifts Stop duration right by4."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 9,
+      "handler": "0x40d8b0",
+      "name": "bgm_load",
+      "arity": 5,
+      "arguments_pop_order": [
+        "slot",
+        "filename",
+        "initial_bytes",
+        "loop_start_bytes",
+        "loop_end_bytes"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Preload enables range when any of its three offsets is nonzero.",
+        "No implicit CSV lookup occurs in this wrapper or its audited loader delegate."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 10,
+      "handler": "0x40d7c0",
+      "name": "bgm_play2",
+      "arity": 3,
+      "arguments_pop_order": [
+        "slot",
+        "flags",
+        "fade_units"
+      ],
+      "writes_destination": false,
+      "return_contract": "control1; destination preserved",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-wrappers.json"
+      ],
+      "notes": [
+        "Play the already loaded slot without reloading.",
+        "Play/Play2 duration is wrapping unsigned duration*(flags&4); nonzero scheduling state shifts unsigned duration right by4 before multiplication."
+      ]
+    },
+    {
+      "build": "totsulover",
+      "category": 4,
+      "index": 3,
+      "handler": "0x41dd10",
+      "name": "bgm_get_volume",
+      "arity": 0,
+      "arguments_pop_order": [],
+      "writes_destination": true,
+      "return_contract": "destination=100*stored_raw/10000; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+      "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+      "evidence": [
+        "reverse/evidence/bgm-totsulover-getters.json"
+      ],
+      "notes": [
+        "Zero operands; configured raw group value is returned as percent independently of mute."
+      ]
+    },
+    {
+      "build": "koikake",
+      "category": 4,
+      "index": 3,
+      "handler": "0x40d400",
+      "name": "bgm_get_volume",
+      "arity": 0,
+      "arguments_pop_order": [],
+      "writes_destination": true,
+      "return_contract": "destination=100*stored_raw/10000; control1",
+      "abi_status": "confirmed",
+      "behavior_status": "reviewed",
+      "binary": "testcase/koikake.exe",
+      "sha256": "93f228aa413aece0f047b27ddb1ea26d4e50316304e6c4029eae4a1a844f437b",
+      "evidence": [
+        "reverse/evidence/bgm-koikake-getters.json"
+      ],
+      "notes": [
+        "Zero operands; configured raw group value is returned as percent independently of mute."
+      ]
+    }
+  ]
+}
