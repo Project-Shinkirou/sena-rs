@@ -400,10 +400,10 @@ mod tests {
         assert_eq!(snapshot.version, PORTABLE_SAVE_VERSION);
         let mut restored = ScriptRuntime::boot(12, ScriptRuntimeConfig::default());
         restored.restore_save_snapshot(snapshot);
-        assert!(
-            restored.dynamic_strings.is_empty(),
-            "fresh runtime has no old dynamic buffers"
-        );
+        // The current format restores live buffers as well as frozen history.
+        // Queries below must still return the earlier captured history strings.
+        assert_eq!(restored.dynamic_strings, vm.dynamic_strings);
+        let saved_buffer_count = restored.dynamic_strings.len();
         let dst = [
             restored.store_dynamic_string(String::new()),
             restored.store_dynamic_string(String::new()),
@@ -414,7 +414,7 @@ mod tests {
             0x100
         );
         assert_eq!(
-            restored.dynamic_strings,
+            &restored.dynamic_strings[saved_buffer_count..],
             ["First speaker", "vo01_first", "First body"]
         );
         assert_eq!(
@@ -422,7 +422,7 @@ mod tests {
             0x200
         );
         assert_eq!(
-            restored.dynamic_strings,
+            &restored.dynamic_strings[saved_buffer_count..],
             ["Second speaker", "vo02_second", "Second body"]
         );
     }

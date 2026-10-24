@@ -30,6 +30,30 @@ copy it to a writable device directory for gameplay and saves.
 See [Switch](switch/README.md) and [PS Vita](vita/README.md) for device paths and
 controls. The existing release workflow now includes both console artifacts.
 
+## Continuous integration
+
+[Build Artifacts](../.github/workflows/release.yml) builds Switch and Vita in
+separate Linux x86-64 Docker jobs on pushes, main-branch pull requests, and manual
+workflow dispatch. The existing host-audio library and C input checks remain
+prerequisites. Both images install `nightly-2026-01-20` with `rust-src`; SDK image
+layers and Cargo/build output have separate caches. Native build caches are
+scoped by the resolved SDK image, toolchain, build scripts and dependency locks.
+
+Successful jobs upload `sena-switch` (`sena.nro` and `sena.nro.sha256`) and
+`sena-vita` (`sena.vpk` and `sena.vpk.sha256`). Package checks reject missing or
+truncated NRO headers, invalid Vita SELF/SFO entries and corrupt VPK CRCs.
+The existing rolling pre-release and version-tag release jobs include both
+packages and checksums. Failed native builds retain a separate build-log
+artifact. Docker build records are excluded from release assets.
+
+The CI maintenance check passed 252 existing host-audio library tests (5 ignored),
+the existing C input check, workflow/actionlint validation, and verification of
+the locally built NRO/VPK. Four stale test assumptions were updated for PAL-clock
+fades, the group slider-end latch, restored dynamic strings, and the independent
+v11 wire layout. No new regression tests or native ABI changes were added.
+This checks the packaging configuration locally; a GitHub-hosted Docker run is
+still required after pushing the workflow changes.
+
 ## Core and host boundary
 
 `pal-vm` defaults to `desktop` and `device-audio`: the current winit/wgpu window

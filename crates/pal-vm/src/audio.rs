@@ -1638,6 +1638,8 @@ mod tests {
         assert_eq!(audio.now_channel(), 0);
         assert_eq!(audio.sound_param(0, 12, true).unwrap(), 1);
         audio.stop_fade(handle, 1).unwrap();
+        // Native fades follow the PAL clock, independently of PCM consumption.
+        audio.set_pal_time(1);
         sink.render_i16(&mut samples);
         audio.update();
         assert_eq!(audio.loaded_channel_count(PalSoundGroup::GROUP3), 0);

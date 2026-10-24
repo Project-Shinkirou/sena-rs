@@ -3,8 +3,10 @@
 Updated 2026-10-24. **Complete behavioral compatibility is not established.**
 This document separates implementation, local validation, and remaining work.
 Export counts, handler counts, and successful cross-builds are not compatibility
-percentages. No regression tests were added or run after the user's instruction
-to stop adding them; subsequent validation uses compilation and isolated game runs.
+percentages. No new regression tests were added in the console CI follow-up.
+Its existing host-audio library checks passed 252 tests (5 ignored) after correcting
+four stale fixture/clock/state assumptions; this is packaging-gate validation,
+not new native-behavior or full-route evidence. See [CI scope](../platform/README.md#continuous-integration).
 
 ## Current implementation
 

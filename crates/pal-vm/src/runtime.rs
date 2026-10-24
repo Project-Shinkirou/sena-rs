@@ -18895,18 +18895,18 @@ mod tests {
     }
 
     #[test]
-    fn slider_on_check_reports_minus_one_unless_button_is_held() {
+    fn slider_on_check_reads_the_group_end_latch() {
         let mut runtime = ScriptRuntime::boot(0, ScriptRuntimeConfig::default());
         runtime.stack = vec![20, 6];
         assert!(matches!(
             runtime.ext_btn_on_check(None, None),
-            ExtCallOutcome::Value(-1)
+            ExtCallOutcome::Value(0)
         ));
-        runtime.pressed_button = Some((6, 20));
+        runtime.button_groups.get_mut(&6).unwrap().slider_ended = true;
         runtime.stack = vec![20, 6];
         assert!(matches!(
             runtime.ext_btn_on_check(None, None),
-            ExtCallOutcome::Value(1)
+            ExtCallOutcome::Value(-1)
         ));
     }
 
@@ -20072,15 +20072,26 @@ mod tests {
 
     #[test]
     fn version_eleven_sprite_records_retain_uniform_scale() {
-        let mut sprites = SpriteSystem::new();
-        let handle = sprites.create_rgba_sprite(1, 1, vec![255; 4], PalVec3::default(), 0, "legacy").unwrap();
-        sprites.set_scale(handle, 0.75);
-        let record = saved_sprite_from_handle(&sprites, 0, handle).unwrap();
-        let mut bytes = Vec::new();
-        write_saved_sprites(&mut bytes, &[record]).unwrap();
-        // The only sprite record extension in v12 is its optional Y-scale pair.
-        bytes.truncate(bytes.len() - 8);
-        let restored = read_saved_sprites(&mut bytes.as_slice(), 11).unwrap();
+        // Independent v11 wire record: count, seven signed fields, scale/color,
+        // visibility, rectangle, dimensions, projection, center flag and RGBA.
+        // Do not construct old fixtures by truncating the current serializer.
+        let mut bytes = 1_u32.to_le_bytes().to_vec();
+        bytes.extend_from_slice(&[0; 7 * 4]);
+        bytes.extend_from_slice(&0.75_f32.to_bits().to_le_bytes());
+        bytes.extend_from_slice(&u32::MAX.to_le_bytes());
+        bytes.push(1);
+        for word in [0_i32, 0, 1, 1] {
+            bytes.extend_from_slice(&word.to_le_bytes());
+        }
+        for word in [1_u32, 1, (-1.0_f32).to_bits(), (-1.0_f32).to_bits()] {
+            bytes.extend_from_slice(&word.to_le_bytes());
+        }
+        bytes.push(0);
+        bytes.extend_from_slice(&4_u32.to_le_bytes());
+        bytes.extend_from_slice(&[255; 4]);
+        let mut reader = bytes.as_slice();
+        let restored = read_saved_sprites(&mut reader, 11).unwrap();
+        assert!(reader.is_empty());
         assert_eq!(restored[0].scale_bits, 0.75_f32.to_bits());
         assert_eq!(restored[0].scale_y_bits, None);
     }
