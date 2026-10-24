@@ -35,9 +35,12 @@ controls. The existing release workflow now includes both console artifacts.
 [Build Artifacts](../.github/workflows/release.yml) builds Switch and Vita in
 separate Linux x86-64 Docker jobs on pushes, main-branch pull requests, and manual
 workflow dispatch. The existing host-audio library and C input checks remain
-prerequisites. Both images install `nightly-2026-01-20` with `rust-src`; SDK image
-layers and Cargo/build output have separate caches. Native build caches are
-scoped by the resolved SDK image, toolchain, build scripts and dependency locks.
+prerequisites. Jobs run directly in siglus_rs's published GHCR images, pinned
+by immutable manifest digest. Switch uses its prepared `nightly-2026-01-20`;
+Vita uses its prepared `nightly-2026-09-18`. Neither job rebuilds an SDK image.
+Only the small CMake/Python/patch packaging helpers are installed at job startup.
+Native build caches are scoped by SDK digest, toolchain, build scripts and
+dependency locks. See [image identities and provenance](UPSTREAM.md).
 
 Successful jobs upload `sena-switch` (`sena.nro` and `sena.nro.sha256`) and
 `sena-vita` (`sena.vpk` and `sena.vpk.sha256`). Package checks reject missing or
@@ -51,8 +54,10 @@ the existing C input check, workflow/actionlint validation, and verification of
 the locally built NRO/VPK. Four stale test assumptions were updated for PAL-clock
 fades, the group slider-end latch, restored dynamic strings, and the independent
 v11 wire layout. No new regression tests or native ABI changes were added.
-This checks the packaging configuration locally; a GitHub-hosted Docker run is
-still required after pushing the workflow changes.
+The first hosted run passed those checks and produced the Vita VPK; Switch
+failed while our old Dockerfile requested the nonexistent `switch-deko3d` package.
+The prepared-image correction removes that SDK rebuild. Its hosted result must
+be checked separately from the preceding local validation.
 
 ## Core and host boundary
 

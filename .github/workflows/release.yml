@@ -524,59 +524,68 @@ jobs:
         include:
           - platform: switch
             package: sena.nro
+            # siglus_rs switch-build:f7740a0a96c7d24a
+            image: ghcr.io/xmoezzz/siglus_rs/switch-build@sha256:bb3f47af6951a4770171fe1c8e5a508ddb233d09a17bd6c8650c2e928ab504f3
+            sdk_key: bb3f47af6951a477
+            toolchain: nightly-2026-01-20
           - platform: vita
             package: sena.vpk
+            # siglus_rs vita-build:6f6be2c078140b09
+            image: ghcr.io/xmoezzz/siglus_rs/vita-build@sha256:f9e3eaa24d74fa48dd514fbc86b19a13d7fdf88db96e920a303b050ec8402a85
+            sdk_key: f9e3eaa24d74fa48
+            toolchain: nightly-2026-09-18
+    container:
+      image: ${{ matrix.image }}
     env:
-      SENA_CONSOLE_TOOLCHAIN: nightly-2026-01-20
-      # Build records are not distributable release assets.
-      DOCKER_BUILD_RECORD_UPLOAD: "false"
+      SENA_CONSOLE_TOOLCHAIN: ${{ matrix.toolchain }}
+      SENA_SWITCH_TOOLCHAIN: ${{ matrix.toolchain }}
+      SENA_VITA_TOOLCHAIN: ${{ matrix.toolchain }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Install packaging helpers
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends cmake python3 patch
 
-      - name: Build and cache SDK image
-        id: sdk
-        uses: docker/build-push-action@v6
-        with:
-          context: platform/${{ matrix.platform }}/docker
-          platforms: linux/amd64
-          build-args: RUST_TOOLCHAIN=${{ env.SENA_CONSOLE_TOOLCHAIN }}
-          tags: sena-${{ matrix.platform }}-build:ci
-          load: true
-          push: false
-          provenance: false
-          cache-from: type=gha,scope=sena-${{ matrix.platform }}-sdk
-          cache-to: type=gha,mode=max,scope=sena-${{ matrix.platform }}-sdk
+      - name: Check prepared SDK and Rust toolchain
+        run: |
+          set -euo pipefail
+          rustup run "$SENA_CONSOLE_TOOLCHAIN" rustc --version
+          case "${{ matrix.platform }}" in
+            switch)
+              command -v aarch64-none-elf-gcc
+              command -v uam
+              test -f "$DEVKITPRO/libnx/lib/libdeko3d.a"
+              ;;
+            vita)
+              command -v arm-vita-eabi-gcc
+              test -f "$VITASDK/arm-vita-eabi/lib/libvita2d.a"
+              ;;
+          esac
 
       - name: Cache console dependencies and build output
         uses: actions/cache@v4
         with:
           path: |
-            .ci-cache/${{ matrix.platform }}
+            /usr/local/cargo/registry
+            /usr/local/cargo/git
             target/${{ matrix.platform }}-native
-          key: console-${{ runner.os }}-${{ matrix.platform }}-${{ steps.sdk.outputs.imageid }}-${{ env.SENA_CONSOLE_TOOLCHAIN }}-${{ hashFiles(format('platform/{0}/docker/Dockerfile', matrix.platform), format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-${{ github.sha }}
+          key: console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-${{ github.sha }}
           restore-keys: |
-            console-${{ runner.os }}-${{ matrix.platform }}-${{ steps.sdk.outputs.imageid }}-${{ env.SENA_CONSOLE_TOOLCHAIN }}-${{ hashFiles(format('platform/{0}/docker/Dockerfile', matrix.platform), format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-
-            console-${{ runner.os }}-${{ matrix.platform }}-${{ steps.sdk.outputs.imageid }}-${{ env.SENA_CONSOLE_TOOLCHAIN }}-${{ hashFiles(format('platform/{0}/docker/Dockerfile', matrix.platform), format('platform/{0}/build_*.sh', matrix.platform)) }}-
+            console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-
+            console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-
 
       - name: Build native package
-        shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "dist/${{ matrix.platform }}" \
-            ".ci-cache/${{ matrix.platform }}/registry" \
-            ".ci-cache/${{ matrix.platform }}/git"
-          docker run --rm --init \
-            -e CARGO_TERM_COLOR -e RUSTFLAGS \
-            -v "$PWD:/src" \
-            -v "$PWD/.ci-cache/${{ matrix.platform }}/registry:/usr/local/cargo/registry" \
-            -v "$PWD/.ci-cache/${{ matrix.platform }}/git:/usr/local/cargo/git" \
-            sena-${{ matrix.platform }}-build:ci \
-            bash platform/${{ matrix.platform }}/build_${{ matrix.platform }}.sh \
-            2>&1 | tee "dist/${{ matrix.platform }}/build.log"
+          mkdir -p "dist/${{ matrix.platform }}"
+          bash platform/${{ matrix.platform }}/build_${{ matrix.platform }}.sh 2>&1 | tee "dist/${{ matrix.platform }}/build.log"
 
       - name: Verify native package and write checksum
         shell: bash

@@ -1,19 +1,9 @@
-FROM devkitpro/devkita64:latest
+# Reuse siglus_rs switch-build:f7740a0a96c7d24a with its prepared SDK/nightly.
+FROM ghcr.io/xmoezzz/siglus_rs/switch-build@sha256:bb3f47af6951a4770171fe1c8e5a508ddb233d09a17bd6c8650c2e928ab504f3
 
-ARG RUST_TOOLCHAIN=nightly-2026-01-20
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    DEVKITPRO=/opt/devkitpro \
-    DEVKITA64=/opt/devkitpro/devkitA64
-ENV PATH=$CARGO_HOME/bin:$DEVKITA64/bin:$DEVKITPRO/tools/bin:$PATH
-
-RUN dkp-pacman -Syu --noconfirm && dkp-pacman -S --needed --noconfirm switch-deko3d uam
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential ca-certificates curl python3 patch \
+    && apt-get install -y --no-install-recommends python3 patch \
     && rm -rf /var/lib/apt/lists/*
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-    | sh -s -- -y --no-modify-path --profile minimal \
-        --default-toolchain "$RUST_TOOLCHAIN" --component rust-src
-ENV SENA_SWITCH_TOOLCHAIN=$RUST_TOOLCHAIN
+ENV SENA_SWITCH_TOOLCHAIN=nightly-2026-01-20
 WORKDIR /src
-CMD ["platform/switch/build_switch.sh"]
+CMD ["bash", "platform/switch/build_switch.sh"]
