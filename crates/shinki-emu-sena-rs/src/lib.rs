@@ -38,7 +38,7 @@ static FORMATS: Formats = Formats([text("softpal-koikake")]);
 ///
 /// # Safety
 /// A non-null, aligned `output` must point to writable storage for one API pointer.
-#[cfg_attr(feature = "diagnostic-bridge", no_mangle)]
+#[cfg_attr(feature = "diagnostic-bridge", unsafe(no_mangle))]
 pub unsafe extern "C" fn shinki_emu_query(version: u32, output: *mut *const CoreApi) -> Status {
     if output.is_null() || !output.is_aligned() {
         return INVALID_ARGUMENT;
