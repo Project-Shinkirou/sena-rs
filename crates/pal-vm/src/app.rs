@@ -461,6 +461,12 @@ impl SenaApplication {
                     // The PAL renderer's four scaling policies need a separate port.
                     log::warn!("PAL aspect mode {mode} has no desktop renderer mapping yet");
                 }
+                PalWindowRequest::CursorVisibility { visible } => {
+                    window.set_cursor_visible(visible);
+                }
+                PalWindowRequest::CursorHideTime { time } => {
+                    log::warn!("Sena native cursor autohide remains unimplemented (value={time})");
+                }
             }
         }
     }

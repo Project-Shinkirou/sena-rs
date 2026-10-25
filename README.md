@@ -12,6 +12,7 @@ Specifically, targeted for the game "Koikake".
 `shinki-latest` merges upstream `main` at `7f633dbb89408297827d6c1857eb8e97dc363dff`; the only upstream release tag is a prerelease. Published Shinki history and adapter integration remain intact.
 
 The merge combines upstream movie audio and raster bindings with embedded pause/resume and offscreen rendering. Save restoration keeps the load-generation notification, the loaded checkpoint and upstream click-wait, tips, BGV and dynamic-string state. The pinned Shinki Kira dependency retains its teardown fixes and the upstream codec feature selection. Only the adapter requires Rust 1.98 and edition 2024.
+The standalone desktop request dispatcher also handles the adapter's explicit cursor visibility request. Cursor-hide duration remains stored native state with an unsupported-operation warning, matching the adapter; no timer units are invented.
 
 
 ## Example screenshots
