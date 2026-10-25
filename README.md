@@ -7,6 +7,13 @@ Specifically, targeted for the game "Koikake".
 
 <br clear="left"/>
 
+## Shinki upstream integration
+
+`shinki-latest` merges upstream `main` at `7f633dbb89408297827d6c1857eb8e97dc363dff`; the only upstream release tag is a prerelease. Published Shinki history and adapter integration remain intact.
+
+The merge combines upstream movie audio and raster bindings with embedded pause/resume and offscreen rendering. Save restoration keeps the load-generation notification, the loaded checkpoint and upstream click-wait, tips, BGV and dynamic-string state. The pinned Shinki Kira dependency retains its teardown fixes and the upstream codec feature selection. Only the adapter requires Rust 1.98 and edition 2024.
+
+
 ## Example screenshots
 
 * sena-rs on macOS
