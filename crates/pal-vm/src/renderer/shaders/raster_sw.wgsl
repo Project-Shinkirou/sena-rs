@@ -24,19 +24,8 @@ const PI: f32 = 3.141592;
 
 @vertex
 fn vs_main(input: VertexInput) -> VertexOutput {
-    let offset = uniforms.effect_params.x;
-    let undulate_x = uniforms.effect_params.y;
-    let undulate_y = uniforms.effect_params.z;
-    let stretch = uniforms.effect_params.w;
-
-    var position = input.position;
-    var val = (position.y * 180.0) + offset;
-    position.x = position.x + cos(val * PI / (180.0 - (150.0 * undulate_x))) * (stretch * undulate_x);
-    val = (position.x * 180.0) + offset;
-    position.y = position.y + cos(val * PI / (180.0 - (150.0 * undulate_y))) * (stretch * undulate_y);
-
     var output: VertexOutput;
-    output.position = vec4<f32>(position, 0.0, 1.0);
+    output.position = vec4<f32>(input.position, 0.0, 1.0);
     output.tex_coord = input.tex_coord;
     output.color = input.color;
     return output;
@@ -50,7 +39,10 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     let undulate = vec2<f32>(undulate_y, undulate_x);
     let val = (input.tex_coord * 180.0) + ((vec2<f32>(360.0, 360.0) * (vec2<f32>(1.0, 1.0) - undulate)) * offset);
     let denominator = vec2<f32>(180.0, 180.0) - (vec2<f32>(180.0, 180.0) * undulate);
-    let tex_coord_yx = input.tex_coord.yx + sin(val * PI / denominator) * (0.1 * undulate);
+    let safe_denominator = select(denominator, vec2<f32>(1.0), denominator == vec2<f32>(0.0));
+    let wave = select(sin(val * PI / safe_denominator) * (0.1 * undulate), vec2<f32>(0.0), denominator == vec2<f32>(0.0));
+    let tex_coord_yx = input.tex_coord.yx + wave;
     let tex_coord = tex_coord_yx.yx;
-    return textureSample(pal_texture, pal_sampler, tex_coord) * input.color;
+    // The embedded HLSL declares COLOR as a scalar float.
+    return textureSample(pal_texture, pal_sampler, tex_coord) * input.color.x;
 }

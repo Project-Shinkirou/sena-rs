@@ -1,0 +1,11 @@
+These small original test patterns contain no game assets. They were generated
+using FFmpeg testsrc2 (32x32, five frames at 25fps):
+
+ffmpeg -f lavfi -i 'testsrc2=size=32x32:rate=25:duration=0.2' -an -c:v mpeg1video -g 5 -bf 0 -f mpeg timing_25fps.mpg
+ffmpeg -f lavfi -i 'testsrc2=size=32x32:rate=25:duration=0.2' -an -c:v wmv2 -g 5 -f asf timing_25fps.wmv
+
+The tests decode these through the embedded MPEG and WMV libraries and require
+no external executables.
+
+The audio regression uses an original 0.2 second 440Hz tone:
+ffmpeg -f lavfi -i 'sine=frequency=440:sample_rate=44100:duration=0.2' -c:a wmav2 -f asf timing_audio.wma

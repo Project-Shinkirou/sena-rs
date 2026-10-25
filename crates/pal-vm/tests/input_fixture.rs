@@ -141,7 +141,7 @@ fn coordinate_space_update_reprojects_current_cursor() {
     assert_eq!(input.mouse_position(), (193, 260));
 
     input.set_coordinate_space(2560, 1440, 1280, 720);
-    assert_eq!(input.mouse_position(), (97, 130));
+    assert_eq!(input.mouse_position(), (96, 130));
 }
 
 #[test]
@@ -173,11 +173,15 @@ fn mouse_delta_cleared_by_begin_frame() {
 // ---- Wheel delta ----
 
 #[test]
-fn wheel_delta_accumulates_within_frame() {
+fn wheel_delta_latches_last_native_direction() {
     let mut input = PalInputState::new();
     input.handle_mouse_wheel(0.0, 1.0);
     input.handle_mouse_wheel(0.0, 1.5);
-    assert!((input.wheel_delta() - 2.5).abs() < 1e-4);
+    assert_eq!(input.wheel_delta(), -1.0);
+    input.handle_mouse_wheel(0.0, -0.25);
+    assert_eq!(input.wheel_delta(), 1.0);
+    input.handle_mouse_wheel(0.0, 0.0);
+    assert_eq!(input.wheel_delta(), -1.0);
 }
 
 #[test]
@@ -227,9 +231,9 @@ fn any_push_true_when_mouse_pressed() {
 }
 
 #[test]
-fn any_push_true_when_mouse_wheel_scrolled_forward() {
+fn any_push_true_when_mouse_wheel_scrolled_down() {
     let mut input = PalInputState::new();
-    input.handle_mouse_wheel(0.0, 1.0);
+    input.handle_mouse_wheel(0.0, -1.0);
     assert!(input.any_push());
 }
 
@@ -243,4 +247,68 @@ fn any_push_false_after_begin_frame_without_new_events() {
         !input.any_push(),
         "any_push must be false after begin_frame clears transient state"
     );
+}
+
+#[test]
+fn repeat_is_a_level_after_strictly_more_than_500_ms() {
+    let mut input = PalInputState::new();
+    input.handle_keyboard_event("ArrowUp", true);
+    input.handle_keyboard_event("ArrowDown", true);
+    input.sample_repeat(100);
+    assert_eq!(input.raw_key_on_ex(), 0);
+    input.begin_frame();
+    input.handle_keyboard_event("ArrowUp", false);
+    input.sample_repeat(600);
+    assert_eq!(input.raw_key_on_ex(), 0);
+    input.begin_frame();
+    input.sample_repeat(601);
+    assert_eq!(input.raw_key_on_ex(), 0x180, "the native repeat keeps released bits");
+    input.begin_frame();
+    input.sample_repeat(602);
+    assert_eq!(input.raw_key_on_ex(), 0x180, "there is no periodic pulse delay");
+    input.clear();
+    assert_eq!(input.raw_key_on_ex(), 0);
+    input.begin_frame();
+    input.sample_repeat(603);
+    assert_eq!(input.raw_key_on_ex(), 0x180, "input clear preserves repeat history");
+    input.clear_repeat();
+    input.begin_frame();
+    input.sample_repeat(2000);
+    assert_eq!(input.raw_key_on_ex(), 0);
+}
+
+#[test]
+fn a_new_push_replaces_repeat_and_timer_wrap_is_unsigned() {
+    let mut input = PalInputState::new();
+    input.handle_keyboard_event("ArrowUp", true);
+    input.sample_repeat(u32::MAX - 100);
+    input.begin_frame();
+    input.sample_repeat(400);
+    assert_eq!(input.raw_key_on_ex(), 0x80);
+    input.handle_keyboard_event("F1", true);
+    input.sample_repeat(401);
+    assert_eq!(input.raw_key_on_ex(), 0);
+    input.begin_frame();
+    input.sample_repeat(902);
+    assert_eq!(input.raw_key_on_ex(), 0x800);
+    input.set_cancel_masks(0x800, 0);
+    assert_eq!(input.raw_key_on_ex(), 0);
+    input.set_cancel_masks(0, 0);
+    assert_eq!(input.raw_key_on_ex(), 0, "unmask cannot resurrect the current sample");
+}
+
+#[test]
+fn coordinate_mapping_truncates_and_applies_native_signed_bounds() {
+    let mut input = PalInputState::new();
+    input.set_coordinate_space(200, 100, 100, 50);
+    input.handle_cursor_moved(3.9, -3.9);
+    assert_eq!(input.mouse_position(), (1, -1));
+    input.begin_frame();
+    input.handle_cursor_moved(199.9, -100.0);
+    assert_eq!(input.mouse_position(), (99, -50));
+    assert_eq!(input.mouse_delta(), (98, -49));
+    input.begin_frame();
+    input.handle_cursor_moved(200.0, -102.0);
+    assert_eq!(input.mouse_position(), (-1, -1));
+    assert_eq!(input.mouse_delta(), (0, 0));
 }

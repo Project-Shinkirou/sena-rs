@@ -1,6 +1,7 @@
 #[derive(Clone, Debug)]
 pub enum PalEvent {
     CloseRequested,
+    Focused { focused: bool },
     Resized { width: u32, height: u32 },
     ScaleFactorChanged { scale_factor: f64 },
     RedrawRequested,

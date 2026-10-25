@@ -1,0 +1,380 @@
+{
+  "functions": [
+    {
+      "ea": "0x100c1200",
+      "name": "PalVideoPlay",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalVideoPlay(char *lpString, __int16 a2)\n{\n  _DWORD *v2; // ecx\n  char *v3; // esi\n  char *v4; // edi\n  __int16 v5; // ax\n  char v6; // al\n  HWND v8; // [esp-10h] [ebp-18h]\n\n  v2 = dword_101336F4;\n  v3 = lpString;\n  v4 = (char *)dword_101336F4 + 18872;\n  *((_DWORD *)dword_101336F4 + 4732) = 0;\n  *((_DWORD *)v4 + 15) = 0;\n  *((_DWORD *)v4 + 16) = 0;\n  *((_DWORD *)v4 + 17) = 0;\n  *((_WORD *)v4 + 45) = a2;\n  if ( v2[274] && sub_100C37D0(lpString) )\n  {\n    PalFileGetFullPath((int)(v4 + 92), 0x104u, lpString);\n    v5 = 2;\n  }\n  else\n  {\n    if ( !sub_100C37D0(lpString) )\n      return 0;\n    do\n    {\n      v6 = *v3++;\n      v3[v4 - lpString + 91] = v6;\n    }\n    while ( v6 );\n    v5 = 1;\n  }\n  *((_WORD *)v4 + 44) = v5;\n  if ( sub_100C0910((LPVOID *)v4) )\n    return 0;\n  SetThreadPriority(*((HANDLE *)dword_101336F4 + 76), -2);\n  (*(void (__stdcall **)(_DWORD))(**((_DWORD **)v4 + 1) + 28))(*((_DWORD *)v4 + 1));\n  v8 = (HWND)*((_DWORD *)dword_101336F4 + 2);\n  *((_DWORD *)dword_101336F4 + 5) = 1;\n  PostMessageA(v8, 0x8065u, 0, 6);\n  if ( sub_100AC920((char *)dword_101336F4 + 504) )\n    PostMessageA(*((HWND *)dword_101336F4 + 2), 0x806Eu, 0, 0);\n  ValidateRect(*((HWND *)dword_101336F4 + 2), 0);\n  UpdateWindow(*((HWND *)dword_101336F4 + 2));\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100c1200",
+          "push    ebp"
+        ],
+        [
+          "0x100c1201",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100c1203",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100c1209",
+          "mov     ax, [ebp+arg_4]"
+        ],
+        [
+          "0x100c120d",
+          "push    esi"
+        ],
+        [
+          "0x100c120e",
+          "mov     esi, [ebp+lpString]"
+        ],
+        [
+          "0x100c1211",
+          "push    edi"
+        ],
+        [
+          "0x100c1212",
+          "lea     edi, [ecx+49B8h]"
+        ],
+        [
+          "0x100c1218",
+          "mov     dword ptr [edi+38h], 0"
+        ],
+        [
+          "0x100c121f",
+          "mov     dword ptr [edi+3Ch], 0"
+        ],
+        [
+          "0x100c1226",
+          "mov     dword ptr [edi+40h], 0"
+        ],
+        [
+          "0x100c122d",
+          "mov     dword ptr [edi+44h], 0"
+        ],
+        [
+          "0x100c1234",
+          "mov     [edi+5Ah], ax"
+        ],
+        [
+          "0x100c1238",
+          "cmp     dword ptr [ecx+448h], 0"
+        ],
+        [
+          "0x100c123f",
+          "jz      short loc_100C126A"
+        ],
+        [
+          "0x100c1241",
+          "mov     edx, offset aWmv; \".wmv\""
+        ],
+        [
+          "0x100c1246",
+          "mov     ecx, esi; lpString"
+        ],
+        [
+          "0x100c1248",
+          "call    sub_100C37D0"
+        ],
+        [
+          "0x100c124d",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c124f",
+          "jz      short loc_100C126A"
+        ],
+        [
+          "0x100c1251",
+          "push    esi; Source"
+        ],
+        [
+          "0x100c1252",
+          "lea     eax, [edi+5Ch]"
+        ],
+        [
+          "0x100c1255",
+          "push    104h; Size"
+        ],
+        [
+          "0x100c125a",
+          "push    eax; int"
+        ],
+        [
+          "0x100c125b",
+          "call    PalFileGetFullPath"
+        ],
+        [
+          "0x100c1260",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100c1263",
+          "mov     eax, 2"
+        ],
+        [
+          "0x100c1268",
+          "jmp     short loc_100C1294"
+        ],
+        [
+          "0x100c126a",
+          "mov     edx, offset aMpg; \".mpg\""
+        ],
+        [
+          "0x100c126f",
+          "mov     ecx, esi; lpString"
+        ],
+        [
+          "0x100c1271",
+          "call    sub_100C37D0"
+        ],
+        [
+          "0x100c1276",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c1278",
+          "jz      loc_100C1332"
+        ],
+        [
+          "0x100c127e",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c1280",
+          "sub     ecx, esi"
+        ],
+        [
+          "0x100c1282",
+          "mov     al, [esi]"
+        ],
+        [
+          "0x100c1284",
+          "lea     esi, [esi+1]"
+        ],
+        [
+          "0x100c1287",
+          "mov     [ecx+esi+5Bh], al"
+        ],
+        [
+          "0x100c128b",
+          "test    al, al"
+        ],
+        [
+          "0x100c128d",
+          "jnz     short loc_100C1282"
+        ],
+        [
+          "0x100c128f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100c1294",
+          "mov     ecx, edi; ppv"
+        ],
+        [
+          "0x100c1296",
+          "mov     [edi+58h], ax"
+        ],
+        [
+          "0x100c129a",
+          "call    sub_100C0910"
+        ],
+        [
+          "0x100c129f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c12a1",
+          "jnz     loc_100C1332"
+        ],
+        [
+          "0x100c12a7",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c12ac",
+          "push    0FFFFFFFEh; nPriority"
+        ],
+        [
+          "0x100c12ae",
+          "push    dword ptr [eax+130h]; hThread"
+        ],
+        [
+          "0x100c12b4",
+          "call    ds:SetThreadPriority"
+        ],
+        [
+          "0x100c12ba",
+          "mov     eax, [edi+4]"
+        ],
+        [
+          "0x100c12bd",
+          "push    eax"
+        ],
+        [
+          "0x100c12be",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c12c0",
+          "call    dword ptr [ecx+1Ch]"
+        ],
+        [
+          "0x100c12c3",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c12c8",
+          "mov     esi, ds:PostMessageA"
+        ],
+        [
+          "0x100c12ce",
+          "push    6; lParam"
+        ],
+        [
+          "0x100c12d0",
+          "push    0; wParam"
+        ],
+        [
+          "0x100c12d2",
+          "push    8065h; Msg"
+        ],
+        [
+          "0x100c12d7",
+          "push    dword ptr [eax+8]; hWnd"
+        ],
+        [
+          "0x100c12da",
+          "mov     dword ptr [eax+14h], 1"
+        ],
+        [
+          "0x100c12e1",
+          "call    esi ; PostMessageA"
+        ],
+        [
+          "0x100c12e3",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100c12e9",
+          "lea     ecx, [ecx+1F8h]"
+        ],
+        [
+          "0x100c12ef",
+          "call    sub_100AC920"
+        ],
+        [
+          "0x100c12f4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c12f6",
+          "jz      short loc_100C130B"
+        ],
+        [
+          "0x100c12f8",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c12fd",
+          "push    0; lParam"
+        ],
+        [
+          "0x100c12ff",
+          "push    0; wParam"
+        ],
+        [
+          "0x100c1301",
+          "push    806Eh; Msg"
+        ],
+        [
+          "0x100c1306",
+          "push    dword ptr [eax+8]; hWnd"
+        ],
+        [
+          "0x100c1309",
+          "call    esi ; PostMessageA"
+        ],
+        [
+          "0x100c130b",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c1310",
+          "push    0; lpRect"
+        ],
+        [
+          "0x100c1312",
+          "push    dword ptr [eax+8]; hWnd"
+        ],
+        [
+          "0x100c1315",
+          "call    ds:ValidateRect"
+        ],
+        [
+          "0x100c131b",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c1320",
+          "push    dword ptr [eax+8]; hWnd"
+        ],
+        [
+          "0x100c1323",
+          "call    ds:UpdateWindow"
+        ],
+        [
+          "0x100c1329",
+          "pop     edi"
+        ],
+        [
+          "0x100c132a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100c132f",
+          "pop     esi"
+        ],
+        [
+          "0x100c1330",
+          "pop     ebp"
+        ],
+        [
+          "0x100c1331",
+          "retn"
+        ],
+        [
+          "0x100c1332",
+          "pop     edi"
+        ],
+        [
+          "0x100c1333",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100c1335",
+          "pop     esi"
+        ],
+        [
+          "0x100c1336",
+          "pop     ebp"
+        ],
+        [
+          "0x100c1337",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

@@ -2,13 +2,51 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use pal_asset::{make_pac_key, parse_archive_dat_paths, Nls, PacArchive, ResourceManager};
+use pal_asset::{make_pac_key, parse_archive_dat_paths, parse_archive_dat_profile, Nls, PacArchive, ResourceManager};
 
 #[test]
 fn archive_dat_parser_matches_pal_delimiters() {
     let bytes = b" data | bg\r\n| fgimage\t |";
     let paths = parse_archive_dat_paths(bytes, Nls::ShiftJis).unwrap();
     assert_eq!(paths, vec!["data", "bg", "fgimage"]);
+}
+
+#[test]
+fn archive_profiles_are_selected_without_merging_or_splitting_dbcs_trail_bytes() {
+    let bytes = b"base|debug,\r\nbase|trial,base|\x83\x7c\0ignored";
+    assert_eq!(parse_archive_dat_paths(bytes, Nls::ShiftJis).unwrap(), ["base", "debug"]);
+    assert_eq!(parse_archive_dat_profile(bytes, Nls::ShiftJis, 1).unwrap(), ["base", "trial"]);
+    assert_eq!(parse_archive_dat_profile(bytes, Nls::ShiftJis, 2).unwrap(), ["base", "\u{30dd}"]);
+    assert!(parse_archive_dat_profile(bytes, Nls::ShiftJis, 3).is_err());
+}
+
+#[test]
+fn switching_archive_profiles_replaces_search_paths_and_cached_archives() {
+    let dir = temp_dir("pal_asset_profiles");
+    let archive_key = make_pac_key("ARCHIVE.DAT", Nls::ShiftJis).unwrap();
+    let image_key = make_pac_key("shared.pgd", Nls::ShiftJis).unwrap();
+    fs::write(dir.join("data.pac"), make_one_entry_pac(archive_key, b"retail,trial")).unwrap();
+    fs::write(dir.join("retail.pac"), make_one_entry_pac(image_key, b"retail image")).unwrap();
+    fs::write(dir.join("trial.pac"), make_one_entry_pac(image_key, b"trial image")).unwrap();
+    let mut manager = ResourceManager::bootstrap(&dir, Nls::ShiftJis).unwrap();
+    assert_eq!(manager.open("shared.pgd").unwrap().bytes, b"retail image");
+    manager.select_archive_profile(1).unwrap();
+    assert_eq!(manager.paths(), ["data", "trial"]);
+    assert_eq!(manager.open("shared.pgd").unwrap().bytes, b"trial image");
+    assert!(manager.select_archive_profile(7).is_err());
+    assert_eq!(manager.paths(), ["data"]);
+    assert!(manager.open("shared.pgd").is_err());
+    fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
+fn archive_list_can_bootstrap_from_csv_archive() {
+    let dir = temp_dir("pal_asset_csv_archive");
+    let key = make_pac_key("ARCHIVE.DAT", Nls::ShiftJis).unwrap();
+    fs::write(dir.join("csv.pac"), make_one_entry_pac(key, b"csv|system")).unwrap();
+    let manager = ResourceManager::bootstrap(&dir, Nls::ShiftJis).unwrap();
+    assert_eq!(manager.paths(), ["data", "csv", "system"]);
+    fs::remove_dir_all(dir).unwrap();
 }
 
 #[test]
@@ -122,6 +160,29 @@ fn resource_manager_ignores_missing_language_archive_list() {
             .unwrap();
     assert_eq!(missing.paths(), plain.paths());
 
+    fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
+fn registered_paths_use_lifo_precedence_and_preserve_language_overrides() {
+    let dir = temp_dir("pal_asset_lifo");
+    for path in ["data", "base", "trial", "localized"] {
+        fs::create_dir_all(dir.join(path)).unwrap();
+    }
+    fs::write(dir.join("data/archive.dat"), b"base,base|trial").unwrap();
+    fs::write(dir.join("data/archive_cn.dat"), b"localized").unwrap();
+    for path in ["data", "base", "trial", "localized"] {
+        fs::write(dir.join(path).join("shared.txt"), path.as_bytes()).unwrap();
+    }
+    let mut manager = ResourceManager::bootstrap_with_path_order(&dir, Nls::ShiftJis, None, true).unwrap();
+    assert_eq!(manager.open("shared.txt").unwrap().bytes, b"base");
+    manager.select_archive_profile(1).unwrap();
+    assert_eq!(manager.open("shared.txt").unwrap().bytes, b"trial");
+    manager.select_archive_profile(0).unwrap();
+    assert_eq!(manager.open("shared.txt").unwrap().bytes, b"base");
+    let mut localized = ResourceManager::bootstrap_with_path_order(&dir, Nls::ShiftJis, Some("archive_cn.dat"), true).unwrap();
+    localized.select_archive_profile(1).unwrap();
+    assert_eq!(localized.open("shared.txt").unwrap().bytes, b"localized");
     fs::remove_dir_all(dir).unwrap();
 }
 

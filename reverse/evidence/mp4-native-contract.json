@@ -1,0 +1,75 @@
+{
+  "binary": "target/reverse-audit/totsulover/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+  "guids": [
+    {
+      "name": "CLSID_MPEG1Splitter",
+      "address": "0x100f3b44",
+      "bytes": "d07564332a94ce11a87000aa002feab5",
+      "guid": "336475d0-942a-11ce-a870-00aa002feab5"
+    },
+    {
+      "name": "CLSID_CMpegVideoCodec",
+      "address": "0x100f3b54",
+      "bytes": "4007b5feef7bce119bd90000e202599c",
+      "guid": "feb50740-7bef-11ce-9bd9-0000e202599c"
+    },
+    {
+      "name": "CLSID_CMpegAudioCodec",
+      "address": "0x100f3b64",
+      "bytes": "e086224aef7bce119bd90000e202599c",
+      "guid": "4a2286e0-7bef-11ce-9bd9-0000e202599c"
+    },
+    {
+      "name": "CLSID_ASFReader",
+      "address": "0x100f3ba4",
+      "bytes": "a0637418b75bd311acbe0080c75e246e",
+      "guid": "187463a0-5bb7-11d3-acbe-0080c75e246e"
+    },
+    {
+      "name": "CLSID_DMOWrapperFilter",
+      "address": "0x10116c5c",
+      "bytes": "4370299482bdfd4db0de8177739c6d20",
+      "guid": "94297043-bd82-4dfd-b0de-8177739c6d20"
+    }
+  ],
+  "caller_binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "caller_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+  "caller_disassembly": "\ntarget/reverse-audit/totsulover/totsulover_try.exe:\tfile format coff-i386\n\nDisassembly of section .text:\n\n00401000 <.text>:\n  45ba50: 50                           \tpush\teax\n  45ba51: 8d 45 dc                     \tlea\teax, [ebp - 0x24]\n  45ba54: 50                           \tpush\teax\n  45ba55: 8d 85 d8 fe ff ff            \tlea\teax, [ebp - 0x128]\n  45ba5b: 68 90 38 4d 00               \tpush\t0x4d3890\n  45ba60: 50                           \tpush\teax\n  45ba61: ff d3                        \tcall\tebx\n  45ba63: ff b5 d4 fe ff ff            \tpush\tdword ptr [ebp - 0x12c]\n  45ba69: 8d 85 d8 fe ff ff            \tlea\teax, [ebp - 0x128]\n  45ba6f: 50                           \tpush\teax\n  45ba70: ff 15 98 bc 4e 00            \tcall\tdword ptr [0x4ebc98]\n  45ba76: 83 c4 18                     \tadd\tesp, 0x18\n  45ba79: 85 c0                        \ttest\teax, eax\n  45ba7b: 75 43                        \tjne\t0x45bac0 <.text+0x5aac0>\n  45ba7d: 8b 04 b5 b8 24 4d 00         \tmov\teax, dword ptr [4*esi + 0x4d24b8]\n  45ba84: 46                           \tinc\tesi\n  45ba85: 85 c0                        \ttest\teax, eax\n  45ba87: 75 c7                        \tjne\t0x45ba50 <.text+0x5aa50>\n",
+  "abi": {
+    "name": "PalVideoPlay",
+    "calling_convention": "cdecl",
+    "return": "int32_t, 0 failure or rejected suffix; 1 graph initialized and playback requested",
+    "arguments": [
+      {
+        "name": "filename",
+        "native_type": "const char *",
+        "pointer_width": 32,
+        "ownership": "caller owned, borrowed synchronously; copied to engine state; not retained",
+        "nullable": false,
+        "encoding": "NUL-terminated narrow path using native resource namespace"
+      },
+      {
+        "name": "playback_flags",
+        "native_type": "uint16_t",
+        "stack_slot_bits": 32,
+        "meaning": "Opaque low 16 bits stored at video state +0x5A; signedness and individual bits unresolved; upper bits discarded"
+      }
+    ],
+    "observed_layout": "The function stores mode as WORD +0x58, flags as WORD +0x5A, path starts +0x5C in private video state. No caller-shared struct."
+  },
+  "sample_scan": {
+    "roots": [
+      "testcase",
+      "totsulover_try"
+    ],
+    "extensions": [
+      ".mp4",
+      ".m4v",
+      ".h264",
+      ".264"
+    ],
+    "loose_matches": [],
+    "limit": "Loose files only; archive contents were not exhaustively enumerated. testcase-cn was absent."
+  }
+}

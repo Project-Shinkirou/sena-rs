@@ -1,0 +1,1200 @@
+{
+  "functions": [
+    {
+      "ea": "0x100c0910",
+      "name": "sub_100C0910",
+      "xrefs": [
+        {
+          "from": "0x100c113a",
+          "function": "sub_100C1120"
+        },
+        {
+          "from": "0x100c1161",
+          "function": "sub_100C1120"
+        },
+        {
+          "from": "0x100c129a",
+          "function": "PalVideoPlay"
+        }
+      ],
+      "pseudocode": "HRESULT __thiscall sub_100C0910(LPVOID *ppv)\n{\n  HRESULT Instance; // edi\n  HRESULT result; // eax\n  int v4; // edi\n  int v5; // edi\n  int v6; // edi\n  int v7; // edi\n  int v8; // ebx\n  int v9; // eax\n  LPVOID v10; // edx\n  _DWORD *v11; // esi\n  int v12; // edi\n  int v13; // eax\n  int v14; // eax\n  LPVOID *v15; // [esp+10h] [ebp-8h]\n\n  CoInitialize(0);\n  Instance = CoCreateInstance(&rclsid, 0, 1u, &riid, ppv);\n  if ( Instance < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : CoCreateInstance \\n\");\n    OutputDebugStringA(\"Video : CoCreateInstance \\n\");\n    return Instance;\n  }\n  v4 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3D14, ppv + 5);\n  if ( v4 < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : IID_IMediaSeeking \\n\");\n    OutputDebugStringA(\"Video : IID_IMediaSeeking \\n\");\n    return v4;\n  }\n  v15 = ppv + 6;\n  v5 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3C44, ppv + 6);\n  if ( v5 < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : IID_IBasicAudio \\n\");\n    OutputDebugStringA(\"Video : IID_IBasicAudio \\n\");\n    return v5;\n  }\n  v6 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3C14, ppv + 1);\n  if ( v6 < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : IID_IMediaControl \\n\");\n    OutputDebugStringA(\"Video : IID_IMediaControl \\n\");\n    return v6;\n  }\n  v7 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3C24, ppv + 2);\n  if ( v7 < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : IID_IMediaEventEx \\n\");\n    OutputDebugStringA(\"Video : IID_IMediaEventEx \\n\");\n    return v7;\n  }\n  v8 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3D44, ppv + 3);\n  if ( v8 < 0 )\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : IID_IMediaEventSink \\n\");\n    OutputDebugStringA(\"Video : IID_IMediaEventSink \\n\");\n    return v8;\n  }\n  if ( sub_100C0460(ppv) )\n  {\n    v8 = (**(int (__stdcall ***)(_DWORD, void *, LPVOID *))*ppv)(*ppv, &unk_100F3C54, ppv + 4);\n    if ( v8 < 0 )\n    {\n      sub_100BEDB0(ppv);\n      PalErrorLogPrintf(\"Video : IID_IVideoWindow \\n\");\n      OutputDebugStringA(\"Video : IID_IVideoWindow \\n\");\n      return v8;\n    }\n  }\n  if ( *((_WORD *)ppv + 44) == 1 )\n  {\n    v9 = sub_100BF020();\n  }\n  else\n  {\n    if ( *((_WORD *)ppv + 44) != 2 )\n      goto LABEL_21;\n    v9 = sub_100BF8B0(ppv);\n  }\n  v8 = v9;\nLABEL_21:\n  if ( v8 >= 0 )\n  {\n    v10 = ppv[4];\n    if ( v10 )\n    {\n      (*(void (__stdcall **)(LPVOID, _DWORD))(*(_DWORD *)v10 + 116))(v10, *((_DWORD *)dword_101336F4 + 2));\n      (*(void (__stdcall **)(LPVOID, int))(*(_DWORD *)ppv[4] + 176))(ppv[4], -1);\n      (*(void (__stdcall **)(LPVOID, int))(*(_DWORD *)ppv[4] + 44))(ppv[4], 8);\n      (*(void (__stdcall **)(LPVOID, int))(*(_DWORD *)ppv[4] + 36))(ppv[4], 1140850688);\n      (*(void (__stdcall **)(LPVOID, int))(*(_DWORD *)ppv[4] + 76))(ppv[4], -1);\n      if ( *((_DWORD *)dword_101336F4 + 249) && *((_DWORD *)dword_101336F4 + 273) )\n        (*(void (__stdcall **)(LPVOID, _DWORD, _DWORD, int, int))(*(_DWORD *)ppv[4] + 156))(\n          ppv[4],\n          *((_DWORD *)dword_101336F4 + 323),\n          *((_DWORD *)dword_101336F4 + 324),\n          *((_DWORD *)dword_101336F4 + 325) - *((_DWORD *)dword_101336F4 + 323),\n          *((_DWORD *)dword_101336F4 + 326) - *((_DWORD *)dword_101336F4 + 324));\n      else\n        (*(void (__stdcall **)(LPVOID, _DWORD, _DWORD, _DWORD, _DWORD))(*(_DWORD *)ppv[4] + 156))(\n          ppv[4],\n          0,\n          0,\n          *((_DWORD *)dword_101336F4 + 260),\n          *((_DWORD *)dword_101336F4 + 261));\n    }\n    (*(void (__thiscall **)(LPVOID, LPVOID, _DWORD, int, _DWORD))(*(_DWORD *)ppv[2] + 52))(\n      ppv[2],\n      ppv[2],\n      *((_DWORD *)dword_101336F4 + 2),\n      32868,\n      0);\n    v11 = *v15;\n    v12 = *(_DWORD *)*v15;\n    v13 = sub_100C08A0();\n    v14 = sub_100B0150(v13);\n    (*(void (__stdcall **)(_DWORD *, int))(v12 + 28))(v11, v14);\n    result = v8;\n    dword_10133728 = 1;\n    dword_10133720 = 1000;\n  }\n  else\n  {\n    sub_100BEDB0(ppv);\n    PalErrorLogPrintf(\"Video : Load \\n\");\n    OutputDebugStringA(\"Video : Load \\n\");\n    return v8;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100c0910",
+          "push    ebp"
+        ],
+        [
+          "0x100c0911",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100c0913",
+          "sub     esp, 0Ch"
+        ],
+        [
+          "0x100c0916",
+          "push    ebx"
+        ],
+        [
+          "0x100c0917",
+          "push    esi"
+        ],
+        [
+          "0x100c0918",
+          "push    edi"
+        ],
+        [
+          "0x100c0919",
+          "push    0; pvReserved"
+        ],
+        [
+          "0x100c091b",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x100c091d",
+          "call    ds:CoInitialize"
+        ],
+        [
+          "0x100c0923",
+          "push    esi; ppv"
+        ],
+        [
+          "0x100c0924",
+          "push    offset riid; riid"
+        ],
+        [
+          "0x100c0929",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100c092b",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100c092d",
+          "push    offset rclsid; rclsid"
+        ],
+        [
+          "0x100c0932",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100c0938",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100c093a",
+          "test    edi, edi"
+        ],
+        [
+          "0x100c093c",
+          "jns     short loc_100C0966"
+        ],
+        [
+          "0x100c093e",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0940",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0945",
+          "push    offset aVideoCocreatei; \"Video : CoCreateInstance \\n\""
+        ],
+        [
+          "0x100c094a",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c094f",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0952",
+          "push    offset aVideoCocreatei; \"Video : CoCreateInstance \\n\""
+        ],
+        [
+          "0x100c0957",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c095d",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100c095f",
+          "pop     edi"
+        ],
+        [
+          "0x100c0960",
+          "pop     esi"
+        ],
+        [
+          "0x100c0961",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0962",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0964",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0965",
+          "retn"
+        ],
+        [
+          "0x100c0966",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c0968",
+          "lea     eax, [esi+14h]"
+        ],
+        [
+          "0x100c096b",
+          "push    eax"
+        ],
+        [
+          "0x100c096c",
+          "push    offset unk_100F3D14"
+        ],
+        [
+          "0x100c0971",
+          "push    ecx"
+        ],
+        [
+          "0x100c0972",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100c0974",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100c0976",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100c0978",
+          "test    edi, edi"
+        ],
+        [
+          "0x100c097a",
+          "jns     short loc_100C09A4"
+        ],
+        [
+          "0x100c097c",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c097e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0983",
+          "push    offset aVideoIidImedia; \"Video : IID_IMediaSeeking \\n\""
+        ],
+        [
+          "0x100c0988",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c098d",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0990",
+          "push    offset aVideoIidImedia; \"Video : IID_IMediaSeeking \\n\""
+        ],
+        [
+          "0x100c0995",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c099b",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100c099d",
+          "pop     edi"
+        ],
+        [
+          "0x100c099e",
+          "pop     esi"
+        ],
+        [
+          "0x100c099f",
+          "pop     ebx"
+        ],
+        [
+          "0x100c09a0",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c09a2",
+          "pop     ebp"
+        ],
+        [
+          "0x100c09a3",
+          "retn"
+        ],
+        [
+          "0x100c09a4",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c09a6",
+          "lea     edx, [esi+18h]"
+        ],
+        [
+          "0x100c09a9",
+          "push    edx"
+        ],
+        [
+          "0x100c09aa",
+          "push    offset unk_100F3C44"
+        ],
+        [
+          "0x100c09af",
+          "push    ecx"
+        ],
+        [
+          "0x100c09b0",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c09b2",
+          "mov     [ebp+var_8], edx"
+        ],
+        [
+          "0x100c09b5",
+          "call    dword ptr [eax]"
+        ],
+        [
+          "0x100c09b7",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100c09b9",
+          "test    edi, edi"
+        ],
+        [
+          "0x100c09bb",
+          "jns     short loc_100C09E5"
+        ],
+        [
+          "0x100c09bd",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c09bf",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c09c4",
+          "push    offset aVideoIidIbasic; \"Video : IID_IBasicAudio \\n\""
+        ],
+        [
+          "0x100c09c9",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c09ce",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c09d1",
+          "push    offset aVideoIidIbasic; \"Video : IID_IBasicAudio \\n\""
+        ],
+        [
+          "0x100c09d6",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c09dc",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100c09de",
+          "pop     edi"
+        ],
+        [
+          "0x100c09df",
+          "pop     esi"
+        ],
+        [
+          "0x100c09e0",
+          "pop     ebx"
+        ],
+        [
+          "0x100c09e1",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c09e3",
+          "pop     ebp"
+        ],
+        [
+          "0x100c09e4",
+          "retn"
+        ],
+        [
+          "0x100c09e5",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c09e7",
+          "lea     eax, [esi+4]"
+        ],
+        [
+          "0x100c09ea",
+          "push    eax"
+        ],
+        [
+          "0x100c09eb",
+          "push    offset unk_100F3C14"
+        ],
+        [
+          "0x100c09f0",
+          "push    ecx"
+        ],
+        [
+          "0x100c09f1",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100c09f3",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100c09f5",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100c09f7",
+          "test    edi, edi"
+        ],
+        [
+          "0x100c09f9",
+          "jns     short loc_100C0A23"
+        ],
+        [
+          "0x100c09fb",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c09fd",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0a02",
+          "push    offset aVideoIidImedia_0; \"Video : IID_IMediaControl \\n\""
+        ],
+        [
+          "0x100c0a07",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0a0c",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0a0f",
+          "push    offset aVideoIidImedia_0; \"Video : IID_IMediaControl \\n\""
+        ],
+        [
+          "0x100c0a14",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0a1a",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100c0a1c",
+          "pop     edi"
+        ],
+        [
+          "0x100c0a1d",
+          "pop     esi"
+        ],
+        [
+          "0x100c0a1e",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0a1f",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0a21",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0a22",
+          "retn"
+        ],
+        [
+          "0x100c0a23",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c0a25",
+          "lea     edx, [esi+8]"
+        ],
+        [
+          "0x100c0a28",
+          "push    edx"
+        ],
+        [
+          "0x100c0a29",
+          "push    offset unk_100F3C24"
+        ],
+        [
+          "0x100c0a2e",
+          "push    ecx"
+        ],
+        [
+          "0x100c0a2f",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c0a31",
+          "mov     [ebp+var_4], edx"
+        ],
+        [
+          "0x100c0a34",
+          "call    dword ptr [eax]"
+        ],
+        [
+          "0x100c0a36",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100c0a38",
+          "test    edi, edi"
+        ],
+        [
+          "0x100c0a3a",
+          "jns     short loc_100C0A64"
+        ],
+        [
+          "0x100c0a3c",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0a3e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0a43",
+          "push    offset aVideoIidImedia_1; \"Video : IID_IMediaEventEx \\n\""
+        ],
+        [
+          "0x100c0a48",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0a4d",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0a50",
+          "push    offset aVideoIidImedia_1; \"Video : IID_IMediaEventEx \\n\""
+        ],
+        [
+          "0x100c0a55",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0a5b",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100c0a5d",
+          "pop     edi"
+        ],
+        [
+          "0x100c0a5e",
+          "pop     esi"
+        ],
+        [
+          "0x100c0a5f",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0a60",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0a62",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0a63",
+          "retn"
+        ],
+        [
+          "0x100c0a64",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c0a66",
+          "lea     eax, [esi+0Ch]"
+        ],
+        [
+          "0x100c0a69",
+          "push    eax"
+        ],
+        [
+          "0x100c0a6a",
+          "push    offset unk_100F3D44"
+        ],
+        [
+          "0x100c0a6f",
+          "push    ecx"
+        ],
+        [
+          "0x100c0a70",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100c0a72",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100c0a74",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c0a76",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0a78",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0a7a",
+          "jns     short loc_100C0AA2"
+        ],
+        [
+          "0x100c0a7c",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0a81",
+          "push    offset aVideoIidImedia_2; \"Video : IID_IMediaEventSink \\n\""
+        ],
+        [
+          "0x100c0a86",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0a8b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0a8e",
+          "push    offset aVideoIidImedia_2; \"Video : IID_IMediaEventSink \\n\""
+        ],
+        [
+          "0x100c0a93",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0a99",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0a9b",
+          "pop     edi"
+        ],
+        [
+          "0x100c0a9c",
+          "pop     esi"
+        ],
+        [
+          "0x100c0a9d",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0a9e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0aa0",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0aa1",
+          "retn"
+        ],
+        [
+          "0x100c0aa2",
+          "call    sub_100C0460"
+        ],
+        [
+          "0x100c0aa7",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c0aa9",
+          "jz      short loc_100C0AE9"
+        ],
+        [
+          "0x100c0aab",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100c0aad",
+          "lea     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0ab0",
+          "push    eax"
+        ],
+        [
+          "0x100c0ab1",
+          "push    offset unk_100F3C54"
+        ],
+        [
+          "0x100c0ab6",
+          "push    ecx"
+        ],
+        [
+          "0x100c0ab7",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100c0ab9",
+          "call    dword ptr [edx]"
+        ],
+        [
+          "0x100c0abb",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c0abd",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0abf",
+          "jns     short loc_100C0AE9"
+        ],
+        [
+          "0x100c0ac1",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0ac3",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0ac8",
+          "push    offset aVideoIidIvideo; \"Video : IID_IVideoWindow \\n\""
+        ],
+        [
+          "0x100c0acd",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0ad2",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0ad5",
+          "push    offset aVideoIidIvideo; \"Video : IID_IVideoWindow \\n\""
+        ],
+        [
+          "0x100c0ada",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0ae0",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0ae2",
+          "pop     edi"
+        ],
+        [
+          "0x100c0ae3",
+          "pop     esi"
+        ],
+        [
+          "0x100c0ae4",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0ae5",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0ae7",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0ae8",
+          "retn"
+        ],
+        [
+          "0x100c0ae9",
+          "movzx   eax, word ptr [esi+58h]"
+        ],
+        [
+          "0x100c0aed",
+          "sub     eax, 1"
+        ],
+        [
+          "0x100c0af0",
+          "jz      short loc_100C0B00"
+        ],
+        [
+          "0x100c0af2",
+          "sub     eax, 1"
+        ],
+        [
+          "0x100c0af5",
+          "jnz     short loc_100C0B09"
+        ],
+        [
+          "0x100c0af7",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0af9",
+          "call    sub_100BF8B0"
+        ],
+        [
+          "0x100c0afe",
+          "jmp     short loc_100C0B07"
+        ],
+        [
+          "0x100c0b00",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0b02",
+          "call    sub_100BF020"
+        ],
+        [
+          "0x100c0b07",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c0b09",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0b0b",
+          "jns     short loc_100C0B35"
+        ],
+        [
+          "0x100c0b0d",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100c0b0f",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0b14",
+          "push    offset aVideoLoad; \"Video : Load \\n\""
+        ],
+        [
+          "0x100c0b19",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0b1e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0b21",
+          "push    offset aVideoLoad; \"Video : Load \\n\""
+        ],
+        [
+          "0x100c0b26",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0b2c",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0b2e",
+          "pop     edi"
+        ],
+        [
+          "0x100c0b2f",
+          "pop     esi"
+        ],
+        [
+          "0x100c0b30",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0b31",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0b33",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0b34",
+          "retn"
+        ],
+        [
+          "0x100c0b35",
+          "mov     edx, [esi+10h]"
+        ],
+        [
+          "0x100c0b38",
+          "test    edx, edx"
+        ],
+        [
+          "0x100c0b3a",
+          "jz      loc_100C0BEC"
+        ],
+        [
+          "0x100c0b40",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c0b45",
+          "mov     ecx, [edx]"
+        ],
+        [
+          "0x100c0b47",
+          "push    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0b4a",
+          "push    edx"
+        ],
+        [
+          "0x100c0b4b",
+          "call    dword ptr [ecx+74h]"
+        ],
+        [
+          "0x100c0b4e",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0b51",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x100c0b53",
+          "push    eax"
+        ],
+        [
+          "0x100c0b54",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0b56",
+          "call    dword ptr [ecx+0B0h]"
+        ],
+        [
+          "0x100c0b5c",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0b5f",
+          "push    8"
+        ],
+        [
+          "0x100c0b61",
+          "push    eax"
+        ],
+        [
+          "0x100c0b62",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0b64",
+          "call    dword ptr [ecx+2Ch]"
+        ],
+        [
+          "0x100c0b67",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0b6a",
+          "push    44000000h"
+        ],
+        [
+          "0x100c0b6f",
+          "push    eax"
+        ],
+        [
+          "0x100c0b70",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0b72",
+          "call    dword ptr [ecx+24h]"
+        ],
+        [
+          "0x100c0b75",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0b78",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x100c0b7a",
+          "push    eax"
+        ],
+        [
+          "0x100c0b7b",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0b7d",
+          "call    dword ptr [ecx+4Ch]"
+        ],
+        [
+          "0x100c0b80",
+          "mov     edx, dword_101336F4"
+        ],
+        [
+          "0x100c0b86",
+          "cmp     dword ptr [edx+3E4h], 0"
+        ],
+        [
+          "0x100c0b8d",
+          "jz      short loc_100C0BD0"
+        ],
+        [
+          "0x100c0b8f",
+          "cmp     dword ptr [edx+444h], 0"
+        ],
+        [
+          "0x100c0b96",
+          "jz      short loc_100C0BD0"
+        ],
+        [
+          "0x100c0b98",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c0b9d",
+          "mov     ecx, [edx+510h]"
+        ],
+        [
+          "0x100c0ba3",
+          "mov     edx, [edx+50Ch]"
+        ],
+        [
+          "0x100c0ba9",
+          "mov     edi, [esi+10h]"
+        ],
+        [
+          "0x100c0bac",
+          "mov     eax, [eax+518h]"
+        ],
+        [
+          "0x100c0bb2",
+          "sub     eax, ecx"
+        ],
+        [
+          "0x100c0bb4",
+          "push    eax"
+        ],
+        [
+          "0x100c0bb5",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c0bba",
+          "mov     esi, [edi]"
+        ],
+        [
+          "0x100c0bbc",
+          "mov     eax, [eax+514h]"
+        ],
+        [
+          "0x100c0bc2",
+          "sub     eax, edx"
+        ],
+        [
+          "0x100c0bc4",
+          "push    eax"
+        ],
+        [
+          "0x100c0bc5",
+          "push    ecx"
+        ],
+        [
+          "0x100c0bc6",
+          "push    edx"
+        ],
+        [
+          "0x100c0bc7",
+          "push    edi"
+        ],
+        [
+          "0x100c0bc8",
+          "call    dword ptr [esi+9Ch]"
+        ],
+        [
+          "0x100c0bce",
+          "jmp     short loc_100C0BEC"
+        ],
+        [
+          "0x100c0bd0",
+          "push    dword ptr [edx+414h]"
+        ],
+        [
+          "0x100c0bd6",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100c0bd9",
+          "push    dword ptr [edx+410h]"
+        ],
+        [
+          "0x100c0bdf",
+          "push    0"
+        ],
+        [
+          "0x100c0be1",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0be3",
+          "push    0"
+        ],
+        [
+          "0x100c0be5",
+          "push    eax"
+        ],
+        [
+          "0x100c0be6",
+          "call    dword ptr [ecx+9Ch]"
+        ],
+        [
+          "0x100c0bec",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0bef",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100c0bf4",
+          "push    0"
+        ],
+        [
+          "0x100c0bf6",
+          "push    8064h"
+        ],
+        [
+          "0x100c0bfb",
+          "mov     ecx, [ecx]"
+        ],
+        [
+          "0x100c0bfd",
+          "push    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0c00",
+          "push    ecx"
+        ],
+        [
+          "0x100c0c01",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100c0c03",
+          "call    dword ptr [edx+34h]"
+        ],
+        [
+          "0x100c0c06",
+          "mov     esi, [ebp+var_8]"
+        ],
+        [
+          "0x100c0c09",
+          "mov     esi, [esi]"
+        ],
+        [
+          "0x100c0c0b",
+          "mov     edi, [esi]"
+        ],
+        [
+          "0x100c0c0d",
+          "call    sub_100C08A0"
+        ],
+        [
+          "0x100c0c12",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100c0c14",
+          "call    sub_100B0150"
+        ],
+        [
+          "0x100c0c19",
+          "push    eax"
+        ],
+        [
+          "0x100c0c1a",
+          "push    esi"
+        ],
+        [
+          "0x100c0c1b",
+          "call    dword ptr [edi+1Ch]"
+        ],
+        [
+          "0x100c0c1e",
+          "pop     edi"
+        ],
+        [
+          "0x100c0c1f",
+          "pop     esi"
+        ],
+        [
+          "0x100c0c20",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0c22",
+          "mov     dword_10133728, 1"
+        ],
+        [
+          "0x100c0c2c",
+          "mov     dword_10133720, 3E8h"
+        ],
+        [
+          "0x100c0c36",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0c37",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0c39",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0c3a",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

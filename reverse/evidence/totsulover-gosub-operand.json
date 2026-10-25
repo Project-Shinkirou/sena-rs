@@ -1,0 +1,886 @@
+{
+  "input": "/Users/xmoe/Documents/projects/sena_rs/target/reverse-audit/totsulover/totsulover_try.exe",
+  "functions": [
+    {
+      "ea": "0x458c10",
+      "name": "sub_458C10",
+      "xrefs": [
+        {
+          "from": "0x4592eb",
+          "function": "sub_459240"
+        },
+        {
+          "from": "0x4eb0cc",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_458C10(_DWORD *a1)\n{\n  int v2; // edi\n  int v3; // eax\n  int v4; // esi\n  _DWORD *v5; // eax\n  int v6; // esi\n  int v8; // [esp+14h] [ebp+8h]\n\n  v2 = 0;\n  v3 = *(_DWORD *)sub_458740(a1);\n  if ( v3 )\n    v2 = *(_DWORD *)(a1[64604] - 4 * v3 + a1[64600]);\n  v4 = a1[87975];\n  v8 = v4;\n  v5 = (_DWORD *)PalMemoryAlloc(8, 1);\n  if ( v5 )\n  {\n    *v5 = v4;\n    v5[1] = 0;\n    PalListPush(a1[88017], v5, 2);\n  }\n  else\n  {\n    PalErrorLogPrintf(\"[%d]memory allocate error DataEntry\", a1[87975]);\n  }\n  v6 = v2 + a1[87976];\n  a1[87975] = v6;\n  PalDebugPrintf(10, 0, &Default);\n  PalDebugPrintf(10, 0, \"gosub %d [%d] stack(%d)\", v8, v6, a1[71588]);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x458c10",
+          "push    ebp"
+        ],
+        [
+          "0x458c11",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x458c13",
+          "push    ebx"
+        ],
+        [
+          "0x458c14",
+          "mov     ebx, [ebp+arg_0]"
+        ],
+        [
+          "0x458c17",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x458c19",
+          "push    esi"
+        ],
+        [
+          "0x458c1a",
+          "push    edi"
+        ],
+        [
+          "0x458c1b",
+          "call    sub_458740"
+        ],
+        [
+          "0x458c20",
+          "xor     edi, edi"
+        ],
+        [
+          "0x458c22",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x458c24",
+          "test    eax, eax"
+        ],
+        [
+          "0x458c26",
+          "jz      short loc_458C3C"
+        ],
+        [
+          "0x458c28",
+          "mov     ecx, [ebx+3F170h]"
+        ],
+        [
+          "0x458c2e",
+          "shl     eax, 2"
+        ],
+        [
+          "0x458c31",
+          "sub     ecx, eax"
+        ],
+        [
+          "0x458c33",
+          "mov     eax, [ebx+3F160h]"
+        ],
+        [
+          "0x458c39",
+          "mov     edi, [ecx+eax]"
+        ],
+        [
+          "0x458c3c",
+          "mov     esi, [ebx+55E9Ch]"
+        ],
+        [
+          "0x458c42",
+          "push    1"
+        ],
+        [
+          "0x458c44",
+          "push    8"
+        ],
+        [
+          "0x458c46",
+          "mov     [ebp+arg_0], esi"
+        ],
+        [
+          "0x458c49",
+          "call    __imp_PalMemoryAlloc"
+        ],
+        [
+          "0x458c4f",
+          "add     esp, 8"
+        ],
+        [
+          "0x458c52",
+          "test    eax, eax"
+        ],
+        [
+          "0x458c54",
+          "jz      short loc_458C73"
+        ],
+        [
+          "0x458c56",
+          "push    2"
+        ],
+        [
+          "0x458c58",
+          "push    eax"
+        ],
+        [
+          "0x458c59",
+          "mov     [eax], esi"
+        ],
+        [
+          "0x458c5b",
+          "mov     dword ptr [eax+4], 0"
+        ],
+        [
+          "0x458c62",
+          "push    dword ptr [ebx+55F44h]"
+        ],
+        [
+          "0x458c68",
+          "call    __imp_PalListPush"
+        ],
+        [
+          "0x458c6e",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x458c71",
+          "jmp     short loc_458C87"
+        ],
+        [
+          "0x458c73",
+          "push    dword ptr [ebx+55E9Ch]"
+        ],
+        [
+          "0x458c79",
+          "push    offset aDMemoryAllocat; \"[%d]memory allocate error DataEntry\""
+        ],
+        [
+          "0x458c7e",
+          "call    __imp_PalErrorLogPrintf"
+        ],
+        [
+          "0x458c84",
+          "add     esp, 8"
+        ],
+        [
+          "0x458c87",
+          "mov     esi, [ebx+55EA0h]"
+        ],
+        [
+          "0x458c8d",
+          "push    offset Default"
+        ],
+        [
+          "0x458c92",
+          "add     esi, edi"
+        ],
+        [
+          "0x458c94",
+          "mov     edi, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x458c9a",
+          "push    0"
+        ],
+        [
+          "0x458c9c",
+          "push    0Ah"
+        ],
+        [
+          "0x458c9e",
+          "mov     [ebx+55E9Ch], esi"
+        ],
+        [
+          "0x458ca4",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x458ca6",
+          "push    dword ptr [ebx+45E90h]"
+        ],
+        [
+          "0x458cac",
+          "push    esi"
+        ],
+        [
+          "0x458cad",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x458cb0",
+          "push    offset aGosubDDStackD; \"gosub %d [%d] stack(%d)\""
+        ],
+        [
+          "0x458cb5",
+          "push    0"
+        ],
+        [
+          "0x458cb7",
+          "push    0Ah"
+        ],
+        [
+          "0x458cb9",
+          "call    edi ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x458cbb",
+          "add     esp, 24h"
+        ],
+        [
+          "0x458cbe",
+          "mov     eax, 1"
+        ],
+        [
+          "0x458cc3",
+          "pop     edi"
+        ],
+        [
+          "0x458cc4",
+          "pop     esi"
+        ],
+        [
+          "0x458cc5",
+          "pop     ebx"
+        ],
+        [
+          "0x458cc6",
+          "pop     ebp"
+        ],
+        [
+          "0x458cc7",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x47d310",
+      "name": "sub_47D310",
+      "xrefs": [
+        {
+          "from": "0x427a56",
+          "function": "sub_427990"
+        },
+        {
+          "from": "0x427bed",
+          "function": "sub_427B90"
+        },
+        {
+          "from": "0x427ca9",
+          "function": "sub_427C40"
+        },
+        {
+          "from": "0x42ad30",
+          "function": "sub_42AC90"
+        },
+        {
+          "from": "0x42ae51",
+          "function": "sub_42ADF0"
+        },
+        {
+          "from": "0x42afb4",
+          "function": "sub_42AE90"
+        },
+        {
+          "from": "0x42afd0",
+          "function": "sub_42AE90"
+        },
+        {
+          "from": "0x42afec",
+          "function": "sub_42AE90"
+        },
+        {
+          "from": "0x42b281",
+          "function": "sub_42B160"
+        },
+        {
+          "from": "0x42b299",
+          "function": "sub_42B160"
+        },
+        {
+          "from": "0x42b2ac",
+          "function": "sub_42B160"
+        },
+        {
+          "from": "0x42c644",
+          "function": "sub_42C5D0"
+        },
+        {
+          "from": "0x42cc2c",
+          "function": "sub_42CA90"
+        },
+        {
+          "from": "0x42d5f4",
+          "function": "sub_42D4F0"
+        },
+        {
+          "from": "0x42d60c",
+          "function": "sub_42D4F0"
+        },
+        {
+          "from": "0x42d7ac",
+          "function": "sub_42D6B0"
+        },
+        {
+          "from": "0x42d7c8",
+          "function": "sub_42D6B0"
+        },
+        {
+          "from": "0x42d7e4",
+          "function": "sub_42D6B0"
+        },
+        {
+          "from": "0x42d9ac",
+          "function": "sub_42D8B0"
+        },
+        {
+          "from": "0x42d9c8",
+          "function": "sub_42D8B0"
+        },
+        {
+          "from": "0x42dbdd",
+          "function": "sub_42DAB0"
+        },
+        {
+          "from": "0x42dbf9",
+          "function": "sub_42DAB0"
+        },
+        {
+          "from": "0x42dc15",
+          "function": "sub_42DAB0"
+        },
+        {
+          "from": "0x42ea95",
+          "function": "sub_42EA30"
+        },
+        {
+          "from": "0x42f503",
+          "function": "sub_42F3A0"
+        },
+        {
+          "from": "0x42f5d1",
+          "function": "sub_42F3A0"
+        },
+        {
+          "from": "0x42f95a",
+          "function": "sub_42F8D0"
+        },
+        {
+          "from": "0x42fa56",
+          "function": "sub_42F9C0"
+        },
+        {
+          "from": "0x42fb86",
+          "function": "sub_42FAF0"
+        },
+        {
+          "from": "0x42fcae",
+          "function": "sub_42FC20"
+        },
+        {
+          "from": "0x42ff40",
+          "function": "sub_42FEE0"
+        },
+        {
+          "from": "0x43005c",
+          "function": "sub_42FFC0"
+        },
+        {
+          "from": "0x430073",
+          "function": "sub_42FFC0"
+        },
+        {
+          "from": "0x430834",
+          "function": "sub_430700"
+        },
+        {
+          "from": "0x430a0a",
+          "function": "sub_430700"
+        },
+        {
+          "from": "0x430b72",
+          "function": "sub_430B10"
+        },
+        {
+          "from": "0x43178b",
+          "function": "sub_4316F0"
+        },
+        {
+          "from": "0x4317d7",
+          "function": "sub_4316F0"
+        },
+        {
+          "from": "0x431995",
+          "function": "sub_431920"
+        },
+        {
+          "from": "0x431bee",
+          "function": "sub_431B50"
+        },
+        {
+          "from": "0x431d97",
+          "function": "sub_431CC0"
+        },
+        {
+          "from": "0x431e94",
+          "function": "sub_431E00"
+        },
+        {
+          "from": "0x4322d3",
+          "function": "sub_432200"
+        },
+        {
+          "from": "0x4326e9",
+          "function": "sub_432680"
+        },
+        {
+          "from": "0x432cc1",
+          "function": "sub_432BF0"
+        },
+        {
+          "from": "0x433de8",
+          "function": "sub_433D40"
+        },
+        {
+          "from": "0x433ff7",
+          "function": "sub_433D40"
+        },
+        {
+          "from": "0x434c37",
+          "function": "sub_434B80"
+        },
+        {
+          "from": "0x434d36",
+          "function": "sub_434CC0"
+        },
+        {
+          "from": "0x434d91",
+          "function": "sub_434CC0"
+        },
+        {
+          "from": "0x4351e5",
+          "function": "sub_435180"
+        },
+        {
+          "from": "0x43533d",
+          "function": "sub_4352D0"
+        },
+        {
+          "from": "0x4355ee",
+          "function": "sub_4354C0"
+        },
+        {
+          "from": "0x435709",
+          "function": "sub_435660"
+        },
+        {
+          "from": "0x435abd",
+          "function": "sub_435A10"
+        },
+        {
+          "from": "0x435c31",
+          "function": "sub_435B30"
+        },
+        {
+          "from": "0x435cb7",
+          "function": "sub_435B30"
+        },
+        {
+          "from": "0x435e97",
+          "function": "sub_435DD0"
+        },
+        {
+          "from": "0x435eb3",
+          "function": "sub_435DD0"
+        },
+        {
+          "from": "0x4360af",
+          "function": "sub_435F80"
+        },
+        {
+          "from": "0x4360ca",
+          "function": "sub_435F80"
+        },
+        {
+          "from": "0x4360e5",
+          "function": "sub_435F80"
+        },
+        {
+          "from": "0x43630f",
+          "function": "sub_4361E0"
+        },
+        {
+          "from": "0x43632a",
+          "function": "sub_4361E0"
+        },
+        {
+          "from": "0x436345",
+          "function": "sub_4361E0"
+        },
+        {
+          "from": "0x4371cc",
+          "function": "sub_437160"
+        },
+        {
+          "from": "0x438bbd",
+          "function": "sub_438B00"
+        },
+        {
+          "from": "0x449cd0",
+          "function": "sub_449B90"
+        },
+        {
+          "from": "0x44d096",
+          "function": "sub_44CF60"
+        },
+        {
+          "from": "0x44dabe",
+          "function": "sub_44DA60"
+        },
+        {
+          "from": "0x45fce2",
+          "function": "sub_45FAF0"
+        },
+        {
+          "from": "0x460b61",
+          "function": "sub_460B00"
+        },
+        {
+          "from": "0x460c0f",
+          "function": "sub_460BA0"
+        },
+        {
+          "from": "0x464ab7",
+          "function": "sub_464670"
+        },
+        {
+          "from": "0x466e02",
+          "function": "sub_466CF0"
+        },
+        {
+          "from": "0x467d32",
+          "function": "sub_467CD0"
+        },
+        {
+          "from": "0x468c08",
+          "function": "sub_468BB0"
+        },
+        {
+          "from": "0x46bc76",
+          "function": "sub_46BC10"
+        },
+        {
+          "from": "0x46bec7",
+          "function": "sub_46BE30"
+        },
+        {
+          "from": "0x46c132",
+          "function": "sub_46C060"
+        },
+        {
+          "from": "0x46cc2f",
+          "function": "sub_46CB00"
+        },
+        {
+          "from": "0x46cee7",
+          "function": "sub_46CDC0"
+        },
+        {
+          "from": "0x46d21a",
+          "function": "sub_46CFD0"
+        },
+        {
+          "from": "0x47197a",
+          "function": "sub_471900"
+        },
+        {
+          "from": "0x471e42",
+          "function": null
+        },
+        {
+          "from": "0x471ed3",
+          "function": "sub_471E60"
+        },
+        {
+          "from": "0x471fa3",
+          "function": "sub_471F30"
+        }
+      ],
+      "pseudocode": "unsigned __int8 __fastcall sub_47D310(char *a1, int a2, int a3, size_t Size)\n{\n  unsigned int v5; // esi\n  int TaskData; // eax\n  char *v7; // ecx\n  char *v8; // edi\n  unsigned __int8 result; // al\n  size_t v10; // ecx\n\n  if ( (a3 & 0x10000000) != 0 )\n  {\n    v5 = a3 & 0xEFFFFFFF;\n    TaskData = PalTaskGetTaskData(0);\n    if ( (a3 & 0xEFFFFFFF) == 0xFFFFFFF || v5 > 0xF )\n    {\n      PalDebugPrintf(0, 0, \"AdvGetVarString(%d): Out of Range\", v5);\n      byte_6F9830 = 0;\n      v7 = &byte_6F9830;\n    }\n    else\n    {\n      v7 = (char *)(TaskData + 2047 * v5 + 319960);\n    }\n    *(_DWORD *)a1 = 0;\n    v8 = (char *)(a1 - v7);\n    do\n    {\n      result = *v7++;\n      v7[(_DWORD)v8 + 3] = result;\n    }\n    while ( result );\n  }\n  else if ( a3 == 0xFFFFFFF )\n  {\n    return (unsigned __int8)memset(a1, 0, Size);\n  }\n  else\n  {\n    v10 = Size;\n    if ( *(_DWORD *)(a2 + 20) < a3 + Size )\n      v10 = *(_DWORD *)(a2 + 20) - a3;\n    return (unsigned __int8)memmove_0(a1, (const void *)(a3 + *(_DWORD *)(a2 + 4)), v10);\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x47d310",
+          "push    ebp"
+        ],
+        [
+          "0x47d311",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x47d313",
+          "push    esi"
+        ],
+        [
+          "0x47d314",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x47d317",
+          "push    edi"
+        ],
+        [
+          "0x47d318",
+          "mov     edi, ecx"
+        ],
+        [
+          "0x47d31a",
+          "test    esi, 10000000h"
+        ],
+        [
+          "0x47d320",
+          "jz      short loc_47D388"
+        ],
+        [
+          "0x47d322",
+          "push    0"
+        ],
+        [
+          "0x47d324",
+          "and     esi, 0EFFFFFFFh"
+        ],
+        [
+          "0x47d32a",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x47d330",
+          "add     esp, 4"
+        ],
+        [
+          "0x47d333",
+          "cmp     esi, 0FFFFFFFh"
+        ],
+        [
+          "0x47d339",
+          "jz      short loc_47D350"
+        ],
+        [
+          "0x47d33b",
+          "cmp     esi, 0Fh"
+        ],
+        [
+          "0x47d33e",
+          "ja      short loc_47D350"
+        ],
+        [
+          "0x47d340",
+          "imul    ecx, esi, 7FFh"
+        ],
+        [
+          "0x47d346",
+          "add     ecx, 4E1D8h"
+        ],
+        [
+          "0x47d34c",
+          "add     ecx, eax"
+        ],
+        [
+          "0x47d34e",
+          "jmp     short loc_47D36F"
+        ],
+        [
+          "0x47d350",
+          "push    esi"
+        ],
+        [
+          "0x47d351",
+          "push    offset aAdvgetvarstrin; \"AdvGetVarString(%d): Out of Range\""
+        ],
+        [
+          "0x47d356",
+          "push    0"
+        ],
+        [
+          "0x47d358",
+          "push    0"
+        ],
+        [
+          "0x47d35a",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x47d360",
+          "add     esp, 10h"
+        ],
+        [
+          "0x47d363",
+          "mov     byte_6F9830, 0"
+        ],
+        [
+          "0x47d36a",
+          "mov     ecx, offset byte_6F9830"
+        ],
+        [
+          "0x47d36f",
+          "mov     dword ptr [edi], 0"
+        ],
+        [
+          "0x47d375",
+          "sub     edi, ecx"
+        ],
+        [
+          "0x47d377",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x47d379",
+          "lea     ecx, [ecx+1]"
+        ],
+        [
+          "0x47d37c",
+          "mov     [edi+ecx+3], al"
+        ],
+        [
+          "0x47d380",
+          "test    al, al"
+        ],
+        [
+          "0x47d382",
+          "jnz     short loc_47D377"
+        ],
+        [
+          "0x47d384",
+          "pop     edi"
+        ],
+        [
+          "0x47d385",
+          "pop     esi"
+        ],
+        [
+          "0x47d386",
+          "pop     ebp"
+        ],
+        [
+          "0x47d387",
+          "retn"
+        ],
+        [
+          "0x47d388",
+          "cmp     esi, 0FFFFFFFh"
+        ],
+        [
+          "0x47d38e",
+          "jnz     short loc_47D3A2"
+        ],
+        [
+          "0x47d390",
+          "push    [ebp+Size]; Size"
+        ],
+        [
+          "0x47d393",
+          "push    0; Val"
+        ],
+        [
+          "0x47d395",
+          "push    edi; void *"
+        ],
+        [
+          "0x47d396",
+          "call    _memset"
+        ],
+        [
+          "0x47d39b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x47d39e",
+          "pop     edi"
+        ],
+        [
+          "0x47d39f",
+          "pop     esi"
+        ],
+        [
+          "0x47d3a0",
+          "pop     ebp"
+        ],
+        [
+          "0x47d3a1",
+          "retn"
+        ],
+        [
+          "0x47d3a2",
+          "mov     ecx, [ebp+Size]"
+        ],
+        [
+          "0x47d3a5",
+          "lea     eax, [esi+ecx]"
+        ],
+        [
+          "0x47d3a8",
+          "cmp     [edx+14h], eax"
+        ],
+        [
+          "0x47d3ab",
+          "jnb     short loc_47D3B2"
+        ],
+        [
+          "0x47d3ad",
+          "mov     ecx, [edx+14h]"
+        ],
+        [
+          "0x47d3b0",
+          "sub     ecx, esi"
+        ],
+        [
+          "0x47d3b2",
+          "mov     eax, [edx+4]"
+        ],
+        [
+          "0x47d3b5",
+          "push    ecx; Size"
+        ],
+        [
+          "0x47d3b6",
+          "add     eax, esi"
+        ],
+        [
+          "0x47d3b8",
+          "push    eax; Src"
+        ],
+        [
+          "0x47d3b9",
+          "push    edi; void *"
+        ],
+        [
+          "0x47d3ba",
+          "call    _memmove_0"
+        ],
+        [
+          "0x47d3bf",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x47d3c2",
+          "pop     edi"
+        ],
+        [
+          "0x47d3c3",
+          "pop     esi"
+        ],
+        [
+          "0x47d3c4",
+          "pop     ebp"
+        ],
+        [
+          "0x47d3c5",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "totsulover_try.exe",
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

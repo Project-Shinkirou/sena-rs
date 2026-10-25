@@ -1,0 +1,59 @@
+{
+  "game_sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e",
+  "game_table": "0x49C3D0",
+  "game_suffixes": [
+    ".wmv",
+    ".mpg",
+    ".avi"
+  ],
+  "note": "Release and debug PAL are different binaries. MP4 suffix recognition and an H.264 decoder request in the incomplete debug graph do not establish working playback. See reverse/mp4-native-audit.md.",
+  "release_profiles": [
+    {
+      "build": "koikake",
+      "binary": "testcase/dll/Pal.dll",
+      "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+      "pal_handler": "PalVideoPlay 0x100C8A50",
+      "extensions": [
+        ".wmv",
+        ".mpg"
+      ],
+      "evidence": "reverse/evidence/mp4-koikake-play.json"
+    },
+    {
+      "build": "reference",
+      "binary": "reverse/PAL.dll",
+      "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+      "pal_handler": "PalVideoPlay 0x100BACB0",
+      "extensions": [
+        ".wmv",
+        ".mpg"
+      ],
+      "evidence": "reverse/evidence/mp4-reference-play.json"
+    },
+    {
+      "build": "totsulover",
+      "binary": "dll/Pal.dll",
+      "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+      "pal_handler": "PalVideoPlay 0x100C1200",
+      "extensions": [
+        ".wmv",
+        ".mpg"
+      ],
+      "evidence": "reverse/evidence/mp4-totsulover-play.json"
+    }
+  ],
+  "debug_profile": {
+    "binary": "PAL_d.dll",
+    "input_md5": "170865af5cfcad1208b738299abb2f99",
+    "source": "reverse/PAL.sqlite",
+    "pal_handler": "PalVideoPlay_0 0x1026BDB0",
+    "extensions": [
+      ".wmv",
+      ".mpg",
+      ".mp4"
+    ],
+    "h264_graph": "0x10267440",
+    "playback_verified": false,
+    "reason": "Incomplete graph: zero-initialized source and audio-decoder filter slots are never assigned before connection."
+  }
+}

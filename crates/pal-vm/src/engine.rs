@@ -7,13 +7,12 @@ use crate::assets::CoreAssets;
 use crate::audio::{AudioConfig, AudioHandle, AudioSystem, PalSoundGroup};
 use crate::config::{ini_graphics_size, parse_system_ini, EngineStartupConfig, TextLang};
 use crate::debug::{collect_frame_dump, pal_debug_enabled, pal_debug_frame_enabled, print_dump};
+use crate::effect::SceneTransition;
 use crate::event::PalEvent;
 use crate::input::PalInputState;
 use crate::platform_time::{Duration, Instant};
 use crate::runtime::{RuntimeStatus, RuntimeTick, ScriptRuntime, ScriptRuntimeConfig, WaitRequest};
-use crate::scene::{
-    rasterize_scene_rgba, DrawCommand, FrameScene, RectF, SceneTexture, SceneTextureId, SpriteDraw,
-};
+use crate::scene::{DrawCommand, FrameScene};
 use crate::sprite::SpriteSystem;
 use crate::task::TaskSystem;
 
@@ -75,19 +74,32 @@ pub struct Engine {
     window_physical_size: (u32, u32),
     pal_debug: bool,
     last_scene: Option<FrameScene>,
-    active_crossfade: Option<(u32, SceneTexture)>,
+    scene_transition: Option<SceneTransition>,
 }
 
 impl Engine {
+    pub fn set_host_touch_available(&mut self, available: bool) {
+        if let Some(runtime) = &mut self.runtime {
+            runtime.set_host_touch_available(available);
+        }
+    }
+
+    pub fn set_host_gpu_renderer(&mut self, enabled: bool) {
+        if let Some(runtime) = &mut self.runtime {
+            runtime.set_host_gpu_renderer(enabled);
+        }
+    }
+
     pub fn new(config: EngineConfig) -> anyhow::Result<Self> {
         let (startup_config, resource_manager, core_assets, runtime, last_runtime_status) =
             match &config.game_root {
                 Some(root) => {
                     let mut startup_config = EngineStartupConfig::load(root, config.nls)?;
-                    let mut resource_manager = ResourceManager::bootstrap_with_language(
+                    let mut resource_manager = ResourceManager::bootstrap_with_path_order(
                         root,
                         config.nls,
                         config.lang.archive_list(),
+                        crate::assets::native_profile::has_registered_dispatch_exports(root),
                     )?;
                     // Releases that keep the whole PAL payload inside data.pac
                     // ship no loose SYSTEM.INI, so the logical size, font type
@@ -104,13 +116,9 @@ impl Engine {
                                     );
                                     startup_config.system_ini = Some(ini);
                                 }
-                                Err(err) => log::warn!(
-                                    "archived SYSTEM.INI parse failed: {err}"
-                                ),
+                                Err(err) => log::warn!("archived SYSTEM.INI parse failed: {err}"),
                             },
-                            Err(err) => log::debug!(
-                                "no loose or archived SYSTEM.INI: {err}"
-                            ),
+                            Err(err) => log::debug!("no loose or archived SYSTEM.INI: {err}"),
                         }
                     }
                     let core_assets = CoreAssets::load(
@@ -135,6 +143,10 @@ impl Engine {
                         core_assets.script_entry_pc,
                         config.script_runtime.clone(),
                     );
+                    runtime.set_font_profile(
+                        core_assets.registered_softpal,
+                        core_assets.text_dat_multilingual,
+                    );
                     runtime.set_text_lang(config.lang);
                     if let Some(system_ini) = startup_config.system_ini.clone() {
                         runtime.set_system_ini(system_ini);
@@ -154,7 +166,13 @@ impl Engine {
                         FrameScene::PAL_DEFAULT_WIDTH,
                         FrameScene::PAL_DEFAULT_HEIGHT,
                     );
-                    runtime.set_window_size(window_width, window_height);
+                    runtime.observe_window_geometry(
+                        0,
+                        0,
+                        window_width as i32,
+                        window_height as i32,
+                        false,
+                    );
                     let status = runtime.status().clone();
                     (
                         Some(startup_config),
@@ -199,10 +217,17 @@ impl Engine {
             window_physical_size: fallback_size,
             pal_debug: pal_debug_enabled(),
             last_scene: None,
-            active_crossfade: None,
+            scene_transition: None,
         };
         if let Some(runtime) = &engine.runtime {
             runtime.apply_persisted_audio_levels(&mut engine.audio);
+            if engine
+                .core_assets
+                .as_ref()
+                .is_some_and(|assets| assets.registered_softpal)
+            {
+                runtime.apply_registered_se_levels(&mut engine.audio);
+            }
         }
         Ok(engine)
     }
@@ -221,6 +246,35 @@ impl Engine {
 
     pub fn core_assets(&self) -> Option<&CoreAssets> {
         self.core_assets.as_ref()
+    }
+
+    /// Write the current parked ADV checkpoint for host-driven reproduction.
+    pub fn save_checkpoint(&self, slot: i32) -> anyhow::Result<std::path::PathBuf> {
+        let root = self.config.game_root.as_deref().ok_or_else(|| anyhow::anyhow!("no game root"))?;
+        let runtime = self.runtime.as_ref().ok_or_else(|| anyhow::anyhow!("no script runtime"))?;
+        runtime.save_host_checkpoint(root, slot, &self.sprites, self.config.nls)
+    }
+
+    /// Restore before the first host step; normal VM execution resumes afterward.
+    pub fn load_checkpoint(&mut self, slot: i32) -> anyhow::Result<()> {
+        let root = self.config.game_root.as_deref().ok_or_else(|| anyhow::anyhow!("no game root"))?;
+        let runtime = self.runtime.as_mut().ok_or_else(|| anyhow::anyhow!("no script runtime"))?;
+        let (wait,clock)=runtime.load_host_checkpoint(root,slot,&mut self.sprites)?;
+        self.task_system.pal_time_ms=clock;
+        runtime.set_pal_time(clock);
+        if let Some(wait)=wait {
+            let handle=match wait {
+                WaitRequest::Frame(n)=>self.task_system.create_wait_frame(n),
+                WaitRequest::Time(ms)|WaitRequest::TextReveal(ms)=>self.task_system.create_wait_time(ms),
+                WaitRequest::Click=>self.task_system.create_wait_click(),
+                WaitRequest::ClickOrTime(ms)=>self.task_system.create_wait_click_or_time(ms),
+                WaitRequest::AutoClickOrTime(ms)=>self.task_system.create_wait_click_or_time_gated(ms,true),
+                WaitRequest::SpriteFx(sprite)=>self.task_system.create_wait_sprite_fx(sprite),
+            };
+            if let Some(handle)=handle {runtime.set_wait_handle(handle,wait);}
+        }
+        self.last_runtime_status = runtime.status().clone();
+        Ok(())
     }
 
     pub fn runtime(&self) -> Option<&ScriptRuntime> {
@@ -324,6 +378,27 @@ impl Engine {
         ini_graphics_size(Some(system_ini), fallback_width, fallback_height)
     }
 
+    /// Drain script window operations for the host event thread.
+    pub fn take_window_requests(&mut self) -> Vec<crate::system::PalWindowRequest> {
+        self.runtime
+            .as_mut()
+            .map_or_else(Vec::new, ScriptRuntime::take_window_requests)
+    }
+
+    /// Host dimensions use logical desktop units; pointer events remain physical pixels.
+    pub fn observe_window_geometry(
+        &mut self,
+        x: i32,
+        y: i32,
+        width: i32,
+        height: i32,
+        fullscreen: bool,
+    ) {
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.observe_window_geometry(x, y, width, height, fullscreen);
+        }
+    }
+
     /// Clear per-frame transient input state after the current frame has consumed it.
     pub fn input_begin_frame(&mut self) {
         self.input.begin_frame();
@@ -340,6 +415,11 @@ impl Engine {
                 self.input.handle_input_event(input_event);
             }
             PalEvent::CloseRequested => {}
+            PalEvent::Focused { focused } => {
+                if let Some(runtime) = self.runtime.as_mut() {
+                    runtime.set_host_active(focused);
+                }
+            }
             PalEvent::Resized { width, height } => {
                 self.window_physical_size = (width.max(1), height.max(1));
             }
@@ -373,6 +453,8 @@ impl Engine {
             FrameScene::PAL_DEFAULT_WIDTH,
             FrameScene::PAL_DEFAULT_HEIGHT,
         );
+        self.sprites
+            .configure_target_render_size(logical_width, logical_height);
         self.input.set_coordinate_space(
             self.window_physical_size.0,
             self.window_physical_size.1,
@@ -382,12 +464,34 @@ impl Engine {
 
         // Update PAL cached time used by all task timing (animation delays, wait timeouts).
         self.task_system
-            .set_pal_time(timing.elapsed.as_millis().min(u32::MAX as u128) as u32);
+            .set_pal_time(timing.elapsed.as_millis() as u32);
+        self.input.sample_repeat(self.task_system.pal_time_ms);
+
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.apply_input_control(&mut self.input);
+        }
+
+        let delta_ms = timing.delta.as_millis().min(u32::MAX as u128) as u32;
+        self.audio.set_pal_time(self.task_system.pal_time_ms);
+        let movie_frame = if let Some(runtime) = self.runtime.as_mut() {
+            runtime.set_pal_time(self.task_system.pal_time_ms);
+            let active = runtime.advance_movie_transport(
+                &mut self.sprites,
+                &mut self.audio,
+                &mut self.input,
+                delta_ms,
+            );
+            runtime.apply_input_control(&mut self.input);
+            active
+        } else {
+            false
+        };
 
         let mut button_consumed_mouse_push = false;
+        let mut button_consumed_mouse_pull = false;
         let mut button_consumed_push_edge = false;
         let mut text_reveal_consumed_push = false;
-        if let Some(runtime) = self.runtime.as_mut() {
+        if let Some(runtime) = self.runtime.as_mut().filter(|_| !movie_frame) {
             runtime.set_pal_time(self.task_system.pal_time_ms);
             if let Some(core_assets) = self.core_assets.as_ref() {
                 let nls = self
@@ -402,16 +506,38 @@ impl Engine {
                     &mut self.sprites,
                 );
                 runtime.sync_history_sprite(core_assets, nls, &mut self.sprites);
+                runtime.sync_history_icons(core_assets, nls, self.resource_manager.as_mut(), &mut self.sprites);
+                runtime.flush_history_icon_sounds(&mut self.audio);
+                runtime.flush_history_checkpoints(self.resource_manager.as_ref());
+                runtime.prepare_button_audio(
+                    core_assets,
+                    nls,
+                    self.resource_manager.as_mut(),
+                    Some(&mut self.audio),
+                );
             }
-            let button_outcome =
-                runtime.update_button_input_state(&mut self.sprites, &self.input);
+            let button_outcome = runtime.update_button_input_state_with_audio(
+                &mut self.sprites,
+                &self.input,
+                Some(&mut self.audio),
+            );
+            if runtime.button_reaction_pending() {
+                self.input.clear();
+            }
             if self.config.trace.buttons {
                 let (mx, my) = self.input.mouse_position();
                 runtime.dump_button_states(&self.sprites, timing.frame_index, mx, my);
             }
-            button_consumed_mouse_push = button_outcome.consumed_mouse_push;
+            button_consumed_mouse_push =
+                button_outcome.consumed_mouse_push || button_outcome.consumed_mouse_capture;
+            button_consumed_mouse_pull = button_outcome.consumed_mouse_pull;
             button_consumed_push_edge = button_outcome.consumed_push_edge;
-            if button_outcome.consumed_any() {
+            if button_outcome.callback_queued && runtime.should_suspend_wait_for_modal() {
+                if let Some(handle) = runtime.pending_wait_handle() {
+                    let _ = self.task_system.free(handle);
+                    runtime.suspend_wait_for_modal();
+                }
+            } else if button_outcome.consumed_any() {
                 if let Some(handle) = runtime.pending_wait_handle() {
                     let _ = self.task_system.free(handle);
                     if runtime.should_suspend_wait_for_modal() {
@@ -425,14 +551,44 @@ impl Engine {
                         runtime.resolve_pending_wait();
                     }
                 }
-            } else if runtime.consume_text_reveal_push(&self.input) {
+            } else if !button_outcome.consumed_mouse_capture
+                && runtime.consume_text_reveal_push(&self.input)
+            {
                 if runtime.pending_wait_is_text_reveal() {
                     if let Some(handle) = runtime.pending_wait_handle() {
                         let _ = self.task_system.free(handle);
                     }
                     runtime.resolve_pending_wait();
+                    runtime.flush_deferred_action_clears(&mut self.sprites);
                 }
                 text_reveal_consumed_push = true;
+            }
+        }
+
+        // Tips scripts poll their own geometry and mouse state while ADV is
+        // parked. Reuse the modal continuation path so returning from a poll
+        // restores the same text wait instead of advancing the story.
+        if !button_consumed_mouse_push && !text_reveal_consumed_push && !self.input.click_push() {
+            if let Some(runtime) = self.runtime.as_mut().filter(|_| !movie_frame) {
+                let can_poll = runtime.pending_wait_handle().is_none_or(|handle| {
+                    self.task_system
+                        .wait_can_poll(handle, runtime.any_voice_playing(&self.audio))
+                });
+                if can_poll
+                    && !runtime.skip_active(&self.input)
+                    && self.core_assets.as_ref().is_some_and(|assets| {
+                        runtime
+                            .queue_tips_tick_checked(&assets.point_table, assets.script.bytes.len())
+                    })
+                {
+                    let clock = runtime
+                        .pending_wait_handle()
+                        .and_then(|handle| self.task_system.wait_clock(handle));
+                    if let Some(handle) = runtime.pending_wait_handle() {
+                        let _ = self.task_system.free(handle);
+                    }
+                    runtime.suspend_wait_for_tips(clock);
+                }
             }
         }
 
@@ -440,7 +596,7 @@ impl Engine {
         // tick sees a latched skip state (skip byte, scene skip, held Ctrl);
         // push-edge reveal completion already ran through
         // consume_text_reveal_push above.
-        if let Some(runtime) = self.runtime.as_mut() {
+        if let Some(runtime) = self.runtime.as_mut().filter(|_| !movie_frame) {
             if runtime.skip_active(&self.input) {
                 runtime.complete_text_reveal_for_skip();
             }
@@ -453,10 +609,14 @@ impl Engine {
         // skips the line instead of completing the typewriter pass.
         let task_input;
         let input_for_tasks = if text_reveal_consumed_push || button_consumed_push_edge {
-            task_input = self.input.without_push_edges();
+            task_input = if button_consumed_mouse_pull {
+                self.input.without_push_edges().without_mouse_edges()
+            } else {
+                self.input.without_push_edges()
+            };
             &task_input
-        } else if button_consumed_mouse_push {
-            task_input = self.input.without_mouse_push();
+        } else if button_consumed_mouse_push || button_consumed_mouse_pull {
+            task_input = self.input.without_mouse_edges();
             &task_input
         } else {
             &self.input
@@ -469,20 +629,30 @@ impl Engine {
             .runtime
             .as_ref()
             .is_some_and(|runtime| runtime.any_voice_playing(&self.audio));
-        self.task_system
-            .process(&mut self.sprites, input_for_tasks, skip_active, voice_active);
-        let delta_ms = timing.delta.as_millis().min(u32::MAX as u128) as u32;
+        self.task_system.process(
+            &mut self.sprites,
+            input_for_tasks,
+            skip_active,
+            voice_active,
+        );
+        self.sprites.set_fx_time(self.task_system.pal_time_ms);
         self.sprites.advance_motion_entries(delta_ms);
         // Native completes in-flight sprite transitions on the same frame a
         // skip state is active instead of playing the remaining frames out.
-        let transition_delta = if skip_active { i32::MAX as u32 } else { delta_ms };
-        self.sprites.advance_transitions(transition_delta);
+        self.sprites
+            .advance_transitions(self.task_system.pal_time_ms, skip_active);
         if let Some(runtime) = self.runtime.as_mut() {
             runtime.set_pal_time(self.task_system.pal_time_ms);
-            runtime.advance_sprite_action_lanes(&mut self.sprites);
-            runtime.advance_msprites(&mut self.sprites, delta_ms);
+            if !movie_frame {
+                runtime.advance_sprite_action_lanes(&mut self.sprites);
+                runtime.advance_actions(&mut self.sprites);
+                runtime.play_action_sounds(&mut self.audio);
+            }
             runtime.release_retired_sprites(&mut self.sprites);
         }
+
+        #[cfg(target_os = "vita")]
+        Self::compact_retired_scene_capture(&mut self.last_scene, &self.sprites, timing.frame_index);
 
         // Check if the script runtime was waiting on a task that just completed.
         if let Some(runtime) = self.runtime.as_mut() {
@@ -502,7 +672,7 @@ impl Engine {
             self.core_assets.as_ref(),
             self.resource_manager.as_mut(),
         ) {
-            (Some(runtime), Some(core_assets), resource_manager) => {
+            (Some(runtime), Some(core_assets), resource_manager) if !movie_frame => {
                 match runtime.run_frame_with_resources(
                     core_assets,
                     resource_manager,
@@ -524,6 +694,12 @@ impl Engine {
             _ => None,
         };
 
+        // Input mutations are visible to the host immediately and persist
+        // before next frame's button/task/VM consumers read the same state.
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.apply_input_control(&mut self.input);
+        }
+
         // Process any wait request emitted by the VM this tick.
         if let Some(tick) = runtime_tick.as_ref() {
             if let Some(wait_req) = &tick.wait_request {
@@ -533,11 +709,18 @@ impl Engine {
                 // the same edge here makes ADV lines auto-advance before the
                 // typewriter pass is visible.
                 let input_satisfied_click_wait = false;
+                let tips_remaining_ms = self
+                    .runtime
+                    .as_mut()
+                    .and_then(|runtime| runtime.take_tips_resumed_wait_ms());
                 let handle = match wait_req {
                     WaitRequest::Click | WaitRequest::ClickOrTime(_)
                         if input_satisfied_click_wait =>
                     {
                         None
+                    }
+                    WaitRequest::SpriteFx(sprite) => {
+                        self.task_system.create_wait_sprite_fx(*sprite)
                     }
                     WaitRequest::Frame(n) => self.task_system.create_wait_frame(*n),
                     WaitRequest::Time(ms) => {
@@ -560,8 +743,9 @@ impl Engine {
                             .runtime
                             .as_ref()
                             .map_or(0, |runtime| runtime.text_reveal_remaining_ms());
-                        self.task_system
-                            .create_wait_click_or_time(ms.saturating_add(reveal_ms))
+                        self.task_system.create_wait_click_or_time(
+                            tips_remaining_ms.unwrap_or_else(|| ms.saturating_add(reveal_ms)),
+                        )
                     }
                     WaitRequest::AutoClickOrTime(ms) => {
                         let reveal_ms = self
@@ -569,7 +753,7 @@ impl Engine {
                             .as_ref()
                             .map_or(0, |runtime| runtime.text_reveal_remaining_ms());
                         self.task_system.create_wait_click_or_time_gated(
-                            ms.saturating_add(reveal_ms),
+                            tips_remaining_ms.unwrap_or_else(|| ms.saturating_add(reveal_ms)),
                             true,
                         )
                     }
@@ -603,29 +787,45 @@ impl Engine {
             self.last_runtime_status = tick.status.clone();
         }
 
+        self.sprites.tick_fx_effects(self.task_system.pal_time_ms);
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.finish_global_fx_stop(&mut self.sprites);
+            runtime.flush_button_audio_releases(&mut self.audio);
+        }
         self.audio.update();
 
-        let effect = self.runtime.as_ref().and_then(ScriptRuntime::effect_state);
-        if let Some(effect) = effect.filter(|effect| effect.effect_id == 1) {
-            if self.active_crossfade.as_ref().map(|(start, _)| *start) != Some(effect.start_ms) {
-                self.active_crossfade = self.last_scene.as_ref().map(|previous| {
-                    (
-                        effect.start_ms,
-                        SceneTexture::rgba8(
-                            SceneTextureId(u64::MAX),
-                            effect.start_ms as u64,
-                            previous.logical_width,
-                            previous.logical_height,
-                            rasterize_scene_rgba(previous),
-                        ),
-                    )
-                });
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.cancel_scene_effect_on_click(self.input.raw_key_push() & 0x800000 != 0);
+        }
+        let effect = self
+            .runtime
+            .as_ref()
+            .and_then(ScriptRuntime::effect_render_state);
+        let mut scene = self.compose_scene(timing.elapsed, logical_width, logical_height);
+        if let Some(effect) = effect {
+            if !self.scene_transition.as_ref().is_some_and(|transition| {
+                transition.start_ms == effect.start_ms && transition.effect_id == effect.effect_id
+            }) {
+                let previous = self.last_scene.as_ref().unwrap_or(&scene);
+                self.scene_transition = SceneTransition::capture(
+                    effect,
+                    previous,
+                    self.resource_manager.as_mut(),
+                    timing.frame_index << 32,
+                );
+            }
+            if let Some(transition) = self.scene_transition.as_mut() {
+                transition.append(&mut scene, effect, self.task_system.pal_time_ms);
+            } else if let Some(runtime) = self.runtime.as_mut() {
+                // Native mask callbacks complete immediately when the file is missing.
+                runtime.finish_scene_effect();
             }
         } else {
-            self.active_crossfade = None;
+            self.scene_transition = None;
         }
-
-        let scene = self.compose_scene(timing.elapsed, logical_width, logical_height);
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.effect_frame_presented();
+        }
         self.last_scene = Some(scene.clone());
 
         if self.pal_debug || pal_debug_frame_enabled(timing.frame_index) {
@@ -735,14 +935,41 @@ impl Engine {
         })
     }
 
+    #[cfg(target_os = "vita")]
+    fn compact_retired_scene_capture(last_scene: &mut Option<FrameScene>, sprites: &SpriteSystem, generation: u64) {
+        let needs_capture = last_scene.as_ref().is_some_and(|scene| {
+            scene.textures.iter().any(|texture| {
+                texture.pixels.len() >= 8 * 1024 * 1024
+                    && sprites.surface(crate::sprite::SpriteSurfaceId(texture.id.0)).is_none()
+            })
+        });
+        if !needs_capture { return; }
+        let previous = last_scene.take().expect("previous scene checked above");
+        // Global effects already capture through this compositor. Freeze the
+        // same pixels before replacing resources, retaining one logical frame
+        // rather than full-size retired textures. Current GPU draws are intact.
+        let pixels = crate::scene::rasterize_scene_rgba(&previous);
+        let texture = crate::scene::SceneTexture::rgba8(
+            crate::scene::SceneTextureId(u64::MAX - 3), generation,
+            previous.logical_width, previous.logical_height, pixels);
+        let draw = crate::scene::SpriteDraw::full_frame(
+            &texture, previous.logical_width, previous.logical_height);
+        let mut captured = FrameScene::boot()
+            .with_logical_size(previous.logical_width, previous.logical_height);
+        captured.textures.push(texture);
+        captured.commands.push(DrawCommand::Sprite(draw));
+        *last_scene = Some(captured);
+    }
+
     fn compose_scene(
-        &self,
+        &mut self,
         elapsed: Duration,
         logical_width: u32,
         logical_height: u32,
     ) -> FrameScene {
         let mut scene = FrameScene::from_runtime_status(&self.last_runtime_status, elapsed)
             .with_logical_size(logical_width, logical_height);
+        scene.raster_stage = self.sprites.global_raster_stage();
         let mut sprite_commands = self.sprites.commands();
         sprite_commands.extend(self.sprites.transition_commands());
         // Transition sprites participate in the same PAL render tree as normal
@@ -752,6 +979,7 @@ impl Engine {
             crate::scene::DrawCommand::Sprite(sprite) => sprite.priority,
             crate::scene::DrawCommand::SolidQuad(_) => i32::MAX,
         });
+        self.sprites.resolve_main_draw_state(&mut sprite_commands);
         let mut used_textures = HashSet::new();
         for command in &sprite_commands {
             if let crate::scene::DrawCommand::Sprite(sprite) = command {
@@ -769,42 +997,7 @@ impl Engine {
             if shake != [0, 0] {
                 translate_scene_commands(&mut scene.commands, shake[0], shake[1]);
             }
-            let effect = runtime.effect_state();
-            if let Some((start, texture)) = self.active_crossfade.as_ref().filter(|(start, _)| {
-                effect.is_some_and(|effect| effect.effect_id == 1 && effect.start_ms == *start)
-            }) {
-                let effect = effect.unwrap();
-                let elapsed = self.task_system.pal_time_ms.wrapping_sub(*start);
-                let alpha =
-                    1.0 - (elapsed as f32 / effect.duration_ms.max(1) as f32).clamp(0.0, 1.0);
-                if alpha > 0.0 {
-                    scene.textures.push(texture.clone());
-                    scene.commands.push(DrawCommand::Sprite(SpriteDraw {
-                        texture_id: texture.id,
-                        smooth_upscale: false,
-                        priority: i32::MAX,
-                        dst: RectF::new(
-                            shake[0] as f32,
-                            shake[1] as f32,
-                            logical_width as f32,
-                            logical_height as f32,
-                        ),
-                        // Renderer UVs are normalized. Pixel dimensions here sample
-                        // only the last texel, so the previous warning image never fades.
-                        src: RectF::new(0.0, 0.0, 1.0, 1.0),
-                        source_rect: [0, 0, texture.width as i32, texture.height as i32],
-                        texture_size: [texture.width, texture.height],
-                        cell_size: [texture.width, texture.height],
-                        position: [0.0; 3],
-                        offset: [0; 2],
-                        color: [1.0, 1.0, 1.0, alpha],
-                        scale: 1.0,
-                        rotation: [0.0; 3],
-                        center_offset: [0.0; 2],
-                        render_mode: 0,
-                    }));
-                }
-            } else if let Some(quad) = runtime.effect_overlay(logical_width, logical_height) {
+            if let Some(quad) = runtime.effect_overlay(logical_width, logical_height) {
                 scene
                     .commands
                     .push(crate::scene::DrawCommand::SolidQuad(quad));

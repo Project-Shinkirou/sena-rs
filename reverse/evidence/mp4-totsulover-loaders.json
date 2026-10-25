@@ -1,0 +1,6517 @@
+{
+  "functions": [
+    {
+      "ea": "0x100bf020",
+      "name": "sub_100BF020",
+      "xrefs": [
+        {
+          "from": "0x100c0b02",
+          "function": "sub_100C0910"
+        }
+      ],
+      "pseudocode": "int __usercall sub_100BF020@<eax>(char *a1@<ecx>, int a2@<ebp>)\n{\n  LPVOID *v3; // edi\n  int v5; // eax\n  char *v6; // eax\n  int v7; // edi\n  char *v8; // ecx\n  int v9; // eax\n  int v10; // esi\n  int v11; // eax\n  int v12; // edx\n  LPVOID *v13; // esi\n  HRESULT v14; // esi\n  int v15; // ecx\n  int v16; // eax\n  int v17; // [esp-24h] [ebp-8Ch]\n  LPVOID *v19; // [esp-1Ch] [ebp-84h]\n  _DWORD *v20; // [esp-18h] [ebp-80h]\n  HRESULT Instance; // [esp-14h] [ebp-7Ch] BYREF\n  _DWORD v22[3]; // [esp-10h] [ebp-78h] BYREF\n  _OWORD v23[5]; // [esp-4h] [ebp-6Ch] BYREF\n  int *v24; // [esp+4Ch] [ebp-1Ch]\n  struct _EXCEPTION_REGISTRATION_RECORD *ExceptionList; // [esp+50h] [ebp-18h]\n  void *v26; // [esp+54h] [ebp-14h]\n  int v27; // [esp+58h] [ebp-10h]\n  int v28; // [esp+5Ch] [ebp-Ch]\n  void *v29; // [esp+60h] [ebp-8h]\n  int v30; // [esp+64h] [ebp-4h] BYREF\n  void *retaddr; // [esp+68h] [ebp+0h]\n\n  v28 = a2;\n  v29 = retaddr;\n  v27 = -1;\n  v26 = &loc_100F1B3A;\n  ExceptionList = NtCurrentTeb()->NtTib.ExceptionList;\n  v24 = &v30;\n  OutputDebugStringA(\"*PalVideoLoadMpeg\\n\");\n  v3 = (LPVOID *)PalMemoryAlloc(0x18u, 1);\n  v19 = v3;\n  if ( !v3 )\n  {\n    sub_100BEDB0(a1);\n    PalErrorLogPrintf(\"Video Mpeg : MemoryAllocate Error \\n\");\n    OutputDebugStringA(\"Video Mpeg : MemoryAllocate Error \\n\");\n    return -2147467259;\n  }\n  v5 = PalFileCreateEx(a1 + 92, 0x80000000, 1, 3, 0x8000000, (int)v22);\n  *((_DWORD *)a1 + 10) = v5;\n  if ( v5 != -1 )\n  {\n    sub_10004B30(v23);\n    v27 = 0;\n    v23[0] = xmmword_100F3AF4;\n    v23[1] = xmmword_100F3B14;\n    v6 = (char *)operator new(0x40u);\n    v7 = v22[2];\n    v8 = v6;\n    v9 = v22[0];\n    v10 = *((_DWORD *)a1 + 10);\n    v20 = v8;\n    *(_DWORD *)v8 = &CFileStream::`vftable';\n    v17 = v9;\n    InitializeCriticalSection((LPCRITICAL_SECTION)(v8 + 20));\n    v20[1] = v10;\n    v20[2] = v7;\n    v20[3] = 0;\n    v20[4] = v17;\n    v20[12] = 0;\n    v20[13] = 0;\n    v20[14] = -1;\n    v20[15] = timeGetTime();\n    *((_DWORD *)a1 + 11) = v20;\n    operator new(0x1E8u);\n    LOBYTE(v27) = 1;\n    v11 = sub_100ADA90(*((_DWORD *)a1 + 11), v23, &Instance);\n    LOBYTE(v27) = 0;\n    *((_DWORD *)a1 + 12) = v11;\n    if ( v11 )\n      v12 = v11 + 12;\n    else\n      v12 = 0;\n    Instance = (*(int (__stdcall **)(_DWORD, int, _DWORD))(**(_DWORD **)a1 + 12))(*(_DWORD *)a1, v12, 0);\n    if ( Instance >= 0 )\n    {\n      v13 = v19;\n    }\n    else\n    {\n      if ( dword_101336F4 )\n        --*((_DWORD *)dword_101336F4 + 82);\n      v13 = v19;\n      j___free_base(v19);\n      if ( Instance < 0 )\n      {\n        sub_100BEDB0(a1);\n        PalErrorLogPrintf(\"Video Mpeg : AddFilter Reader \\n\");\n        v14 = Instance;\n        OutputDebugStringA(\"Video Mpeg : AddFilter Reader \\n\");\n        goto LABEL_81;\n      }\n    }\n    Instance = CoCreateInstance(&stru_100F3B44, 0, 1u, &stru_100F3CA4, v13);\n    if ( Instance < 0 )\n    {\n      if ( dword_101336F4 )\n        --*((_DWORD *)dword_101336F4 + 82);\n      j___free_base(v13);\n      if ( Instance < 0 )\n      {\n        sub_100BEDB0(a1);\n        PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_MPEG1Splitter \\n\");\n        v14 = Instance;\n        OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_MPEG1Splitter \\n\");\n        goto LABEL_81;\n      }\n    }\n    Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                 *(_DWORD *)a1,\n                 *v13,\n                 L\"MPEG-l Stream Splitter\");\n    if ( Instance < 0 )\n    {\n      if ( dword_101336F4 )\n        --*((_DWORD *)dword_101336F4 + 82);\n      j___free_base(v13);\n      if ( Instance < 0 )\n      {\n        sub_100BEDB0(a1);\n        PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_MPEG1Splitter \\n\");\n        v14 = Instance;\n        OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_MPEG1Splitter \\n\");\n        goto LABEL_81;\n      }\n    }\n    Instance = CoCreateInstance(&stru_100F3B54, 0, 1u, &stru_100F3CA4, v13 + 1);\n    if ( Instance >= 0 )\n      goto LABEL_30;\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v13);\n    if ( Instance >= 0 )\n    {\nLABEL_30:\n      Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                   *(_DWORD *)a1,\n                   v13[1],\n                   L\"MPEG Video Decoder\");\n      if ( Instance < 0 )\n      {\n        PalMemoryFree(v13);\n        if ( Instance < 0 )\n        {\n          sub_100BEDB0(a1);\n          PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_CMpegVideoCodec \\n\");\n          v14 = Instance;\n          OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_CMpegVideoCodec \\n\");\n          goto LABEL_81;\n        }\n      }\n      Instance = CoCreateInstance(&stru_100F3B84, 0, 1u, &stru_100F3CA4, v13 + 5);\n      if ( Instance < 0 )\n      {\n        PalMemoryFree(v13);\n        if ( Instance < 0 )\n        {\n          sub_100BEDB0(a1);\n          PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_Colour \\n\");\n          v14 = Instance;\n          OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_Colour \\n\");\n          goto LABEL_81;\n        }\n      }\n      Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                   *(_DWORD *)a1,\n                   v13[5],\n                   L\"Color Space Converter\");\n      if ( Instance < 0 )\n      {\n        PalMemoryFree(v13);\n        if ( Instance < 0 )\n        {\n          sub_100BEDB0(a1);\n          PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_Colour \\n\");\n          v14 = Instance;\n          OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_Colour \\n\");\n          goto LABEL_81;\n        }\n      }\n      if ( !*((_DWORD *)a1 + 7) )\n      {\n        Instance = CoCreateInstance(&stru_100F3B74, 0, 1u, &stru_100F3CA4, v13 + 2);\n        if ( Instance < 0 )\n        {\n          PalMemoryFree(v13);\n          if ( Instance < 0 )\n            goto LABEL_42;\n        }\n        Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                     *(_DWORD *)a1,\n                     v13[2],\n                     L\"Video Renderer\");\n        if ( Instance < 0 )\n        {\n          PalMemoryFree(v13);\n          if ( Instance < 0 )\n          {\n            sub_100BEDB0(a1);\n            PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_VideoRendererDefault \\n\");\n            v14 = Instance;\n            OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_VideoRendererDefault \\n\");\n            goto LABEL_81;\n          }\n        }\n      }\n      Instance = sub_100ADE00(*v13, xmmword_100F3AF4);\n      if ( Instance >= 0 || (PalMemoryFree(v13), Instance >= 0) )\n      {\n        Instance = sub_100ADE00(v13[1], xmmword_100F3AD4);\n        if ( Instance >= 0 || (PalMemoryFree(v13), Instance >= 0) )\n        {\n          Instance = sub_100ADE00(v13[5], xmmword_100F3AD4);\n          if ( Instance >= 0 || (PalMemoryFree(v13), Instance >= 0) )\n          {\n            v15 = *((_DWORD *)a1 + 7);\n            if ( v15 )\n              v16 = sub_100ADE00(v15, xmmword_100F3AD4);\n            else\n              v16 = sub_100ADE00(v13[2], xmmword_100F3AD4);\n            Instance = v16;\n            if ( v16 >= 0 || (PalMemoryFree(v13), Instance >= 0) )\n            {\n              if ( !sub_100ADF00(xmmword_100F3AE4) )\n              {\n                Instance = CoCreateInstance(&stru_100F3B64, 0, 1u, &stru_100F3CA4, v13 + 3);\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_CMpegAudioCodec \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_CMpegAudioCodec \\n\");\n                    goto LABEL_81;\n                  }\n                }\n                Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                             *(_DWORD *)a1,\n                             v13[3],\n                             L\"MPEG Audio Decoder\");\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_CMpegAudioCodec \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_CMpegAudioCodec \\n\");\n                    goto LABEL_81;\n                  }\n                }\n                Instance = CoCreateInstance(&stru_100F3B94, 0, 1u, &stru_100F3CA4, v13 + 4);\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_DSoundRender \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_DSoundRender \\n\");\n                    goto LABEL_81;\n                  }\n                }\n                Instance = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)a1 + 12))(\n                             *(_DWORD *)a1,\n                             v13[4],\n                             L\"Default DirectSound Device\");\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_DSoundRender \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_DSoundRender \\n\");\n                    goto LABEL_81;\n                  }\n                }\n                Instance = sub_100ADE00(v13[3], xmmword_100F3AE4);\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : ConnectFilter Audio [0x0001] \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : ConnectFilter Audio [0x0001] \\n\");\n                    goto LABEL_81;\n                  }\n                }\n                Instance = sub_100ADE00(v13[4], xmmword_100F3AE4);\n                if ( Instance < 0 )\n                {\n                  PalMemoryFree(v13);\n                  if ( Instance < 0 )\n                  {\n                    sub_100BEDB0(a1);\n                    PalErrorLogPrintf(\"Video Mpeg : ConnectFilter Audio [0x0002] \\n\");\n                    v14 = Instance;\n                    OutputDebugStringA(\"Video Mpeg : ConnectFilter Audio [0x0002] \\n\");\n                    goto LABEL_81;\n                  }\n                }\n              }\n              *((_DWORD *)a1 + 21) = v13;\n              v14 = 0;\n              goto LABEL_81;\n            }\n            sub_100BEDB0(a1);\n            PalErrorLogPrintf(\"Video Mpeg : ConnectFilter [0x0004] \\n\");\n            v14 = Instance;\n            OutputDebugStringA(\"Video Mpeg : ConnectFilter [0x0004] \\n\");\n          }\n          else\n          {\n            sub_100BEDB0(a1);\n            PalErrorLogPrintf(\"Video Mpeg : ConnectFilter [0x0003] \\n\");\n            v14 = Instance;\n            OutputDebugStringA(\"Video Mpeg : ConnectFilter [0x0003] \\n\");\n          }\n        }\n        else\n        {\n          sub_100BEDB0(a1);\n          PalErrorLogPrintf(\"Video Mpeg : ConnectFilter [0x0002] \\n\");\n          v14 = Instance;\n          OutputDebugStringA(\"Video Mpeg : ConnectFilter [0x0002] \\n\");\n        }\n      }\n      else\n      {\n        sub_100BEDB0(a1);\n        PalErrorLogPrintf(\"Video Mpeg : ConnectFilter [0x0001] \\n\");\n        v14 = Instance;\n        OutputDebugStringA(\"Video Mpeg : ConnectFilter [0x0001] \\n\");\n      }\nLABEL_81:\n      sub_10004B60(v23);\n      return v14;\n    }\nLABEL_42:\n    sub_100BEDB0(a1);\n    PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_CMpegVideoCodec \\n\");\n    v14 = Instance;\n    OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_CMpegVideoCodec \\n\");\n    goto LABEL_81;\n  }\n  if ( dword_101336F4 )\n    --*((_DWORD *)dword_101336F4 + 82);\n  j___free_base(v3);\n  sub_100BEDB0(a1);\n  PalErrorLogPrintf(\"Video Mpeg : CreateFile \\n\");\n  OutputDebugStringA(\"Video Mpeg : CreateFile \\n\");\n  return -2147467259;\n}\n",
+      "disassembly": [
+        [
+          "0x100bf020",
+          "push    ebx"
+        ],
+        [
+          "0x100bf021",
+          "mov     ebx, esp"
+        ],
+        [
+          "0x100bf023",
+          "sub     esp, 8"
+        ],
+        [
+          "0x100bf026",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100bf029",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf02c",
+          "push    ebp"
+        ],
+        [
+          "0x100bf02d",
+          "mov     ebp, [ebx+4]"
+        ],
+        [
+          "0x100bf030",
+          "mov     [esp+0Ch+var_8], ebp"
+        ],
+        [
+          "0x100bf034",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100bf036",
+          "push    0FFFFFFFFh"
+        ],
+        [
+          "0x100bf038",
+          "push    offset loc_100F1B3A"
+        ],
+        [
+          "0x100bf03d",
+          "mov     eax, large fs:0"
+        ],
+        [
+          "0x100bf043",
+          "push    eax"
+        ],
+        [
+          "0x100bf044",
+          "push    ebx"
+        ],
+        [
+          "0x100bf045",
+          "sub     esp, 70h"
+        ],
+        [
+          "0x100bf048",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100bf04d",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x100bf04f",
+          "mov     [ebp-14h], eax"
+        ],
+        [
+          "0x100bf052",
+          "push    esi"
+        ],
+        [
+          "0x100bf053",
+          "push    edi"
+        ],
+        [
+          "0x100bf054",
+          "push    eax"
+        ],
+        [
+          "0x100bf055",
+          "lea     eax, [ebp-0Ch]"
+        ],
+        [
+          "0x100bf058",
+          "mov     large fs:0, eax"
+        ],
+        [
+          "0x100bf05e",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x100bf060",
+          "mov     [ebp-7Ch], esi"
+        ],
+        [
+          "0x100bf063",
+          "push    offset aPalvideoloadmp; \"*PalVideoLoadMpeg\\n\""
+        ],
+        [
+          "0x100bf068",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf06e",
+          "push    1; char"
+        ],
+        [
+          "0x100bf070",
+          "push    18h; Size"
+        ],
+        [
+          "0x100bf072",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100bf077",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100bf079",
+          "add     esp, 8"
+        ],
+        [
+          "0x100bf07c",
+          "mov     [ebp-78h], edi"
+        ],
+        [
+          "0x100bf07f",
+          "test    edi, edi"
+        ],
+        [
+          "0x100bf081",
+          "jnz     short loc_100BF0AD"
+        ],
+        [
+          "0x100bf083",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100bf085",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf08a",
+          "push    offset aVideoMpegMemor; \"Video Mpeg : MemoryAllocate Error \\n\""
+        ],
+        [
+          "0x100bf08f",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf094",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf099",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf09c",
+          "push    offset aVideoMpegMemor; \"Video Mpeg : MemoryAllocate Error \\n\""
+        ],
+        [
+          "0x100bf0a1",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf0a3",
+          "mov     eax, 80004005h"
+        ],
+        [
+          "0x100bf0a8",
+          "jmp     loc_100BF886"
+        ],
+        [
+          "0x100bf0ad",
+          "lea     eax, [ebp-6Ch]"
+        ],
+        [
+          "0x100bf0b0",
+          "push    eax; int"
+        ],
+        [
+          "0x100bf0b1",
+          "push    8000000h; int"
+        ],
+        [
+          "0x100bf0b6",
+          "push    3; int"
+        ],
+        [
+          "0x100bf0b8",
+          "push    1; int"
+        ],
+        [
+          "0x100bf0ba",
+          "lea     eax, [esi+5Ch]"
+        ],
+        [
+          "0x100bf0bd",
+          "push    80000000h; int"
+        ],
+        [
+          "0x100bf0c2",
+          "push    eax; Source"
+        ],
+        [
+          "0x100bf0c3",
+          "call    PalFileCreateEx"
+        ],
+        [
+          "0x100bf0c8",
+          "add     esp, 18h"
+        ],
+        [
+          "0x100bf0cb",
+          "mov     [esi+28h], eax"
+        ],
+        [
+          "0x100bf0ce",
+          "cmp     eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x100bf0d1",
+          "jnz     short loc_100BF115"
+        ],
+        [
+          "0x100bf0d3",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bf0d8",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf0da",
+          "jz      short loc_100BF0E2"
+        ],
+        [
+          "0x100bf0dc",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bf0e2",
+          "push    edi; Block"
+        ],
+        [
+          "0x100bf0e3",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf0e8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf0eb",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100bf0ed",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf0f2",
+          "push    offset aVideoMpegCreat; \"Video Mpeg : CreateFile \\n\""
+        ],
+        [
+          "0x100bf0f7",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf0fc",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf101",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf104",
+          "push    offset aVideoMpegCreat; \"Video Mpeg : CreateFile \\n\""
+        ],
+        [
+          "0x100bf109",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf10b",
+          "mov     eax, 80004005h"
+        ],
+        [
+          "0x100bf110",
+          "jmp     loc_100BF886"
+        ],
+        [
+          "0x100bf115",
+          "lea     ecx, [ebp-60h]; void *"
+        ],
+        [
+          "0x100bf118",
+          "call    sub_10004B30"
+        ],
+        [
+          "0x100bf11d",
+          "mov     dword ptr [ebp-4], 0"
+        ],
+        [
+          "0x100bf124",
+          "movups  xmm0, ds:xmmword_100F3AF4"
+        ],
+        [
+          "0x100bf12b",
+          "push    40h ; '@'; Size"
+        ],
+        [
+          "0x100bf12d",
+          "movups  xmmword ptr [ebp-60h], xmm0"
+        ],
+        [
+          "0x100bf131",
+          "movups  xmm0, ds:xmmword_100F3B14"
+        ],
+        [
+          "0x100bf138",
+          "movups  xmmword ptr [ebp-50h], xmm0"
+        ],
+        [
+          "0x100bf13c",
+          "call    ??2@YAPAXI@Z; operator new(uint)"
+        ],
+        [
+          "0x100bf141",
+          "mov     edi, [ebp-64h]"
+        ],
+        [
+          "0x100bf144",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100bf146",
+          "mov     eax, [ebp-6Ch]"
+        ],
+        [
+          "0x100bf149",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf14c",
+          "mov     esi, [esi+28h]"
+        ],
+        [
+          "0x100bf14f",
+          "mov     [ebp-74h], ecx"
+        ],
+        [
+          "0x100bf152",
+          "mov     dword ptr [ecx], offset ??_7CFileStream@@6B@; const CFileStream::`vftable'"
+        ],
+        [
+          "0x100bf158",
+          "add     ecx, 14h"
+        ],
+        [
+          "0x100bf15b",
+          "push    ecx; lpCriticalSection"
+        ],
+        [
+          "0x100bf15c",
+          "mov     [ebp-80h], eax"
+        ],
+        [
+          "0x100bf15f",
+          "call    ds:InitializeCriticalSection"
+        ],
+        [
+          "0x100bf165",
+          "mov     eax, [ebp-74h]"
+        ],
+        [
+          "0x100bf168",
+          "mov     [eax+4], esi"
+        ],
+        [
+          "0x100bf16b",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100bf16d",
+          "mov     eax, [ebp-80h]"
+        ],
+        [
+          "0x100bf170",
+          "mov     [esi+8], edi"
+        ],
+        [
+          "0x100bf173",
+          "mov     dword ptr [esi+0Ch], 0"
+        ],
+        [
+          "0x100bf17a",
+          "mov     [esi+10h], eax"
+        ],
+        [
+          "0x100bf17d",
+          "mov     dword ptr [esi+30h], 0"
+        ],
+        [
+          "0x100bf184",
+          "mov     dword ptr [esi+34h], 0"
+        ],
+        [
+          "0x100bf18b",
+          "mov     dword ptr [esi+38h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100bf192",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100bf198",
+          "mov     edi, [ebp-7Ch]"
+        ],
+        [
+          "0x100bf19b",
+          "mov     [esi+3Ch], eax"
+        ],
+        [
+          "0x100bf19e",
+          "push    1E8h; Size"
+        ],
+        [
+          "0x100bf1a3",
+          "mov     [edi+2Ch], esi"
+        ],
+        [
+          "0x100bf1a6",
+          "call    ??2@YAPAXI@Z; operator new(uint)"
+        ],
+        [
+          "0x100bf1ab",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf1ae",
+          "mov     [ebp-7Ch], eax"
+        ],
+        [
+          "0x100bf1b1",
+          "lea     ecx, [ebp-70h]"
+        ],
+        [
+          "0x100bf1b4",
+          "mov     byte ptr [ebp-4], 1"
+        ],
+        [
+          "0x100bf1b8",
+          "push    ecx"
+        ],
+        [
+          "0x100bf1b9",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100bf1bc",
+          "push    ecx"
+        ],
+        [
+          "0x100bf1bd",
+          "push    dword ptr [edi+2Ch]"
+        ],
+        [
+          "0x100bf1c0",
+          "mov     ecx, eax"
+        ],
+        [
+          "0x100bf1c2",
+          "call    sub_100ADA90"
+        ],
+        [
+          "0x100bf1c7",
+          "mov     byte ptr [ebp-4], 0"
+        ],
+        [
+          "0x100bf1cb",
+          "mov     [edi+30h], eax"
+        ],
+        [
+          "0x100bf1ce",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf1d0",
+          "jz      short loc_100BF1D7"
+        ],
+        [
+          "0x100bf1d2",
+          "lea     edx, [eax+0Ch]"
+        ],
+        [
+          "0x100bf1d5",
+          "jmp     short loc_100BF1D9"
+        ],
+        [
+          "0x100bf1d7",
+          "xor     edx, edx"
+        ],
+        [
+          "0x100bf1d9",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf1db",
+          "push    0"
+        ],
+        [
+          "0x100bf1dd",
+          "push    edx"
+        ],
+        [
+          "0x100bf1de",
+          "push    eax"
+        ],
+        [
+          "0x100bf1df",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf1e1",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf1e4",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf1e7",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf1e9",
+          "jns     short loc_100BF234"
+        ],
+        [
+          "0x100bf1eb",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bf1f0",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf1f2",
+          "jz      short loc_100BF1FA"
+        ],
+        [
+          "0x100bf1f4",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bf1fa",
+          "mov     esi, [ebp-78h]"
+        ],
+        [
+          "0x100bf1fd",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf1fe",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf203",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf206",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf20a",
+          "jge     short loc_100BF237"
+        ],
+        [
+          "0x100bf20c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf20e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf213",
+          "push    offset aVideoMpegAddfi_0; \"Video Mpeg : AddFilter Reader \\n\""
+        ],
+        [
+          "0x100bf218",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf21d",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf222",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf225",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf228",
+          "push    offset aVideoMpegAddfi_0; \"Video Mpeg : AddFilter Reader \\n\""
+        ],
+        [
+          "0x100bf22d",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf22f",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf234",
+          "mov     esi, [ebp-78h]"
+        ],
+        [
+          "0x100bf237",
+          "push    esi; ppv"
+        ],
+        [
+          "0x100bf238",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf23d",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf23f",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf241",
+          "push    offset stru_100F3B44; rclsid"
+        ],
+        [
+          "0x100bf246",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf24c",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf24f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf251",
+          "jns     short loc_100BF299"
+        ],
+        [
+          "0x100bf253",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bf258",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf25a",
+          "jz      short loc_100BF262"
+        ],
+        [
+          "0x100bf25c",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bf262",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf263",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf268",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf26b",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf26f",
+          "jge     short loc_100BF299"
+        ],
+        [
+          "0x100bf271",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf273",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf278",
+          "push    offset aVideoMpegCocre_0; \"Video Mpeg : CoCreateInstance CLSID_MPE\"..."
+        ],
+        [
+          "0x100bf27d",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf282",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf287",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf28a",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf28d",
+          "push    offset aVideoMpegCocre_0; \"Video Mpeg : CoCreateInstance CLSID_MPE\"..."
+        ],
+        [
+          "0x100bf292",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf294",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf299",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf29b",
+          "push    offset aMpegLStreamSpl; \"MPEG-l Stream Splitter\""
+        ],
+        [
+          "0x100bf2a0",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x100bf2a2",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf2a4",
+          "push    eax"
+        ],
+        [
+          "0x100bf2a5",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf2a8",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf2ab",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf2ad",
+          "jns     short loc_100BF2F5"
+        ],
+        [
+          "0x100bf2af",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bf2b4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf2b6",
+          "jz      short loc_100BF2BE"
+        ],
+        [
+          "0x100bf2b8",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bf2be",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf2bf",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf2c4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf2c7",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf2cb",
+          "jge     short loc_100BF2F5"
+        ],
+        [
+          "0x100bf2cd",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf2cf",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf2d4",
+          "push    offset aVideoMpegAddfi_1; \"Video Mpeg : AddFilter CLSID_MPEG1Split\"..."
+        ],
+        [
+          "0x100bf2d9",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf2de",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf2e3",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf2e6",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf2e9",
+          "push    offset aVideoMpegAddfi_1; \"Video Mpeg : AddFilter CLSID_MPEG1Split\"..."
+        ],
+        [
+          "0x100bf2ee",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf2f0",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf2f5",
+          "lea     eax, [esi+4]"
+        ],
+        [
+          "0x100bf2f8",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bf2f9",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf2fe",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf300",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf302",
+          "push    offset stru_100F3B54; rclsid"
+        ],
+        [
+          "0x100bf307",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf30d",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf310",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf312",
+          "jns     short loc_100BF336"
+        ],
+        [
+          "0x100bf314",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100bf319",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf31b",
+          "jz      short loc_100BF323"
+        ],
+        [
+          "0x100bf31d",
+          "dec     dword ptr [eax+148h]"
+        ],
+        [
+          "0x100bf323",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf324",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf329",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf32c",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf330",
+          "jl      loc_100BF460"
+        ],
+        [
+          "0x100bf336",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf338",
+          "push    offset aMpegVideoDecod; \"MPEG Video Decoder\""
+        ],
+        [
+          "0x100bf33d",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x100bf340",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf342",
+          "push    eax"
+        ],
+        [
+          "0x100bf343",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf346",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf349",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf34b",
+          "jns     short loc_100BF384"
+        ],
+        [
+          "0x100bf34d",
+          "push    esi"
+        ],
+        [
+          "0x100bf34e",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf353",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf356",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf35a",
+          "jge     short loc_100BF384"
+        ],
+        [
+          "0x100bf35c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf35e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf363",
+          "push    offset aVideoMpegAddfi_2; \"Video Mpeg : AddFilter CLSID_CMpegVideo\"..."
+        ],
+        [
+          "0x100bf368",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf36d",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf372",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf375",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf378",
+          "push    offset aVideoMpegAddfi_2; \"Video Mpeg : AddFilter CLSID_CMpegVideo\"..."
+        ],
+        [
+          "0x100bf37d",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf37f",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf384",
+          "lea     eax, [esi+14h]"
+        ],
+        [
+          "0x100bf387",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bf388",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf38d",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf38f",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf391",
+          "push    offset stru_100F3B84; rclsid"
+        ],
+        [
+          "0x100bf396",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf39c",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf39f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf3a1",
+          "jns     short loc_100BF3DA"
+        ],
+        [
+          "0x100bf3a3",
+          "push    esi"
+        ],
+        [
+          "0x100bf3a4",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf3a9",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf3ac",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf3b0",
+          "jge     short loc_100BF3DA"
+        ],
+        [
+          "0x100bf3b2",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf3b4",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf3b9",
+          "push    offset aVideoMpegCocre; \"Video Mpeg : CoCreateInstance CLSID_Col\"..."
+        ],
+        [
+          "0x100bf3be",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf3c3",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf3c8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf3cb",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf3ce",
+          "push    offset aVideoMpegCocre; \"Video Mpeg : CoCreateInstance CLSID_Col\"..."
+        ],
+        [
+          "0x100bf3d3",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf3d5",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf3da",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf3dc",
+          "push    offset aColorSpaceConv; \"Color Space Converter\""
+        ],
+        [
+          "0x100bf3e1",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x100bf3e4",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf3e6",
+          "push    eax"
+        ],
+        [
+          "0x100bf3e7",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf3ea",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf3ed",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf3ef",
+          "jns     short loc_100BF428"
+        ],
+        [
+          "0x100bf3f1",
+          "push    esi"
+        ],
+        [
+          "0x100bf3f2",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf3f7",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf3fa",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf3fe",
+          "jge     short loc_100BF428"
+        ],
+        [
+          "0x100bf400",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf402",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf407",
+          "push    offset aVideoMpegAddfi; \"Video Mpeg : AddFilter CLSID_Colour \\n\""
+        ],
+        [
+          "0x100bf40c",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf411",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf416",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf419",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf41c",
+          "push    offset aVideoMpegAddfi; \"Video Mpeg : AddFilter CLSID_Colour \\n\""
+        ],
+        [
+          "0x100bf421",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf423",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf428",
+          "cmp     dword ptr [edi+1Ch], 0"
+        ],
+        [
+          "0x100bf42c",
+          "jnz     loc_100BF4D6"
+        ],
+        [
+          "0x100bf432",
+          "lea     eax, [esi+8]"
+        ],
+        [
+          "0x100bf435",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bf436",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf43b",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf43d",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf43f",
+          "push    offset stru_100F3B74; rclsid"
+        ],
+        [
+          "0x100bf444",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf44a",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf44d",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf44f",
+          "jns     short loc_100BF488"
+        ],
+        [
+          "0x100bf451",
+          "push    esi"
+        ],
+        [
+          "0x100bf452",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf457",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf45a",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf45e",
+          "jge     short loc_100BF488"
+        ],
+        [
+          "0x100bf460",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf462",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf467",
+          "push    offset aVideoMpegCocre_1; \"Video Mpeg : CoCreateInstance CLSID_CMp\"..."
+        ],
+        [
+          "0x100bf46c",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf471",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf476",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf479",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf47c",
+          "push    offset aVideoMpegCocre_1; \"Video Mpeg : CoCreateInstance CLSID_CMp\"..."
+        ],
+        [
+          "0x100bf481",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf483",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf488",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf48a",
+          "push    offset aVideoRenderer_0; \"Video Renderer\""
+        ],
+        [
+          "0x100bf48f",
+          "push    dword ptr [esi+8]"
+        ],
+        [
+          "0x100bf492",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf494",
+          "push    eax"
+        ],
+        [
+          "0x100bf495",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf498",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf49b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf49d",
+          "jns     short loc_100BF4D6"
+        ],
+        [
+          "0x100bf49f",
+          "push    esi"
+        ],
+        [
+          "0x100bf4a0",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf4a5",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf4a8",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf4ac",
+          "jge     short loc_100BF4D6"
+        ],
+        [
+          "0x100bf4ae",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf4b0",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf4b5",
+          "push    offset aVideoMpegAddfi_3; \"Video Mpeg : AddFilter CLSID_VideoRende\"..."
+        ],
+        [
+          "0x100bf4ba",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf4bf",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf4c4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf4c7",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf4ca",
+          "push    offset aVideoMpegAddfi_3; \"Video Mpeg : AddFilter CLSID_VideoRende\"..."
+        ],
+        [
+          "0x100bf4cf",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf4d1",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf4d6",
+          "mov     edx, [edi+30h]"
+        ],
+        [
+          "0x100bf4d9",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf4dc",
+          "movups  xmm0, ds:xmmword_100F3AF4"
+        ],
+        [
+          "0x100bf4e3",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf4e5",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf4e7",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x100bf4e9",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf4ec",
+          "lea     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100bf4ef",
+          "neg     edx"
+        ],
+        [
+          "0x100bf4f1",
+          "sbb     edx, edx"
+        ],
+        [
+          "0x100bf4f3",
+          "and     edx, eax"
+        ],
+        [
+          "0x100bf4f5",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf4fa",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf4fd",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf500",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf502",
+          "jns     short loc_100BF53B"
+        ],
+        [
+          "0x100bf504",
+          "push    esi"
+        ],
+        [
+          "0x100bf505",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf50a",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf50d",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf511",
+          "jge     short loc_100BF53B"
+        ],
+        [
+          "0x100bf513",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf515",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf51a",
+          "push    offset aVideoMpegConne; \"Video Mpeg : ConnectFilter [0x0001] \\n\""
+        ],
+        [
+          "0x100bf51f",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf524",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf529",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf52c",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf52f",
+          "push    offset aVideoMpegConne; \"Video Mpeg : ConnectFilter [0x0001] \\n\""
+        ],
+        [
+          "0x100bf534",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf536",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf53b",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100bf542",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x100bf544",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf547",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf549",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf54b",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x100bf54e",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf551",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf556",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf559",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf55c",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf55e",
+          "jns     short loc_100BF597"
+        ],
+        [
+          "0x100bf560",
+          "push    esi"
+        ],
+        [
+          "0x100bf561",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf566",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf569",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf56d",
+          "jge     short loc_100BF597"
+        ],
+        [
+          "0x100bf56f",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf571",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf576",
+          "push    offset aVideoMpegConne_0; \"Video Mpeg : ConnectFilter [0x0002] \\n\""
+        ],
+        [
+          "0x100bf57b",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf580",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf585",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf588",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf58b",
+          "push    offset aVideoMpegConne_0; \"Video Mpeg : ConnectFilter [0x0002] \\n\""
+        ],
+        [
+          "0x100bf590",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf592",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf597",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100bf59e",
+          "mov     edx, [esi+4]"
+        ],
+        [
+          "0x100bf5a1",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf5a4",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf5a6",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf5a8",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x100bf5ab",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf5ae",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf5b3",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf5b6",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf5b9",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf5bb",
+          "jns     short loc_100BF5F4"
+        ],
+        [
+          "0x100bf5bd",
+          "push    esi"
+        ],
+        [
+          "0x100bf5be",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf5c3",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf5c6",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf5ca",
+          "jge     short loc_100BF5F4"
+        ],
+        [
+          "0x100bf5cc",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf5ce",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf5d3",
+          "push    offset aVideoMpegConne_1; \"Video Mpeg : ConnectFilter [0x0003] \\n\""
+        ],
+        [
+          "0x100bf5d8",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf5dd",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf5e2",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf5e5",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf5e8",
+          "push    offset aVideoMpegConne_1; \"Video Mpeg : ConnectFilter [0x0003] \\n\""
+        ],
+        [
+          "0x100bf5ed",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf5ef",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf5f4",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100bf5fb",
+          "mov     ecx, [edi+1Ch]"
+        ],
+        [
+          "0x100bf5fe",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf601",
+          "mov     edx, [esi+14h]"
+        ],
+        [
+          "0x100bf604",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf606",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf609",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf60b",
+          "jnz     short loc_100BF612"
+        ],
+        [
+          "0x100bf60d",
+          "push    dword ptr [esi+8]"
+        ],
+        [
+          "0x100bf610",
+          "jmp     short loc_100BF613"
+        ],
+        [
+          "0x100bf612",
+          "push    ecx"
+        ],
+        [
+          "0x100bf613",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf615",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf61a",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf61d",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf620",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf622",
+          "jns     short loc_100BF65B"
+        ],
+        [
+          "0x100bf624",
+          "push    esi"
+        ],
+        [
+          "0x100bf625",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf62a",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf62d",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf631",
+          "jge     short loc_100BF65B"
+        ],
+        [
+          "0x100bf633",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf635",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf63a",
+          "push    offset aVideoMpegConne_2; \"Video Mpeg : ConnectFilter [0x0004] \\n\""
+        ],
+        [
+          "0x100bf63f",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf644",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf649",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf64c",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf64f",
+          "push    offset aVideoMpegConne_2; \"Video Mpeg : ConnectFilter [0x0004] \\n\""
+        ],
+        [
+          "0x100bf654",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf656",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf65b",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100bf662",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100bf664",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf667",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf669",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf66c",
+          "call    sub_100ADF00"
+        ],
+        [
+          "0x100bf671",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100bf674",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf676",
+          "jnz     loc_100BF877"
+        ],
+        [
+          "0x100bf67c",
+          "lea     eax, [esi+0Ch]"
+        ],
+        [
+          "0x100bf67f",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bf680",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf685",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf687",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf689",
+          "push    offset stru_100F3B64; rclsid"
+        ],
+        [
+          "0x100bf68e",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf694",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf697",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf699",
+          "jns     short loc_100BF6D2"
+        ],
+        [
+          "0x100bf69b",
+          "push    esi"
+        ],
+        [
+          "0x100bf69c",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf6a1",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf6a4",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf6a8",
+          "jge     short loc_100BF6D2"
+        ],
+        [
+          "0x100bf6aa",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf6ac",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf6b1",
+          "push    offset aVideoMpegCocre_2; \"Video Mpeg : CoCreateInstance CLSID_CMp\"..."
+        ],
+        [
+          "0x100bf6b6",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf6bb",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf6c0",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf6c3",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf6c6",
+          "push    offset aVideoMpegCocre_2; \"Video Mpeg : CoCreateInstance CLSID_CMp\"..."
+        ],
+        [
+          "0x100bf6cb",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf6cd",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf6d2",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf6d4",
+          "push    offset aMpegAudioDecod; \"MPEG Audio Decoder\""
+        ],
+        [
+          "0x100bf6d9",
+          "push    dword ptr [esi+0Ch]"
+        ],
+        [
+          "0x100bf6dc",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf6de",
+          "push    eax"
+        ],
+        [
+          "0x100bf6df",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf6e2",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf6e5",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf6e7",
+          "jns     short loc_100BF720"
+        ],
+        [
+          "0x100bf6e9",
+          "push    esi"
+        ],
+        [
+          "0x100bf6ea",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf6ef",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf6f2",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf6f6",
+          "jge     short loc_100BF720"
+        ],
+        [
+          "0x100bf6f8",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf6fa",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf6ff",
+          "push    offset aVideoMpegAddfi_4; \"Video Mpeg : AddFilter CLSID_CMpegAudio\"..."
+        ],
+        [
+          "0x100bf704",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf709",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf70e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf711",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf714",
+          "push    offset aVideoMpegAddfi_4; \"Video Mpeg : AddFilter CLSID_CMpegAudio\"..."
+        ],
+        [
+          "0x100bf719",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf71b",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf720",
+          "lea     eax, [esi+10h]"
+        ],
+        [
+          "0x100bf723",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bf724",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf729",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf72b",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf72d",
+          "push    offset stru_100F3B94; rclsid"
+        ],
+        [
+          "0x100bf732",
+          "call    ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf738",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf73b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf73d",
+          "jns     short loc_100BF776"
+        ],
+        [
+          "0x100bf73f",
+          "push    esi"
+        ],
+        [
+          "0x100bf740",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf745",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf748",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf74c",
+          "jge     short loc_100BF776"
+        ],
+        [
+          "0x100bf74e",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf750",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf755",
+          "push    offset aVideoMpegCocre_3; \"Video Mpeg : CoCreateInstance CLSID_DSo\"..."
+        ],
+        [
+          "0x100bf75a",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf75f",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf764",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf767",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf76a",
+          "push    offset aVideoMpegCocre_3; \"Video Mpeg : CoCreateInstance CLSID_DSo\"..."
+        ],
+        [
+          "0x100bf76f",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf771",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf776",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf778",
+          "push    offset aDefaultDirects; \"Default DirectSound Device\""
+        ],
+        [
+          "0x100bf77d",
+          "push    dword ptr [esi+10h]"
+        ],
+        [
+          "0x100bf780",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf782",
+          "push    eax"
+        ],
+        [
+          "0x100bf783",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf786",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf789",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf78b",
+          "jns     short loc_100BF7C4"
+        ],
+        [
+          "0x100bf78d",
+          "push    esi"
+        ],
+        [
+          "0x100bf78e",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf793",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf796",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf79a",
+          "jge     short loc_100BF7C4"
+        ],
+        [
+          "0x100bf79c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf79e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf7a3",
+          "push    offset aVideoMpegAddfi_5; \"Video Mpeg : AddFilter CLSID_DSoundRend\"..."
+        ],
+        [
+          "0x100bf7a8",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf7ad",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf7b2",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf7b5",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf7b8",
+          "push    offset aVideoMpegAddfi_5; \"Video Mpeg : AddFilter CLSID_DSoundRend\"..."
+        ],
+        [
+          "0x100bf7bd",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf7bf",
+          "jmp     loc_100BF87C"
+        ],
+        [
+          "0x100bf7c4",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100bf7cb",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x100bf7cd",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf7d0",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf7d2",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf7d4",
+          "push    dword ptr [esi+0Ch]"
+        ],
+        [
+          "0x100bf7d7",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf7da",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf7df",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf7e2",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf7e5",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf7e7",
+          "jns     short loc_100BF81D"
+        ],
+        [
+          "0x100bf7e9",
+          "push    esi"
+        ],
+        [
+          "0x100bf7ea",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf7ef",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf7f2",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf7f6",
+          "jge     short loc_100BF81D"
+        ],
+        [
+          "0x100bf7f8",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf7fa",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf7ff",
+          "push    offset aVideoMpegConne_3; \"Video Mpeg : ConnectFilter Audio [0x000\"..."
+        ],
+        [
+          "0x100bf804",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf809",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf80e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf811",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf814",
+          "push    offset aVideoMpegConne_3; \"Video Mpeg : ConnectFilter Audio [0x000\"..."
+        ],
+        [
+          "0x100bf819",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf81b",
+          "jmp     short loc_100BF87C"
+        ],
+        [
+          "0x100bf81d",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100bf824",
+          "mov     edx, [esi+0Ch]"
+        ],
+        [
+          "0x100bf827",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100bf82a",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100bf82c",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100bf82e",
+          "push    dword ptr [esi+10h]"
+        ],
+        [
+          "0x100bf831",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100bf834",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100bf839",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100bf83c",
+          "mov     [ebp-70h], eax"
+        ],
+        [
+          "0x100bf83f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf841",
+          "jns     short loc_100BF877"
+        ],
+        [
+          "0x100bf843",
+          "push    esi"
+        ],
+        [
+          "0x100bf844",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bf849",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf84c",
+          "cmp     dword ptr [ebp-70h], 0"
+        ],
+        [
+          "0x100bf850",
+          "jge     short loc_100BF877"
+        ],
+        [
+          "0x100bf852",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf854",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf859",
+          "push    offset aVideoMpegConne_4; \"Video Mpeg : ConnectFilter Audio [0x000\"..."
+        ],
+        [
+          "0x100bf85e",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf863",
+          "mov     eax, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf868",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf86b",
+          "mov     esi, [ebp-70h]"
+        ],
+        [
+          "0x100bf86e",
+          "push    offset aVideoMpegConne_4; \"Video Mpeg : ConnectFilter Audio [0x000\"..."
+        ],
+        [
+          "0x100bf873",
+          "call    eax ; OutputDebugStringA"
+        ],
+        [
+          "0x100bf875",
+          "jmp     short loc_100BF87C"
+        ],
+        [
+          "0x100bf877",
+          "mov     [edi+54h], esi"
+        ],
+        [
+          "0x100bf87a",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100bf87c",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100bf87f",
+          "call    sub_10004B60"
+        ],
+        [
+          "0x100bf884",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100bf886",
+          "mov     ecx, [ebp-0Ch]"
+        ],
+        [
+          "0x100bf889",
+          "mov     large fs:0, ecx"
+        ],
+        [
+          "0x100bf890",
+          "pop     ecx"
+        ],
+        [
+          "0x100bf891",
+          "pop     edi"
+        ],
+        [
+          "0x100bf892",
+          "pop     esi"
+        ],
+        [
+          "0x100bf893",
+          "mov     ecx, [ebp-14h]"
+        ],
+        [
+          "0x100bf896",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bf898",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bf89d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bf89f",
+          "pop     ebp"
+        ],
+        [
+          "0x100bf8a0",
+          "mov     esp, ebx"
+        ],
+        [
+          "0x100bf8a2",
+          "pop     ebx"
+        ],
+        [
+          "0x100bf8a3",
+          "retn"
+        ],
+        [
+          "0x100f1b20",
+          "lea     ecx, [ebp-60h]"
+        ],
+        [
+          "0x100f1b23",
+          "jmp     sub_10004B60"
+        ],
+        [
+          "0x100f1b28",
+          "push    1E8h"
+        ],
+        [
+          "0x100f1b2d",
+          "mov     eax, [ebp-7Ch]"
+        ],
+        [
+          "0x100f1b30",
+          "push    eax; Block"
+        ],
+        [
+          "0x100f1b31",
+          "call    sub_100CFC25"
+        ],
+        [
+          "0x100f1b36",
+          "add     esp, 8"
+        ],
+        [
+          "0x100f1b39",
+          "retn"
+        ],
+        [
+          "0x100f1b3a",
+          "mov     edx, [esp+arg_4]"
+        ],
+        [
+          "0x100f1b3e",
+          "lea     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100f1b41",
+          "mov     ecx, [edx-80h]"
+        ],
+        [
+          "0x100f1b44",
+          "xor     ecx, eax; StackCookie"
+        ],
+        [
+          "0x100f1b46",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100f1b4b",
+          "mov     ecx, [edx-8]"
+        ],
+        [
+          "0x100f1b4e",
+          "xor     ecx, eax; StackCookie"
+        ],
+        [
+          "0x100f1b50",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100f1b55",
+          "mov     eax, offset stru_1011BDD8"
+        ],
+        [
+          "0x100f1b5a",
+          "jmp     ___CxxFrameHandler3_0"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100bf8b0",
+      "name": "sub_100BF8B0",
+      "xrefs": [
+        {
+          "from": "0x100c0af9",
+          "function": "sub_100C0910"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_100BF8B0(const CHAR *this)\n{\n  LPVOID *v2; // eax\n  LPVOID *v3; // esi\n  int result; // eax\n  HRESULT v5; // ebx\n  int v6; // ebx\n  int v7; // ebx\n  int v8; // ebx\n  int v9; // ebx\n  int v10; // ebx\n  int v11; // ecx\n  int v12; // eax\n  int v13; // ebx\n  HRESULT Instance; // [esp+10h] [ebp-218h]\n  int v15; // [esp+10h] [ebp-218h]\n  int v16; // [esp+10h] [ebp-218h]\n  int v17; // [esp+10h] [ebp-218h]\n  HRESULT v18; // [esp+10h] [ebp-218h]\n  int v19; // [esp+10h] [ebp-218h]\n  int v20; // [esp+10h] [ebp-218h]\n  int v21; // [esp+10h] [ebp-218h]\n  HRESULT v22; // [esp+10h] [ebp-218h]\n  int v23; // [esp+10h] [ebp-218h]\n  int v24; // [esp+10h] [ebp-218h]\n  int v25; // [esp+10h] [ebp-218h]\n  HRESULT v26; // [esp+10h] [ebp-218h]\n  int v27; // [esp+10h] [ebp-218h]\n  HRESULT v28; // [esp+10h] [ebp-218h]\n  int v29; // [esp+10h] [ebp-218h]\n  int v30; // [esp+14h] [ebp-214h] BYREF\n  WCHAR WideCharStr[262]; // [esp+18h] [ebp-210h] BYREF\n\n  v30 = 0;\n  v2 = (LPVOID *)PalMemoryAlloc(0x1Cu, 1);\n  v3 = v2;\n  if ( !v2 )\n  {\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : MemoryAllocate Error \\n\");\n    OutputDebugStringA(\"Video WMV : MemoryAllocate Error \\n\");\n    return -2147467259;\n  }\n  Instance = CoCreateInstance(&stru_100F3BA4, 0, 1u, &stru_100F3CA4, v2);\n  if ( Instance < 0 )\n  {\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v3);\n    if ( v30 )\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : CoCreateInstance ASF Reader \\n\");\n    OutputDebugStringA(\"Video WMV : CoCreateInstance ASF Reader \\n\");\n    return Instance;\n  }\n  v15 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n          *(_DWORD *)this,\n          *v3,\n          L\"ASF Reader\");\n  if ( v15 < 0 )\n  {\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v3);\n    if ( v30 )\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : AddFilter ASF Reader \\n\");\n    OutputDebugStringA(\"Video WMV : AddFilter ASF Reader \\n\");\n    return v15;\n  }\n  v16 = (**(int (__stdcall ***)(LPVOID, void *, int))*v3)(*v3, &unk_100F3D54, (int)(v3 + 6));\n  if ( v16 < 0 )\n  {\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v3);\n    if ( v30 )\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : QueryInterface IID_IFileSourceFilter \\n\");\n    OutputDebugStringA(\"Video WMV : QueryInterface IID_IFileSourceFilter \\n\");\n    return v16;\n  }\n  MultiByteToWideChar(0, 0, this + 92, -1, WideCharStr, 260);\n  v17 = (*(int (__stdcall **)(LPVOID, WCHAR *, _DWORD))(*(_DWORD *)v3[6] + 12))(v3[6], WideCharStr, 0);\n  if ( v17 < 0 )\n  {\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v3);\n    if ( v30 )\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : Load \\n\");\n    OutputDebugStringA(\"Video WMV : Load \\n\");\n    return v17;\n  }\n  v18 = CoCreateInstance(&stru_10116C5C, 0, 1u, &stru_100F3CA4, v3 + 3);\n  if ( v18 < 0 )\n  {\n    if ( dword_101336F4 )\n      --*((_DWORD *)dword_101336F4 + 82);\n    j___free_base(v3);\n    if ( v30 )\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : CoCreateInstance CLSID_DMOWrapperFilter \\n\");\n    OutputDebugStringA(\"Video WMA : CoCreateInstance CLSID_DMOWrapperFilter \\n\");\n    return v18;\n  }\n  v19 = (**(int (__stdcall ***)(LPVOID, void *, int *))v3[3])(v3[3], &unk_10116C6C, &v30);\n  if ( v19 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : QueryInterface IDMOWrapperFilter \\n\");\n    OutputDebugStringA(\"Video WMA : QueryInterface IDMOWrapperFilter \\n\");\n    return v19;\n  }\n  v20 = (*(int (__stdcall **)(int, void *, void *))(*(_DWORD *)v30 + 12))(v30, &unk_100F3EF4, &unk_10116C4C);\n  if ( v20 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : Init CLSID_CWMADecMediaObject \\n\");\n    OutputDebugStringA(\"Video WMA : Init CLSID_CWMADecMediaObject \\n\");\n    return v20;\n  }\n  v21 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n          *(_DWORD *)this,\n          v3[3],\n          L\"WMA decoder\");\n  if ( v21 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : AddFilter DMOCATEGORY_AUDIO_DECODER \\n\");\n    OutputDebugStringA(\"Video WMA : AddFilter DMOCATEGORY_AUDIO_DECODER \\n\");\n    return v21;\n  }\n  if ( v30 )\n  {\n    (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    v30 = 0;\n  }\n  v22 = CoCreateInstance(&stru_10116C5C, 0, 1u, &stru_100F3CA4, v3 + 1);\n  if ( v22 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : CoCreateInstance CLSID_DMOWrapperFilter \\n\");\n    OutputDebugStringA(\"Video WMV : CoCreateInstance CLSID_DMOWrapperFilter \\n\");\n    return v22;\n  }\n  v23 = (**(int (__stdcall ***)(LPVOID, void *, int *))v3[1])(v3[1], &unk_10116C6C, &v30);\n  if ( v23 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : QueryInterface IDMOWrapperFilter \\n\");\n    OutputDebugStringA(\"Video WMV : QueryInterface IDMOWrapperFilter \\n\");\n    return v23;\n  }\n  v24 = (*(int (__stdcall **)(int, void *, void *))(*(_DWORD *)v30 + 12))(v30, &unk_100F3F04, &unk_10116C3C);\n  if ( v24 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : Init CLSID_CWMVDecMediaObject \\n\");\n    OutputDebugStringA(\"Video WMV : Init CLSID_CWMVDecMediaObject \\n\");\n    return v24;\n  }\n  v25 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n          *(_DWORD *)this,\n          v3[1],\n          L\"WMV decoder\");\n  if ( v25 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : AddFilter DMOCATEGORY_VIDEO_DECODER \\n\");\n    OutputDebugStringA(\"Video WMV : AddFilter DMOCATEGORY_VIDEO_DECODER \\n\");\n    return v25;\n  }\n  if ( v30 )\n  {\n    (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n    v30 = 0;\n  }\n  v26 = CoCreateInstance(&stru_100F3B84, 0, 1u, &stru_100F3CA4, v3 + 5);\n  if ( v26 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video Mpeg : CoCreateInstance CLSID_Colour \\n\");\n    OutputDebugStringA(\"Video Mpeg : CoCreateInstance CLSID_Colour \\n\");\n    return v26;\n  }\n  v27 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n          *(_DWORD *)this,\n          v3[5],\n          L\"Color Space Converter\");\n  if ( v27 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video Mpeg : AddFilter CLSID_Colour \\n\");\n    OutputDebugStringA(\"Video Mpeg : AddFilter CLSID_Colour \\n\");\n    return v27;\n  }\n  v28 = CoCreateInstance(&stru_100F3B94, 0, 1u, &stru_100F3CA4, v3 + 4);\n  if ( v28 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : CoCreateInstance CLSID_DSoundRender \\n\");\n    OutputDebugStringA(\"Video WMA : CoCreateInstance CLSID_DSoundRender \\n\");\n    return v28;\n  }\n  v29 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n          *(_DWORD *)this,\n          v3[4],\n          L\"DirectSound renderer\");\n  if ( v29 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMA : AddFilter CLSID_DSoundRender \\n\");\n    OutputDebugStringA(\"Video WMA : AddFilter CLSID_DSoundRender \\n\");\n    return v29;\n  }\n  if ( *((_DWORD *)this + 7) )\n    goto LABEL_90;\n  v5 = CoCreateInstance(&stru_100F3B74, 0, 1u, &stru_100F3CA4, v3 + 2);\n  if ( v5 < 0 )\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : CoCreateInstance CLSID_VideoRenderer \\n\");\n    OutputDebugStringA(\"Video WMV : CoCreateInstance CLSID_VideoRenderer \\n\");\n    return v5;\n  }\n  v6 = (*(int (__stdcall **)(_DWORD, LPVOID, const wchar_t *))(**(_DWORD **)this + 12))(\n         *(_DWORD *)this,\n         v3[2],\n         L\"Video renderer\");\n  if ( v6 >= 0 )\n  {\nLABEL_90:\n    v7 = sub_100ADE00(v3[3], xmmword_100F3AE4);\n    if ( v7 >= 0 )\n    {\n      v8 = sub_100ADE00(v3[4], xmmword_100F3AE4);\n      if ( v8 >= 0 )\n      {\n        v9 = sub_100ADE00(v3[1], xmmword_100F3AD4);\n        if ( v9 >= 0 )\n        {\n          v10 = sub_100ADE00(v3[5], xmmword_100F3AD4);\n          if ( v10 >= 0 )\n          {\n            v11 = *((_DWORD *)this + 7);\n            if ( v11 )\n              v12 = sub_100ADE00(v11, xmmword_100F3AD4);\n            else\n              v12 = sub_100ADE00(v3[2], xmmword_100F3AD4);\n            v13 = v12;\n            if ( v12 >= 0 )\n            {\n              result = 0;\n              *((_DWORD *)this + 21) = v3;\n            }\n            else\n            {\n              PalMemoryFree(v3);\n              if ( v30 )\n              {\n                (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n                v30 = 0;\n              }\n              sub_100BEDB0(this);\n              PalErrorLogPrintf(\"Video WMV : ConnectFilter color converter > renderer \\n\");\n              OutputDebugStringA(\"Video WMV : ConnectFilter color converter > renderer \\n\");\n              return v13;\n            }\n          }\n          else\n          {\n            PalMemoryFree(v3);\n            if ( v30 )\n            {\n              (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n              v30 = 0;\n            }\n            sub_100BEDB0(this);\n            PalErrorLogPrintf(\"Video WMV : ConnectFilter decoder > color converter \\n\");\n            OutputDebugStringA(\"Video WMV : ConnectFilter decoder > color converter \\n\");\n            return v10;\n          }\n        }\n        else\n        {\n          PalMemoryFree(v3);\n          if ( v30 )\n          {\n            (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n            v30 = 0;\n          }\n          sub_100BEDB0(this);\n          PalErrorLogPrintf(\"Video WMV : ConnectFilter source > decoder \\n\");\n          OutputDebugStringA(\"Video WMV : ConnectFilter source > decoder \\n\");\n          return v9;\n        }\n      }\n      else\n      {\n        PalMemoryFree(v3);\n        if ( v30 )\n        {\n          (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n          v30 = 0;\n        }\n        sub_100BEDB0(this);\n        PalErrorLogPrintf(\"Video WMA : ConnectFilter decoder > renderer \\n\");\n        OutputDebugStringA(\"Video WMA : ConnectFilter decoder > renderer \\n\");\n        return v8;\n      }\n    }\n    else\n    {\n      PalMemoryFree(v3);\n      if ( v30 )\n      {\n        (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n        v30 = 0;\n      }\n      sub_100BEDB0(this);\n      PalErrorLogPrintf(\"Video WMA : ConnectFilter source > decoder \\n\");\n      OutputDebugStringA(\"Video WMA : ConnectFilter source > decoder \\n\");\n      return v7;\n    }\n  }\n  else\n  {\n    PalMemoryFree(v3);\n    if ( v30 )\n    {\n      (*(void (__stdcall **)(int))(*(_DWORD *)v30 + 8))(v30);\n      v30 = 0;\n    }\n    sub_100BEDB0(this);\n    PalErrorLogPrintf(\"Video WMV : AddFilter CLSID_VideoRenderer \\n\");\n    OutputDebugStringA(\"Video WMV : AddFilter CLSID_VideoRenderer \\n\");\n    return v6;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100bf8b0",
+          "push    ebp"
+        ],
+        [
+          "0x100bf8b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100bf8b3",
+          "sub     esp, 21Ch"
+        ],
+        [
+          "0x100bf8b9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100bf8be",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x100bf8c0",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100bf8c3",
+          "push    ebx"
+        ],
+        [
+          "0x100bf8c4",
+          "push    esi"
+        ],
+        [
+          "0x100bf8c5",
+          "push    edi"
+        ],
+        [
+          "0x100bf8c6",
+          "push    1; char"
+        ],
+        [
+          "0x100bf8c8",
+          "push    1Ch; Size"
+        ],
+        [
+          "0x100bf8ca",
+          "mov     edi, ecx"
+        ],
+        [
+          "0x100bf8cc",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bf8d6",
+          "call    PalMemoryAlloc"
+        ],
+        [
+          "0x100bf8db",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100bf8dd",
+          "add     esp, 8"
+        ],
+        [
+          "0x100bf8e0",
+          "test    esi, esi"
+        ],
+        [
+          "0x100bf8e2",
+          "jnz     short loc_100BF929"
+        ],
+        [
+          "0x100bf8e4",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bf8ea",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf8ec",
+          "jz      short loc_100BF8F4"
+        ],
+        [
+          "0x100bf8ee",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bf8f0",
+          "push    ecx"
+        ],
+        [
+          "0x100bf8f1",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bf8f4",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf8f6",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf8fb",
+          "push    offset aVideoWmvMemory; \"Video WMV : MemoryAllocate Error \\n\""
+        ],
+        [
+          "0x100bf900",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf905",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf908",
+          "push    offset aVideoWmvMemory; \"Video WMV : MemoryAllocate Error \\n\""
+        ],
+        [
+          "0x100bf90d",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf913",
+          "mov     eax, 80004005h"
+        ],
+        [
+          "0x100bf918",
+          "pop     edi"
+        ],
+        [
+          "0x100bf919",
+          "pop     esi"
+        ],
+        [
+          "0x100bf91a",
+          "pop     ebx"
+        ],
+        [
+          "0x100bf91b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bf91e",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bf920",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bf925",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bf927",
+          "pop     ebp"
+        ],
+        [
+          "0x100bf928",
+          "retn"
+        ],
+        [
+          "0x100bf929",
+          "mov     ebx, ds:CoCreateInstance"
+        ],
+        [
+          "0x100bf92f",
+          "push    esi; ppv"
+        ],
+        [
+          "0x100bf930",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bf935",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bf937",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bf939",
+          "push    offset stru_100F3BA4; rclsid"
+        ],
+        [
+          "0x100bf93e",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100bf940",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bf946",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf948",
+          "jns     short loc_100BF9A9"
+        ],
+        [
+          "0x100bf94a",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100bf950",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf952",
+          "jz      short loc_100BF95A"
+        ],
+        [
+          "0x100bf954",
+          "dec     dword ptr [ecx+148h]"
+        ],
+        [
+          "0x100bf95a",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf95b",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf960",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bf966",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf969",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf96b",
+          "jz      short loc_100BF973"
+        ],
+        [
+          "0x100bf96d",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bf96f",
+          "push    ecx"
+        ],
+        [
+          "0x100bf970",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bf973",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf975",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf97a",
+          "push    offset aVideoWmvCocrea; \"Video WMV : CoCreateInstance ASF Reader\"..."
+        ],
+        [
+          "0x100bf97f",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf984",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf987",
+          "push    offset aVideoWmvCocrea; \"Video WMV : CoCreateInstance ASF Reader\"..."
+        ],
+        [
+          "0x100bf98c",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bf992",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bf998",
+          "pop     edi"
+        ],
+        [
+          "0x100bf999",
+          "pop     esi"
+        ],
+        [
+          "0x100bf99a",
+          "pop     ebx"
+        ],
+        [
+          "0x100bf99b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bf99e",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bf9a0",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bf9a5",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bf9a7",
+          "pop     ebp"
+        ],
+        [
+          "0x100bf9a8",
+          "retn"
+        ],
+        [
+          "0x100bf9a9",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bf9ab",
+          "push    offset aAsfReader; \"ASF Reader\""
+        ],
+        [
+          "0x100bf9b0",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x100bf9b2",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bf9b4",
+          "push    eax"
+        ],
+        [
+          "0x100bf9b5",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bf9b8",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bf9be",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bf9c0",
+          "jns     short loc_100BFA21"
+        ],
+        [
+          "0x100bf9c2",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100bf9c8",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf9ca",
+          "jz      short loc_100BF9D2"
+        ],
+        [
+          "0x100bf9cc",
+          "dec     dword ptr [ecx+148h]"
+        ],
+        [
+          "0x100bf9d2",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bf9d3",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bf9d8",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bf9de",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf9e1",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bf9e3",
+          "jz      short loc_100BF9EB"
+        ],
+        [
+          "0x100bf9e5",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bf9e7",
+          "push    ecx"
+        ],
+        [
+          "0x100bf9e8",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bf9eb",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bf9ed",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bf9f2",
+          "push    offset aVideoWmvAddfil; \"Video WMV : AddFilter ASF Reader \\n\""
+        ],
+        [
+          "0x100bf9f7",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bf9fc",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bf9ff",
+          "push    offset aVideoWmvAddfil; \"Video WMV : AddFilter ASF Reader \\n\""
+        ],
+        [
+          "0x100bfa04",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfa0a",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfa10",
+          "pop     edi"
+        ],
+        [
+          "0x100bfa11",
+          "pop     esi"
+        ],
+        [
+          "0x100bfa12",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfa13",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfa16",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfa18",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfa1d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfa1f",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfa20",
+          "retn"
+        ],
+        [
+          "0x100bfa21",
+          "mov     ecx, [esi]"
+        ],
+        [
+          "0x100bfa23",
+          "lea     edx, [esi+18h]"
+        ],
+        [
+          "0x100bfa26",
+          "push    edx"
+        ],
+        [
+          "0x100bfa27",
+          "push    offset unk_100F3D54"
+        ],
+        [
+          "0x100bfa2c",
+          "push    ecx"
+        ],
+        [
+          "0x100bfa2d",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfa2f",
+          "call    dword ptr [eax]"
+        ],
+        [
+          "0x100bfa31",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfa37",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfa39",
+          "jns     short loc_100BFA9A"
+        ],
+        [
+          "0x100bfa3b",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100bfa41",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfa43",
+          "jz      short loc_100BFA4B"
+        ],
+        [
+          "0x100bfa45",
+          "dec     dword ptr [ecx+148h]"
+        ],
+        [
+          "0x100bfa4b",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bfa4c",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bfa51",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfa57",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfa5a",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfa5c",
+          "jz      short loc_100BFA64"
+        ],
+        [
+          "0x100bfa5e",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfa60",
+          "push    ecx"
+        ],
+        [
+          "0x100bfa61",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfa64",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfa66",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfa6b",
+          "push    offset aVideoWmvQueryi; \"Video WMV : QueryInterface IID_IFileSou\"..."
+        ],
+        [
+          "0x100bfa70",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfa75",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfa78",
+          "push    offset aVideoWmvQueryi; \"Video WMV : QueryInterface IID_IFileSou\"..."
+        ],
+        [
+          "0x100bfa7d",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfa83",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfa89",
+          "pop     edi"
+        ],
+        [
+          "0x100bfa8a",
+          "pop     esi"
+        ],
+        [
+          "0x100bfa8b",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfa8c",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfa8f",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfa91",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfa96",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfa98",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfa99",
+          "retn"
+        ],
+        [
+          "0x100bfa9a",
+          "push    104h; cchWideChar"
+        ],
+        [
+          "0x100bfa9f",
+          "lea     eax, [ebp+WideCharStr]"
+        ],
+        [
+          "0x100bfaa5",
+          "push    eax; lpWideCharStr"
+        ],
+        [
+          "0x100bfaa6",
+          "push    0FFFFFFFFh; cbMultiByte"
+        ],
+        [
+          "0x100bfaa8",
+          "lea     eax, [edi+5Ch]"
+        ],
+        [
+          "0x100bfaab",
+          "push    eax; lpMultiByteStr"
+        ],
+        [
+          "0x100bfaac",
+          "push    0; dwFlags"
+        ],
+        [
+          "0x100bfaae",
+          "push    0; CodePage"
+        ],
+        [
+          "0x100bfab0",
+          "call    ds:MultiByteToWideChar"
+        ],
+        [
+          "0x100bfab6",
+          "mov     eax, [esi+18h]"
+        ],
+        [
+          "0x100bfab9",
+          "lea     edx, [ebp+WideCharStr]"
+        ],
+        [
+          "0x100bfabf",
+          "push    0"
+        ],
+        [
+          "0x100bfac1",
+          "push    edx"
+        ],
+        [
+          "0x100bfac2",
+          "push    eax"
+        ],
+        [
+          "0x100bfac3",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfac5",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bfac8",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bface",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfad0",
+          "jns     short loc_100BFB31"
+        ],
+        [
+          "0x100bfad2",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100bfad8",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfada",
+          "jz      short loc_100BFAE2"
+        ],
+        [
+          "0x100bfadc",
+          "dec     dword ptr [ecx+148h]"
+        ],
+        [
+          "0x100bfae2",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bfae3",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bfae8",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfaee",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfaf1",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfaf3",
+          "jz      short loc_100BFAFB"
+        ],
+        [
+          "0x100bfaf5",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfaf7",
+          "push    ecx"
+        ],
+        [
+          "0x100bfaf8",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfafb",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfafd",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfb02",
+          "push    offset aVideoWmvLoad; \"Video WMV : Load \\n\""
+        ],
+        [
+          "0x100bfb07",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfb0c",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfb0f",
+          "push    offset aVideoWmvLoad; \"Video WMV : Load \\n\""
+        ],
+        [
+          "0x100bfb14",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfb1a",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfb20",
+          "pop     edi"
+        ],
+        [
+          "0x100bfb21",
+          "pop     esi"
+        ],
+        [
+          "0x100bfb22",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfb23",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfb26",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfb28",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfb2d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfb2f",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfb30",
+          "retn"
+        ],
+        [
+          "0x100bfb31",
+          "lea     eax, [esi+0Ch]"
+        ],
+        [
+          "0x100bfb34",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bfb35",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bfb3a",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bfb3c",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bfb3e",
+          "push    offset stru_10116C5C; rclsid"
+        ],
+        [
+          "0x100bfb43",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100bfb45",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfb4b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfb4d",
+          "jns     short loc_100BFBAE"
+        ],
+        [
+          "0x100bfb4f",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100bfb55",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfb57",
+          "jz      short loc_100BFB5F"
+        ],
+        [
+          "0x100bfb59",
+          "dec     dword ptr [ecx+148h]"
+        ],
+        [
+          "0x100bfb5f",
+          "push    esi; Block"
+        ],
+        [
+          "0x100bfb60",
+          "call    j___free_base"
+        ],
+        [
+          "0x100bfb65",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfb6b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfb6e",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfb70",
+          "jz      short loc_100BFB78"
+        ],
+        [
+          "0x100bfb72",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfb74",
+          "push    ecx"
+        ],
+        [
+          "0x100bfb75",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfb78",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfb7a",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfb7f",
+          "push    offset aVideoWmaCocrea; \"Video WMA : CoCreateInstance CLSID_DMOW\"..."
+        ],
+        [
+          "0x100bfb84",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfb89",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfb8c",
+          "push    offset aVideoWmaCocrea; \"Video WMA : CoCreateInstance CLSID_DMOW\"..."
+        ],
+        [
+          "0x100bfb91",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfb97",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfb9d",
+          "pop     edi"
+        ],
+        [
+          "0x100bfb9e",
+          "pop     esi"
+        ],
+        [
+          "0x100bfb9f",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfba0",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfba3",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfba5",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfbaa",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfbac",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfbad",
+          "retn"
+        ],
+        [
+          "0x100bfbae",
+          "mov     eax, [esi+0Ch]"
+        ],
+        [
+          "0x100bfbb1",
+          "lea     edx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfbb7",
+          "push    edx"
+        ],
+        [
+          "0x100bfbb8",
+          "push    offset unk_10116C6C"
+        ],
+        [
+          "0x100bfbbd",
+          "push    eax"
+        ],
+        [
+          "0x100bfbbe",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfbc0",
+          "call    dword ptr [ecx]"
+        ],
+        [
+          "0x100bfbc2",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfbc8",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfbca",
+          "jns     short loc_100BFC25"
+        ],
+        [
+          "0x100bfbcc",
+          "push    esi"
+        ],
+        [
+          "0x100bfbcd",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfbd2",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfbd8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfbdb",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfbdd",
+          "jz      short loc_100BFBEF"
+        ],
+        [
+          "0x100bfbdf",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfbe1",
+          "push    ecx"
+        ],
+        [
+          "0x100bfbe2",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfbe5",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfbef",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfbf1",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfbf6",
+          "push    offset aVideoWmaQueryi; \"Video WMA : QueryInterface IDMOWrapperF\"..."
+        ],
+        [
+          "0x100bfbfb",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfc00",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfc03",
+          "push    offset aVideoWmaQueryi; \"Video WMA : QueryInterface IDMOWrapperF\"..."
+        ],
+        [
+          "0x100bfc08",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfc0e",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfc14",
+          "pop     edi"
+        ],
+        [
+          "0x100bfc15",
+          "pop     esi"
+        ],
+        [
+          "0x100bfc16",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfc17",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfc1a",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfc1c",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfc21",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfc23",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfc24",
+          "retn"
+        ],
+        [
+          "0x100bfc25",
+          "mov     eax, [ebp+var_214]"
+        ],
+        [
+          "0x100bfc2b",
+          "push    offset unk_10116C4C"
+        ],
+        [
+          "0x100bfc30",
+          "push    offset unk_100F3EF4"
+        ],
+        [
+          "0x100bfc35",
+          "push    eax"
+        ],
+        [
+          "0x100bfc36",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfc38",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bfc3b",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfc41",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfc43",
+          "jns     short loc_100BFC9E"
+        ],
+        [
+          "0x100bfc45",
+          "push    esi"
+        ],
+        [
+          "0x100bfc46",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfc4b",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfc51",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfc54",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfc56",
+          "jz      short loc_100BFC68"
+        ],
+        [
+          "0x100bfc58",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfc5a",
+          "push    ecx"
+        ],
+        [
+          "0x100bfc5b",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfc5e",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfc68",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfc6a",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfc6f",
+          "push    offset aVideoWmaInitCl; \"Video WMA : Init CLSID_CWMADecMediaObje\"..."
+        ],
+        [
+          "0x100bfc74",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfc79",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfc7c",
+          "push    offset aVideoWmaInitCl; \"Video WMA : Init CLSID_CWMADecMediaObje\"..."
+        ],
+        [
+          "0x100bfc81",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfc87",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfc8d",
+          "pop     edi"
+        ],
+        [
+          "0x100bfc8e",
+          "pop     esi"
+        ],
+        [
+          "0x100bfc8f",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfc90",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfc93",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfc95",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfc9a",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfc9c",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfc9d",
+          "retn"
+        ],
+        [
+          "0x100bfc9e",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bfca0",
+          "push    offset aWmaDecoder; \"WMA decoder\""
+        ],
+        [
+          "0x100bfca5",
+          "push    dword ptr [esi+0Ch]"
+        ],
+        [
+          "0x100bfca8",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfcaa",
+          "push    eax"
+        ],
+        [
+          "0x100bfcab",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bfcae",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfcb4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfcb6",
+          "jns     short loc_100BFD11"
+        ],
+        [
+          "0x100bfcb8",
+          "push    esi"
+        ],
+        [
+          "0x100bfcb9",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfcbe",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfcc4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfcc7",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfcc9",
+          "jz      short loc_100BFCDB"
+        ],
+        [
+          "0x100bfccb",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfccd",
+          "push    ecx"
+        ],
+        [
+          "0x100bfcce",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfcd1",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfcdb",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfcdd",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfce2",
+          "push    offset aVideoWmaAddfil; \"Video WMA : AddFilter DMOCATEGORY_AUDIO\"..."
+        ],
+        [
+          "0x100bfce7",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfcec",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfcef",
+          "push    offset aVideoWmaAddfil; \"Video WMA : AddFilter DMOCATEGORY_AUDIO\"..."
+        ],
+        [
+          "0x100bfcf4",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfcfa",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfd00",
+          "pop     edi"
+        ],
+        [
+          "0x100bfd01",
+          "pop     esi"
+        ],
+        [
+          "0x100bfd02",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfd03",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfd06",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfd08",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfd0d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfd0f",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfd10",
+          "retn"
+        ],
+        [
+          "0x100bfd11",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfd17",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfd19",
+          "jz      short loc_100BFD2B"
+        ],
+        [
+          "0x100bfd1b",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfd1d",
+          "push    ecx"
+        ],
+        [
+          "0x100bfd1e",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfd21",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfd2b",
+          "lea     eax, [esi+4]"
+        ],
+        [
+          "0x100bfd2e",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bfd2f",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bfd34",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bfd36",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bfd38",
+          "push    offset stru_10116C5C; rclsid"
+        ],
+        [
+          "0x100bfd3d",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100bfd3f",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfd45",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfd47",
+          "jns     short loc_100BFDA2"
+        ],
+        [
+          "0x100bfd49",
+          "push    esi"
+        ],
+        [
+          "0x100bfd4a",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfd4f",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfd55",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfd58",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfd5a",
+          "jz      short loc_100BFD6C"
+        ],
+        [
+          "0x100bfd5c",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfd5e",
+          "push    ecx"
+        ],
+        [
+          "0x100bfd5f",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfd62",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfd6c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfd6e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfd73",
+          "push    offset aVideoWmvCocrea_0; \"Video WMV : CoCreateInstance CLSID_DMOW\"..."
+        ],
+        [
+          "0x100bfd78",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfd7d",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfd80",
+          "push    offset aVideoWmvCocrea_0; \"Video WMV : CoCreateInstance CLSID_DMOW\"..."
+        ],
+        [
+          "0x100bfd85",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfd8b",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfd91",
+          "pop     edi"
+        ],
+        [
+          "0x100bfd92",
+          "pop     esi"
+        ],
+        [
+          "0x100bfd93",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfd94",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfd97",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfd99",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfd9e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfda0",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfda1",
+          "retn"
+        ],
+        [
+          "0x100bfda2",
+          "mov     eax, [esi+4]"
+        ],
+        [
+          "0x100bfda5",
+          "lea     edx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfdab",
+          "push    edx"
+        ],
+        [
+          "0x100bfdac",
+          "push    offset unk_10116C6C"
+        ],
+        [
+          "0x100bfdb1",
+          "push    eax"
+        ],
+        [
+          "0x100bfdb2",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfdb4",
+          "call    dword ptr [ecx]"
+        ],
+        [
+          "0x100bfdb6",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfdbc",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfdbe",
+          "jns     short loc_100BFE19"
+        ],
+        [
+          "0x100bfdc0",
+          "push    esi"
+        ],
+        [
+          "0x100bfdc1",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfdc6",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfdcc",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfdcf",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfdd1",
+          "jz      short loc_100BFDE3"
+        ],
+        [
+          "0x100bfdd3",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfdd5",
+          "push    ecx"
+        ],
+        [
+          "0x100bfdd6",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfdd9",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfde3",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfde5",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfdea",
+          "push    offset aVideoWmvQueryi_0; \"Video WMV : QueryInterface IDMOWrapperF\"..."
+        ],
+        [
+          "0x100bfdef",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfdf4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfdf7",
+          "push    offset aVideoWmvQueryi_0; \"Video WMV : QueryInterface IDMOWrapperF\"..."
+        ],
+        [
+          "0x100bfdfc",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfe02",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfe08",
+          "pop     edi"
+        ],
+        [
+          "0x100bfe09",
+          "pop     esi"
+        ],
+        [
+          "0x100bfe0a",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfe0b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfe0e",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfe10",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfe15",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfe17",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfe18",
+          "retn"
+        ],
+        [
+          "0x100bfe19",
+          "mov     eax, [ebp+var_214]"
+        ],
+        [
+          "0x100bfe1f",
+          "push    offset unk_10116C3C"
+        ],
+        [
+          "0x100bfe24",
+          "push    offset unk_100F3F04"
+        ],
+        [
+          "0x100bfe29",
+          "push    eax"
+        ],
+        [
+          "0x100bfe2a",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfe2c",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bfe2f",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfe35",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfe37",
+          "jns     short loc_100BFE92"
+        ],
+        [
+          "0x100bfe39",
+          "push    esi"
+        ],
+        [
+          "0x100bfe3a",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfe3f",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfe45",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfe48",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfe4a",
+          "jz      short loc_100BFE5C"
+        ],
+        [
+          "0x100bfe4c",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfe4e",
+          "push    ecx"
+        ],
+        [
+          "0x100bfe4f",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfe52",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfe5c",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfe5e",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfe63",
+          "push    offset aVideoWmvInitCl; \"Video WMV : Init CLSID_CWMVDecMediaObje\"..."
+        ],
+        [
+          "0x100bfe68",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfe6d",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfe70",
+          "push    offset aVideoWmvInitCl; \"Video WMV : Init CLSID_CWMVDecMediaObje\"..."
+        ],
+        [
+          "0x100bfe75",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfe7b",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfe81",
+          "pop     edi"
+        ],
+        [
+          "0x100bfe82",
+          "pop     esi"
+        ],
+        [
+          "0x100bfe83",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfe84",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfe87",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfe89",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bfe8e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bfe90",
+          "pop     ebp"
+        ],
+        [
+          "0x100bfe91",
+          "retn"
+        ],
+        [
+          "0x100bfe92",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bfe94",
+          "push    offset aWmvDecoder; \"WMV decoder\""
+        ],
+        [
+          "0x100bfe99",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x100bfe9c",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bfe9e",
+          "push    eax"
+        ],
+        [
+          "0x100bfe9f",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bfea2",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bfea8",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bfeaa",
+          "jns     short loc_100BFF05"
+        ],
+        [
+          "0x100bfeac",
+          "push    esi"
+        ],
+        [
+          "0x100bfead",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bfeb2",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bfeb8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfebb",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bfebd",
+          "jz      short loc_100BFECF"
+        ],
+        [
+          "0x100bfebf",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bfec1",
+          "push    ecx"
+        ],
+        [
+          "0x100bfec2",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bfec5",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bfecf",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bfed1",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bfed6",
+          "push    offset aVideoWmvAddfil_0; \"Video WMV : AddFilter DMOCATEGORY_VIDEO\"..."
+        ],
+        [
+          "0x100bfedb",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bfee0",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bfee3",
+          "push    offset aVideoWmvAddfil_0; \"Video WMV : AddFilter DMOCATEGORY_VIDEO\"..."
+        ],
+        [
+          "0x100bfee8",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfeee",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfef4",
+          "pop     edi"
+        ],
+        [
+          "0x100bfef5",
+          "pop     esi"
+        ],
+        [
+          "0x100bfef6",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfef7",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfefa",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bfefc",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bff01",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bff03",
+          "pop     ebp"
+        ],
+        [
+          "0x100bff04",
+          "retn"
+        ],
+        [
+          "0x100bff05",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bff0b",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bff0d",
+          "jz      short loc_100BFF1F"
+        ],
+        [
+          "0x100bff0f",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bff11",
+          "push    ecx"
+        ],
+        [
+          "0x100bff12",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bff15",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bff1f",
+          "lea     eax, [esi+14h]"
+        ],
+        [
+          "0x100bff22",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100bff23",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100bff28",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100bff2a",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100bff2c",
+          "push    offset stru_100F3B84; rclsid"
+        ],
+        [
+          "0x100bff31",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100bff33",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bff39",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bff3b",
+          "jns     short loc_100BFF96"
+        ],
+        [
+          "0x100bff3d",
+          "push    esi"
+        ],
+        [
+          "0x100bff3e",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bff43",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bff49",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bff4c",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bff4e",
+          "jz      short loc_100BFF60"
+        ],
+        [
+          "0x100bff50",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bff52",
+          "push    ecx"
+        ],
+        [
+          "0x100bff53",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bff56",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bff60",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bff62",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bff67",
+          "push    offset aVideoMpegCocre; \"Video Mpeg : CoCreateInstance CLSID_Col\"..."
+        ],
+        [
+          "0x100bff6c",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bff71",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bff74",
+          "push    offset aVideoMpegCocre; \"Video Mpeg : CoCreateInstance CLSID_Col\"..."
+        ],
+        [
+          "0x100bff79",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bff7f",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bff85",
+          "pop     edi"
+        ],
+        [
+          "0x100bff86",
+          "pop     esi"
+        ],
+        [
+          "0x100bff87",
+          "pop     ebx"
+        ],
+        [
+          "0x100bff88",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bff8b",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100bff8d",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100bff92",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bff94",
+          "pop     ebp"
+        ],
+        [
+          "0x100bff95",
+          "retn"
+        ],
+        [
+          "0x100bff96",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100bff98",
+          "push    offset aColorSpaceConv; \"Color Space Converter\""
+        ],
+        [
+          "0x100bff9d",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x100bffa0",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100bffa2",
+          "push    eax"
+        ],
+        [
+          "0x100bffa3",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100bffa6",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100bffac",
+          "test    eax, eax"
+        ],
+        [
+          "0x100bffae",
+          "jns     short loc_100C0009"
+        ],
+        [
+          "0x100bffb0",
+          "push    esi"
+        ],
+        [
+          "0x100bffb1",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100bffb6",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100bffbc",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bffbf",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100bffc1",
+          "jz      short loc_100BFFD3"
+        ],
+        [
+          "0x100bffc3",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100bffc5",
+          "push    ecx"
+        ],
+        [
+          "0x100bffc6",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100bffc9",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100bffd3",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100bffd5",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100bffda",
+          "push    offset aVideoMpegAddfi; \"Video Mpeg : AddFilter CLSID_Colour \\n\""
+        ],
+        [
+          "0x100bffdf",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100bffe4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100bffe7",
+          "push    offset aVideoMpegAddfi; \"Video Mpeg : AddFilter CLSID_Colour \\n\""
+        ],
+        [
+          "0x100bffec",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100bfff2",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100bfff8",
+          "pop     edi"
+        ],
+        [
+          "0x100bfff9",
+          "pop     esi"
+        ],
+        [
+          "0x100bfffa",
+          "pop     ebx"
+        ],
+        [
+          "0x100bfffb",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bfffe",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c0000",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c0005",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0007",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0008",
+          "retn"
+        ],
+        [
+          "0x100c0009",
+          "lea     eax, [esi+10h]"
+        ],
+        [
+          "0x100c000c",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100c000d",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100c0012",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100c0014",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100c0016",
+          "push    offset stru_100F3B94; rclsid"
+        ],
+        [
+          "0x100c001b",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100c001d",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100c0023",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c0025",
+          "jns     short loc_100C0080"
+        ],
+        [
+          "0x100c0027",
+          "push    esi"
+        ],
+        [
+          "0x100c0028",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c002d",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c0033",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0036",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c0038",
+          "jz      short loc_100C004A"
+        ],
+        [
+          "0x100c003a",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c003c",
+          "push    ecx"
+        ],
+        [
+          "0x100c003d",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0040",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c004a",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c004c",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0051",
+          "push    offset aVideoWmaCocrea_0; \"Video WMA : CoCreateInstance CLSID_DSou\"..."
+        ],
+        [
+          "0x100c0056",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c005b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c005e",
+          "push    offset aVideoWmaCocrea_0; \"Video WMA : CoCreateInstance CLSID_DSou\"..."
+        ],
+        [
+          "0x100c0063",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0069",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100c006f",
+          "pop     edi"
+        ],
+        [
+          "0x100c0070",
+          "pop     esi"
+        ],
+        [
+          "0x100c0071",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0072",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0075",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c0077",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c007c",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c007e",
+          "pop     ebp"
+        ],
+        [
+          "0x100c007f",
+          "retn"
+        ],
+        [
+          "0x100c0080",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100c0082",
+          "push    offset aDirectsoundRen; \"DirectSound renderer\""
+        ],
+        [
+          "0x100c0087",
+          "push    dword ptr [esi+10h]"
+        ],
+        [
+          "0x100c008a",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c008c",
+          "push    eax"
+        ],
+        [
+          "0x100c008d",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100c0090",
+          "mov     [ebp+var_218], eax"
+        ],
+        [
+          "0x100c0096",
+          "test    eax, eax"
+        ],
+        [
+          "0x100c0098",
+          "jns     short loc_100C00F3"
+        ],
+        [
+          "0x100c009a",
+          "push    esi"
+        ],
+        [
+          "0x100c009b",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c00a0",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c00a6",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c00a9",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c00ab",
+          "jz      short loc_100C00BD"
+        ],
+        [
+          "0x100c00ad",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c00af",
+          "push    ecx"
+        ],
+        [
+          "0x100c00b0",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c00b3",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c00bd",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c00bf",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c00c4",
+          "push    offset aVideoWmaAddfil_0; \"Video WMA : AddFilter CLSID_DSoundRende\"..."
+        ],
+        [
+          "0x100c00c9",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c00ce",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c00d1",
+          "push    offset aVideoWmaAddfil_0; \"Video WMA : AddFilter CLSID_DSoundRende\"..."
+        ],
+        [
+          "0x100c00d6",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c00dc",
+          "mov     eax, [ebp+var_218]"
+        ],
+        [
+          "0x100c00e2",
+          "pop     edi"
+        ],
+        [
+          "0x100c00e3",
+          "pop     esi"
+        ],
+        [
+          "0x100c00e4",
+          "pop     ebx"
+        ],
+        [
+          "0x100c00e5",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c00e8",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c00ea",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c00ef",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c00f1",
+          "pop     ebp"
+        ],
+        [
+          "0x100c00f2",
+          "retn"
+        ],
+        [
+          "0x100c00f3",
+          "cmp     dword ptr [edi+1Ch], 0"
+        ],
+        [
+          "0x100c00f7",
+          "jnz     loc_100C01D7"
+        ],
+        [
+          "0x100c00fd",
+          "lea     eax, [esi+8]"
+        ],
+        [
+          "0x100c0100",
+          "push    eax; ppv"
+        ],
+        [
+          "0x100c0101",
+          "push    offset stru_100F3CA4; riid"
+        ],
+        [
+          "0x100c0106",
+          "push    1; dwClsContext"
+        ],
+        [
+          "0x100c0108",
+          "push    0; pUnkOuter"
+        ],
+        [
+          "0x100c010a",
+          "push    offset stru_100F3B74; rclsid"
+        ],
+        [
+          "0x100c010f",
+          "call    ebx ; CoCreateInstance"
+        ],
+        [
+          "0x100c0111",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c0113",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0115",
+          "jns     short loc_100C016C"
+        ],
+        [
+          "0x100c0117",
+          "push    esi"
+        ],
+        [
+          "0x100c0118",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c011d",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c0123",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0126",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c0128",
+          "jz      short loc_100C013A"
+        ],
+        [
+          "0x100c012a",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c012c",
+          "push    ecx"
+        ],
+        [
+          "0x100c012d",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0130",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c013a",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c013c",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0141",
+          "push    offset aVideoWmvCocrea_1; \"Video WMV : CoCreateInstance CLSID_Vide\"..."
+        ],
+        [
+          "0x100c0146",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c014b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c014e",
+          "push    offset aVideoWmvCocrea_1; \"Video WMV : CoCreateInstance CLSID_Vide\"..."
+        ],
+        [
+          "0x100c0153",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0159",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c015b",
+          "pop     edi"
+        ],
+        [
+          "0x100c015c",
+          "pop     esi"
+        ],
+        [
+          "0x100c015d",
+          "pop     ebx"
+        ],
+        [
+          "0x100c015e",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0161",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c0163",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c0168",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c016a",
+          "pop     ebp"
+        ],
+        [
+          "0x100c016b",
+          "retn"
+        ],
+        [
+          "0x100c016c",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100c016e",
+          "push    offset aVideoRenderer; \"Video renderer\""
+        ],
+        [
+          "0x100c0173",
+          "push    dword ptr [esi+8]"
+        ],
+        [
+          "0x100c0176",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100c0178",
+          "push    eax"
+        ],
+        [
+          "0x100c0179",
+          "call    dword ptr [ecx+0Ch]"
+        ],
+        [
+          "0x100c017c",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c017e",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0180",
+          "jns     short loc_100C01D7"
+        ],
+        [
+          "0x100c0182",
+          "push    esi"
+        ],
+        [
+          "0x100c0183",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c0188",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c018e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0191",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c0193",
+          "jz      short loc_100C01A5"
+        ],
+        [
+          "0x100c0195",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c0197",
+          "push    ecx"
+        ],
+        [
+          "0x100c0198",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c019b",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c01a5",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c01a7",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c01ac",
+          "push    offset aVideoWmvAddfil_1; \"Video WMV : AddFilter CLSID_VideoRender\"..."
+        ],
+        [
+          "0x100c01b1",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c01b6",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c01b9",
+          "push    offset aVideoWmvAddfil_1; \"Video WMV : AddFilter CLSID_VideoRender\"..."
+        ],
+        [
+          "0x100c01be",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c01c4",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c01c6",
+          "pop     edi"
+        ],
+        [
+          "0x100c01c7",
+          "pop     esi"
+        ],
+        [
+          "0x100c01c8",
+          "pop     ebx"
+        ],
+        [
+          "0x100c01c9",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c01cc",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c01ce",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c01d3",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c01d5",
+          "pop     ebp"
+        ],
+        [
+          "0x100c01d6",
+          "retn"
+        ],
+        [
+          "0x100c01d7",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100c01de",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x100c01e0",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100c01e3",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100c01e5",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100c01e7",
+          "push    dword ptr [esi+0Ch]"
+        ],
+        [
+          "0x100c01ea",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100c01ed",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100c01f2",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c01f4",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100c01f7",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c01f9",
+          "jns     short loc_100C0250"
+        ],
+        [
+          "0x100c01fb",
+          "push    esi"
+        ],
+        [
+          "0x100c01fc",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c0201",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c0207",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c020a",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c020c",
+          "jz      short loc_100C021E"
+        ],
+        [
+          "0x100c020e",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c0210",
+          "push    ecx"
+        ],
+        [
+          "0x100c0211",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0214",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c021e",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c0220",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0225",
+          "push    offset aVideoWmaConnec; \"Video WMA : ConnectFilter source > deco\"..."
+        ],
+        [
+          "0x100c022a",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c022f",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0232",
+          "push    offset aVideoWmaConnec; \"Video WMA : ConnectFilter source > deco\"..."
+        ],
+        [
+          "0x100c0237",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c023d",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c023f",
+          "pop     edi"
+        ],
+        [
+          "0x100c0240",
+          "pop     esi"
+        ],
+        [
+          "0x100c0241",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0242",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0245",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c0247",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c024c",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c024e",
+          "pop     ebp"
+        ],
+        [
+          "0x100c024f",
+          "retn"
+        ],
+        [
+          "0x100c0250",
+          "movups  xmm0, ds:xmmword_100F3AE4"
+        ],
+        [
+          "0x100c0257",
+          "mov     edx, [esi+0Ch]"
+        ],
+        [
+          "0x100c025a",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100c025d",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100c025f",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100c0261",
+          "push    dword ptr [esi+10h]"
+        ],
+        [
+          "0x100c0264",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100c0267",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100c026c",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c026e",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100c0271",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0273",
+          "jns     short loc_100C02CA"
+        ],
+        [
+          "0x100c0275",
+          "push    esi"
+        ],
+        [
+          "0x100c0276",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c027b",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c0281",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0284",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c0286",
+          "jz      short loc_100C0298"
+        ],
+        [
+          "0x100c0288",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c028a",
+          "push    ecx"
+        ],
+        [
+          "0x100c028b",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c028e",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c0298",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c029a",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c029f",
+          "push    offset aVideoWmaConnec_0; \"Video WMA : ConnectFilter decoder > ren\"..."
+        ],
+        [
+          "0x100c02a4",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c02a9",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c02ac",
+          "push    offset aVideoWmaConnec_0; \"Video WMA : ConnectFilter decoder > ren\"..."
+        ],
+        [
+          "0x100c02b1",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c02b7",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c02b9",
+          "pop     edi"
+        ],
+        [
+          "0x100c02ba",
+          "pop     esi"
+        ],
+        [
+          "0x100c02bb",
+          "pop     ebx"
+        ],
+        [
+          "0x100c02bc",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c02bf",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c02c1",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c02c6",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c02c8",
+          "pop     ebp"
+        ],
+        [
+          "0x100c02c9",
+          "retn"
+        ],
+        [
+          "0x100c02ca",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100c02d1",
+          "mov     edx, [esi]"
+        ],
+        [
+          "0x100c02d3",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100c02d6",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100c02d8",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100c02da",
+          "push    dword ptr [esi+4]"
+        ],
+        [
+          "0x100c02dd",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100c02e0",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100c02e5",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c02e7",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100c02ea",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c02ec",
+          "jns     short loc_100C0343"
+        ],
+        [
+          "0x100c02ee",
+          "push    esi"
+        ],
+        [
+          "0x100c02ef",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c02f4",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c02fa",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c02fd",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c02ff",
+          "jz      short loc_100C0311"
+        ],
+        [
+          "0x100c0301",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c0303",
+          "push    ecx"
+        ],
+        [
+          "0x100c0304",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0307",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c0311",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c0313",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0318",
+          "push    offset aVideoWmvConnec; \"Video WMV : ConnectFilter source > deco\"..."
+        ],
+        [
+          "0x100c031d",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0322",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0325",
+          "push    offset aVideoWmvConnec; \"Video WMV : ConnectFilter source > deco\"..."
+        ],
+        [
+          "0x100c032a",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c0330",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0332",
+          "pop     edi"
+        ],
+        [
+          "0x100c0333",
+          "pop     esi"
+        ],
+        [
+          "0x100c0334",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0335",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0338",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c033a",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c033f",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0341",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0342",
+          "retn"
+        ],
+        [
+          "0x100c0343",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100c034a",
+          "mov     edx, [esi+4]"
+        ],
+        [
+          "0x100c034d",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100c0350",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100c0352",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100c0354",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x100c0357",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100c035a",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100c035f",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c0361",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100c0364",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c0366",
+          "jns     short loc_100C03BD"
+        ],
+        [
+          "0x100c0368",
+          "push    esi"
+        ],
+        [
+          "0x100c0369",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c036e",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c0374",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0377",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c0379",
+          "jz      short loc_100C038B"
+        ],
+        [
+          "0x100c037b",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c037d",
+          "push    ecx"
+        ],
+        [
+          "0x100c037e",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0381",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c038b",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c038d",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0392",
+          "push    offset aVideoWmvConnec_0; \"Video WMV : ConnectFilter decoder > col\"..."
+        ],
+        [
+          "0x100c0397",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c039c",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c039f",
+          "push    offset aVideoWmvConnec_0; \"Video WMV : ConnectFilter decoder > col\"..."
+        ],
+        [
+          "0x100c03a4",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c03aa",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c03ac",
+          "pop     edi"
+        ],
+        [
+          "0x100c03ad",
+          "pop     esi"
+        ],
+        [
+          "0x100c03ae",
+          "pop     ebx"
+        ],
+        [
+          "0x100c03af",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c03b2",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c03b4",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c03b9",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c03bb",
+          "pop     ebp"
+        ],
+        [
+          "0x100c03bc",
+          "retn"
+        ],
+        [
+          "0x100c03bd",
+          "movups  xmm0, ds:xmmword_100F3AD4"
+        ],
+        [
+          "0x100c03c4",
+          "mov     ecx, [edi+1Ch]"
+        ],
+        [
+          "0x100c03c7",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100c03ca",
+          "mov     edx, [esi+14h]"
+        ],
+        [
+          "0x100c03cd",
+          "mov     eax, esp"
+        ],
+        [
+          "0x100c03cf",
+          "movups  xmmword ptr [eax], xmm0"
+        ],
+        [
+          "0x100c03d2",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c03d4",
+          "jnz     short loc_100C03DB"
+        ],
+        [
+          "0x100c03d6",
+          "push    dword ptr [esi+8]"
+        ],
+        [
+          "0x100c03d9",
+          "jmp     short loc_100C03DC"
+        ],
+        [
+          "0x100c03db",
+          "push    ecx"
+        ],
+        [
+          "0x100c03dc",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100c03de",
+          "call    sub_100ADE00"
+        ],
+        [
+          "0x100c03e3",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100c03e5",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100c03e8",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100c03ea",
+          "jns     short loc_100C0441"
+        ],
+        [
+          "0x100c03ec",
+          "push    esi"
+        ],
+        [
+          "0x100c03ed",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100c03f2",
+          "mov     ecx, [ebp+var_214]"
+        ],
+        [
+          "0x100c03f8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c03fb",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100c03fd",
+          "jz      short loc_100C040F"
+        ],
+        [
+          "0x100c03ff",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100c0401",
+          "push    ecx"
+        ],
+        [
+          "0x100c0402",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100c0405",
+          "mov     [ebp+var_214], 0"
+        ],
+        [
+          "0x100c040f",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x100c0411",
+          "call    sub_100BEDB0"
+        ],
+        [
+          "0x100c0416",
+          "push    offset aVideoWmvConnec_1; \"Video WMV : ConnectFilter color convert\"..."
+        ],
+        [
+          "0x100c041b",
+          "call    PalErrorLogPrintf"
+        ],
+        [
+          "0x100c0420",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c0423",
+          "push    offset aVideoWmvConnec_1; \"Video WMV : ConnectFilter color convert\"..."
+        ],
+        [
+          "0x100c0428",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100c042e",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100c0430",
+          "pop     edi"
+        ],
+        [
+          "0x100c0431",
+          "pop     esi"
+        ],
+        [
+          "0x100c0432",
+          "pop     ebx"
+        ],
+        [
+          "0x100c0433",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0436",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c0438",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c043d",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c043f",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0440",
+          "retn"
+        ],
+        [
+          "0x100c0441",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c0444",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100c0446",
+          "mov     [edi+54h], esi"
+        ],
+        [
+          "0x100c0449",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100c044b",
+          "pop     edi"
+        ],
+        [
+          "0x100c044c",
+          "pop     esi"
+        ],
+        [
+          "0x100c044d",
+          "pop     ebx"
+        ],
+        [
+          "0x100c044e",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100c0453",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c0455",
+          "pop     ebp"
+        ],
+        [
+          "0x100c0456",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

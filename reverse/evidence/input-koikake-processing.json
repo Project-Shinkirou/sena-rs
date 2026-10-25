@@ -1,0 +1,1149 @@
+{
+  "functions": [
+    {
+      "ea": "0x100b7c80",
+      "name": "sub_100B7C80",
+      "xrefs": [
+        {
+          "from": "0x100b7519",
+          "function": "sub_100B7400"
+        }
+      ],
+      "pseudocode": "char *sub_100B7C80()\n{\n  char *result; // eax\n  int v1; // [esp+0h] [ebp-10h]\n  int v2; // [esp+4h] [ebp-Ch]\n  int i; // [esp+8h] [ebp-8h]\n  char *v4; // [esp+Ch] [ebp-4h]\n\n  v4 = (char *)dword_101294A4 + 472;\n  v2 = 0;\n  for ( i = 0; vKey[i]; ++i )\n  {\n    if ( GetAsyncKeyState(vKey[i]) < 0 )\n      v2 |= 1 << i;\n  }\n  *((_DWORD *)v4 + 21) = *((_DWORD *)v4 + 20);\n  *((_DWORD *)v4 + 20) = v2;\n  v1 = *((_DWORD *)v4 + 21) ^ *((_DWORD *)v4 + 20);\n  *((_DWORD *)v4 + 23) = *((_DWORD *)v4 + 20) & *((_DWORD *)v4 + 21);\n  *((_DWORD *)v4 + 24) = v1 & *((_DWORD *)v4 + 21);\n  *((_DWORD *)v4 + 22) = v1 & *((_DWORD *)v4 + 20);\n  *((_DWORD *)v4 + 26) = 0;\n  if ( *((_DWORD *)v4 + 22) )\n  {\n    *((_DWORD *)v4 + 28) = PaltimeGetTime();\n    *((_DWORD *)v4 + 27) = *((_DWORD *)v4 + 22);\n  }\n  else if ( (*((_DWORD *)v4 + 27) & *((_DWORD *)v4 + 23)) != 0 )\n  {\n    if ( (unsigned int)(PaltimeGetTime() - *((_DWORD *)v4 + 28)) > 0x1F4 )\n      *((_DWORD *)v4 + 26) = *((_DWORD *)v4 + 27);\n  }\n  else\n  {\n    *((_DWORD *)v4 + 27) = 0;\n  }\n  result = (char *)sub_100B75C0((char *)dword_101294A4 + 472);\n  if ( !result )\n  {\n    *((_DWORD *)v4 + 22) = sub_100A0A40(*((_DWORD *)v4 + 22), 58720256);\n    result = v4;\n    *((_WORD *)v4 + 66) = 0;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b7c80",
+          "push    ebp"
+        ],
+        [
+          "0x100b7c81",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b7c83",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100b7c86",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7c8b",
+          "add     eax, 1D8h"
+        ],
+        [
+          "0x100b7c90",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b7c93",
+          "mov     [ebp+var_C], 0"
+        ],
+        [
+          "0x100b7c9a",
+          "mov     [ebp+var_8], 0"
+        ],
+        [
+          "0x100b7ca1",
+          "jmp     short loc_100B7CAC"
+        ],
+        [
+          "0x100b7ca3",
+          "mov     ecx, [ebp+var_8]"
+        ],
+        [
+          "0x100b7ca6",
+          "add     ecx, 1"
+        ],
+        [
+          "0x100b7ca9",
+          "mov     [ebp+var_8], ecx"
+        ],
+        [
+          "0x100b7cac",
+          "mov     edx, [ebp+var_8]"
+        ],
+        [
+          "0x100b7caf",
+          "cmp     vKey[edx*4], 0"
+        ],
+        [
+          "0x100b7cb7",
+          "jz      short loc_100B7CE7"
+        ],
+        [
+          "0x100b7cb9",
+          "mov     eax, [ebp+var_8]"
+        ],
+        [
+          "0x100b7cbc",
+          "mov     ecx, vKey[eax*4]"
+        ],
+        [
+          "0x100b7cc3",
+          "push    ecx; vKey"
+        ],
+        [
+          "0x100b7cc4",
+          "call    ds:GetAsyncKeyState"
+        ],
+        [
+          "0x100b7cca",
+          "movsx   edx, ax"
+        ],
+        [
+          "0x100b7ccd",
+          "and     edx, 8000h"
+        ],
+        [
+          "0x100b7cd3",
+          "jz      short loc_100B7CE5"
+        ],
+        [
+          "0x100b7cd5",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b7cda",
+          "mov     ecx, [ebp+var_8]"
+        ],
+        [
+          "0x100b7cdd",
+          "shl     eax, cl"
+        ],
+        [
+          "0x100b7cdf",
+          "or      eax, [ebp+var_C]"
+        ],
+        [
+          "0x100b7ce2",
+          "mov     [ebp+var_C], eax"
+        ],
+        [
+          "0x100b7ce5",
+          "jmp     short loc_100B7CA3"
+        ],
+        [
+          "0x100b7ce7",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7cea",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7ced",
+          "mov     eax, [edx+50h]"
+        ],
+        [
+          "0x100b7cf0",
+          "mov     [ecx+54h], eax"
+        ],
+        [
+          "0x100b7cf3",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7cf6",
+          "mov     edx, [ebp+var_C]"
+        ],
+        [
+          "0x100b7cf9",
+          "mov     [ecx+50h], edx"
+        ],
+        [
+          "0x100b7cfc",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7cff",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d02",
+          "mov     edx, [eax+50h]"
+        ],
+        [
+          "0x100b7d05",
+          "xor     edx, [ecx+54h]"
+        ],
+        [
+          "0x100b7d08",
+          "mov     [ebp+var_10], edx"
+        ],
+        [
+          "0x100b7d0b",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d0e",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d11",
+          "mov     edx, [eax+54h]"
+        ],
+        [
+          "0x100b7d14",
+          "and     edx, [ecx+50h]"
+        ],
+        [
+          "0x100b7d17",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d1a",
+          "mov     [eax+5Ch], edx"
+        ],
+        [
+          "0x100b7d1d",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d20",
+          "mov     edx, [ecx+54h]"
+        ],
+        [
+          "0x100b7d23",
+          "and     edx, [ebp+var_10]"
+        ],
+        [
+          "0x100b7d26",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d29",
+          "mov     [eax+60h], edx"
+        ],
+        [
+          "0x100b7d2c",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d2f",
+          "mov     edx, [ecx+50h]"
+        ],
+        [
+          "0x100b7d32",
+          "and     edx, [ebp+var_10]"
+        ],
+        [
+          "0x100b7d35",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d38",
+          "mov     [eax+58h], edx"
+        ],
+        [
+          "0x100b7d3b",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d3e",
+          "mov     dword ptr [ecx+68h], 0"
+        ],
+        [
+          "0x100b7d45",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d48",
+          "cmp     dword ptr [edx+58h], 0"
+        ],
+        [
+          "0x100b7d4c",
+          "jz      short loc_100B7D67"
+        ],
+        [
+          "0x100b7d4e",
+          "call    PaltimeGetTime"
+        ],
+        [
+          "0x100b7d53",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d56",
+          "mov     [ecx+70h], eax"
+        ],
+        [
+          "0x100b7d59",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d5c",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d5f",
+          "mov     ecx, [eax+58h]"
+        ],
+        [
+          "0x100b7d62",
+          "mov     [edx+6Ch], ecx"
+        ],
+        [
+          "0x100b7d65",
+          "jmp     short loc_100B7D9F"
+        ],
+        [
+          "0x100b7d67",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d6a",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d6d",
+          "mov     ecx, [edx+5Ch]"
+        ],
+        [
+          "0x100b7d70",
+          "and     ecx, [eax+6Ch]"
+        ],
+        [
+          "0x100b7d73",
+          "jz      short loc_100B7D95"
+        ],
+        [
+          "0x100b7d75",
+          "call    PaltimeGetTime"
+        ],
+        [
+          "0x100b7d7a",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d7d",
+          "sub     eax, [edx+70h]"
+        ],
+        [
+          "0x100b7d80",
+          "cmp     eax, 1F4h"
+        ],
+        [
+          "0x100b7d85",
+          "jbe     short loc_100B7D93"
+        ],
+        [
+          "0x100b7d87",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d8a",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d8d",
+          "mov     edx, [ecx+6Ch]"
+        ],
+        [
+          "0x100b7d90",
+          "mov     [eax+68h], edx"
+        ],
+        [
+          "0x100b7d93",
+          "jmp     short loc_100B7D9F"
+        ],
+        [
+          "0x100b7d95",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7d98",
+          "mov     dword ptr [eax+6Ch], 0"
+        ],
+        [
+          "0x100b7d9f",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7da5",
+          "add     ecx, 1D8h"
+        ],
+        [
+          "0x100b7dab",
+          "push    ecx"
+        ],
+        [
+          "0x100b7dac",
+          "call    sub_100B75C0"
+        ],
+        [
+          "0x100b7db1",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b7db4",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b7db6",
+          "jnz     short loc_100B7DDE"
+        ],
+        [
+          "0x100b7db8",
+          "push    3800000h"
+        ],
+        [
+          "0x100b7dbd",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7dc0",
+          "mov     eax, [edx+58h]"
+        ],
+        [
+          "0x100b7dc3",
+          "push    eax"
+        ],
+        [
+          "0x100b7dc4",
+          "call    sub_100A0A40"
+        ],
+        [
+          "0x100b7dc9",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b7dcc",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7dcf",
+          "mov     [ecx+58h], eax"
+        ],
+        [
+          "0x100b7dd2",
+          "xor     edx, edx"
+        ],
+        [
+          "0x100b7dd4",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7dd7",
+          "mov     [eax+84h], dx"
+        ],
+        [
+          "0x100b7dde",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b7de0",
+          "pop     ebp"
+        ],
+        [
+          "0x100b7de1",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b7df0",
+      "name": "sub_100B7DF0",
+      "xrefs": [
+        {
+          "from": "0x100b7514",
+          "function": "sub_100B7400"
+        }
+      ],
+      "pseudocode": "int sub_100B7DF0()\n{\n  float v0; // xmm0_4\n  float v1; // xmm0_4\n  float v2; // xmm0_4\n  int result; // eax\n  struct tagPOINT Point; // [esp+20h] [ebp-34h] BYREF\n  int v5; // [esp+28h] [ebp-2Ch]\n  int v6; // [esp+2Ch] [ebp-28h]\n  int v7; // [esp+30h] [ebp-24h]\n  int v8; // [esp+34h] [ebp-20h]\n  unsigned int v9; // [esp+38h] [ebp-1Ch]\n  unsigned int v10; // [esp+3Ch] [ebp-18h]\n  unsigned int v11; // [esp+40h] [ebp-14h]\n  unsigned int v12; // [esp+44h] [ebp-10h]\n  float v13; // [esp+48h] [ebp-Ch]\n  float v14; // [esp+4Ch] [ebp-8h]\n  _DWORD *v15; // [esp+50h] [ebp-4h]\n\n  v15 = (char *)dword_101294A4 + 472;\n  v6 = *((_DWORD *)dword_101294A4 + 147);\n  v5 = *((_DWORD *)dword_101294A4 + 148);\n  GetCursorPos(&Point);\n  Point.x -= v15[34];\n  Point.y -= v15[35];\n  if ( *((_DWORD *)dword_101294A4 + 157) )\n  {\n    Point.x -= *((_DWORD *)dword_101294A4 + 231);\n    Point.y -= *((_DWORD *)dword_101294A4 + 232);\n    v8 = *((_DWORD *)dword_101294A4 + 233) - *((_DWORD *)dword_101294A4 + 231);\n    v7 = *((_DWORD *)dword_101294A4 + 234) - *((_DWORD *)dword_101294A4 + 232);\n    v14 = (float)Point.x / (float)v8;\n    v13 = (float)Point.y / (float)v7;\n    v12 = *((_DWORD *)dword_101294A4 + 170);\n    v0 = (float)v12;\n    v15[29] = (int)(float)(v0 * v14);\n    v11 = *((_DWORD *)dword_101294A4 + 171);\n    v1 = (float)v11;\n  }\n  else\n  {\n    v14 = (float)Point.x / (float)*((int *)dword_101294A4 + 168);\n    v13 = (float)Point.y / (float)*((int *)dword_101294A4 + 169);\n    v10 = *((_DWORD *)dword_101294A4 + 170);\n    v2 = (float)v10;\n    v15[29] = (int)(float)(v2 * v14);\n    v9 = *((_DWORD *)dword_101294A4 + 171);\n    v1 = (float)v9;\n  }\n  v15[30] = (int)(float)(v1 * v13);\n  if ( v15[29] < *((_DWORD *)dword_101294A4 + 170) && v15[29] >= -*((_DWORD *)dword_101294A4 + 170) )\n  {\n    if ( v15[29] == -1 )\n      v15[31] = 0;\n    else\n      v15[31] = v15[29] - v6;\n  }\n  else\n  {\n    v15[31] = 0;\n    v15[29] = -1;\n  }\n  if ( v15[30] < *((_DWORD *)dword_101294A4 + 171) && (result = -*((_DWORD *)dword_101294A4 + 171), v15[30] >= result) )\n  {\n    if ( v15[30] == -1 )\n    {\n      v15[32] = 0;\n    }\n    else\n    {\n      result = (int)v15;\n      v15[32] = v15[30] - v5;\n    }\n  }\n  else\n  {\n    v15[32] = 0;\n    result = (int)v15;\n    v15[30] = -1;\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b7df0",
+          "push    ebp"
+        ],
+        [
+          "0x100b7df1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b7df3",
+          "sub     esp, 54h"
+        ],
+        [
+          "0x100b7df6",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7dfb",
+          "add     eax, 1D8h"
+        ],
+        [
+          "0x100b7e00",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b7e03",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7e06",
+          "mov     edx, [ecx+74h]"
+        ],
+        [
+          "0x100b7e09",
+          "mov     [ebp+var_28], edx"
+        ],
+        [
+          "0x100b7e0c",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7e0f",
+          "mov     ecx, [eax+78h]"
+        ],
+        [
+          "0x100b7e12",
+          "mov     [ebp+var_2C], ecx"
+        ],
+        [
+          "0x100b7e15",
+          "lea     edx, [ebp+Point]"
+        ],
+        [
+          "0x100b7e18",
+          "push    edx; lpPoint"
+        ],
+        [
+          "0x100b7e19",
+          "call    ds:GetCursorPos"
+        ],
+        [
+          "0x100b7e1f",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7e22",
+          "mov     ecx, [ebp+Point.x]"
+        ],
+        [
+          "0x100b7e25",
+          "sub     ecx, [eax+88h]"
+        ],
+        [
+          "0x100b7e2b",
+          "mov     [ebp+Point.x], ecx"
+        ],
+        [
+          "0x100b7e2e",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7e31",
+          "mov     eax, [ebp+Point.y]"
+        ],
+        [
+          "0x100b7e34",
+          "sub     eax, [edx+8Ch]"
+        ],
+        [
+          "0x100b7e3a",
+          "mov     [ebp+Point.y], eax"
+        ],
+        [
+          "0x100b7e3d",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7e43",
+          "cmp     dword ptr [ecx+274h], 0"
+        ],
+        [
+          "0x100b7e4a",
+          "jz      loc_100B7F4A"
+        ],
+        [
+          "0x100b7e50",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b7e56",
+          "mov     eax, [ebp+Point.x]"
+        ],
+        [
+          "0x100b7e59",
+          "sub     eax, [edx+39Ch]"
+        ],
+        [
+          "0x100b7e5f",
+          "mov     [ebp+Point.x], eax"
+        ],
+        [
+          "0x100b7e62",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7e68",
+          "mov     edx, [ebp+Point.y]"
+        ],
+        [
+          "0x100b7e6b",
+          "sub     edx, [ecx+3A0h]"
+        ],
+        [
+          "0x100b7e71",
+          "mov     [ebp+Point.y], edx"
+        ],
+        [
+          "0x100b7e74",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7e79",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7e7f",
+          "mov     edx, [eax+3A4h]"
+        ],
+        [
+          "0x100b7e85",
+          "sub     edx, [ecx+39Ch]"
+        ],
+        [
+          "0x100b7e8b",
+          "mov     [ebp+var_20], edx"
+        ],
+        [
+          "0x100b7e8e",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7e93",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7e99",
+          "mov     edx, [eax+3A8h]"
+        ],
+        [
+          "0x100b7e9f",
+          "sub     edx, [ecx+3A0h]"
+        ],
+        [
+          "0x100b7ea5",
+          "mov     [ebp+var_24], edx"
+        ],
+        [
+          "0x100b7ea8",
+          "cvtsi2ss xmm0, [ebp+Point.x]"
+        ],
+        [
+          "0x100b7ead",
+          "cvtsi2ss xmm1, [ebp+var_20]"
+        ],
+        [
+          "0x100b7eb2",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x100b7eb6",
+          "movss   [ebp+var_8], xmm0"
+        ],
+        [
+          "0x100b7ebb",
+          "cvtsi2ss xmm0, [ebp+Point.y]"
+        ],
+        [
+          "0x100b7ec0",
+          "cvtsi2ss xmm1, [ebp+var_24]"
+        ],
+        [
+          "0x100b7ec5",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x100b7ec9",
+          "movss   [ebp+var_C], xmm0"
+        ],
+        [
+          "0x100b7ece",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7ed3",
+          "mov     ecx, [eax+2A8h]"
+        ],
+        [
+          "0x100b7ed9",
+          "mov     [ebp+var_10], ecx"
+        ],
+        [
+          "0x100b7edc",
+          "cvtsi2sd xmm0, [ebp+var_10]"
+        ],
+        [
+          "0x100b7ee1",
+          "mov     edx, [ebp+var_10]"
+        ],
+        [
+          "0x100b7ee4",
+          "shr     edx, 1Fh"
+        ],
+        [
+          "0x100b7ee7",
+          "addsd   xmm0, ds:qword_10113690[edx*8]"
+        ],
+        [
+          "0x100b7ef0",
+          "movsd   [ebp+var_3C], xmm0"
+        ],
+        [
+          "0x100b7ef5",
+          "cvtsd2ss xmm0, [ebp+var_3C]"
+        ],
+        [
+          "0x100b7efa",
+          "mulss   xmm0, [ebp+var_8]"
+        ],
+        [
+          "0x100b7eff",
+          "cvttss2si eax, xmm0"
+        ],
+        [
+          "0x100b7f03",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7f06",
+          "mov     [ecx+74h], eax"
+        ],
+        [
+          "0x100b7f09",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b7f0f",
+          "mov     eax, [edx+2ACh]"
+        ],
+        [
+          "0x100b7f15",
+          "mov     [ebp+var_14], eax"
+        ],
+        [
+          "0x100b7f18",
+          "cvtsi2sd xmm0, [ebp+var_14]"
+        ],
+        [
+          "0x100b7f1d",
+          "mov     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x100b7f20",
+          "shr     ecx, 1Fh"
+        ],
+        [
+          "0x100b7f23",
+          "addsd   xmm0, ds:qword_10113690[ecx*8]"
+        ],
+        [
+          "0x100b7f2c",
+          "movsd   [ebp+var_44], xmm0"
+        ],
+        [
+          "0x100b7f31",
+          "cvtsd2ss xmm0, [ebp+var_44]"
+        ],
+        [
+          "0x100b7f36",
+          "mulss   xmm0, [ebp+var_C]"
+        ],
+        [
+          "0x100b7f3b",
+          "cvttss2si edx, xmm0"
+        ],
+        [
+          "0x100b7f3f",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7f42",
+          "mov     [eax+78h], edx"
+        ],
+        [
+          "0x100b7f45",
+          "jmp     loc_100B7FF9"
+        ],
+        [
+          "0x100b7f4a",
+          "cvtsi2ss xmm0, [ebp+Point.x]"
+        ],
+        [
+          "0x100b7f4f",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b7f55",
+          "cvtsi2ss xmm1, dword ptr [ecx+2A0h]"
+        ],
+        [
+          "0x100b7f5d",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x100b7f61",
+          "movss   [ebp+var_8], xmm0"
+        ],
+        [
+          "0x100b7f66",
+          "cvtsi2ss xmm0, [ebp+Point.y]"
+        ],
+        [
+          "0x100b7f6b",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b7f71",
+          "cvtsi2ss xmm1, dword ptr [edx+2A4h]"
+        ],
+        [
+          "0x100b7f79",
+          "divss   xmm0, xmm1"
+        ],
+        [
+          "0x100b7f7d",
+          "movss   [ebp+var_C], xmm0"
+        ],
+        [
+          "0x100b7f82",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b7f87",
+          "mov     ecx, [eax+2A8h]"
+        ],
+        [
+          "0x100b7f8d",
+          "mov     [ebp+var_18], ecx"
+        ],
+        [
+          "0x100b7f90",
+          "cvtsi2sd xmm0, [ebp+var_18]"
+        ],
+        [
+          "0x100b7f95",
+          "mov     edx, [ebp+var_18]"
+        ],
+        [
+          "0x100b7f98",
+          "shr     edx, 1Fh"
+        ],
+        [
+          "0x100b7f9b",
+          "addsd   xmm0, ds:qword_10113690[edx*8]"
+        ],
+        [
+          "0x100b7fa4",
+          "movsd   [ebp+var_4C], xmm0"
+        ],
+        [
+          "0x100b7fa9",
+          "cvtsd2ss xmm0, [ebp+var_4C]"
+        ],
+        [
+          "0x100b7fae",
+          "mulss   xmm0, [ebp+var_8]"
+        ],
+        [
+          "0x100b7fb3",
+          "cvttss2si eax, xmm0"
+        ],
+        [
+          "0x100b7fb7",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7fba",
+          "mov     [ecx+74h], eax"
+        ],
+        [
+          "0x100b7fbd",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b7fc3",
+          "mov     eax, [edx+2ACh]"
+        ],
+        [
+          "0x100b7fc9",
+          "mov     [ebp+var_1C], eax"
+        ],
+        [
+          "0x100b7fcc",
+          "cvtsi2sd xmm0, [ebp+var_1C]"
+        ],
+        [
+          "0x100b7fd1",
+          "mov     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x100b7fd4",
+          "shr     ecx, 1Fh"
+        ],
+        [
+          "0x100b7fd7",
+          "addsd   xmm0, ds:qword_10113690[ecx*8]"
+        ],
+        [
+          "0x100b7fe0",
+          "movsd   [ebp+var_54], xmm0"
+        ],
+        [
+          "0x100b7fe5",
+          "cvtsd2ss xmm0, [ebp+var_54]"
+        ],
+        [
+          "0x100b7fea",
+          "mulss   xmm0, [ebp+var_C]"
+        ],
+        [
+          "0x100b7fef",
+          "cvttss2si edx, xmm0"
+        ],
+        [
+          "0x100b7ff3",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b7ff6",
+          "mov     [eax+78h], edx"
+        ],
+        [
+          "0x100b7ff9",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b7ffc",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b8002",
+          "mov     eax, [ecx+74h]"
+        ],
+        [
+          "0x100b8005",
+          "cmp     eax, [edx+2A8h]"
+        ],
+        [
+          "0x100b800b",
+          "jge     short loc_100B8023"
+        ],
+        [
+          "0x100b800d",
+          "mov     ecx, dword_101294A4"
+        ],
+        [
+          "0x100b8013",
+          "mov     edx, [ecx+2A8h]"
+        ],
+        [
+          "0x100b8019",
+          "neg     edx"
+        ],
+        [
+          "0x100b801b",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b801e",
+          "cmp     [eax+74h], edx"
+        ],
+        [
+          "0x100b8021",
+          "jge     short loc_100B8039"
+        ],
+        [
+          "0x100b8023",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8026",
+          "mov     dword ptr [ecx+7Ch], 0"
+        ],
+        [
+          "0x100b802d",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8030",
+          "mov     dword ptr [edx+74h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100b8037",
+          "jmp     short loc_100B805D"
+        ],
+        [
+          "0x100b8039",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b803c",
+          "cmp     dword ptr [eax+74h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100b8040",
+          "jnz     short loc_100B804E"
+        ],
+        [
+          "0x100b8042",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8045",
+          "mov     dword ptr [ecx+7Ch], 0"
+        ],
+        [
+          "0x100b804c",
+          "jmp     short loc_100B805D"
+        ],
+        [
+          "0x100b804e",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8051",
+          "mov     eax, [edx+74h]"
+        ],
+        [
+          "0x100b8054",
+          "sub     eax, [ebp+var_28]"
+        ],
+        [
+          "0x100b8057",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b805a",
+          "mov     [ecx+7Ch], eax"
+        ],
+        [
+          "0x100b805d",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8060",
+          "mov     eax, dword_101294A4"
+        ],
+        [
+          "0x100b8065",
+          "mov     ecx, [edx+78h]"
+        ],
+        [
+          "0x100b8068",
+          "cmp     ecx, [eax+2ACh]"
+        ],
+        [
+          "0x100b806e",
+          "jge     short loc_100B8086"
+        ],
+        [
+          "0x100b8070",
+          "mov     edx, dword_101294A4"
+        ],
+        [
+          "0x100b8076",
+          "mov     eax, [edx+2ACh]"
+        ],
+        [
+          "0x100b807c",
+          "neg     eax"
+        ],
+        [
+          "0x100b807e",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8081",
+          "cmp     [ecx+78h], eax"
+        ],
+        [
+          "0x100b8084",
+          "jge     short loc_100B809F"
+        ],
+        [
+          "0x100b8086",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b8089",
+          "mov     dword ptr [edx+80h], 0"
+        ],
+        [
+          "0x100b8093",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b8096",
+          "mov     dword ptr [eax+78h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100b809d",
+          "jmp     short loc_100B80C9"
+        ],
+        [
+          "0x100b809f",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b80a2",
+          "cmp     dword ptr [ecx+78h], 0FFFFFFFFh"
+        ],
+        [
+          "0x100b80a6",
+          "jnz     short loc_100B80B7"
+        ],
+        [
+          "0x100b80a8",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b80ab",
+          "mov     dword ptr [edx+80h], 0"
+        ],
+        [
+          "0x100b80b5",
+          "jmp     short loc_100B80C9"
+        ],
+        [
+          "0x100b80b7",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b80ba",
+          "mov     ecx, [eax+78h]"
+        ],
+        [
+          "0x100b80bd",
+          "sub     ecx, [ebp+var_2C]"
+        ],
+        [
+          "0x100b80c0",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b80c3",
+          "mov     [edx+80h], ecx"
+        ],
+        [
+          "0x100b80c9",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b80cb",
+          "pop     ebp"
+        ],
+        [
+          "0x100b80cc",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/dll/Pal.dll",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

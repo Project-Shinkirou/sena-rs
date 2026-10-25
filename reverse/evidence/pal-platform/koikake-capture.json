@@ -1,0 +1,517 @@
+{
+  "functions": [
+    {
+      "ea": "0x100a9a00",
+      "name": "sub_100A9A00",
+      "xrefs": [
+        {
+          "from": "0x100a9b80",
+          "function": "sub_100A9B50"
+        },
+        {
+          "from": "0x100c84ec",
+          "function": "PalThumbnailCreate"
+        },
+        {
+          "from": "0x100c8661",
+          "function": "PalThumbnailCreateMosaic"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100A9A00(int a1, unsigned int *a2, unsigned int a3, unsigned int a4)\n{\n  int v5; // eax\n  int v6; // edi\n  int v7; // ecx\n  int v8; // edx\n  int v9; // eax\n  _DWORD *v11; // esi\n  int v12; // edx\n  int v13; // ecx\n  const CHAR *v14; // [esp-4h] [ebp-24h]\n  _DWORD v15[2]; // [esp+8h] [ebp-18h] BYREF\n  int v16; // [esp+10h] [ebp-10h]\n  int v17; // [esp+14h] [ebp-Ch]\n  int v18; // [esp+18h] [ebp-8h]\n  int v19; // [esp+1Ch] [ebp-4h] BYREF\n\n  v19 = 0;\n  if ( a3 < *(_DWORD *)(a1 + 768) || a4 < *(_DWORD *)(a1 + 772) )\n    return 0;\n  if ( (*(int (__stdcall **)(_DWORD, _DWORD, int *))(**(_DWORD **)(a1 + 40) + 72))(*(_DWORD *)(a1 + 40), 0, &v19) )\n  {\n    OutputDebugStringA(\"GetBackBuffer : GetSurfaceLevel\");\n    return 0;\n  }\n  if ( (*(int (__stdcall **)(_DWORD, _DWORD, int))(**(_DWORD **)(a1 + 8) + 128))(\n         *(_DWORD *)(a1 + 8),\n         *(_DWORD *)(a1 + 20),\n         v19) )\n  {\n    v14 = \"GetBackBuffer : GetRenderTargetData\";\n    goto LABEL_17;\n  }\n  if ( (*(int (__stdcall **)(int, _DWORD *, _DWORD, int))(*(_DWORD *)v19 + 52))(v19, v15, 0, 16) )\n  {\n    v14 = \"GetBackBuffer : LockRect\";\nLABEL_17:\n    OutputDebugStringA(v14);\n    if ( v19 )\n    {\n      if ( (*(int (__stdcall **)(int))(*(_DWORD *)v19 + 8))(v19) < 0 )\n        OutputDebugStringA(\"release error\");\n    }\n    return 0;\n  }\n  v5 = *(_DWORD *)(a1 + 768);\n  v6 = a3 - v5;\n  v7 = *(_DWORD *)(a1 + 52);\n  v8 = *(_DWORD *)(a1 + 48) - v5;\n  v18 = v5;\n  v9 = *(_DWORD *)(a1 + 772);\n  v16 = 4 * v8;\n  v17 = 4 * v6;\n  v11 = (_DWORD *)(v15[1] + v15[0] * ((unsigned int)(v7 - v9) >> 1) + ((4 * v8) >> 1));\n  v12 = v9;\n  do\n  {\n    v13 = v18;\n    do\n    {\n      *a2++ = *v11++ | 0xFF000000;\n      --v13;\n    }\n    while ( v13 );\n    a2 = (unsigned int *)((char *)a2 + v17);\n    v11 = (_DWORD *)((char *)v11 + v16);\n    --v12;\n  }\n  while ( v12 );\n  (*(void (__stdcall **)(int))(*(_DWORD *)v19 + 56))(v19);\n  if ( v19 && (*(int (__stdcall **)(int))(*(_DWORD *)v19 + 8))(v19) < 0 )\n    OutputDebugStringA(\"release error\");\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100a9a00",
+          "push    ebp"
+        ],
+        [
+          "0x100a9a01",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100a9a03",
+          "sub     esp, 18h"
+        ],
+        [
+          "0x100a9a06",
+          "push    esi"
+        ],
+        [
+          "0x100a9a07",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x100a9a0a",
+          "push    edi"
+        ],
+        [
+          "0x100a9a0b",
+          "mov     edi, [ebp+arg_8]"
+        ],
+        [
+          "0x100a9a0e",
+          "mov     [ebp+var_4], 0"
+        ],
+        [
+          "0x100a9a15",
+          "cmp     edi, [esi+300h]"
+        ],
+        [
+          "0x100a9a1b",
+          "jb      loc_100A9B44"
+        ],
+        [
+          "0x100a9a21",
+          "mov     eax, [ebp+arg_C]"
+        ],
+        [
+          "0x100a9a24",
+          "cmp     eax, [esi+304h]"
+        ],
+        [
+          "0x100a9a2a",
+          "jb      loc_100A9B44"
+        ],
+        [
+          "0x100a9a30",
+          "mov     eax, [esi+28h]"
+        ],
+        [
+          "0x100a9a33",
+          "lea     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100a9a36",
+          "push    edx"
+        ],
+        [
+          "0x100a9a37",
+          "push    0"
+        ],
+        [
+          "0x100a9a39",
+          "push    eax"
+        ],
+        [
+          "0x100a9a3a",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100a9a3c",
+          "call    dword ptr [ecx+48h]"
+        ],
+        [
+          "0x100a9a3f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a9a41",
+          "jz      short loc_100A9A56"
+        ],
+        [
+          "0x100a9a43",
+          "push    offset aGetbackbufferG; \"GetBackBuffer : GetSurfaceLevel\""
+        ],
+        [
+          "0x100a9a48",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100a9a4e",
+          "pop     edi"
+        ],
+        [
+          "0x100a9a4f",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100a9a51",
+          "pop     esi"
+        ],
+        [
+          "0x100a9a52",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100a9a54",
+          "pop     ebp"
+        ],
+        [
+          "0x100a9a55",
+          "retn"
+        ],
+        [
+          "0x100a9a56",
+          "mov     eax, [esi+8]"
+        ],
+        [
+          "0x100a9a59",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x100a9a5c",
+          "push    dword ptr [esi+14h]"
+        ],
+        [
+          "0x100a9a5f",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100a9a61",
+          "push    eax"
+        ],
+        [
+          "0x100a9a62",
+          "call    dword ptr [ecx+80h]"
+        ],
+        [
+          "0x100a9a68",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a9a6a",
+          "jz      short loc_100A9A76"
+        ],
+        [
+          "0x100a9a6c",
+          "push    offset aGetbackbufferG_0; \"GetBackBuffer : GetRenderTargetData\""
+        ],
+        [
+          "0x100a9a71",
+          "jmp     loc_100A9B24"
+        ],
+        [
+          "0x100a9a76",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100a9a79",
+          "lea     edx, [ebp+var_18]"
+        ],
+        [
+          "0x100a9a7c",
+          "push    10h"
+        ],
+        [
+          "0x100a9a7e",
+          "push    0"
+        ],
+        [
+          "0x100a9a80",
+          "push    edx"
+        ],
+        [
+          "0x100a9a81",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100a9a83",
+          "push    eax"
+        ],
+        [
+          "0x100a9a84",
+          "call    dword ptr [ecx+34h]"
+        ],
+        [
+          "0x100a9a87",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a9a89",
+          "jnz     loc_100A9B1F"
+        ],
+        [
+          "0x100a9a8f",
+          "mov     eax, [esi+300h]"
+        ],
+        [
+          "0x100a9a95",
+          "sub     edi, eax"
+        ],
+        [
+          "0x100a9a97",
+          "mov     edx, [esi+30h]"
+        ],
+        [
+          "0x100a9a9a",
+          "mov     ecx, [esi+34h]"
+        ],
+        [
+          "0x100a9a9d",
+          "sub     edx, eax"
+        ],
+        [
+          "0x100a9a9f",
+          "mov     [ebp+var_8], eax"
+        ],
+        [
+          "0x100a9aa2",
+          "mov     eax, [esi+304h]"
+        ],
+        [
+          "0x100a9aa8",
+          "sub     ecx, eax"
+        ],
+        [
+          "0x100a9aaa",
+          "shr     ecx, 1"
+        ],
+        [
+          "0x100a9aac",
+          "imul    ecx, [ebp+var_18]"
+        ],
+        [
+          "0x100a9ab0",
+          "shl     edx, 2"
+        ],
+        [
+          "0x100a9ab3",
+          "mov     [ebp+var_10], edx"
+        ],
+        [
+          "0x100a9ab6",
+          "sar     edx, 1"
+        ],
+        [
+          "0x100a9ab8",
+          "shl     edi, 2"
+        ],
+        [
+          "0x100a9abb",
+          "add     ecx, [ebp+var_14]"
+        ],
+        [
+          "0x100a9abe",
+          "add     edx, ecx"
+        ],
+        [
+          "0x100a9ac0",
+          "mov     [ebp+var_C], edi"
+        ],
+        [
+          "0x100a9ac3",
+          "mov     [ebp+arg_8], eax"
+        ],
+        [
+          "0x100a9ac6",
+          "mov     [ebp+arg_0], edx"
+        ],
+        [
+          "0x100a9ac9",
+          "mov     edi, [ebp+arg_4]"
+        ],
+        [
+          "0x100a9acc",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x100a9acf",
+          "mov     edx, [ebp+arg_8]"
+        ],
+        [
+          "0x100a9ad2",
+          "mov     ecx, [ebp+var_8]"
+        ],
+        [
+          "0x100a9ad5",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x100a9ad7",
+          "or      eax, 0FF000000h"
+        ],
+        [
+          "0x100a9adc",
+          "mov     [edi], eax"
+        ],
+        [
+          "0x100a9ade",
+          "add     edi, 4"
+        ],
+        [
+          "0x100a9ae1",
+          "add     esi, 4"
+        ],
+        [
+          "0x100a9ae4",
+          "loop    loc_100A9AD5"
+        ],
+        [
+          "0x100a9ae6",
+          "add     edi, [ebp+var_C]"
+        ],
+        [
+          "0x100a9ae9",
+          "add     esi, [ebp+var_10]"
+        ],
+        [
+          "0x100a9aec",
+          "dec     edx"
+        ],
+        [
+          "0x100a9aed",
+          "jnz     short loc_100A9AD2"
+        ],
+        [
+          "0x100a9aef",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100a9af2",
+          "push    eax"
+        ],
+        [
+          "0x100a9af3",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100a9af5",
+          "call    dword ptr [ecx+38h]"
+        ],
+        [
+          "0x100a9af8",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100a9afb",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100a9afd",
+          "jz      short loc_100A9B14"
+        ],
+        [
+          "0x100a9aff",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100a9b01",
+          "push    ecx"
+        ],
+        [
+          "0x100a9b02",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100a9b05",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a9b07",
+          "jns     short loc_100A9B14"
+        ],
+        [
+          "0x100a9b09",
+          "push    offset aReleaseError; \"release error\""
+        ],
+        [
+          "0x100a9b0e",
+          "call    ds:OutputDebugStringA"
+        ],
+        [
+          "0x100a9b14",
+          "pop     edi"
+        ],
+        [
+          "0x100a9b15",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100a9b1a",
+          "pop     esi"
+        ],
+        [
+          "0x100a9b1b",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100a9b1d",
+          "pop     ebp"
+        ],
+        [
+          "0x100a9b1e",
+          "retn"
+        ],
+        [
+          "0x100a9b1f",
+          "push    offset aGetbackbufferL; \"GetBackBuffer : LockRect\""
+        ],
+        [
+          "0x100a9b24",
+          "mov     esi, ds:OutputDebugStringA"
+        ],
+        [
+          "0x100a9b2a",
+          "call    esi ; OutputDebugStringA"
+        ],
+        [
+          "0x100a9b2c",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100a9b2f",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100a9b31",
+          "jz      short loc_100A9B44"
+        ],
+        [
+          "0x100a9b33",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100a9b35",
+          "push    ecx"
+        ],
+        [
+          "0x100a9b36",
+          "call    dword ptr [eax+8]"
+        ],
+        [
+          "0x100a9b39",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a9b3b",
+          "jns     short loc_100A9B44"
+        ],
+        [
+          "0x100a9b3d",
+          "push    offset aReleaseError; \"release error\""
+        ],
+        [
+          "0x100a9b42",
+          "call    esi ; OutputDebugStringA"
+        ],
+        [
+          "0x100a9b44",
+          "pop     edi"
+        ],
+        [
+          "0x100a9b45",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100a9b47",
+          "pop     esi"
+        ],
+        [
+          "0x100a9b48",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100a9b4a",
+          "pop     ebp"
+        ],
+        [
+          "0x100a9b4b",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Pal.dll",
+  "build": "koikake",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

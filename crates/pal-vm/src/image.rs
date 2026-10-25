@@ -10,6 +10,15 @@ pub struct DecodedImage {
 }
 
 pub fn decode_image(bytes: &[u8]) -> anyhow::Result<DecodedImage> {
+    if bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return png::decode(bytes);
+    }
+    if bytes.starts_with(&[0xff, 0xd8, 0xff]) {
+        return jpeg::decode(bytes);
+    }
+    if bytes.starts_with(b"BM") {
+        return bmp::decode(bytes);
+    }
     if bytes.len() >= 0x20 && bytes.get(0..3) == Some(b"GE ") {
         return decode_pgd_ge(bytes);
     }
@@ -20,6 +29,23 @@ pub fn decode_image(bytes: &[u8]) -> anyhow::Result<DecodedImage> {
         return decode_tga(bytes);
     }
     anyhow::bail!("unsupported image signature");
+}
+
+mod bmp;
+mod jpeg;
+mod png;
+
+/// Limit the new general-purpose image decoders before allocating pixel data.
+/// Decoder work buffers have a separate limit; this bounds the final RGBA image.
+const MAX_RASTER_BYTES: usize = 256 * 1024 * 1024;
+
+fn bounded_rgba_len(width: u32, height: u32) -> anyhow::Result<usize> {
+    let len = u64::from(width)
+        .checked_mul(u64::from(height))
+        .and_then(|pixels| pixels.checked_mul(4))
+        .filter(|&len| len > 0 && len <= MAX_RASTER_BYTES as u64)
+        .ok_or_else(|| anyhow::anyhow!("image dimensions exceed decoded size limit"))?;
+    Ok(usize::try_from(len)?)
 }
 
 pub fn decode_image_with_resolver<F>(bytes: &[u8], resolver: &mut F) -> anyhow::Result<DecodedImage>
@@ -54,20 +80,16 @@ where
         );
     }
 
-    let mut input = Cursor::new(&bytes[..data_end], 0x38);
-    let unpacked = unpack_ge_pre(&mut input, unpacked_size)?;
     let pixel_size = match bpp {
         24 => 3,
         32 => 4,
         _ => anyhow::bail!("unsupported PGD3 bpp {bpp}"),
     };
-    let patch = post_process_pal(&unpacked, 0, width, height, pixel_size)?;
     let base_bytes = resolver(&base_name)?;
     let mut base = decode_image_with_resolver(&base_bytes, resolver)
         .map_err(|err| anyhow::anyhow!("PGD3 base {base_name:?} decode failed: {err}"))?;
-    xor_pgd3_patch(
-        &mut base, offset_x, offset_y, width, height, pixel_size, &patch,
-    )?;
+    let mut stream = GeStream::new(Cursor::new(&bytes[..data_end], 0x38), unpacked_size);
+    xor_pgd3_stream(&mut base, offset_x, offset_y, width, height, pixel_size, &mut stream)?;
     Ok(base)
 }
 
@@ -233,57 +255,131 @@ fn decode_tga(bytes: &[u8]) -> anyhow::Result<DecodedImage> {
     })
 }
 
-fn xor_pgd3_patch(
+/// The LZ token stores a 12-bit distance. A 4 KiB window replaces the full
+/// unpacked patch, which can otherwise exceed 64 MiB beside its decoded base.
+struct GeStream<'a> {
+    input: Cursor<'a>,
+    history: [u8; 4096],
+    size: usize,
+    produced: usize,
+    control: u16,
+    run: usize,
+    distance: usize,
+}
+
+impl<'a> GeStream<'a> {
+    fn new(input: Cursor<'a>, size: usize) -> Self {
+        Self { input, history: [0; 4096], size, produced: 0,
+            control: 2, run: 0, distance: 0 }
+    }
+
+    #[inline]
+    fn read(&mut self) -> anyhow::Result<u8> {
+        if self.produced >= self.size {
+            anyhow::bail!("PGD unpacked stream exhausted");
+        }
+        while self.run == 0 {
+            self.control >>= 1;
+            if self.control == 1 {
+                self.control = u16::from(self.input.read_u8()?) | 0x100;
+            }
+            if self.control & 1 != 0 {
+                let raw = usize::from(self.input.read_u16()?);
+                let mut count = raw & 7;
+                if raw & 8 == 0 {
+                    count = (count << 8) | usize::from(self.input.read_u8()?);
+                }
+                self.run = count + 4;
+                self.distance = raw >> 4;
+                if self.distance == 0 || self.distance > self.produced {
+                    anyhow::bail!("invalid PGD back-reference distance");
+                }
+            } else {
+                self.run = usize::from(self.input.read_u8()?);
+                self.distance = 0;
+            }
+            if self.run > self.size - self.produced {
+                anyhow::bail!("PGD token exceeds unpacked stream");
+            }
+        }
+        let byte = if self.distance == 0 {
+            self.input.read_u8()?
+        } else {
+            self.history[(self.produced - self.distance) & 4095]
+        };
+        self.history[self.produced & 4095] = byte;
+        self.produced += 1;
+        self.run -= 1;
+        Ok(byte)
+    }
+}
+
+fn xor_pgd3_stream(
     base: &mut DecodedImage,
     offset_x: i32,
     offset_y: i32,
     width: usize,
     height: usize,
     pixel_size: usize,
-    patch: &[u8],
+    stream: &mut GeStream<'_>,
 ) -> anyhow::Result<()> {
-    if offset_x < 0 || offset_y < 0 {
-        anyhow::bail!("PGD3 negative patch offset ({offset_x}, {offset_y})");
+    if offset_x < 0 || offset_y < 0 || width == 0 || height == 0 {
+        anyhow::bail!("PGD3 invalid patch geometry");
     }
-    let offset_x = offset_x as usize;
-    let offset_y = offset_y as usize;
-    let base_width = base.width as usize;
-    let base_height = base.height as usize;
-    if offset_x.saturating_add(width) > base_width || offset_y.saturating_add(height) > base_height
-    {
-        anyhow::bail!(
-            "PGD3 patch {}x{} at ({}, {}) exceeds base {}x{}",
-            width,
-            height,
-            offset_x,
-            offset_y,
-            base_width,
-            base_height
-        );
+    let (offset_x, offset_y) = (offset_x as usize, offset_y as usize);
+    if offset_x.saturating_add(width) > base.width as usize
+        || offset_y.saturating_add(height) > base.height as usize {
+        anyhow::bail!("PGD3 patch exceeds base image");
     }
-    let expected = width
-        .checked_mul(height)
-        .and_then(|px| px.checked_mul(pixel_size))
-        .ok_or_else(|| anyhow::anyhow!("PGD3 patch dimensions overflow"))?;
-    if patch.len() != expected {
-        anyhow::bail!(
-            "PGD3 patch size mismatch: got {}, expected {}",
-            patch.len(),
-            expected
-        );
-    }
-    for y in 0..height {
-        for x in 0..width {
-            let patch_index = (y * width + x) * pixel_size;
-            let base_index = ((offset_y + y) * base_width + (offset_x + x)) * 4;
-            base.rgba[base_index] ^= patch[patch_index + 2];
-            base.rgba[base_index + 1] ^= patch[patch_index + 1];
-            base.rgba[base_index + 2] ^= patch[patch_index];
-            if pixel_size == 4 {
-                base.rgba[base_index + 3] ^= patch[patch_index + 3];
-            }
+    visit_pal_rows(stream, width, height, pixel_size, |y, row| {
+        let start = ((offset_y + y) * base.width as usize + offset_x) * 4;
+        for (dst, patch) in base.rgba[start..start + width * 4].chunks_exact_mut(4)
+            .zip(row.chunks_exact(pixel_size)) {
+            dst[0] ^= patch[2];
+            dst[1] ^= patch[1];
+            dst[2] ^= patch[0];
+            if pixel_size == 4 { dst[3] ^= patch[3]; }
         }
+        Ok(())
+    })
+}
+
+fn visit_pal_rows(
+    stream: &mut GeStream<'_>, width: usize, height: usize, pixel_size: usize,
+    mut visit: impl FnMut(usize, &[u8]) -> anyhow::Result<()>,
+) -> anyhow::Result<()> {
+    let stride = width.checked_mul(pixel_size)
+        .ok_or_else(|| anyhow::anyhow!("PGD row size overflow"))?;
+    let required = stride.checked_add(1).and_then(|row| row.checked_mul(height))
+        .ok_or_else(|| anyhow::anyhow!("PGD image size overflow"))?;
+    if width == 0 || height == 0 || required > stream.size - stream.produced {
+        anyhow::bail!("PGD row data out of bounds");
     }
+    let mut controls = vec![0; height];
+    for control in &mut controls { *control = stream.read()?; }
+    let mut previous = vec![0u8; stride];
+    let mut row = vec![0u8; stride];
+    for (y, control) in controls.into_iter().enumerate() {
+        if control & 1 == 0 && control & 2 != 0 && y == 0 {
+            anyhow::bail!("PGD row references previous row before row 0");
+        }
+        for x in 0..stride {
+            let delta = stream.read()?;
+            row[x] = if control & 1 != 0 {
+                if x < pixel_size { delta } else { row[x - pixel_size].wrapping_sub(delta) }
+            } else if control & 2 != 0 {
+                previous[x].wrapping_sub(delta)
+            } else if y == 0 || x < pixel_size {
+                delta
+            } else {
+                let value = ((u16::from(previous[x]) + u16::from(row[x - pixel_size])) / 2) as u8;
+                value.wrapping_sub(delta)
+            };
+        }
+        visit(y, &row)?;
+        std::mem::swap(&mut row, &mut previous);
+    }
+    while stream.produced < stream.size { stream.read()?; }
     Ok(())
 }
 
@@ -296,24 +392,38 @@ fn decode_pgd_ge(bytes: &[u8]) -> anyhow::Result<DecodedImage> {
     let cell_height = read_u32(bytes, 0x18)?.max(1);
     let method = read_u16(bytes, 0x1C)?;
     let unpacked_size = read_u32(bytes, 0x20)? as usize;
-    let mut input = Cursor::new(bytes, 0x28);
-    let unpacked = unpack_ge_pre(&mut input, unpacked_size)?;
-    let rgba = match method {
-        1 => post_process_planes_bgra_to_rgba(&unpacked)?,
-        2 => post_process_yuv_like_to_rgba(&unpacked, width, height)?,
-        3 => {
-            let bpp = read_u16(&unpacked, 2)?;
-            width = read_u16(&unpacked, 4)? as usize;
-            height = read_u16(&unpacked, 6)? as usize;
-            let pixel_size = match bpp {
-                24 => 3,
-                32 => 4,
-                _ => anyhow::bail!("unsupported PGD/GE bpp {bpp}"),
-            };
-            let bgx = post_process_pal(&unpacked, 8, width, height, pixel_size)?;
-            bgx_to_rgba(&bgx, pixel_size)?
+    let rgba = if method == 3 {
+        let mut stream = GeStream::new(Cursor::new(bytes, 0x28), unpacked_size);
+        let mut header = [0u8; 8];
+        for byte in &mut header { *byte = stream.read()?; }
+        let bpp = u16::from_le_bytes([header[2], header[3]]);
+        width = usize::from(u16::from_le_bytes([header[4], header[5]]));
+        height = usize::from(u16::from_le_bytes([header[6], header[7]]));
+        let pixel_size = match bpp {
+            24 => 3,
+            32 => 4,
+            _ => anyhow::bail!("unsupported PGD/GE bpp {bpp}"),
+        };
+        let length = bounded_rgba_len(width as u32, height as u32)?;
+        image_allocation_begin(length);
+        let mut pixels = vec![0u8; length];
+        visit_pal_rows(&mut stream, width, height, pixel_size, |y, row| {
+            let start = y * width * 4;
+            for (dst, src) in pixels[start..start + width * 4].chunks_exact_mut(4)
+                .zip(row.chunks_exact(pixel_size)) {
+                dst.copy_from_slice(&[src[2], src[1], src[0], if pixel_size == 4 { src[3] } else { 255 }]);
+            }
+            Ok(())
+        })?;
+        pixels
+    } else {
+        let mut input = Cursor::new(bytes, 0x28);
+        let unpacked = unpack_ge_pre(&mut input, unpacked_size)?;
+        match method {
+            1 => post_process_planes_bgra_to_rgba(&unpacked)?,
+            2 => post_process_yuv_like_to_rgba(&unpacked, width, height)?,
+            _ => anyhow::bail!("unsupported PGD/GE method {method}"),
         }
-        _ => anyhow::bail!("unsupported PGD/GE method {method}"),
     };
     let expected = width
         .checked_mul(height)
@@ -337,7 +447,18 @@ fn decode_pgd_ge(bytes: &[u8]) -> anyhow::Result<DecodedImage> {
     })
 }
 
+fn image_allocation_begin(bytes: usize) {
+    #[cfg(target_os = "vita")]
+    if bytes >= 8 * 1024 * 1024 {
+        unsafe extern "C" { fn sena_vita_image_allocation(bytes: usize); }
+        unsafe { sena_vita_image_allocation(bytes); }
+    }
+    #[cfg(not(target_os = "vita"))]
+    let _ = bytes;
+}
+
 fn unpack_ge_pre(input: &mut Cursor<'_>, unpacked_size: usize) -> anyhow::Result<Vec<u8>> {
+    image_allocation_begin(unpacked_size);
     let mut output = vec![0u8; unpacked_size];
     let mut dst = 0usize;
     let mut ctl = 2u16;
@@ -429,116 +550,6 @@ fn post_process_yuv_like_to_rgba(
     Ok(output)
 }
 
-fn post_process_pal(
-    input: &[u8],
-    mut src: usize,
-    width: usize,
-    height: usize,
-    pixel_size: usize,
-) -> anyhow::Result<Vec<u8>> {
-    let stride = width
-        .checked_mul(pixel_size)
-        .ok_or_else(|| anyhow::anyhow!("PGD/GE stride overflow"))?;
-    let mut output = vec![0u8; height * stride];
-    let mut ctl = src;
-    src += height;
-    let mut dst = 0usize;
-    for row in 0..height {
-        let c = *input
-            .get(ctl)
-            .ok_or_else(|| anyhow::anyhow!("PGD/GE row control out of bounds"))?;
-        ctl += 1;
-        if (c & 1) != 0 {
-            copy_input(input, src, &mut output, dst, pixel_size)?;
-            src += pixel_size;
-            let mut prev = dst;
-            dst += pixel_size;
-            for _ in 0..stride - pixel_size {
-                let delta = *input
-                    .get(src)
-                    .ok_or_else(|| anyhow::anyhow!("PGD/GE row data out of bounds"))?;
-                output[dst] = output[prev].wrapping_sub(delta);
-                src += 1;
-                dst += 1;
-                prev += 1;
-            }
-        } else if (c & 2) != 0 {
-            if row == 0 {
-                anyhow::bail!("PGD/GE row references previous row before row 0");
-            }
-            let mut prev = dst - stride;
-            for _ in 0..stride {
-                let delta = *input
-                    .get(src)
-                    .ok_or_else(|| anyhow::anyhow!("PGD/GE row data out of bounds"))?;
-                output[dst] = output[prev].wrapping_sub(delta);
-                src += 1;
-                dst += 1;
-                prev += 1;
-            }
-        } else {
-            copy_input(input, src, &mut output, dst, pixel_size)?;
-            src += pixel_size;
-            dst += pixel_size;
-            if row == 0 {
-                copy_input(input, src, &mut output, dst, stride - pixel_size)?;
-                src += stride - pixel_size;
-                dst += stride - pixel_size;
-                continue;
-            }
-            let mut prev = dst - stride;
-            for _ in 0..stride - pixel_size {
-                let delta = *input
-                    .get(src)
-                    .ok_or_else(|| anyhow::anyhow!("PGD/GE row data out of bounds"))?;
-                output[dst] =
-                    ((u16::from(output[prev]) + u16::from(output[dst - pixel_size])) / 2) as u8;
-                output[dst] = output[dst].wrapping_sub(delta);
-                src += 1;
-                dst += 1;
-                prev += 1;
-            }
-        }
-    }
-    Ok(output)
-}
-
-fn bgx_to_rgba(input: &[u8], pixel_size: usize) -> anyhow::Result<Vec<u8>> {
-    if input.len() % pixel_size != 0 {
-        anyhow::bail!("PGD/GE pixel payload has partial pixel");
-    }
-    let mut out = Vec::with_capacity(input.len() / pixel_size * 4);
-    for px in input.chunks_exact(pixel_size) {
-        out.push(px[2]);
-        out.push(px[1]);
-        out.push(px[0]);
-        out.push(if pixel_size == 4 { px[3] } else { 255 });
-    }
-    Ok(out)
-}
-
-fn copy_input(
-    input: &[u8],
-    src: usize,
-    output: &mut [u8],
-    dst: usize,
-    count: usize,
-) -> anyhow::Result<()> {
-    let src_end = src
-        .checked_add(count)
-        .ok_or_else(|| anyhow::anyhow!("PGD/GE source range overflow"))?;
-    let dst_end = dst
-        .checked_add(count)
-        .ok_or_else(|| anyhow::anyhow!("PGD/GE destination range overflow"))?;
-    let data = input
-        .get(src..src_end)
-        .ok_or_else(|| anyhow::anyhow!("PGD/GE source range out of bounds"))?;
-    let target = output
-        .get_mut(dst..dst_end)
-        .ok_or_else(|| anyhow::anyhow!("PGD/GE destination range out of bounds"))?;
-    target.copy_from_slice(data);
-    Ok(())
-}
 
 fn copy_overlapped(output: &mut [u8], src: usize, dst: usize, count: usize) -> anyhow::Result<()> {
     let end = dst

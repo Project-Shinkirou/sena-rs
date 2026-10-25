@@ -1,0 +1,557 @@
+{
+  "input": "/Users/xmoe/Documents/projects/sena_rs/target/reverse-audit/totsulover/Pal.dll",
+  "functions": [
+    {
+      "ea": "0x100b9e90",
+      "name": "PalSpriteLoad",
+      "xrefs": [
+        {
+          "from": "0x100af36e",
+          "function": "PalNumberCreate"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSpriteLoad(int a1, char *Source, int a3)\n{\n  void *v4; // ebx\n  int Memory; // eax\n  int v6; // esi\n  _BYTE *v7; // ecx\n  int v8; // [esp-Ch] [ebp-64h]\n  int v9; // [esp-8h] [ebp-60h]\n  DWORD NumberOfBytesRead; // [esp+10h] [ebp-48h] BYREF\n  int v11; // [esp+18h] [ebp-40h]\n  int v12; // [esp+1Ch] [ebp-3Ch]\n  int v13; // [esp+20h] [ebp-38h]\n  int v14; // [esp+24h] [ebp-34h]\n  int v15; // [esp+28h] [ebp-30h]\n  int v16; // [esp+2Ch] [ebp-2Ch]\n  int v17; // [esp+30h] [ebp-28h] BYREF\n  DWORD nNumberOfBytesToRead; // [esp+38h] [ebp-20h]\n  void *Block; // [esp+3Ch] [ebp-1Ch] BYREF\n  unsigned int v20; // [esp+50h] [ebp-8h]\n\n  if ( !a1 )\n  {\n    SetLastError(6u);\n    return 0;\n  }\n  v4 = (void *)PalFileCreateEx(Source, 0x80000000, 1, 3, 0x8000000, (int)&v17);\n  if ( v4 == (void *)-1 )\n    return 0;\n  *(_BYTE *)Src = 0;\n  *((_BYTE *)Src + 1) = 0;\n  *((_BYTE *)Src + 2) = 0;\n  *((_BYTE *)Src + 3) = 0;\n  ReadFile(v4, Src, nNumberOfBytesToRead, &NumberOfBytesRead, 0);\n  CloseHandle(v4);\n  if ( *(_WORD *)Src != 17735 && (*(_DWORD *)Src == 843335504 || *(_DWORD *)Src == 860112720) )\n    Memory = sub_100B9B80(a1, v8, v9, a3);\n  else\n    Memory = PalSpriteLoadMemory(a1, (int)Source, Src, nNumberOfBytesToRead, a3);\n  v6 = Memory;\n  if ( Memory )\n  {\n    v11 = (int)*(float *)(Memory + 64);\n    v12 = (int)*(float *)(Memory + 68);\n    v13 = *(_DWORD *)(Memory + 84);\n    v14 = *(_DWORD *)(Memory + 88);\n    v15 = *(_DWORD *)(Memory + 92);\n    v16 = *(_DWORD *)(Memory + 96);\n    if ( Source )\n    {\n      sub_100BC1F0(&Block, Source);\n      sub_100B3EF0();\n      if ( v20 >= 0x10 )\n      {\n        v7 = Block;\n        if ( v20 + 1 >= 0x1000 )\n        {\n          v7 = (_BYTE *)*((_DWORD *)Block - 1);\n          if ( (unsigned int)((_BYTE *)Block - v7 - 4) > 0x1F )\n            _invalid_parameter_noinfo_noreturn();\n        }\n        sub_100CFC25(v7);\n      }\n    }\n  }\n  return v6;\n}\n",
+      "disassembly": [
+        [
+          "0x100b9e90",
+          "push    ebp"
+        ],
+        [
+          "0x100b9e91",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b9e93",
+          "and     esp, 0FFFFFFF8h"
+        ],
+        [
+          "0x100b9e96",
+          "sub     esp, 4Ch"
+        ],
+        [
+          "0x100b9e99",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100b9e9e",
+          "xor     eax, esp"
+        ],
+        [
+          "0x100b9ea0",
+          "mov     [esp+4Ch+var_4], eax"
+        ],
+        [
+          "0x100b9ea4",
+          "push    ebx"
+        ],
+        [
+          "0x100b9ea5",
+          "push    esi"
+        ],
+        [
+          "0x100b9ea6",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x100b9ea9",
+          "push    edi"
+        ],
+        [
+          "0x100b9eaa",
+          "mov     edi, [ebp+Source]"
+        ],
+        [
+          "0x100b9ead",
+          "test    esi, esi"
+        ],
+        [
+          "0x100b9eaf",
+          "jnz     short loc_100B9ECD"
+        ],
+        [
+          "0x100b9eb1",
+          "push    6; dwErrCode"
+        ],
+        [
+          "0x100b9eb3",
+          "call    ds:SetLastError"
+        ],
+        [
+          "0x100b9eb9",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b9ebb",
+          "pop     edi"
+        ],
+        [
+          "0x100b9ebc",
+          "pop     esi"
+        ],
+        [
+          "0x100b9ebd",
+          "pop     ebx"
+        ],
+        [
+          "0x100b9ebe",
+          "mov     ecx, [esp+4Ch+var_4]"
+        ],
+        [
+          "0x100b9ec2",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100b9ec4",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b9ec9",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b9ecb",
+          "pop     ebp"
+        ],
+        [
+          "0x100b9ecc",
+          "retn"
+        ],
+        [
+          "0x100b9ecd",
+          "lea     eax, [esp+58h+var_28]"
+        ],
+        [
+          "0x100b9ed1",
+          "push    eax; int"
+        ],
+        [
+          "0x100b9ed2",
+          "push    8000000h; int"
+        ],
+        [
+          "0x100b9ed7",
+          "push    3; int"
+        ],
+        [
+          "0x100b9ed9",
+          "push    1; int"
+        ],
+        [
+          "0x100b9edb",
+          "push    80000000h; int"
+        ],
+        [
+          "0x100b9ee0",
+          "push    edi; Source"
+        ],
+        [
+          "0x100b9ee1",
+          "call    PalFileCreateEx"
+        ],
+        [
+          "0x100b9ee6",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100b9ee8",
+          "add     esp, 18h"
+        ],
+        [
+          "0x100b9eeb",
+          "cmp     ebx, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b9eee",
+          "jz      short loc_100B9EB9"
+        ],
+        [
+          "0x100b9ef0",
+          "mov     eax, Src"
+        ],
+        [
+          "0x100b9ef5",
+          "push    0; lpOverlapped"
+        ],
+        [
+          "0x100b9ef7",
+          "mov     byte ptr [eax], 0"
+        ],
+        [
+          "0x100b9efa",
+          "mov     eax, Src"
+        ],
+        [
+          "0x100b9eff",
+          "mov     byte ptr [eax+1], 0"
+        ],
+        [
+          "0x100b9f03",
+          "mov     eax, Src"
+        ],
+        [
+          "0x100b9f08",
+          "mov     byte ptr [eax+2], 0"
+        ],
+        [
+          "0x100b9f0c",
+          "mov     eax, Src"
+        ],
+        [
+          "0x100b9f11",
+          "mov     byte ptr [eax+3], 0"
+        ],
+        [
+          "0x100b9f15",
+          "lea     eax, [esp+5Ch+NumberOfBytesRead]"
+        ],
+        [
+          "0x100b9f19",
+          "push    eax; int"
+        ],
+        [
+          "0x100b9f1a",
+          "push    [esp+60h+nNumberOfBytesToRead]; int"
+        ],
+        [
+          "0x100b9f1e",
+          "push    Src; lpBuffer"
+        ],
+        [
+          "0x100b9f24",
+          "push    ebx; hFile"
+        ],
+        [
+          "0x100b9f25",
+          "call    ds:ReadFile"
+        ],
+        [
+          "0x100b9f2b",
+          "push    ebx; hObject"
+        ],
+        [
+          "0x100b9f2c",
+          "call    ds:CloseHandle"
+        ],
+        [
+          "0x100b9f32",
+          "mov     eax, Src"
+        ],
+        [
+          "0x100b9f37",
+          "mov     ecx, 4547h"
+        ],
+        [
+          "0x100b9f3c",
+          "movzx   edx, word ptr [eax]"
+        ],
+        [
+          "0x100b9f3f",
+          "cmp     dx, cx"
+        ],
+        [
+          "0x100b9f42",
+          "jz      short loc_100B9F75"
+        ],
+        [
+          "0x100b9f44",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b9f46",
+          "cmp     ecx, 32444750h"
+        ],
+        [
+          "0x100b9f4c",
+          "jnz     short loc_100B9F60"
+        ],
+        [
+          "0x100b9f4e",
+          "push    [ebp+arg_8]; int"
+        ],
+        [
+          "0x100b9f51",
+          "mov     ecx, esi; int"
+        ],
+        [
+          "0x100b9f53",
+          "sub     esp, 8"
+        ],
+        [
+          "0x100b9f56",
+          "call    sub_100B9B80"
+        ],
+        [
+          "0x100b9f5b",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100b9f5e",
+          "jmp     short loc_100B9F87"
+        ],
+        [
+          "0x100b9f60",
+          "cmp     ecx, 33444750h"
+        ],
+        [
+          "0x100b9f66",
+          "jz      short loc_100B9F4E"
+        ],
+        [
+          "0x100b9f68",
+          "cmp     ecx, 474E5089h"
+        ],
+        [
+          "0x100b9f6e",
+          "jz      short loc_100B9F75"
+        ],
+        [
+          "0x100b9f70",
+          "mov     ecx, 0D8FFh"
+        ],
+        [
+          "0x100b9f75",
+          "push    [ebp+arg_8]; int"
+        ],
+        [
+          "0x100b9f78",
+          "push    [esp+5Ch+nNumberOfBytesToRead]; dwBytes"
+        ],
+        [
+          "0x100b9f7c",
+          "push    eax; Src"
+        ],
+        [
+          "0x100b9f7d",
+          "push    edi; int"
+        ],
+        [
+          "0x100b9f7e",
+          "push    esi; int"
+        ],
+        [
+          "0x100b9f7f",
+          "call    PalSpriteLoadMemory"
+        ],
+        [
+          "0x100b9f84",
+          "add     esp, 14h"
+        ],
+        [
+          "0x100b9f87",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b9f89",
+          "test    esi, esi"
+        ],
+        [
+          "0x100b9f8b",
+          "jz      short loc_100BA008"
+        ],
+        [
+          "0x100b9f8d",
+          "cvttss2si eax, dword ptr [esi+40h]"
+        ],
+        [
+          "0x100b9f92",
+          "mov     [esp+58h+var_40], eax"
+        ],
+        [
+          "0x100b9f96",
+          "cvttss2si eax, dword ptr [esi+44h]"
+        ],
+        [
+          "0x100b9f9b",
+          "mov     [esp+58h+var_3C], eax"
+        ],
+        [
+          "0x100b9f9f",
+          "mov     eax, [esi+54h]"
+        ],
+        [
+          "0x100b9fa2",
+          "mov     [esp+58h+var_38], eax"
+        ],
+        [
+          "0x100b9fa6",
+          "mov     eax, [esi+58h]"
+        ],
+        [
+          "0x100b9fa9",
+          "mov     [esp+58h+var_34], eax"
+        ],
+        [
+          "0x100b9fad",
+          "mov     eax, [esi+5Ch]"
+        ],
+        [
+          "0x100b9fb0",
+          "mov     [esp+58h+var_30], eax"
+        ],
+        [
+          "0x100b9fb4",
+          "mov     eax, [esi+60h]"
+        ],
+        [
+          "0x100b9fb7",
+          "mov     [esp+58h+var_2C], eax"
+        ],
+        [
+          "0x100b9fbb",
+          "test    edi, edi"
+        ],
+        [
+          "0x100b9fbd",
+          "jz      short loc_100BA008"
+        ],
+        [
+          "0x100b9fbf",
+          "push    edi; Src"
+        ],
+        [
+          "0x100b9fc0",
+          "lea     ecx, [esp+5Ch+Block]; void *"
+        ],
+        [
+          "0x100b9fc4",
+          "call    sub_100BC1F0"
+        ],
+        [
+          "0x100b9fc9",
+          "lea     edx, [esp+58h+var_44]"
+        ],
+        [
+          "0x100b9fcd",
+          "lea     ecx, [esp+58h+Block]"
+        ],
+        [
+          "0x100b9fd1",
+          "call    sub_100B3EF0"
+        ],
+        [
+          "0x100b9fd6",
+          "mov     edx, [esp+58h+var_8]"
+        ],
+        [
+          "0x100b9fda",
+          "cmp     edx, 10h"
+        ],
+        [
+          "0x100b9fdd",
+          "jb      short loc_100BA008"
+        ],
+        [
+          "0x100b9fdf",
+          "mov     ecx, [esp+58h+Block]"
+        ],
+        [
+          "0x100b9fe3",
+          "inc     edx"
+        ],
+        [
+          "0x100b9fe4",
+          "mov     eax, ecx"
+        ],
+        [
+          "0x100b9fe6",
+          "cmp     edx, 1000h"
+        ],
+        [
+          "0x100b9fec",
+          "jb      short loc_100B9FFE"
+        ],
+        [
+          "0x100b9fee",
+          "mov     ecx, [ecx-4]"
+        ],
+        [
+          "0x100b9ff1",
+          "add     edx, 23h ; '#'"
+        ],
+        [
+          "0x100b9ff4",
+          "sub     eax, ecx"
+        ],
+        [
+          "0x100b9ff6",
+          "add     eax, 0FFFFFFFCh"
+        ],
+        [
+          "0x100b9ff9",
+          "cmp     eax, 1Fh"
+        ],
+        [
+          "0x100b9ffc",
+          "ja      short loc_100BA01C"
+        ],
+        [
+          "0x100b9ffe",
+          "push    edx"
+        ],
+        [
+          "0x100b9fff",
+          "push    ecx; Block"
+        ],
+        [
+          "0x100ba000",
+          "call    sub_100CFC25"
+        ],
+        [
+          "0x100ba005",
+          "add     esp, 8"
+        ],
+        [
+          "0x100ba008",
+          "mov     ecx, [esp+58h+var_4]"
+        ],
+        [
+          "0x100ba00c",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100ba00e",
+          "pop     edi"
+        ],
+        [
+          "0x100ba00f",
+          "pop     esi"
+        ],
+        [
+          "0x100ba010",
+          "pop     ebx"
+        ],
+        [
+          "0x100ba011",
+          "xor     ecx, esp; StackCookie"
+        ],
+        [
+          "0x100ba013",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100ba018",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100ba01a",
+          "pop     ebp"
+        ],
+        [
+          "0x100ba01b",
+          "retn"
+        ],
+        [
+          "0x100ba01c",
+          "call    __invalid_parameter_noinfo_noreturn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "/Users/xmoe/Documents/totsulover_try/dll/Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

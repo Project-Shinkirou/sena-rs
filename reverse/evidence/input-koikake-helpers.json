@@ -1,0 +1,599 @@
+{
+  "functions": [
+    {
+      "ea": "0x100ed2c0",
+      "name": "GetCursorPos",
+      "xrefs": [
+        {
+          "from": "0x100b75ca",
+          "function": "sub_100B75C0"
+        },
+        {
+          "from": "0x100b7e19",
+          "function": "sub_100B7DF0"
+        },
+        {
+          "from": "0x100b75ca",
+          "function": "sub_100B75C0"
+        },
+        {
+          "from": "0x100b7e19",
+          "function": "sub_100B7DF0"
+        }
+      ]
+    },
+    {
+      "ea": "0x100ed2c4",
+      "name": "GetAsyncKeyState",
+      "xrefs": [
+        {
+          "from": "0x100b7cc4",
+          "function": "sub_100B7C80"
+        },
+        {
+          "from": "0x100b7cc4",
+          "function": "sub_100B7C80"
+        }
+      ]
+    },
+    {
+      "ea": "0x100b0450",
+      "name": "sub_100B0450",
+      "xrefs": [
+        {
+          "from": "0x100b0081",
+          "function": "PalButtonGetReaction"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B0450(int a1)\n{\n  if ( (*(_DWORD *)(a1 + 16) & 1) != 0 )\n  {\n    if ( (PalInputGetKeyPush() & 0x800000) != 0 )\n      return 1;\n  }\n  else if ( (*(_DWORD *)(a1 + 16) & 2) != 0 )\n  {\n    if ( (PalInputGetKeyOnEx() & 0x800000) != 0 )\n      return 1;\n    if ( (PalInputGetKeyPush() & 0x800000) != 0 )\n      return 1;\n  }\n  return 0;\n}\n",
+      "disassembly": [
+        [
+          "0x100b0450",
+          "push    ebp"
+        ],
+        [
+          "0x100b0451",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b0453",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0456",
+          "mov     ecx, [eax+10h]"
+        ],
+        [
+          "0x100b0459",
+          "and     ecx, 1"
+        ],
+        [
+          "0x100b045c",
+          "jz      short loc_100B0473"
+        ],
+        [
+          "0x100b045e",
+          "call    PalInputGetKeyPush"
+        ],
+        [
+          "0x100b0463",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b0468",
+          "jz      short loc_100B0471"
+        ],
+        [
+          "0x100b046a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b046f",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b0471",
+          "jmp     short loc_100B04A6"
+        ],
+        [
+          "0x100b0473",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0476",
+          "mov     eax, [edx+10h]"
+        ],
+        [
+          "0x100b0479",
+          "and     eax, 2"
+        ],
+        [
+          "0x100b047c",
+          "jz      short loc_100B04A6"
+        ],
+        [
+          "0x100b047e",
+          "call    PalInputGetKeyOnEx"
+        ],
+        [
+          "0x100b0483",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b0488",
+          "jz      short loc_100B0493"
+        ],
+        [
+          "0x100b048a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b048f",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b0491",
+          "jmp     short loc_100B04A6"
+        ],
+        [
+          "0x100b0493",
+          "call    PalInputGetKeyPush"
+        ],
+        [
+          "0x100b0498",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b049d",
+          "jz      short loc_100B04A6"
+        ],
+        [
+          "0x100b049f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b04a4",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b04a6",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b04a8",
+          "pop     ebp"
+        ],
+        [
+          "0x100b04a9",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b04b0",
+      "name": "sub_100B04B0",
+      "xrefs": [
+        {
+          "from": "0x100b00b4",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b00eb",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b00fb",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b0272",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100b02a7",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100b02b7",
+          "function": "PalButtonGetReactionEx"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B04B0(int *a1, int a2)\n{\n  int result; // eax\n\n  result = (int)a1;\n  if ( (a1[4] & 4) == 0 )\n    return PalSpriteRectSetPos(*a1, 0, a2 + a1[3]);\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b04b0",
+          "push    ebp"
+        ],
+        [
+          "0x100b04b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b04b3",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04b6",
+          "mov     ecx, [eax+10h]"
+        ],
+        [
+          "0x100b04b9",
+          "and     ecx, 4"
+        ],
+        [
+          "0x100b04bc",
+          "jnz     short loc_100B04D8"
+        ],
+        [
+          "0x100b04be",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04c1",
+          "mov     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100b04c4",
+          "add     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b04c7",
+          "push    eax"
+        ],
+        [
+          "0x100b04c8",
+          "push    0"
+        ],
+        [
+          "0x100b04ca",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04cd",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100b04cf",
+          "push    edx"
+        ],
+        [
+          "0x100b04d0",
+          "call    PalSpriteRectSetPos"
+        ],
+        [
+          "0x100b04d5",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100b04d8",
+          "pop     ebp"
+        ],
+        [
+          "0x100b04d9",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b0540",
+      "name": "sub_100B0540",
+      "xrefs": [
+        {
+          "from": "0x100b0021",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b0204",
+          "function": "PalButtonGetReactionEx"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B0540(int a1, int a2, int a3)\n{\n  int v4; // [esp+0h] [ebp-5Ch]\n  int v5; // [esp+4h] [ebp-58h]\n  _DWORD *i; // [esp+8h] [ebp-54h]\n  _BYTE v7[52]; // [esp+Ch] [ebp-50h] BYREF\n  int v8; // [esp+40h] [ebp-1Ch]\n\n  v5 = 0;\n  v4 = 0x7FFFFFFF;\n  for ( i = *(_DWORD **)(a1 + 20); i; i = (_DWORD *)i[5] )\n  {\n    if ( PalSpriteHit(*i, a2, a3, i[4] & 0x10000) )\n    {\n      PalSpriteGetInfo(*i, v7);\n      if ( v4 > v8 )\n      {\n        if ( i[1] )\n          v5 = *i;\n        else\n          v5 = 0;\n        v4 = v8;\n      }\n    }\n  }\n  return v5;\n}\n",
+      "disassembly": [
+        [
+          "0x100b0540",
+          "push    ebp"
+        ],
+        [
+          "0x100b0541",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b0543",
+          "sub     esp, 5Ch"
+        ],
+        [
+          "0x100b0546",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100b054b",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x100b054d",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b0550",
+          "mov     [ebp+var_58], 0"
+        ],
+        [
+          "0x100b0557",
+          "mov     [ebp+var_5C], 7FFFFFFFh"
+        ],
+        [
+          "0x100b055e",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0561",
+          "mov     ecx, [eax+14h]"
+        ],
+        [
+          "0x100b0564",
+          "mov     [ebp+var_54], ecx"
+        ],
+        [
+          "0x100b0567",
+          "jmp     short loc_100B0572"
+        ],
+        [
+          "0x100b0569",
+          "mov     edx, [ebp+var_54]"
+        ],
+        [
+          "0x100b056c",
+          "mov     eax, [edx+14h]"
+        ],
+        [
+          "0x100b056f",
+          "mov     [ebp+var_54], eax"
+        ],
+        [
+          "0x100b0572",
+          "cmp     [ebp+var_54], 0"
+        ],
+        [
+          "0x100b0576",
+          "jz      short loc_100B05DB"
+        ],
+        [
+          "0x100b0578",
+          "mov     ecx, [ebp+var_54]"
+        ],
+        [
+          "0x100b057b",
+          "mov     edx, [ecx+10h]"
+        ],
+        [
+          "0x100b057e",
+          "and     edx, 10000h"
+        ],
+        [
+          "0x100b0584",
+          "push    edx"
+        ],
+        [
+          "0x100b0585",
+          "mov     eax, [ebp+arg_8]"
+        ],
+        [
+          "0x100b0588",
+          "push    eax"
+        ],
+        [
+          "0x100b0589",
+          "mov     ecx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b058c",
+          "push    ecx"
+        ],
+        [
+          "0x100b058d",
+          "mov     edx, [ebp+var_54]"
+        ],
+        [
+          "0x100b0590",
+          "mov     eax, [edx]"
+        ],
+        [
+          "0x100b0592",
+          "push    eax"
+        ],
+        [
+          "0x100b0593",
+          "call    PalSpriteHit"
+        ],
+        [
+          "0x100b0598",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100b059b",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b059d",
+          "jz      short loc_100B05D9"
+        ],
+        [
+          "0x100b059f",
+          "lea     ecx, [ebp+var_50]"
+        ],
+        [
+          "0x100b05a2",
+          "push    ecx"
+        ],
+        [
+          "0x100b05a3",
+          "mov     edx, [ebp+var_54]"
+        ],
+        [
+          "0x100b05a6",
+          "mov     eax, [edx]"
+        ],
+        [
+          "0x100b05a8",
+          "push    eax"
+        ],
+        [
+          "0x100b05a9",
+          "call    PalSpriteGetInfo"
+        ],
+        [
+          "0x100b05ae",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b05b1",
+          "mov     ecx, [ebp+var_5C]"
+        ],
+        [
+          "0x100b05b4",
+          "cmp     ecx, [ebp+var_1C]"
+        ],
+        [
+          "0x100b05b7",
+          "jle     short loc_100B05D9"
+        ],
+        [
+          "0x100b05b9",
+          "mov     edx, [ebp+var_54]"
+        ],
+        [
+          "0x100b05bc",
+          "cmp     dword ptr [edx+4], 0"
+        ],
+        [
+          "0x100b05c0",
+          "jz      short loc_100B05CC"
+        ],
+        [
+          "0x100b05c2",
+          "mov     eax, [ebp+var_54]"
+        ],
+        [
+          "0x100b05c5",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b05c7",
+          "mov     [ebp+var_58], ecx"
+        ],
+        [
+          "0x100b05ca",
+          "jmp     short loc_100B05D3"
+        ],
+        [
+          "0x100b05cc",
+          "mov     [ebp+var_58], 0"
+        ],
+        [
+          "0x100b05d3",
+          "mov     edx, [ebp+var_1C]"
+        ],
+        [
+          "0x100b05d6",
+          "mov     [ebp+var_5C], edx"
+        ],
+        [
+          "0x100b05d9",
+          "jmp     short loc_100B0569"
+        ],
+        [
+          "0x100b05db",
+          "mov     eax, [ebp+var_58]"
+        ],
+        [
+          "0x100b05de",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b05e1",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100b05e3",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100b05e8",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b05ea",
+          "pop     ebp"
+        ],
+        [
+          "0x100b05eb",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b0680",
+      "name": "sub_100B0680",
+      "xrefs": [
+        {
+          "from": "0x100afe99",
+          "function": "PalButtonEntry"
+        },
+        {
+          "from": "0x100aff18",
+          "function": "PalButtonEntryEx"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B0680(int a1, int a2)\n{\n  int result; // eax\n\n  *(_DWORD *)(a2 + 20) = *(_DWORD *)(a1 + 20);\n  result = a1;\n  *(_DWORD *)(a1 + 20) = a2;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b0680",
+          "push    ebp"
+        ],
+        [
+          "0x100b0681",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b0683",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b0686",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0689",
+          "mov     edx, [ecx+14h]"
+        ],
+        [
+          "0x100b068c",
+          "mov     [eax+14h], edx"
+        ],
+        [
+          "0x100b068f",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0692",
+          "mov     ecx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b0695",
+          "mov     [eax+14h], ecx"
+        ],
+        [
+          "0x100b0698",
+          "pop     ebp"
+        ],
+        [
+          "0x100b0699",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/dll/Pal.dll",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

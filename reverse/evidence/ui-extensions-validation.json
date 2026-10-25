@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-24",
+  "scope": "Single-agent UI/history and packed sprite/selection fixes; compilation and isolated actual-game execution, not whole-engine parity.",
+  "subagents_started_after_user_prohibition": 0,
+  "regression_tests_added": 0,
+  "cargo_tests_run": 0,
+  "existing_test_maintenance": "Two existing selection assertions now expect no PAL wait request. No tests were added or executed.",
+  "reviewed_newer_coordinates": 94,
+  "registered_newer_coordinates": 787,
+  "unreviewed_newer_coordinates": 693,
+  "counts_are_not_missing_handler_totals": true,
+  "original_game_directories": "Read-only; resource symlinks and independent writable save directories under target/reverse-audit.",
+  "native_game_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+  "newer_contracts": [
+    "reverse/evidence/totsulover-twelve-reviewed.json",
+    "reverse/evidence/totsulover-graphics-reviewed.json"
+  ],
+  "checks": [
+    {
+      "command": "python3 reverse/evidence/generate_registered_dispatch.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 reverse/abi/generate.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo build -p pal-vm --release --bin sena --lib --features host-audio",
+      "exit_code": 0,
+      "log": "target/reverse-audit/ui-extensions-build.log"
+    },
+    {
+      "command": "cargo check -p pal-vm --lib --no-default-features --target i686-pc-windows-gnu",
+      "exit_code": 0,
+      "log": "target/reverse-audit/ui-windows-check.log"
+    },
+    {
+      "command": "git diff --check -- crates/pal-vm/src/runtime.rs crates/pal-vm/src/engine.rs crates/pal-vm/src/font/native.rs",
+      "exit_code": 0
+    }
+  ],
+  "runs": [
+    {
+      "log": "target/reverse-audit/ui-totsulover-final.log",
+      "last_frame": "[headless] frame=6199 clock=6200 dt=16ms elapsed=99200ms status=wait click (task) pc=0x00132A1C textures=7 draw_commands=7 events=0 clear=[0.03903889943181113, 0.02, 0.05, 1.0]",
+      "warning_count": 0,
+      "fault_or_unsupported_lines": [],
+      "log_sha256": "e12681eb8e6a3fc4f1984b04d00c30bec8936fd41a6a5d1f412c7225433d402b",
+      "command": "RUST_LOG=warn target/release/sena target/reverse-audit/isolated-totsulover-graphics --headless --no-audio --diagnostic-frames 6200 --diagnostic-frame-ms 0 --fixed-timestep-ms 16 --diagnostic-click 2500:200:140 --diagnostic-click 3000:540:415 --diagnostic-click 4500:620:150 --diagnostic-auto-advance --diagnostic-auto-advance-min-frames 30 --diagnostic-png-at 2400:target/reverse-audit/ui-totsulover-title-final.png --diagnostic-png target/reverse-audit/ui-totsulover-adv.png",
+      "observed": "Title buttons render at the recovered position. GAME START, voice confirmation and chapter selection reach ADV. Native font markup remains intact during wrapping/reveal; no font warnings."
+    },
+    {
+      "log": "target/reverse-audit/ui-koikake-final.log",
+      "last_frame": "[headless] frame=4199 clock=4200 dt=16ms elapsed=67200ms status=wait frame (task) pc=0x0006C3D8 textures=3 draw_commands=3 events=0 clear=[0.02, 0.03, 0.055, 1.0]",
+      "warning_count": 0,
+      "fault_or_unsupported_lines": [],
+      "log_sha256": "93ed49a2742f6c9bf1cbeff4e37d7a6c767e1a80246c330df9b391b34458f424",
+      "command": "RUST_LOG=warn target/release/sena target/reverse-audit/isolated-game --headless --no-audio --diagnostic-frames 4200 --diagnostic-frame-ms 0 --fixed-timestep-ms 16 --diagnostic-auto-advance --diagnostic-auto-advance-min-frames 60 --diagnostic-click-when-hit-enabled 160:260 --diagnostic-png target/reverse-audit/ui-koikake-final.png",
+      "observed": "Reached ADV. This run preceded the final font layout-unit edit; the subsequent host FFI run uses the final production code."
+    },
+    {
+      "command": "python3 target/reverse-audit/console_ffi_smoke.py",
+      "exit_code": 0,
+      "log": "target/reverse-audit/ui-host-ffi.log",
+      "game": "Koikake isolated-game",
+      "result": {
+        "frames": 3600,
+        "dt_ms": 16,
+        "pcm_peak": 26783,
+        "frames_with_audio": 2245,
+        "sink_after_engine_teardown": "silent",
+        "wall_seconds": 36.86
+      }
+    }
+  ],
+  "artifact_sha256": {
+    "target/release/sena": "7e85ef3bd3a7dc9071022e5019f72e2af26870823c73ebaac5c4352b98f1f019",
+    "target/release/libpal_vm.dylib": "3a29d8fd42732c880a0fb7b76775e4f2346704b6ba2fcf2e28e8502e7d2d81aa",
+    "target/reverse-audit/ui-totsulover-title-final.png": "aef7305c63ee02b6619911e56c5a896d58e675667e94d9df40fd83d24397b334",
+    "target/reverse-audit/ui-totsulover-adv.png": "7da28101c2fe8db143d8288d05991e502ff64ad640e6746d9eb9b758604c3ee2",
+    "target/reverse-audit/console-ffi-3599.png": "d411cd5fc0dbb3a282d4cc299940ad3ec3441ba2ccddd563157d01ea98da2e52"
+  },
+  "source_sha256": {
+    "crates/pal-vm/src/runtime.rs": "88854343f151fff33a03eacb35cf7b9f027663f02aca7bc8c784c84fecb47cf0",
+    "crates/pal-vm/src/runtime/button_extensions.rs": "704ec6d96ba16ae51c422f1de82cb65972478869215c6f79b927234b2688fa92",
+    "crates/pal-vm/src/runtime/history_icons.rs": "92a7c346f835bbf69ca553a9a8f9cdf4fc359207c1abdf90403587329ab16539",
+    "crates/pal-vm/src/runtime/history_navigation.rs": "9d8f4bb5a85711f99b478f3616f57efddc479114fcedbea68e11457b8d49391b",
+    "crates/pal-vm/src/runtime/ui_snapshot.rs": "32065231469534d09a9c8dc5ff9d8792d1a69d2aeb355e7f641935b272222fba",
+    "crates/pal-vm/src/runtime/select.rs": "6122e3da48df2f4b7d6ff7960e70ec32247a8de9fadb7c02010e29ea191b8526",
+    "crates/pal-vm/src/font/native.rs": "2bd47c0c0c8645e8473a86a343cd78a583ddda74b127b6a7582a30eec4377c1f",
+    "crates/pal-vm/src/engine.rs": "dd239848e6cf91a9c11cfc125631d7ad75130a341f462d7acd17526791af98c1",
+    "crates/pal-script/src/extsig_registered.rs": "68dd420ae8c167d295210cc78e2cca10ad6c48eca3c42276343e5c39f9c8d90b"
+  },
+  "limitations": [
+    "History icon callbacks, checkpoint replay and portable-v15 reload are not all exercised by these runs. The extra 6800-frame toolbar-click run did not open the backlog.",
+    "Portable history checkpoint files are not native image-compatible. Complete original save writing and auxiliary-state import are unverified.",
+    "Additional review identified newer 3:4 at 0x44BBC0 as a two-argument placement-mode call, while the current fallback still consumes four coordinates. The -GRPOS executable-version flag selects ten- versus twenty-step placement. This remains a confirmed correction to make.",
+    "Full ordinary wrapper animation/transform-bank parity and raw PAL namespace references remain open.",
+    "No console/mobile hardware acceptance and no complete game-route comparison. Earlier Switch/Vita package builds predate this batch.",
+    "MP4/H.264 work is excluded by user instruction."
+  ]
+}

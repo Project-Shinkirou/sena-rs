@@ -1,56 +1,49 @@
-struct EffectUniforms {
-    tex_size: vec2<f32>,
-    tex_diff_u: vec2<f32>,
-    effect_params: vec4<f32>,
+// Translation of FX.dll RASTER vs_1_1/ps_2_0. See fx-bytecode.json.
+struct RasterUniforms {
+    params: vec4<f32>,
+    transform_x: vec4<f32>,
+    transform_y: vec4<f32>,
 };
-
 struct VertexInput {
     @location(0) position: vec2<f32>,
     @location(1) tex_coord: vec2<f32>,
     @location(2) color: vec4<f32>,
 };
-
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
     @location(0) tex_coord: vec2<f32>,
     @location(1) color: vec4<f32>,
 };
-
 @group(0) @binding(0) var pal_texture: texture_2d<f32>;
 @group(0) @binding(1) var pal_sampler: sampler;
-@group(0) @binding(2) var<uniform> uniforms: EffectUniforms;
+@group(1) @binding(0) var<uniform> uniforms: RasterUniforms;
 
-const PI: f32 = 3.141592;
+fn wave(coordinate: vec2<f32>, phase: f32) -> vec2<f32> {
+    let cycles = (coordinate * 512.0 + phase * 512.0) * 0.0019531245343387127 + 0.25;
+    let angle = fract(cycles) * 6.2831854820251465 - 3.1415927410125732;
+    let square = angle * angle;
+    var value = square * -2.5239850742764247e-7 + 2.476090048730839e-5;
+    value = square * value - 0.001388839678838849;
+    value = square * value + 0.04166664183139801;
+    value = square * value - 0.5;
+    return square * value + 1.0;
+}
 
 @vertex
 fn vs_main(input: VertexInput) -> VertexOutput {
-    let offset = uniforms.effect_params.x;
-    let undulate_x = uniforms.effect_params.y;
-    let undulate_y = uniforms.effect_params.z;
-    let stretch = uniforms.effect_params.w;
-
-    var position = input.position;
-    var val = (position.y * 180.0) + offset;
-    position.x = position.x + cos(val * PI / (180.0 - (150.0 * undulate_x))) * (stretch * undulate_x);
-    val = (position.x * 180.0) + offset;
-    position.y = position.y + cos(val * PI / (180.0 - (150.0 * undulate_y))) * (stretch * undulate_y);
-
+    // Local PAL clip coordinates; placement and rotation follow the effect.
+    let position = input.position + wave(input.position.yx * 0.5, uniforms.params.x) * uniforms.params.yz * 0.1;
     var output: VertexOutput;
-    output.position = vec4<f32>(position, 0.0, 1.0);
+    let point = vec3<f32>(position, 1.0);
+    output.position = vec4<f32>(dot(uniforms.transform_x.xyz, point), dot(uniforms.transform_y.xyz, point), 0.0, 1.0);
     output.tex_coord = input.tex_coord;
+    // Scene tint is the enclosing PAL sprite's modulation.
     output.color = input.color;
     return output;
 }
 
 @fragment
 fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
-    let offset = uniforms.effect_params.x;
-    let undulate_x = uniforms.effect_params.y;
-    let undulate_y = uniforms.effect_params.z;
-    let undulate = vec2<f32>(undulate_y, undulate_x);
-    let val = (input.tex_coord * 180.0) + ((vec2<f32>(360.0, 360.0) * (vec2<f32>(1.0, 1.0) - undulate)) * offset);
-    let denominator = vec2<f32>(180.0, 180.0) - (vec2<f32>(180.0, 180.0) * undulate);
-    let tex_coord_yx = input.tex_coord.yx + sin(val * PI / denominator) * (0.1 * undulate);
-    let tex_coord = tex_coord_yx.yx;
-    return textureSample(pal_texture, pal_sampler, tex_coord) * input.color;
+    let uv = input.tex_coord + wave(input.tex_coord.yx, uniforms.params.x) * uniforms.params.yz * 0.1;
+    return textureSample(pal_texture, pal_sampler, uv) * input.color;
 }

@@ -1369,6 +1369,79 @@ mod tests {
     // ── test_unknown_extcall_raw_args ─────────────────────────────────────────
 
     #[test]
+    fn test_history_text_query_keeps_destination_order_and_return_value() {
+        let instr = make_extcall_instr(SCRIPT_CODE_BASE, 14, 20, 9);
+        let pending = vec![imm_op(0x10000003), imm_op(0x10000002), imm_op(0x10000001), imm_op(0)];
+        let lua = emit_single_instr_lua_full(&instr, &[], &[], Some(Nls::ShiftJis), &pending, &[], &[]);
+        assert_eq!(lua, "v9 = history_get_text(0, dynamic_string(0x10000001), dynamic_string(0x10000002), dynamic_string(0x10000003))");
+    }
+
+    #[test]
+    fn test_button_mode_consumes_only_its_own_argument() {
+        let instructions = vec![
+            make_primary(12, 31, vec![imm_arg(77)]),
+            make_primary(20, 31, vec![imm_arg(1)]),
+            make_extcall_instr(28, 8, 36, 0),
+            make_extcall_instr(40, 13, 14, 0),
+            make_primary(52, 21, vec![]),
+        ];
+        let points = pal_script::PointTable::parse(&[]).unwrap();
+        let cfg = build_cfg(&instructions, 12);
+        let ctx = DecompileContext::new_simple(cfg, &points, &[], &[], None);
+        let lua = emit_lua(&ctx, 12);
+        assert!(lua.contains("btn_mode(1)"), "{lua}");
+        assert!(lua.contains("voice_autopan_initialize(77)"), "{lua}");
+    }
+
+    #[test]
+    fn test_tips_calls_preserve_the_surrounding_argument_stack() {
+        let instructions = vec![
+            make_primary(12, 31, vec![imm_arg(77)]),
+            make_extcall_instr(20, 2, 44, 1),
+            make_primary(32, 31, vec![imm_arg(2)]),
+            make_primary(40, 31, vec![imm_arg(0x10000000)]),
+            make_primary(48, 31, vec![imm_arg(3)]),
+            make_extcall_instr(56, 2, 38, 2),
+            make_extcall_instr(68, 13, 14, 0),
+            make_primary(80, 21, vec![]),
+        ];
+        let points = pal_script::PointTable::parse(&[]).unwrap();
+        let cfg = build_cfg(&instructions, 12);
+        let ctx = DecompileContext::new_simple(cfg, &points, &[], &[], Some(Nls::ShiftJis));
+        let lua = emit_lua(&ctx, 12);
+        assert!(lua.contains("v1 = tips_get_flag()"), "{lua}");
+        assert!(lua.contains("tips_get_str(3, dynamic_string(0x10000000), 2)"), "{lua}");
+        assert!(lua.contains("voice_autopan_initialize(77)"), "{lua}");
+    }
+
+    #[test]
+    fn test_native_helper_signatures_preserve_caller_stack_and_render_arguments() {
+        for (category, index, name, args) in [
+            (15, 2, "set_window_text", vec![6548, 0]),
+            (15, 4, "debug_print", vec![16, 7, 6, 5, 4, 3, 2, 1]),
+            (13, 4, "set_voice_info", vec![2, -1, 37, 1]),
+            (14, 12, "history_set", vec![1415]),
+        ] {
+            let mut instructions = vec![make_primary(12, 31, vec![imm_arg(77)])];
+            let mut pc = 20;
+            for argument in args.iter().rev() {
+                instructions.push(make_primary(pc, 31, vec![imm_arg(*argument)]));
+                pc += 8;
+            }
+            instructions.push(make_extcall_instr(pc, category, index, 0));
+            instructions.push(make_extcall_instr(pc + 12, 13, 14, 0));
+            instructions.push(make_primary(pc + 24, 21, vec![]));
+            let points = pal_script::PointTable::parse(&[]).unwrap();
+            let cfg = build_cfg(&instructions, 12);
+            let ctx = DecompileContext::new_simple(cfg, &points, &[], &[], None);
+            let lua = emit_lua(&ctx, 12);
+            assert!(lua.contains(&format!("{name}(")), "{lua}");
+            assert!(!lua.contains(&format!("{name}()")), "{lua}");
+            assert!(lua.contains("voice_autopan_initialize(77)"), "{lua}");
+        }
+    }
+
+    #[test]
     fn test_unknown_extcall_raw_args() {
         let instr = make_extcall_instr(SCRIPT_CODE_BASE, 99, 0, 0);
         let pending = vec![imm_op(1), imm_op(2)];

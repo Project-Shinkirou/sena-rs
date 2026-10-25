@@ -1,0 +1,700 @@
+{
+  "functions": [
+    {
+      "ea": "0x447fe0",
+      "name": "sub_447FE0",
+      "xrefs": [
+        {
+          "from": "0x40d6cf",
+          "function": "sub_40D3A0"
+        },
+        {
+          "from": "0x40f81e",
+          "function": "VmExtcall_BtnSet"
+        },
+        {
+          "from": "0x411abf",
+          "function": "sub_411940"
+        },
+        {
+          "from": "0x411f30",
+          "function": "VmExtcall_EffectSkipStep"
+        },
+        {
+          "from": "0x422e5e",
+          "function": "sub_422E10"
+        },
+        {
+          "from": "0x422f5e",
+          "function": "sub_422F10"
+        },
+        {
+          "from": "0x42396f",
+          "function": "sub_4236D0"
+        },
+        {
+          "from": "0x4252fb",
+          "function": "sub_425220"
+        },
+        {
+          "from": "0x425dc3",
+          "function": "VmExtcall_SpSetRGBShift"
+        },
+        {
+          "from": "0x427091",
+          "function": "VmExtcall_SpFreeAll"
+        },
+        {
+          "from": "0x429173",
+          "function": "VmExtcall_SpCreateTransition"
+        },
+        {
+          "from": "0x4296e0",
+          "function": "VmExtcall_SpSetEx"
+        },
+        {
+          "from": "0x429bf3",
+          "function": "VmExtcall_SpSet"
+        },
+        {
+          "from": "0x42a865",
+          "function": "sub_42A760"
+        },
+        {
+          "from": "0x42aee0",
+          "function": "sub_42AB00"
+        },
+        {
+          "from": "0x432cc3",
+          "function": "VmOpc_LoadThumbnail"
+        },
+        {
+          "from": "0x436661",
+          "function": "VmOpc_SelectWait"
+        },
+        {
+          "from": "0x43ad59",
+          "function": "sub_43AA10"
+        },
+        {
+          "from": "0x43aede",
+          "function": "sub_43AA10"
+        },
+        {
+          "from": "0x440cc4",
+          "function": "VmExtcall_TextSetIcon"
+        },
+        {
+          "from": "0x441008",
+          "function": "VmExtcall_TextGetInfo"
+        }
+      ],
+      "pseudocode": "int __fastcall sub_447FE0(const char *a1, int a2, int a3, int a4)\n{\n  int Active; // eax\n  bool v7; // zf\n  int v8; // edi\n  int result; // eax\n  int v10; // esi\n  int v11; // edi\n  int v12; // edi\n  int v13; // esi\n  const char *v14; // eax\n  int v15; // esi\n  int v16; // edi\n  const CHAR *lpString; // [esp+10h] [ebp-110h]\n  int v18; // [esp+14h] [ebp-10Ch] BYREF\n  CHAR v19[260]; // [esp+18h] [ebp-108h] BYREF\n\n  lpString = a1 + 1;\n  PalDebugPrintf(0, 0, \"[%d][%d][%d][%d][%d][%d]AdvLoadSprite\", *a1, a1[1], a1[2], a1[3], a1[4], a1[5]);\n  Active = PalRenderGetActive();\n  v7 = *a1 == 35;\n  v8 = Active;\n  v18 = Active;\n  if ( v7 )\n  {\n    if ( (VmGetTaskSchedulingState() & 0x30) != 0 )\n      return PalSpriteInfoCreate(0, a2, a3, a4);\n    v10 = StrLen_Safe(lpString, &v18);\n    v11 = PalSpriteCreate(v8);\n    PalSpritePaint(v11, 0, v10);\n    return v11;\n  }\n  if ( (VmGetTaskSchedulingState() & 0x30) != 0 )\n  {\n    v12 = 0;\n    if ( off_4BB6B0 )\n    {\n      v13 = 0;\n      do\n      {\n        wsprintfA(v19, \"%s%s\", a1, (&off_4BB670)[v13]);\n        result = ((int (__cdecl *)(CHAR *, _DWORD, _DWORD, int))dword_4BB6B4[v13])(v19, 0, 0, a4);\n        if ( result )\n          return result;\n        ++v12;\n        v13 = 2 * v12;\n      }\n      while ( (&off_4BB6B0)[2 * v12] );\n    }\nLABEL_15:\n    PalDebugPrintf(0, 0, \"sprite load error [%s]\", a1);\n    return 0;\n  }\n  v14 = off_4BB670;\n  v15 = 0;\n  if ( !off_4BB670 )\n    goto LABEL_15;\n  v16 = 0;\n  while ( 1 )\n  {\n    wsprintfA(v19, \"%s%s\", a1, v14);\n    result = ((int (__cdecl *)(int, CHAR *, int))dword_4BB674[v16])(v18, v19, a4);\n    if ( result )\n      return result;\n    ++v15;\n    v16 = 2 * v15;\n    v14 = (&off_4BB670)[2 * v15];\n    if ( !v14 )\n      goto LABEL_15;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x447fe0",
+          "push    ebp"
+        ],
+        [
+          "0x447fe1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x447fe3",
+          "sub     esp, 114h"
+        ],
+        [
+          "0x447fe9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x447fee",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x447ff0",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x447ff3",
+          "push    ebx"
+        ],
+        [
+          "0x447ff4",
+          "push    esi"
+        ],
+        [
+          "0x447ff5",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x447ff7",
+          "mov     esi, edx"
+        ],
+        [
+          "0x447ff9",
+          "push    edi"
+        ],
+        [
+          "0x447ffa",
+          "lea     ecx, [ebx+1]"
+        ],
+        [
+          "0x447ffd",
+          "mov     [ebp+var_114], esi"
+        ],
+        [
+          "0x448003",
+          "mov     [ebp+lpString], ecx"
+        ],
+        [
+          "0x448009",
+          "movsx   eax, byte ptr [ebx+5]"
+        ],
+        [
+          "0x44800d",
+          "push    eax"
+        ],
+        [
+          "0x44800e",
+          "movsx   eax, byte ptr [ebx+4]"
+        ],
+        [
+          "0x448012",
+          "push    eax"
+        ],
+        [
+          "0x448013",
+          "movsx   eax, byte ptr [ebx+3]"
+        ],
+        [
+          "0x448017",
+          "push    eax"
+        ],
+        [
+          "0x448018",
+          "movsx   eax, byte ptr [ebx+2]"
+        ],
+        [
+          "0x44801c",
+          "push    eax"
+        ],
+        [
+          "0x44801d",
+          "movsx   eax, byte ptr [ecx]"
+        ],
+        [
+          "0x448020",
+          "push    eax"
+        ],
+        [
+          "0x448021",
+          "movsx   eax, byte ptr [ebx]"
+        ],
+        [
+          "0x448024",
+          "push    eax"
+        ],
+        [
+          "0x448025",
+          "push    offset aDDDDDDAdvloads; \"[%d][%d][%d][%d][%d][%d]AdvLoadSprite\""
+        ],
+        [
+          "0x44802a",
+          "push    0"
+        ],
+        [
+          "0x44802c",
+          "push    0"
+        ],
+        [
+          "0x44802e",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x448034",
+          "add     esp, 24h"
+        ],
+        [
+          "0x448037",
+          "call    __imp_PalRenderGetActive"
+        ],
+        [
+          "0x44803d",
+          "cmp     byte ptr [ebx], 23h ; '#'"
+        ],
+        [
+          "0x448040",
+          "mov     edi, eax"
+        ],
+        [
+          "0x448042",
+          "mov     [ebp+var_10C], edi"
+        ],
+        [
+          "0x448048",
+          "jnz     short loc_4480C0"
+        ],
+        [
+          "0x44804a",
+          "call    VmGetTaskSchedulingState; Returns VM scheduling/input state bitmask. Bit 4 (0x10)=skip mode active. Bit 5 (0x20)=auto mode active. Bit 3 (0x08)=advance key pressed or mousewheel. Bit 2 (0x04)=confirm key on. Wait handlers check (result&0x30) to skip waits in skip/auto mode. Main loop checks (result&0x10/0x20) to control execution cadence."
+        ],
+        [
+          "0x44804f",
+          "test    al, 30h"
+        ],
+        [
+          "0x448051",
+          "jz      short loc_448078"
+        ],
+        [
+          "0x448053",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x448056",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x448059",
+          "push    esi"
+        ],
+        [
+          "0x44805a",
+          "push    0"
+        ],
+        [
+          "0x44805c",
+          "call    __imp_PalSpriteInfoCreate"
+        ],
+        [
+          "0x448062",
+          "add     esp, 10h"
+        ],
+        [
+          "0x448065",
+          "mov     edi, eax"
+        ],
+        [
+          "0x448067",
+          "pop     edi"
+        ],
+        [
+          "0x448068",
+          "pop     esi"
+        ],
+        [
+          "0x448069",
+          "pop     ebx"
+        ],
+        [
+          "0x44806a",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x44806d",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x44806f",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x448074",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x448076",
+          "pop     ebp"
+        ],
+        [
+          "0x448077",
+          "retn"
+        ],
+        [
+          "0x448078",
+          "mov     ecx, [ebp+lpString]; lpString"
+        ],
+        [
+          "0x44807e",
+          "lea     edx, [ebp+var_10C]"
+        ],
+        [
+          "0x448084",
+          "call    StrLen_Safe"
+        ],
+        [
+          "0x448089",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x44808c",
+          "mov     esi, eax"
+        ],
+        [
+          "0x44808e",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x448091",
+          "push    [ebp+var_114]"
+        ],
+        [
+          "0x448097",
+          "push    edi"
+        ],
+        [
+          "0x448098",
+          "call    __imp_PalSpriteCreate"
+        ],
+        [
+          "0x44809e",
+          "push    esi"
+        ],
+        [
+          "0x44809f",
+          "mov     edi, eax"
+        ],
+        [
+          "0x4480a1",
+          "push    0"
+        ],
+        [
+          "0x4480a3",
+          "push    edi"
+        ],
+        [
+          "0x4480a4",
+          "call    __imp_PalSpritePaint"
+        ],
+        [
+          "0x4480aa",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x4480ad",
+          "mov     eax, edi"
+        ],
+        [
+          "0x4480af",
+          "pop     edi"
+        ],
+        [
+          "0x4480b0",
+          "pop     esi"
+        ],
+        [
+          "0x4480b1",
+          "pop     ebx"
+        ],
+        [
+          "0x4480b2",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x4480b5",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x4480b7",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x4480bc",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x4480be",
+          "pop     ebp"
+        ],
+        [
+          "0x4480bf",
+          "retn"
+        ],
+        [
+          "0x4480c0",
+          "call    VmGetTaskSchedulingState; Returns VM scheduling/input state bitmask. Bit 4 (0x10)=skip mode active. Bit 5 (0x20)=auto mode active. Bit 3 (0x08)=advance key pressed or mousewheel. Bit 2 (0x04)=confirm key on. Wait handlers check (result&0x30) to skip waits in skip/auto mode. Main loop checks (result&0x10/0x20) to control execution cadence."
+        ],
+        [
+          "0x4480c5",
+          "test    al, 30h"
+        ],
+        [
+          "0x4480c7",
+          "jz      short loc_448128"
+        ],
+        [
+          "0x4480c9",
+          "xor     edi, edi"
+        ],
+        [
+          "0x4480cb",
+          "cmp     off_4BB6B0, edi; \".pgd\""
+        ],
+        [
+          "0x4480d1",
+          "jz      loc_44817A"
+        ],
+        [
+          "0x4480d7",
+          "xor     esi, esi"
+        ],
+        [
+          "0x4480d9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x4480e0",
+          "push    off_4BB670[esi]; \".pgd\""
+        ],
+        [
+          "0x4480e6",
+          "lea     eax, [ebp+var_108]"
+        ],
+        [
+          "0x4480ec",
+          "push    ebx"
+        ],
+        [
+          "0x4480ed",
+          "push    offset aSS; \"%s%s\""
+        ],
+        [
+          "0x4480f2",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x4480f3",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x4480f9",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x4480fc",
+          "mov     eax, dword_4BB6B4[esi]"
+        ],
+        [
+          "0x448102",
+          "lea     ecx, [ebp+var_108]"
+        ],
+        [
+          "0x448108",
+          "push    0"
+        ],
+        [
+          "0x44810a",
+          "push    0"
+        ],
+        [
+          "0x44810c",
+          "push    ecx"
+        ],
+        [
+          "0x44810d",
+          "call    eax"
+        ],
+        [
+          "0x44810f",
+          "add     esp, 20h"
+        ],
+        [
+          "0x448112",
+          "test    eax, eax"
+        ],
+        [
+          "0x448114",
+          "jnz     short loc_44818F"
+        ],
+        [
+          "0x448116",
+          "inc     edi"
+        ],
+        [
+          "0x448117",
+          "lea     esi, ds:0[edi*8]"
+        ],
+        [
+          "0x44811e",
+          "cmp     off_4BB6B0[esi], eax; \".pgd\""
+        ],
+        [
+          "0x448124",
+          "jnz     short loc_4480E0"
+        ],
+        [
+          "0x448126",
+          "jmp     short loc_44817A"
+        ],
+        [
+          "0x448128",
+          "mov     eax, off_4BB670; \".pgd\""
+        ],
+        [
+          "0x44812d",
+          "xor     esi, esi"
+        ],
+        [
+          "0x44812f",
+          "test    eax, eax"
+        ],
+        [
+          "0x448131",
+          "jz      short loc_44817A"
+        ],
+        [
+          "0x448133",
+          "xor     edi, edi"
+        ],
+        [
+          "0x448135",
+          "push    eax"
+        ],
+        [
+          "0x448136",
+          "push    ebx"
+        ],
+        [
+          "0x448137",
+          "lea     eax, [ebp+var_108]"
+        ],
+        [
+          "0x44813d",
+          "push    offset aSS; \"%s%s\""
+        ],
+        [
+          "0x448142",
+          "push    eax; LPSTR"
+        ],
+        [
+          "0x448143",
+          "call    ds:__imp_wsprintfA"
+        ],
+        [
+          "0x448149",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x44814c",
+          "mov     eax, dword_4BB674[edi]"
+        ],
+        [
+          "0x448152",
+          "lea     ecx, [ebp+var_108]"
+        ],
+        [
+          "0x448158",
+          "push    ecx"
+        ],
+        [
+          "0x448159",
+          "push    [ebp+var_10C]"
+        ],
+        [
+          "0x44815f",
+          "call    eax"
+        ],
+        [
+          "0x448161",
+          "add     esp, 1Ch"
+        ],
+        [
+          "0x448164",
+          "test    eax, eax"
+        ],
+        [
+          "0x448166",
+          "jnz     short loc_44818F"
+        ],
+        [
+          "0x448168",
+          "inc     esi"
+        ],
+        [
+          "0x448169",
+          "lea     edi, ds:0[esi*8]"
+        ],
+        [
+          "0x448170",
+          "mov     eax, off_4BB670[edi]; \".pgd\""
+        ],
+        [
+          "0x448176",
+          "test    eax, eax"
+        ],
+        [
+          "0x448178",
+          "jnz     short loc_448135"
+        ],
+        [
+          "0x44817a",
+          "push    ebx"
+        ],
+        [
+          "0x44817b",
+          "push    offset aSpriteLoadErro; \"sprite load error [%s]\""
+        ],
+        [
+          "0x448180",
+          "push    0"
+        ],
+        [
+          "0x448182",
+          "push    0"
+        ],
+        [
+          "0x448184",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x44818a",
+          "add     esp, 10h"
+        ],
+        [
+          "0x44818d",
+          "xor     eax, eax"
+        ],
+        [
+          "0x44818f",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x448192",
+          "pop     edi"
+        ],
+        [
+          "0x448193",
+          "pop     esi"
+        ],
+        [
+          "0x448194",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x448196",
+          "pop     ebx"
+        ],
+        [
+          "0x448197",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x44819c",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x44819e",
+          "pop     ebp"
+        ],
+        [
+          "0x44819f",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/Game.exe",
+  "sha256": "219395e636f8fb8eb1bc7790345b0de5294671b33f8542edf074b333b0722e8e"
+}

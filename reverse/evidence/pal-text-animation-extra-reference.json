@@ -1,0 +1,670 @@
+{
+  "input": "/Users/xmoe/Downloads/[Us_track] \u604b\u00d7\u30b7\u30f3\u30a2\u30a4\u5f7c\u5973 \u60f3\u8981\u4f20\u8fbe\u7ed9\u4f60\u7684\u7231\u604b [\u5b98\u4e2d+\u6c49\u5316]/\u5b98\u4e2d/koikake/dll/PAL.dll",
+  "functions": [
+    {
+      "ea": "0x100beb30",
+      "name": "sub_100BEB30",
+      "xrefs": [
+        {
+          "from": "0x100a9991",
+          "function": "sub_100A97C0"
+        },
+        {
+          "from": "0x100a9bdd",
+          "function": "sub_100A99B0"
+        },
+        {
+          "from": "0x100b64c5",
+          "function": "StretchImage"
+        }
+      ],
+      "pseudocode": "int __fastcall sub_100BEB30(_BYTE *a1, int a2, int a3, int a4, int a5, int a6, float a7, float a8)\n{\n  int v9; // edx\n  int v10; // ebx\n  int v11; // edi\n  int result; // eax\n  int v13; // ebx\n  int v14; // esi\n  int v15; // ecx\n  int v16; // edi\n  int v17; // edx\n  int v18; // esi\n  unsigned __int8 *v19; // edx\n  int v20; // ecx\n  bool v21; // zf\n  int v22; // [esp+8h] [ebp-3Ch]\n  int v23; // [esp+Ch] [ebp-38h]\n  int v24; // [esp+10h] [ebp-34h]\n  int v25; // [esp+14h] [ebp-30h]\n  int v26; // [esp+24h] [ebp-20h]\n  int v27; // [esp+34h] [ebp-10h]\n  int v28; // [esp+38h] [ebp-Ch]\n  int v29; // [esp+3Ch] [ebp-8h]\n  _BYTE *v30; // [esp+40h] [ebp-4h]\n  int v31; // [esp+4Ch] [ebp+8h]\n  int v32; // [esp+5Ch] [ebp+18h]\n  int v33; // [esp+60h] [ebp+1Ch]\n\n  v9 = a5;\n  v30 = a1;\n  v10 = (int)(float)((float)a5 * a7);\n  if ( v10 > a2 )\n    v10 = a2;\n  v27 = v10;\n  v11 = (int)(float)((float)a6 * a8);\n  if ( v11 > a3 )\n    v11 = a3;\n  v28 = v11;\n  v23 = a2 - v10;\n  v25 = (int)(float)(256.0 / a7);\n  result = (int)(float)(256.0 / a8);\n  v22 = result;\n  if ( v11 > 0 )\n  {\n    v13 = 0;\n    v29 = 0;\n    do\n    {\n      result = v13 >> 8;\n      v14 = v9 * (v13 >> 8);\n      v24 = v14;\n      if ( v27 > 0 )\n      {\n        v31 = v27;\n        v32 = v9 - 1;\n        result = 0;\n        v33 = 0;\n        do\n        {\n          v15 = 0;\n          v26 = 256 - (unsigned __int8)result;\n          v16 = 0;\n          v17 = (result >> 8) + v14;\n          v18 = 0;\n          v19 = (unsigned __int8 *)(a4 + v17);\n          if ( result >> 8 != v32 )\n            v16 = v19[1];\n          if ( v13 >> 8 != a6 - 1 )\n          {\n            v15 = v19[a5];\n            if ( result >> 8 != v32 )\n              v18 = v19[a5 + 1];\n          }\n          v20 = (unsigned __int8)result * v18 + v26 * v15;\n          v14 = v24;\n          *v30 = ((unsigned __int8)v13 * v20\n                + (256 - (unsigned __int8)v13) * ((unsigned __int8)result * v16 + v26 * (unsigned int)*v19)) >> 16;\n          a1 = v30 + 1;\n          result = v25 + v33;\n          v21 = v31-- == 1;\n          ++v30;\n          v33 += v25;\n        }\n        while ( !v21 );\n        v9 = a5;\n        v11 = v28;\n      }\n      a1 += v23;\n      v13 = v22 + v29;\n      --v11;\n      v30 = a1;\n      v29 += v22;\n      v28 = v11;\n    }\n    while ( v11 );\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100beb30",
+          "push    ebp"
+        ],
+        [
+          "0x100beb31",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100beb33",
+          "sub     esp, 3Ch"
+        ],
+        [
+          "0x100beb36",
+          "push    ebx"
+        ],
+        [
+          "0x100beb37",
+          "push    esi"
+        ],
+        [
+          "0x100beb38",
+          "mov     esi, edx"
+        ],
+        [
+          "0x100beb3a",
+          "movss   xmm1, ds:dword_1010EE24"
+        ],
+        [
+          "0x100beb42",
+          "mov     edx, [ebp+arg_8]"
+        ],
+        [
+          "0x100beb45",
+          "push    edi"
+        ],
+        [
+          "0x100beb46",
+          "mov     [ebp+var_4], ecx"
+        ],
+        [
+          "0x100beb49",
+          "movd    xmm0, edx"
+        ],
+        [
+          "0x100beb4d",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100beb50",
+          "mulss   xmm0, [ebp+arg_10]"
+        ],
+        [
+          "0x100beb55",
+          "cvttss2si ebx, xmm0"
+        ],
+        [
+          "0x100beb59",
+          "movd    xmm0, [ebp+arg_C]"
+        ],
+        [
+          "0x100beb5e",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100beb61",
+          "cmp     ebx, esi"
+        ],
+        [
+          "0x100beb63",
+          "cmovg   ebx, esi"
+        ],
+        [
+          "0x100beb66",
+          "mov     [ebp+var_10], ebx"
+        ],
+        [
+          "0x100beb69",
+          "mulss   xmm0, [ebp+arg_14]"
+        ],
+        [
+          "0x100beb6e",
+          "cvttss2si edi, xmm0"
+        ],
+        [
+          "0x100beb72",
+          "movaps  xmm0, xmm1"
+        ],
+        [
+          "0x100beb75",
+          "divss   xmm0, [ebp+arg_10]"
+        ],
+        [
+          "0x100beb7a",
+          "cmp     edi, [ebp+arg_0]"
+        ],
+        [
+          "0x100beb7d",
+          "cmovg   edi, [ebp+arg_0]"
+        ],
+        [
+          "0x100beb81",
+          "sub     esi, ebx"
+        ],
+        [
+          "0x100beb83",
+          "mov     [ebp+var_C], edi"
+        ],
+        [
+          "0x100beb86",
+          "mov     [ebp+var_38], esi"
+        ],
+        [
+          "0x100beb89",
+          "divss   xmm1, [ebp+arg_14]"
+        ],
+        [
+          "0x100beb8e",
+          "cvttss2si eax, xmm0"
+        ],
+        [
+          "0x100beb92",
+          "mov     [ebp+var_30], eax"
+        ],
+        [
+          "0x100beb95",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100beb99",
+          "mov     [ebp+var_3C], eax"
+        ],
+        [
+          "0x100beb9c",
+          "test    edi, edi"
+        ],
+        [
+          "0x100beb9e",
+          "jle     loc_100BECA7"
+        ],
+        [
+          "0x100beba4",
+          "xor     ebx, ebx"
+        ],
+        [
+          "0x100beba6",
+          "mov     [ebp+var_8], ebx"
+        ],
+        [
+          "0x100beba9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x100bebb0",
+          "movzx   esi, bl"
+        ],
+        [
+          "0x100bebb3",
+          "mov     eax, ebx"
+        ],
+        [
+          "0x100bebb5",
+          "sar     eax, 8"
+        ],
+        [
+          "0x100bebb8",
+          "mov     ebx, 100h"
+        ],
+        [
+          "0x100bebbd",
+          "sub     ebx, esi"
+        ],
+        [
+          "0x100bebbf",
+          "mov     [ebp+var_2C], esi"
+        ],
+        [
+          "0x100bebc2",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100bebc4",
+          "mov     [ebp+var_28], ebx"
+        ],
+        [
+          "0x100bebc7",
+          "mov     ebx, [ebp+var_10]"
+        ],
+        [
+          "0x100bebca",
+          "imul    esi, edx"
+        ],
+        [
+          "0x100bebcd",
+          "mov     [ebp+var_14], eax"
+        ],
+        [
+          "0x100bebd0",
+          "mov     [ebp+var_34], esi"
+        ],
+        [
+          "0x100bebd3",
+          "test    ebx, ebx"
+        ],
+        [
+          "0x100bebd5",
+          "jle     loc_100BEC8C"
+        ],
+        [
+          "0x100bebdb",
+          "lea     eax, [edx-1]"
+        ],
+        [
+          "0x100bebde",
+          "mov     [ebp+arg_0], ebx"
+        ],
+        [
+          "0x100bebe1",
+          "mov     [ebp+arg_10], eax"
+        ],
+        [
+          "0x100bebe4",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100bebe6",
+          "mov     [ebp+arg_14], eax"
+        ],
+        [
+          "0x100bebe9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x100bebf0",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100bebf2",
+          "movzx   ecx, al"
+        ],
+        [
+          "0x100bebf5",
+          "sar     ebx, 8"
+        ],
+        [
+          "0x100bebf8",
+          "mov     eax, 100h"
+        ],
+        [
+          "0x100bebfd",
+          "sub     eax, ecx"
+        ],
+        [
+          "0x100bebff",
+          "mov     [ebp+var_24], ecx"
+        ],
+        [
+          "0x100bec02",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100bec04",
+          "mov     [ebp+var_20], eax"
+        ],
+        [
+          "0x100bec07",
+          "xor     edi, edi"
+        ],
+        [
+          "0x100bec09",
+          "mov     [ebp+var_1C], ebx"
+        ],
+        [
+          "0x100bec0c",
+          "lea     edx, [ebx+esi]"
+        ],
+        [
+          "0x100bec0f",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100bec11",
+          "add     edx, [ebp+arg_4]"
+        ],
+        [
+          "0x100bec14",
+          "mov     [ebp+var_18], edx"
+        ],
+        [
+          "0x100bec17",
+          "movzx   eax, byte ptr [edx]"
+        ],
+        [
+          "0x100bec1a",
+          "cmp     ebx, [ebp+arg_10]"
+        ],
+        [
+          "0x100bec1d",
+          "jz      short loc_100BEC23"
+        ],
+        [
+          "0x100bec1f",
+          "movzx   edi, byte ptr [edx+1]"
+        ],
+        [
+          "0x100bec23",
+          "mov     ebx, [ebp+arg_C]"
+        ],
+        [
+          "0x100bec26",
+          "mov     edx, [ebp+var_18]"
+        ],
+        [
+          "0x100bec29",
+          "dec     ebx"
+        ],
+        [
+          "0x100bec2a",
+          "cmp     [ebp+var_14], ebx"
+        ],
+        [
+          "0x100bec2d",
+          "mov     ebx, [ebp+var_1C]"
+        ],
+        [
+          "0x100bec30",
+          "jz      short loc_100BEC46"
+        ],
+        [
+          "0x100bec32",
+          "mov     ecx, [ebp+arg_8]"
+        ],
+        [
+          "0x100bec35",
+          "movzx   ecx, byte ptr [edx+ecx]"
+        ],
+        [
+          "0x100bec39",
+          "cmp     ebx, [ebp+arg_10]"
+        ],
+        [
+          "0x100bec3c",
+          "jz      short loc_100BEC46"
+        ],
+        [
+          "0x100bec3e",
+          "mov     esi, [ebp+arg_8]"
+        ],
+        [
+          "0x100bec41",
+          "movzx   esi, byte ptr [edx+esi+1]"
+        ],
+        [
+          "0x100bec46",
+          "imul    eax, [ebp+var_20]"
+        ],
+        [
+          "0x100bec4a",
+          "imul    ecx, [ebp+var_20]"
+        ],
+        [
+          "0x100bec4e",
+          "imul    esi, [ebp+var_24]"
+        ],
+        [
+          "0x100bec52",
+          "imul    edi, [ebp+var_24]"
+        ],
+        [
+          "0x100bec56",
+          "add     ecx, esi"
+        ],
+        [
+          "0x100bec58",
+          "mov     esi, [ebp+var_34]"
+        ],
+        [
+          "0x100bec5b",
+          "imul    ecx, [ebp+var_2C]"
+        ],
+        [
+          "0x100bec5f",
+          "add     eax, edi"
+        ],
+        [
+          "0x100bec61",
+          "imul    eax, [ebp+var_28]"
+        ],
+        [
+          "0x100bec65",
+          "add     eax, ecx"
+        ],
+        [
+          "0x100bec67",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100bec6a",
+          "sar     eax, 10h"
+        ],
+        [
+          "0x100bec6d",
+          "mov     [ecx], al"
+        ],
+        [
+          "0x100bec6f",
+          "inc     ecx"
+        ],
+        [
+          "0x100bec70",
+          "mov     eax, [ebp+arg_14]"
+        ],
+        [
+          "0x100bec73",
+          "add     eax, [ebp+var_30]"
+        ],
+        [
+          "0x100bec76",
+          "sub     [ebp+arg_0], 1"
+        ],
+        [
+          "0x100bec7a",
+          "mov     [ebp+var_4], ecx"
+        ],
+        [
+          "0x100bec7d",
+          "mov     [ebp+arg_14], eax"
+        ],
+        [
+          "0x100bec80",
+          "jnz     loc_100BEBF0"
+        ],
+        [
+          "0x100bec86",
+          "mov     edx, [ebp+arg_8]"
+        ],
+        [
+          "0x100bec89",
+          "mov     edi, [ebp+var_C]"
+        ],
+        [
+          "0x100bec8c",
+          "mov     ebx, [ebp+var_8]"
+        ],
+        [
+          "0x100bec8f",
+          "add     ecx, [ebp+var_38]"
+        ],
+        [
+          "0x100bec92",
+          "add     ebx, [ebp+var_3C]"
+        ],
+        [
+          "0x100bec95",
+          "sub     edi, 1"
+        ],
+        [
+          "0x100bec98",
+          "mov     [ebp+var_4], ecx"
+        ],
+        [
+          "0x100bec9b",
+          "mov     [ebp+var_8], ebx"
+        ],
+        [
+          "0x100bec9e",
+          "mov     [ebp+var_C], edi"
+        ],
+        [
+          "0x100beca1",
+          "jnz     loc_100BEBB0"
+        ],
+        [
+          "0x100beca7",
+          "pop     edi"
+        ],
+        [
+          "0x100beca8",
+          "pop     esi"
+        ],
+        [
+          "0x100beca9",
+          "pop     ebx"
+        ],
+        [
+          "0x100becaa",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100becac",
+          "pop     ebp"
+        ],
+        [
+          "0x100becad",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100bef50",
+      "name": "sub_100BEF50",
+      "xrefs": [
+        {
+          "from": "0x100a981c",
+          "function": "sub_100A97C0"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100BEF50(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)\n{\n  char *v8; // ecx\n  int result; // eax\n  char *v10; // edi\n  char *v11; // esi\n  unsigned int v13; // ecx\n  char *v14; // edi\n  char *v15; // esi\n  unsigned int v16; // ecx\n  int v17; // [esp+1Ch] [ebp+Ch]\n  int v18; // [esp+34h] [ebp+24h]\n\n  result = a3;\n  v17 = a2 - a3;\n  v18 = a8 - a3;\n  v10 = v8;\n  v11 = (char *)(a6 + a5);\n  do\n  {\n    v13 = (a3 & 0xFFFFFFFC) >> 2;\n    qmemcpy(v10, v11, 4 * v13);\n    v15 = &v11[4 * v13];\n    v14 = &v10[4 * v13];\n    v16 = a3 & 3;\n    qmemcpy(v14, v15, v16);\n    v11 = &v15[v16 + v18];\n    v10 = &v14[v16 + v17];\n    --a4;\n  }\n  while ( a4 );\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100bef50",
+          "push    ebp"
+        ],
+        [
+          "0x100bef51",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100bef53",
+          "push    ecx"
+        ],
+        [
+          "0x100bef54",
+          "mov     eax, [ebp+arg_14]"
+        ],
+        [
+          "0x100bef57",
+          "add     [ebp+arg_10], eax"
+        ],
+        [
+          "0x100bef5a",
+          "mov     eax, [ebp+arg_8]"
+        ],
+        [
+          "0x100bef5d",
+          "sub     [ebp+arg_4], eax"
+        ],
+        [
+          "0x100bef60",
+          "sub     [ebp+arg_1C], eax"
+        ],
+        [
+          "0x100bef63",
+          "push    ebx"
+        ],
+        [
+          "0x100bef64",
+          "push    esi"
+        ],
+        [
+          "0x100bef65",
+          "push    edi"
+        ],
+        [
+          "0x100bef66",
+          "mov     [ebp+var_4], ecx"
+        ],
+        [
+          "0x100bef69",
+          "mov     edi, [ebp+var_4]"
+        ],
+        [
+          "0x100bef6c",
+          "mov     esi, [ebp+arg_10]"
+        ],
+        [
+          "0x100bef6f",
+          "mov     edx, [ebp+arg_C]"
+        ],
+        [
+          "0x100bef72",
+          "mov     ecx, [ebp+arg_8]"
+        ],
+        [
+          "0x100bef75",
+          "mov     ebx, ecx"
+        ],
+        [
+          "0x100bef77",
+          "and     ecx, 0FFFFFFFCh"
+        ],
+        [
+          "0x100bef7a",
+          "shr     ecx, 2"
+        ],
+        [
+          "0x100bef7d",
+          "rep movsd"
+        ],
+        [
+          "0x100bef7f",
+          "mov     ecx, ebx"
+        ],
+        [
+          "0x100bef81",
+          "and     ecx, 3"
+        ],
+        [
+          "0x100bef84",
+          "rep movsb"
+        ],
+        [
+          "0x100bef86",
+          "add     esi, [ebp+arg_1C]"
+        ],
+        [
+          "0x100bef89",
+          "add     edi, [ebp+arg_4]"
+        ],
+        [
+          "0x100bef8c",
+          "dec     edx"
+        ],
+        [
+          "0x100bef8d",
+          "jnz     short loc_100BEF72"
+        ],
+        [
+          "0x100bef8f",
+          "pop     edi"
+        ],
+        [
+          "0x100bef90",
+          "pop     esi"
+        ],
+        [
+          "0x100bef91",
+          "pop     ebx"
+        ],
+        [
+          "0x100bef92",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100bef94",
+          "pop     ebp"
+        ],
+        [
+          "0x100bef95",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/PAL.dll",
+  "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+}

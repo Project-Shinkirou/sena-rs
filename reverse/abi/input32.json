@@ -1,0 +1,1040 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalInputGetKeyPush",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the stored push word. Bits newly pressed: current & (current XOR previous). No read-to-clear side effect. Requires initialized PAL context.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace60",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab610",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7000",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetKeyOn",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the stored on word. Stable held bits: current & previous; excludes the first sampled press. No read-to-clear side effect. Requires initialized PAL context.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace40",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab5f0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7020",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetKeyPull",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the stored pull word. Bits newly released: previous & (current XOR previous). No read-to-clear side effect. Requires initialized PAL context.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace50",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab600",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7010",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetKeyOnEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the stored repeat word. Last newly pressed mask after strictly more than 500 ms while any bit of that mask remains held; otherwise zero. This is a level, not a periodic pulse. No read-to-clear side effect. Requires initialized PAL context.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acdd0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab580",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7090",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetKeyEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the stored extended word. Frame-local extended-event word: left/right/middle double-click bits1/2/4 and window-mode-change bit8. Wheel has a separate signed16 latch. No read-to-clear side effect. Requires initialized PAL context.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acdc0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab570",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetJoyPush",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns newly pressed joystick bits when joystick-enabled is nonzero, otherwise zero. No read-to-clear side effect. DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acb00",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab2b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7110",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetJoyOn",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns current & previous joystick bits when joystick-enabled is nonzero, otherwise zero. No read-to-clear side effect. DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acac0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab270",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7170",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetJoyPull",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns newly released joystick bits when joystick-enabled is nonzero, otherwise zero. No read-to-clear side effect. DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acae0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab290",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b7140",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetJoyOnEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns stored extended joystick word; the inspected polling helper does not populate it when joystick-enabled is nonzero, otherwise zero. No read-to-clear side effect. DirectInput X/Y thresholds are strictly below -800 or above800; direction bits up/down/left/right=1/2/4/8, buttons begin at bit4.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acaa0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab250",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b71a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetMouseX",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns stored logical cursor x. No coordinate recomputation or consumption occurs in the export. Inactive/minimized/resize gate sets coordinates -1 and deltas0. Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100aceb0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab660",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70b0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetMouseY",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns stored logical cursor y. No coordinate recomputation or consumption occurs in the export. Inactive/minimized/resize gate sets coordinates -1 and deltas0. Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100acea0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab650",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70c0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetMouseMoveX",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns stored sample-to-sample logical x delta. No coordinate recomputation or consumption occurs in the export. Inactive/minimized/resize gate sets coordinates -1 and deltas0. Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace90",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab640",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetMouseMoveY",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns stored sample-to-sample logical y delta. No coordinate recomputation or consumption occurs in the export. Inactive/minimized/resize gate sets coordinates -1 and deltas0. Sampling uses single-precision scaling and truncation toward zero, not rounding; see narrative for out-of-window rules.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace80",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab630",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalInputGetWheel",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int16_t",
+      "parameters": [],
+      "implementation": "crates/pal-vm/src/input.rs",
+      "notes": "Returns the signed16 wheel latch. Windows positive wheel delta becomes -1; negative becomes +1. The last queued wheel message wins, then the engine clears the latch after its frame callback. Export itself does not consume the latch. Magnitude is normalized by the window procedure; multiple events are not summed. A zero Windows delta follows the nonnegative branch and becomes -1.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100ace70",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100ab620",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b70f0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonCreate",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalButtonGroupOpaque *",
+      "parameters": [
+        {
+          "name": "hover_sound",
+          "type": "const char *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed for synchronous sound loading"
+        },
+        {
+          "name": "click_sound",
+          "type": "const char *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed for synchronous sound loading"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Allocates and zeroes group; loads optional hover and click assets into sound group5. Native filename constructor incorrectly calls SoundCopy on each zeroed destination slot rather than the loaded hover source, so only the first hover slot is normally usable. Owned PalButtonGroupOpaque pointer, null on allocation failure. Sound-load failure does not reject the button group. Release destroys the sound handles and group, never registered sprites.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5650",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a5210",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100afc70",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonCreateEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalButtonGroupOpaque *",
+      "parameters": [
+        {
+          "name": "hover_sound",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "click_sound",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Copies hover sound four times into group5, then stores original hover and click handles. Release will release both original handles too: ownership transfers to the group on successful allocation. Owned PalButtonGroupOpaque pointer, null on allocation failure. Copies may fail independently without rejecting group. Allocation failure does not release caller handles. Same allocation/layout differences as Create.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a55f0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a5040",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100afd30",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonRelease",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Frees every registration node, releases five hover handles and click handle, then frees group. Registered sprites remain alive. int32_t:1 released,0 null group. Caller must not retain/reuse group or nodes after release. No validation of dangling nonnull pointers.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5560",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4fb0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100afdb0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonEntry",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Allocates24-byte node at list head; enabled=1,reserved=0,base_row=0. flags=1. int32_t:1 inserted,0 null group/allocation failure. Null sprite and duplicate sprites are accepted at insertion. Newer insertion is searched first when priorities tie. Flags:1 push,2 repeat-or-push when bit1 absent,4 suppress cell changes,0x10000 forwarded to SpriteHit; newer GetReaction also honors8 sound suppression.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5500",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4ed0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100afe30",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonEntryEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "flags",
+          "type": "uint32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Allocates24-byte node at list head; enabled=1,reserved=0,base_row=0. Copies all32 flag bits. int32_t:1 inserted,0 null group/allocation failure. Null sprite and duplicate sprites are accepted at insertion. Newer insertion is searched first when priorities tie. Flags:1 push,2 repeat-or-push when bit1 absent,4 suppress cell changes,0x10000 forwarded to SpriteHit; newer GetReaction also honors8 sound suppression.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a54a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4df0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100afeb0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonDelete",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Unlinks and frees the first matching registration node only. Does not release sprite, reset pending reaction, or remove duplicate registrations. int32_t:1 first match removed,0 missing/null group. ",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5440",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4d90",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100aff30",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonCtrl",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "enabled",
+          "type": "uint32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Stores raw enabled word in first matching node. Does not change sprite visibility or clear pending reaction. int32_t:1 first matching node changed,0 missing/null group/null sprite. Disabled front node still occludes lower-priority button nodes during hit selection.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a4fd0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4750",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b0340",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonSetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        },
+        {
+          "name": "base_row",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Stores base cell row and calls SpriteRectSetPos(sprite,0,row); this is an image cell, not screen x/y. int32_t:1 matching node,0 missing/null group. A null sprite registration can match and returns1 after native sprite routine reports error6. SpriteRectSetPos row clamping is build-specific and belongs to sprite contract.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a4f40",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4690",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b03e0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonGetPos",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Returns node base_row without querying visible sprite cell. int32_t base row; -1 missing/null group/null sprite. ",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a4f10",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonSetReaction",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "If group exists and no pending sprite, stores requested sprite and sets synthetic flag1. Does not require sprite registration. A pending reaction rejects replacement. int32_t always0. A zero requested sprite still sets synthetic flag but does not enter pending path.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a4f80",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4720",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b03a0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonIsProcessing",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "True exactly when group is nonnull and pending sprite field+0x20 is nonzero. int32_t normalized0/1. ",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a4fb0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonReset",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": false,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "sprite",
+          "type": "PalSpriteOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed; button registration never owns the sprite"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Always clears current/previous12-byte reactions, capture sprite and synthetic flag. If requested sprite exists in list, also sets its enabled word0. int32_t:1 requested sprite disabled,0 missing/null requested sprite. Reset-only with null sprite still resets state but returns0. Null group is dereferenced; do not claim null-safe export.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a56d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a5400",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonGetHitSprite",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteOpaque *",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Tests every node with SpriteHit(flags&0x10000). Chooses strictly smallest native sprite priority, retaining first encountered tie. Disabled winner produces null and occludes rear nodes. Then confirms enabled registration. Borrowed PalSpriteOpaque pointer, null if no enabled hit. Null group or negative x/y returnsnull; helper is called before negative-coordinate rejection. No sprite ownership transfer or mutation.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5010",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonHitTest",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Returns GetHitSprite(group,x,y)!=null with identical hit/occlusion rules. int32_t normalized0/1. ",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5070",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonGetReaction",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteOpaque *",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "reaction",
+          "type": "PalButtonReaction32 *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "caller-owned writable12-byte output; special null-group rule for Ex",
+          "layout": "PalButtonReaction32"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Polls shared input and updates group latch. If pending, synthetic flag starts click sound once; otherwise waits until click sound is not playing, then moves pending to completed. If idle, copies current to previous, clears current, finds front hit, updates cells and starts pending click according to mode/flags. Copies {completed,hovered,pending} to optional output. Borrowed completed sprite pointer; null while idle/hovering/pending. Null group returns0 and zeroes output if nonnull. Even with no click sound, clicked sprite is not returned until a later poll. Export does not clear input itself; Game.exe consumer clears input while pending. No native callback is invoked; VM wrapper dispatches callbacks using completed and hovered pointers. Pending branch bypasses hit testing and cell reset.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a51d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a49b0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100aff90",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    },
+    {
+      "name": "PalButtonGetReactionEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalSpriteOpaque *",
+      "parameters": [
+        {
+          "name": "group",
+          "type": "PalButtonGroupOpaque *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "borrowed unless Release is called"
+        },
+        {
+          "name": "x",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "y",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "trigger",
+          "type": "int32_t",
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "reaction",
+          "type": "PalButtonReaction32 *",
+          "stack_bytes": 4,
+          "consumed_bits": 32,
+          "nullable": true,
+          "ownership": "caller-owned writable12-byte output; special null-group rule for Ex",
+          "layout": "PalButtonReaction32"
+        }
+      ],
+      "implementation": "crates/pal-vm/src/runtime.rs; crates/pal-vm/src/runtime/buttons.rs",
+      "notes": "Same pending/sound-completion latch but uses supplied x/y and nonzero trigger. Ignores global release mode and node push/repeat flags. Applies flag4 cell suppression; does not honor newer flag8 sound suppression. Borrowed completed sprite pointer; null until completion. Null group unconditionally writes12 zero bytes through reaction; output must be nonnull in that case. With nonnull group, output may be null. Unlike GetReaction, no explicit negative-coordinate rejection follows hit selection. Any nonzero trigger starts pending; no normalization of the caller's input source.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100a5090",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        },
+        "reference": {
+          "address": "0x100a4790",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/input-reference-exports.json"
+        },
+        "koikake": {
+          "address": "0x100b0190",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/input-koikake-exports.json"
+        }
+      }
+    }
+  ]
+}

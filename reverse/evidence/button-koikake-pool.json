@@ -1,0 +1,382 @@
+{
+  "functions": [
+    {
+      "ea": "0x100b04e0",
+      "name": "sub_100B04E0",
+      "xrefs": [
+        {
+          "from": "0x100b00d4",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b0290",
+          "function": "PalButtonGetReactionEx"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B04E0(int a1)\n{\n  int i; // [esp+0h] [ebp-4h]\n\n  for ( i = 0; i < 5; ++i )\n  {\n    if ( !PalSoundPlayIs(*(_DWORD *)(a1 + 4 * i + 48)) )\n      return *(_DWORD *)(a1 + 4 * i + 48);\n  }\n  return *(_DWORD *)(a1 + 48);\n}\n",
+      "disassembly": [
+        [
+          "0x100b04e0",
+          "push    ebp"
+        ],
+        [
+          "0x100b04e1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b04e3",
+          "push    ecx"
+        ],
+        [
+          "0x100b04e4",
+          "mov     [ebp+var_4], 0"
+        ],
+        [
+          "0x100b04eb",
+          "jmp     short loc_100B04F6"
+        ],
+        [
+          "0x100b04ed",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b04f0",
+          "add     eax, 1"
+        ],
+        [
+          "0x100b04f3",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b04f6",
+          "cmp     [ebp+var_4], 5"
+        ],
+        [
+          "0x100b04fa",
+          "jge     short loc_100B0521"
+        ],
+        [
+          "0x100b04fc",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b04ff",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0502",
+          "mov     eax, [edx+ecx*4+30h]"
+        ],
+        [
+          "0x100b0506",
+          "push    eax"
+        ],
+        [
+          "0x100b0507",
+          "call    PalSoundPlayIs"
+        ],
+        [
+          "0x100b050c",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b050f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b0511",
+          "jnz     short loc_100B051F"
+        ],
+        [
+          "0x100b0513",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b0516",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0519",
+          "mov     eax, [edx+ecx*4+30h]"
+        ],
+        [
+          "0x100b051d",
+          "jmp     short loc_100B0530"
+        ],
+        [
+          "0x100b051f",
+          "jmp     short loc_100B04ED"
+        ],
+        [
+          "0x100b0521",
+          "mov     eax, 4"
+        ],
+        [
+          "0x100b0526",
+          "imul    ecx, eax, 0"
+        ],
+        [
+          "0x100b0529",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b052c",
+          "mov     eax, [edx+ecx+30h]"
+        ],
+        [
+          "0x100b0530",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b0532",
+          "pop     ebp"
+        ],
+        [
+          "0x100b0533",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b04b0",
+      "name": "sub_100B04B0",
+      "xrefs": [
+        {
+          "from": "0x100b00b4",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b00eb",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b00fb",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100b0272",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100b02a7",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100b02b7",
+          "function": "PalButtonGetReactionEx"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B04B0(int *a1, int a2)\n{\n  int result; // eax\n\n  result = (int)a1;\n  if ( (a1[4] & 4) == 0 )\n    return PalSpriteRectSetPos(*a1, 0, a2 + a1[3]);\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b04b0",
+          "push    ebp"
+        ],
+        [
+          "0x100b04b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b04b3",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04b6",
+          "mov     ecx, [eax+10h]"
+        ],
+        [
+          "0x100b04b9",
+          "and     ecx, 4"
+        ],
+        [
+          "0x100b04bc",
+          "jnz     short loc_100B04D8"
+        ],
+        [
+          "0x100b04be",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04c1",
+          "mov     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100b04c4",
+          "add     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b04c7",
+          "push    eax"
+        ],
+        [
+          "0x100b04c8",
+          "push    0"
+        ],
+        [
+          "0x100b04ca",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b04cd",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100b04cf",
+          "push    edx"
+        ],
+        [
+          "0x100b04d0",
+          "call    PalSpriteRectSetPos"
+        ],
+        [
+          "0x100b04d5",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x100b04d8",
+          "pop     ebp"
+        ],
+        [
+          "0x100b04d9",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b0450",
+      "name": "sub_100B0450",
+      "xrefs": [
+        {
+          "from": "0x100b0081",
+          "function": "PalButtonGetReaction"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B0450(int a1)\n{\n  if ( (*(_DWORD *)(a1 + 16) & 1) != 0 )\n  {\n    if ( (PalInputGetKeyPush() & 0x800000) != 0 )\n      return 1;\n  }\n  else if ( (*(_DWORD *)(a1 + 16) & 2) != 0 )\n  {\n    if ( (PalInputGetKeyOnEx() & 0x800000) != 0 )\n      return 1;\n    if ( (PalInputGetKeyPush() & 0x800000) != 0 )\n      return 1;\n  }\n  return 0;\n}\n",
+      "disassembly": [
+        [
+          "0x100b0450",
+          "push    ebp"
+        ],
+        [
+          "0x100b0451",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b0453",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0456",
+          "mov     ecx, [eax+10h]"
+        ],
+        [
+          "0x100b0459",
+          "and     ecx, 1"
+        ],
+        [
+          "0x100b045c",
+          "jz      short loc_100B0473"
+        ],
+        [
+          "0x100b045e",
+          "call    PalInputGetKeyPush"
+        ],
+        [
+          "0x100b0463",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b0468",
+          "jz      short loc_100B0471"
+        ],
+        [
+          "0x100b046a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b046f",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b0471",
+          "jmp     short loc_100B04A6"
+        ],
+        [
+          "0x100b0473",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b0476",
+          "mov     eax, [edx+10h]"
+        ],
+        [
+          "0x100b0479",
+          "and     eax, 2"
+        ],
+        [
+          "0x100b047c",
+          "jz      short loc_100B04A6"
+        ],
+        [
+          "0x100b047e",
+          "call    PalInputGetKeyOnEx"
+        ],
+        [
+          "0x100b0483",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b0488",
+          "jz      short loc_100B0493"
+        ],
+        [
+          "0x100b048a",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b048f",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b0491",
+          "jmp     short loc_100B04A6"
+        ],
+        [
+          "0x100b0493",
+          "call    PalInputGetKeyPush"
+        ],
+        [
+          "0x100b0498",
+          "and     eax, 800000h"
+        ],
+        [
+          "0x100b049d",
+          "jz      short loc_100B04A6"
+        ],
+        [
+          "0x100b049f",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b04a4",
+          "jmp     short loc_100B04A8"
+        ],
+        [
+          "0x100b04a6",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b04a8",
+          "pop     ebp"
+        ],
+        [
+          "0x100b04a9",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/dll/Pal.dll",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

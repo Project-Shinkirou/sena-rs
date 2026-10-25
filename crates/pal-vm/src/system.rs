@@ -9,23 +9,41 @@ pub struct PalRandomState {
 
 impl Default for PalRandomState {
     fn default() -> Self {
-        Self::new(256)
+        Self::new(2048)
     }
 }
 
 impl PalRandomState {
+    pub(crate) fn snapshot(&self) -> (Vec<i32>, usize, u32) {
+        (self.seeds.clone(), self.cursor, self.lcg_state)
+    }
+
+    pub(crate) fn restore_snapshot(&mut self, seeds: Vec<i32>, cursor: usize, lcg_state: u32) {
+        debug_assert!(!seeds.is_empty() && cursor < seeds.len());
+        self.seeds = seeds;
+        self.cursor = cursor;
+        self.lcg_state = lcg_state;
+    }
+
     pub fn new(seed_count: usize) -> Self {
+        Self::with_seed(seed_count, 1)
+    }
+
+    /// PalInit seeds the bundled CRT with the low DWORD of Unix seconds before
+    /// filling the ring. Explicit seeds also make deterministic replay possible.
+    pub fn with_seed(seed_count: usize, seed: u32) -> Self {
         let seed_count = seed_count.max(1);
         let mut state = Self {
             seeds: vec![0; seed_count],
             cursor: 0,
-            lcg_state: 0x1234_ABCD,
+            lcg_state: seed,
         };
         state.reset();
         state
     }
 
     /// PalRandomEx always reads the current seed entry and advances modulo seed_count.
+    /// Native declaration: `abi::win32::PalRandomEx`; self supplies DLL context.
     pub fn random_ex(&mut self) -> i32 {
         let value = self.seeds[self.cursor];
         self.cursor += 1;
@@ -46,6 +64,8 @@ impl PalRandomState {
 
     /// Fill the PAL seed ring. Mirrors PalRandomSetSeed_0's truncated copy and reset cursor.
     /// The original returns copied_count - 1.
+    /// `abi::win32::PalRandomSetSeed` accepts a pointer/count pair; the portable
+    /// slice adapter supplies those bounds and never retains the source.
     pub fn set_seed(&mut self, values: &[i32]) -> i32 {
         self.cursor = 0;
         let count = values.len().min(self.seeds.len());
@@ -54,6 +74,8 @@ impl PalRandomState {
     }
 
     /// Copy the PAL seed ring out. Mirrors PalRandomGetSeed_0's truncated copy count.
+    /// `abi::win32::PalRandomGetSeed` returns i32; this safe slice adapter uses
+    /// usize for its copied length. It is not an extern function declaration.
     pub fn get_seed(&self, out: &mut [i32]) -> usize {
         let count = out.len().min(self.seeds.len());
         out[..count].copy_from_slice(&self.seeds[..count]);
@@ -61,7 +83,8 @@ impl PalRandomState {
     }
 
     /// PalRandomReset_0 resets cursor and refills the seed ring with rand() output.
-    /// This uses a deterministic LCG in place of CRT rand() so tests and PAL_DEBUG are stable.
+    /// The local CRT stream uses the recovered Win32 rand() recurrence.
+    /// Its default seed is 1; portable snapshots retain the stream state.
     pub fn reset(&mut self) {
         self.cursor = 0;
         for index in 0..self.seeds.len() {
@@ -80,18 +103,19 @@ impl PalRandomState {
     fn next_lcg(&mut self) -> u32 {
         self.lcg_state = self
             .lcg_state
-            .wrapping_mul(1_664_525)
-            .wrapping_add(1_013_904_223);
-        self.lcg_state
+            .wrapping_mul(214_013)
+            .wrapping_add(2_531_011);
+        (self.lcg_state >> 16) & 0x7fff
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PalSystemState {
     language: i32,
-    /// Game.exe task data +8, written by window_change_mode after posting
-    /// PalWindowChangeMode.
+    /// PAL mode accepted by the host request consumer.
     window_mode: i32,
+    /// Game.exe task data +8, written even when PAL rejects the posted change.
+    script_window_mode: i32,
     /// Game.exe task data +12, written by window_set_mode_cache and returned
     /// by window_get_mode_cache.  This is intentionally separate from the
     /// live PAL window mode; system scripts use it as pending/config state.
@@ -130,6 +154,7 @@ impl Default for PalSystemState {
         Self {
             language: 1,
             window_mode: 0,
+            script_window_mode: 0,
             window_mode_cache: 0,
             auto_speed_percent: 50,
             text_speed_percent: 50,
@@ -173,12 +198,17 @@ impl PalSystemState {
         self.window_mode
     }
 
+    pub fn script_window_mode(&self) -> i32 {
+        self.script_window_mode
+    }
+
     pub fn window_mode_cache(&self) -> i32 {
         self.window_mode_cache
     }
 
     pub fn change_window_mode(&mut self, mode: i32) -> i32 {
-        self.window_mode = mode;
+        self.script_window_mode = mode;
+        // PAL posts to its window thread; the enable latch is checked there.
         self.window_requests
             .push(PalWindowRequest::ChangeMode { mode });
         1
@@ -352,12 +382,19 @@ impl PalSystemState {
     }
 
     pub fn set_window_size(&mut self, width: i32, height: i32) {
-        self.window_size = (width.max(1), height.max(1));
-        self.windowed_content_rect = PalRectI::new(0, 0, width.max(1), height.max(1));
-        self.window_requests.push(PalWindowRequest::ChangeSize {
-            width: width.max(1),
-            height: height.max(1),
-        });
+        // PalChangeWindowSize_0 accepts but ignores requests in fullscreen.
+        if self.window_mode != 0 {
+            return;
+        }
+        let width = width.max(1);
+        let height = if (width, height) == self.window_size {
+            height.max(1)
+        } else {
+            // sub_1026CE50 preserves the game's logical aspect from the width.
+            ((width as f32 * self.logical_size.1 as f32 / self.logical_size.0 as f32) as i32).max(1)
+        };
+        self.window_requests
+            .push(PalWindowRequest::ChangeSize { width, height });
     }
 
     pub fn set_logical_size(&mut self, width: i32, height: i32) {
@@ -415,8 +452,50 @@ impl PalSystemState {
         self.system_paths.get(kind)
     }
 
+    /// Record host geometry without requesting another platform operation.
+    pub fn observe_window_geometry(
+        &mut self,
+        x: i32,
+        y: i32,
+        width: i32,
+        height: i32,
+        fullscreen: bool,
+    ) {
+        let width = width.max(1);
+        let height = height.max(1);
+        if fullscreen {
+            if self.window_mode == 0 {
+                self.window_mode = 1;
+            }
+            self.fullscreen_content_rect =
+                PalRectI::new(x, y, x.saturating_add(width), y.saturating_add(height));
+        } else {
+            self.window_mode = 0;
+            self.window_pos = (x, y);
+            self.window_size = (width, height);
+            self.windowed_content_rect = PalRectI::new(0, 0, width, height);
+        }
+    }
+
     pub fn take_window_requests(&mut self) -> Vec<PalWindowRequest> {
-        std::mem::take(&mut self.window_requests)
+        let mut ready = Vec::new();
+        for request in std::mem::take(&mut self.window_requests) {
+            match request {
+                PalWindowRequest::ChangeMode { mode } => {
+                    if self.window_change_enabled == 0 || self.window_mode == mode {
+                        continue;
+                    }
+                    self.window_mode = mode;
+                }
+                PalWindowRequest::ChangeSize { width, height } => {
+                    self.window_size = (width, height);
+                    self.windowed_content_rect = PalRectI::new(0, 0, width, height);
+                }
+                _ => {}
+            }
+            ready.push(request);
+        }
+        ready
     }
 
     /// Confirm platform geometry without emitting another platform request.

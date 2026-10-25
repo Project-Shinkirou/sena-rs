@@ -1,0 +1,249 @@
+{
+  "input": "/Users/xmoe/Documents/projects/sena_rs/target/reverse-audit/shader-audit/fixture-Pal.dll",
+  "functions": [
+    {
+      "ea": "0x100a1390",
+      "name": "sub_100A1390",
+      "xrefs": [
+        {
+          "from": "0x100b5fc0",
+          "function": "sub_100B5E10"
+        },
+        {
+          "from": "0x100b68c8",
+          "function": "sub_100B6660"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100A1390(_BYTE *a1, LPCSTR lpString, int a3, int a4, char a5)\n{\n  int v5; // edi\n  int v6; // esi\n  int v7; // ecx\n  CHAR v8; // al\n  const CHAR *v9; // ecx\n  CHAR v10; // al\n\n  v5 = 0;\n  v6 = 0;\n  lstrlenA(lpString);\n  v7 = a3;\n  if ( a3 )\n  {\n    if ( *lpString )\n    {\n      do\n      {\n        v8 = lpString[v6];\n        if ( !v8 )\n          return 0;\n        ++v6;\n        if ( v8 == a5 && !--v7 )\n          goto LABEL_8;\n      }\n      while ( lpString[v6] );\n    }\n    if ( v7 )\n      return 0;\n  }\nLABEL_8:\n  v9 = &lpString[v6];\n  *a1 = 0;\n  v10 = lpString[v6];\n  if ( v10 )\n  {\n    do\n    {\n      if ( a5 == v10 )\n        break;\n      a1[v5] = v10;\n      ++v9;\n      a1[++v5] = 0;\n      v10 = *v9;\n    }\n    while ( *v9 );\n  }\n  return v5 + 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100a1390",
+          "push    ebp"
+        ],
+        [
+          "0x100a1391",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100a1393",
+          "push    ebx"
+        ],
+        [
+          "0x100a1394",
+          "mov     ebx, [ebp+lpString]"
+        ],
+        [
+          "0x100a1397",
+          "push    esi"
+        ],
+        [
+          "0x100a1398",
+          "push    edi"
+        ],
+        [
+          "0x100a1399",
+          "push    ebx; lpString"
+        ],
+        [
+          "0x100a139a",
+          "xor     edi, edi"
+        ],
+        [
+          "0x100a139c",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100a139e",
+          "call    ds:lstrlenA"
+        ],
+        [
+          "0x100a13a4",
+          "mov     ecx, [ebp+arg_8]"
+        ],
+        [
+          "0x100a13a7",
+          "mov     ah, [ebp+arg_10]"
+        ],
+        [
+          "0x100a13aa",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100a13ac",
+          "jz      short loc_100A13CC"
+        ],
+        [
+          "0x100a13ae",
+          "cmp     byte ptr [ebx], 0"
+        ],
+        [
+          "0x100a13b1",
+          "jz      short loc_100A13C8"
+        ],
+        [
+          "0x100a13b3",
+          "mov     al, [esi+ebx]"
+        ],
+        [
+          "0x100a13b6",
+          "test    al, al"
+        ],
+        [
+          "0x100a13b8",
+          "jz      short loc_100A13FB"
+        ],
+        [
+          "0x100a13ba",
+          "inc     esi"
+        ],
+        [
+          "0x100a13bb",
+          "cmp     al, ah"
+        ],
+        [
+          "0x100a13bd",
+          "jnz     short loc_100A13C2"
+        ],
+        [
+          "0x100a13bf",
+          "dec     ecx"
+        ],
+        [
+          "0x100a13c0",
+          "jz      short loc_100A13CC"
+        ],
+        [
+          "0x100a13c2",
+          "cmp     byte ptr [esi+ebx], 0"
+        ],
+        [
+          "0x100a13c6",
+          "jnz     short loc_100A13B3"
+        ],
+        [
+          "0x100a13c8",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100a13ca",
+          "jnz     short loc_100A13FB"
+        ],
+        [
+          "0x100a13cc",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100a13cf",
+          "lea     ecx, [esi+ebx]"
+        ],
+        [
+          "0x100a13d2",
+          "mov     byte ptr [edx], 0"
+        ],
+        [
+          "0x100a13d5",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x100a13d7",
+          "test    al, al"
+        ],
+        [
+          "0x100a13d9",
+          "jz      short loc_100A13F3"
+        ],
+        [
+          "0x100a13db",
+          "jmp     short loc_100A13E0"
+        ],
+        [
+          "0x100a13e0",
+          "cmp     ah, al"
+        ],
+        [
+          "0x100a13e2",
+          "jz      short loc_100A13F3"
+        ],
+        [
+          "0x100a13e4",
+          "mov     [edi+edx], al"
+        ],
+        [
+          "0x100a13e7",
+          "inc     ecx"
+        ],
+        [
+          "0x100a13e8",
+          "inc     edi"
+        ],
+        [
+          "0x100a13e9",
+          "mov     byte ptr [edi+edx], 0"
+        ],
+        [
+          "0x100a13ed",
+          "mov     al, [ecx]"
+        ],
+        [
+          "0x100a13ef",
+          "test    al, al"
+        ],
+        [
+          "0x100a13f1",
+          "jnz     short loc_100A13E0"
+        ],
+        [
+          "0x100a13f3",
+          "lea     eax, [edi+1]"
+        ],
+        [
+          "0x100a13f6",
+          "pop     edi"
+        ],
+        [
+          "0x100a13f7",
+          "pop     esi"
+        ],
+        [
+          "0x100a13f8",
+          "pop     ebx"
+        ],
+        [
+          "0x100a13f9",
+          "pop     ebp"
+        ],
+        [
+          "0x100a13fa",
+          "retn"
+        ],
+        [
+          "0x100a13fb",
+          "pop     edi"
+        ],
+        [
+          "0x100a13fc",
+          "pop     esi"
+        ],
+        [
+          "0x100a13fd",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100a13ff",
+          "pop     ebx"
+        ],
+        [
+          "0x100a1400",
+          "pop     ebp"
+        ],
+        [
+          "0x100a1401",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/dll/Pal.dll",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

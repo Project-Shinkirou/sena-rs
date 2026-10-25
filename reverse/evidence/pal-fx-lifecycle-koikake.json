@@ -1,0 +1,616 @@
+{
+  "functions": [
+    {
+      "ea": "0x100b3c30",
+      "name": "PalReleaseFxEffect",
+      "xrefs": [
+        {
+          "from": "0x10116138",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalReleaseFxEffect(int *a1, int a2)\n{\n  int v3; // [esp+4h] [ebp-8h]\n  int v4; // [esp+8h] [ebp-4h]\n\n  if ( (a2 & 0x10000000) != 0 )\n  {\n    if ( dword_101294D4 )\n    {\n      PalMemoryFree(dword_101294D4);\n      dword_101294D4 = 0;\n    }\n    if ( dword_101294D0 )\n    {\n      PalMemoryFree(dword_101294D0);\n      dword_101294D0 = 0;\n    }\n    sub_100BCA80(dword_101294B8, &dword_101294BC);\n    dword_101294B8 = 0;\n    dword_101294BC = 0;\n    dword_101294C0 = 0;\n    dword_101294C4 = 0;\n    dword_101294C8 = 0;\n    dword_101294CC = 0;\n    dword_101294D0 = 0;\n    dword_101294D4 = 0;\n    return 1;\n  }\n  else\n  {\n    v4 = *a1;\n    if ( !*(_DWORD *)(*a1 + 28) )\n      return 0;\n    v3 = sub_100B3DA0(*(_DWORD *)(v4 + 28));\n    *(_DWORD *)(v4 + 28) = 0;\n  }\n  return v3;\n}\n",
+      "disassembly": [
+        [
+          "0x100b3c30",
+          "push    ebp"
+        ],
+        [
+          "0x100b3c31",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b3c33",
+          "sub     esp, 0Ch"
+        ],
+        [
+          "0x100b3c36",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b3c39",
+          "and     eax, 10000000h"
+        ],
+        [
+          "0x100b3c3e",
+          "jz      loc_100B3CD6"
+        ],
+        [
+          "0x100b3c44",
+          "cmp     dword_101294D4, 0"
+        ],
+        [
+          "0x100b3c4b",
+          "jz      short loc_100B3C66"
+        ],
+        [
+          "0x100b3c4d",
+          "mov     ecx, dword_101294D4"
+        ],
+        [
+          "0x100b3c53",
+          "push    ecx; Block"
+        ],
+        [
+          "0x100b3c54",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100b3c59",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3c5c",
+          "mov     dword_101294D4, 0"
+        ],
+        [
+          "0x100b3c66",
+          "cmp     dword_101294D0, 0"
+        ],
+        [
+          "0x100b3c6d",
+          "jz      short loc_100B3C88"
+        ],
+        [
+          "0x100b3c6f",
+          "mov     edx, dword_101294D0"
+        ],
+        [
+          "0x100b3c75",
+          "push    edx; Block"
+        ],
+        [
+          "0x100b3c76",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100b3c7b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3c7e",
+          "mov     dword_101294D0, 0"
+        ],
+        [
+          "0x100b3c88",
+          "push    offset dword_101294BC"
+        ],
+        [
+          "0x100b3c8d",
+          "mov     eax, dword_101294B8"
+        ],
+        [
+          "0x100b3c92",
+          "push    eax"
+        ],
+        [
+          "0x100b3c93",
+          "call    sub_100BCA80"
+        ],
+        [
+          "0x100b3c98",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b3c9b",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100b3c9d",
+          "mov     dword_101294B8, ecx"
+        ],
+        [
+          "0x100b3ca3",
+          "mov     dword_101294BC, ecx"
+        ],
+        [
+          "0x100b3ca9",
+          "mov     dword_101294C0, ecx"
+        ],
+        [
+          "0x100b3caf",
+          "mov     dword_101294C4, ecx"
+        ],
+        [
+          "0x100b3cb5",
+          "mov     dword_101294C8, ecx"
+        ],
+        [
+          "0x100b3cbb",
+          "mov     dword_101294CC, ecx"
+        ],
+        [
+          "0x100b3cc1",
+          "mov     dword_101294D0, ecx"
+        ],
+        [
+          "0x100b3cc7",
+          "mov     dword_101294D4, ecx"
+        ],
+        [
+          "0x100b3ccd",
+          "mov     [ebp+var_8], 1"
+        ],
+        [
+          "0x100b3cd4",
+          "jmp     short loc_100B3D0D"
+        ],
+        [
+          "0x100b3cd6",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b3cd9",
+          "mov     eax, [edx]"
+        ],
+        [
+          "0x100b3cdb",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b3cde",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b3ce1",
+          "cmp     dword ptr [ecx+1Ch], 0"
+        ],
+        [
+          "0x100b3ce5",
+          "jnz     short loc_100B3CEB"
+        ],
+        [
+          "0x100b3ce7",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b3ce9",
+          "jmp     short loc_100B3D10"
+        ],
+        [
+          "0x100b3ceb",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b3cee",
+          "mov     eax, [edx+1Ch]"
+        ],
+        [
+          "0x100b3cf1",
+          "mov     [ebp+var_C], eax"
+        ],
+        [
+          "0x100b3cf4",
+          "mov     ecx, [ebp+var_C]"
+        ],
+        [
+          "0x100b3cf7",
+          "push    ecx"
+        ],
+        [
+          "0x100b3cf8",
+          "call    sub_100B3DA0"
+        ],
+        [
+          "0x100b3cfd",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3d00",
+          "mov     [ebp+var_8], eax"
+        ],
+        [
+          "0x100b3d03",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b3d06",
+          "mov     dword ptr [edx+1Ch], 0"
+        ],
+        [
+          "0x100b3d0d",
+          "mov     eax, [ebp+var_8]"
+        ],
+        [
+          "0x100b3d10",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b3d12",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3d13",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b3d20",
+      "name": "PalGetFxEffectState",
+      "xrefs": [
+        {
+          "from": "0x10116138",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalGetFxEffectState(int a1, int a2)\n{\n  if ( (a2 & 0x10000000) != 0 )\n    return dword_101294C8;\n  if ( *(_DWORD *)(*(_DWORD *)a1 + 28) )\n    return *(_DWORD *)(*(_DWORD *)(*(_DWORD *)a1 + 28) + 12);\n  return 0;\n}\n",
+      "disassembly": [
+        [
+          "0x100b3d20",
+          "push    ebp"
+        ],
+        [
+          "0x100b3d21",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b3d23",
+          "push    ecx"
+        ],
+        [
+          "0x100b3d24",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b3d27",
+          "and     eax, 10000000h"
+        ],
+        [
+          "0x100b3d2c",
+          "jz      short loc_100B3D37"
+        ],
+        [
+          "0x100b3d2e",
+          "mov     eax, dword_101294C8"
+        ],
+        [
+          "0x100b3d33",
+          "jmp     short loc_100B3D55"
+        ],
+        [
+          "0x100b3d35",
+          "jmp     short loc_100B3D55"
+        ],
+        [
+          "0x100b3d37",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b3d3a",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100b3d3c",
+          "mov     [ebp+var_4], edx"
+        ],
+        [
+          "0x100b3d3f",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b3d42",
+          "cmp     dword ptr [eax+1Ch], 0"
+        ],
+        [
+          "0x100b3d46",
+          "jnz     short loc_100B3D4C"
+        ],
+        [
+          "0x100b3d48",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b3d4a",
+          "jmp     short loc_100B3D55"
+        ],
+        [
+          "0x100b3d4c",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100b3d4f",
+          "mov     edx, [ecx+1Ch]"
+        ],
+        [
+          "0x100b3d52",
+          "mov     eax, [edx+0Ch]"
+        ],
+        [
+          "0x100b3d55",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b3d57",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3d58",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100c4880",
+      "name": "PalSpriteGetFxEffectState",
+      "xrefs": [
+        {
+          "from": "0x10116138",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSpriteGetFxEffectState(int a1)\n{\n  return sub_100B3FC0(*(_DWORD *)(a1 + 28));\n}\n",
+      "disassembly": [
+        [
+          "0x100c4880",
+          "push    ebp"
+        ],
+        [
+          "0x100c4881",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100c4883",
+          "push    ecx"
+        ],
+        [
+          "0x100c4884",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100c4887",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100c488a",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100c488d",
+          "mov     edx, [ecx+1Ch]"
+        ],
+        [
+          "0x100c4890",
+          "push    edx"
+        ],
+        [
+          "0x100c4891",
+          "call    sub_100B3FC0"
+        ],
+        [
+          "0x100c4896",
+          "add     esp, 4"
+        ],
+        [
+          "0x100c4899",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100c489b",
+          "pop     ebp"
+        ],
+        [
+          "0x100c489c",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b3da0",
+      "name": "sub_100B3DA0",
+      "xrefs": [
+        {
+          "from": "0x100b3cf8",
+          "function": "PalReleaseFxEffect"
+        },
+        {
+          "from": "0x100c1ef2",
+          "function": "PalSpriteRelease"
+        }
+      ],
+      "pseudocode": "int __cdecl sub_100B3DA0(void **a1)\n{\n  if ( a1 )\n  {\n    if ( a1[6] )\n    {\n      PalMemoryFree(a1[6]);\n      a1[6] = 0;\n    }\n    if ( a1[5] )\n    {\n      PalMemoryFree(a1[5]);\n      a1[5] = 0;\n    }\n    PalMemoryFree(a1);\n    SetLastError(0);\n    return 1;\n  }\n  else\n  {\n    SetLastError(6u);\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100b3da0",
+          "push    ebp"
+        ],
+        [
+          "0x100b3da1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b3da3",
+          "push    ecx"
+        ],
+        [
+          "0x100b3da4",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b3da7",
+          "mov     [ebp+Block], eax"
+        ],
+        [
+          "0x100b3daa",
+          "cmp     [ebp+Block], 0"
+        ],
+        [
+          "0x100b3dae",
+          "jnz     short loc_100B3DBC"
+        ],
+        [
+          "0x100b3db0",
+          "push    6; dwErrCode"
+        ],
+        [
+          "0x100b3db2",
+          "call    ds:SetLastError"
+        ],
+        [
+          "0x100b3db8",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b3dba",
+          "jmp     short loc_100B3E26"
+        ],
+        [
+          "0x100b3dbc",
+          "mov     ecx, [ebp+Block]"
+        ],
+        [
+          "0x100b3dbf",
+          "cmp     dword ptr [ecx+18h], 0"
+        ],
+        [
+          "0x100b3dc3",
+          "jz      short loc_100B3DDE"
+        ],
+        [
+          "0x100b3dc5",
+          "mov     edx, [ebp+Block]"
+        ],
+        [
+          "0x100b3dc8",
+          "mov     eax, [edx+18h]"
+        ],
+        [
+          "0x100b3dcb",
+          "push    eax; Block"
+        ],
+        [
+          "0x100b3dcc",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100b3dd1",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3dd4",
+          "mov     ecx, [ebp+Block]"
+        ],
+        [
+          "0x100b3dd7",
+          "mov     dword ptr [ecx+18h], 0"
+        ],
+        [
+          "0x100b3dde",
+          "mov     edx, [ebp+Block]"
+        ],
+        [
+          "0x100b3de1",
+          "cmp     dword ptr [edx+14h], 0"
+        ],
+        [
+          "0x100b3de5",
+          "jz      short loc_100B3E00"
+        ],
+        [
+          "0x100b3de7",
+          "mov     eax, [ebp+Block]"
+        ],
+        [
+          "0x100b3dea",
+          "mov     ecx, [eax+14h]"
+        ],
+        [
+          "0x100b3ded",
+          "push    ecx; Block"
+        ],
+        [
+          "0x100b3dee",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100b3df3",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3df6",
+          "mov     edx, [ebp+Block]"
+        ],
+        [
+          "0x100b3df9",
+          "mov     dword ptr [edx+14h], 0"
+        ],
+        [
+          "0x100b3e00",
+          "cmp     [ebp+Block], 0"
+        ],
+        [
+          "0x100b3e04",
+          "jz      short loc_100B3E19"
+        ],
+        [
+          "0x100b3e06",
+          "mov     eax, [ebp+Block]"
+        ],
+        [
+          "0x100b3e09",
+          "push    eax; Block"
+        ],
+        [
+          "0x100b3e0a",
+          "call    PalMemoryFree"
+        ],
+        [
+          "0x100b3e0f",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3e12",
+          "mov     [ebp+Block], 0"
+        ],
+        [
+          "0x100b3e19",
+          "push    0; dwErrCode"
+        ],
+        [
+          "0x100b3e1b",
+          "call    ds:SetLastError"
+        ],
+        [
+          "0x100b3e21",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b3e26",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b3e28",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3e29",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "testcase/dll/Pal.dll",
+  "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+  "sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e"
+}

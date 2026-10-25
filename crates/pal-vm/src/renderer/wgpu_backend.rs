@@ -1,20 +1,22 @@
 //! GPU backend for the PAL scene renderer.
 //!
-//! The scene graph (`FrameScene`) is backend-neutral: sprites are axis-aligned
-//! textured quads with a tint and an optional smooth-upscale hint, plus solid
-//! color quads. This backend maps each `SceneTexture` to an RGBA8 texture
+//! The scene graph (`FrameScene`) is backend-neutral: textured quads carry
+//! tint, rotation, optional PAL raster FX, and a smooth-upscale hint. This backend maps each `SceneTexture` to an RGBA8 texture
 //! (re-uploaded only when its generation changes) and emits one draw call per
 //! sprite, mirroring the software compositor's source-over blending.
 
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use wgpu::util::DeviceExt;
 use winit::dpi::PhysicalSize;
 use winit::window::Window;
 
 use crate::scene::{DrawCommand, FrameScene, SceneTexture, SceneTextureId, SpriteDraw};
 
-use super::{pal_device_rect_to_clip_quad, scaled_rect, RenderOutcome};
+use super::{
+    pal_device_rect_to_clip_quad, scaled_rect, shader_source, RenderOutcome, ShaderProgram,
+};
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -22,6 +24,135 @@ struct SpriteVertex {
     position: [f32; 2],
     uv: [f32; 2],
     color: [f32; 4],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct RasterGpuUniforms {
+    params: [f32; 4],
+    transform_x: [f32; 4],
+    transform_y: [f32; 4],
+}
+
+impl RasterGpuUniforms {
+    fn new(fx: crate::fx::RasterUniforms, quad: [[f32; 2]; 4]) -> Self {
+        let row = |axis: usize| {
+            [
+                (quad[1][axis] - quad[0][axis]) * 0.5,
+                (quad[0][axis] - quad[3][axis]) * 0.5,
+                (quad[0][axis] + quad[2][axis]) * 0.5,
+                0.0,
+            ]
+        };
+        Self {
+            params: [fx.offset, fx.undulate_x, fx.undulate_y, 0.0],
+            transform_x: row(0),
+            transform_y: row(1),
+        }
+    }
+}
+
+fn raster_bind_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
+    device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: Some("PAL raster parameters"),
+        entries: &[wgpu::BindGroupLayoutEntry {
+            binding: 0,
+            visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
+            ty: wgpu::BindingType::Buffer {
+                ty: wgpu::BufferBindingType::Uniform,
+                has_dynamic_offset: false,
+                min_binding_size: wgpu::BufferSize::new(48),
+            },
+            count: None,
+        }],
+    })
+}
+
+fn raster_bind_group(
+    device: &wgpu::Device,
+    layout: &wgpu::BindGroupLayout,
+    uniforms: RasterGpuUniforms,
+) -> wgpu::BindGroup {
+    let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        label: Some("PAL raster uniforms"),
+        contents: bytemuck::bytes_of(&uniforms),
+        usage: wgpu::BufferUsages::UNIFORM,
+    });
+    device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("PAL raster uniforms"),
+        layout,
+        entries: &[wgpu::BindGroupEntry {
+            binding: 0,
+            resource: buffer.as_entire_binding(),
+        }],
+    })
+}
+
+fn raster_pipeline(
+    device: &wgpu::Device,
+    format: wgpu::TextureFormat,
+    texture: &wgpu::BindGroupLayout,
+    uniforms: &wgpu::BindGroupLayout,
+    mode: u32,
+) -> wgpu::RenderPipeline {
+    let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("PAL raster pipeline layout"),
+        bind_group_layouts: &[Some(texture), Some(uniforms)],
+        immediate_size: 0,
+    });
+    let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: Some(ShaderProgram::Raster.label()),
+        source: wgpu::ShaderSource::Wgsl(shader_source(ShaderProgram::Raster).into()),
+    });
+    device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("PAL raster pipeline"),
+        layout: Some(&layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_main"),
+            compilation_options: Default::default(),
+            buffers: &[SpriteVertex::LAYOUT],
+        },
+        primitive: Default::default(),
+        depth_stencil: None,
+        multisample: Default::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: Default::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format,
+                blend: blend_state(mode),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    })
+}
+
+fn blend_state(mode: u32) -> Option<wgpu::BlendState> {
+    use wgpu::{BlendComponent, BlendFactor as Factor, BlendOperation as Op};
+    let (src_factor, dst_factor, operation) = match mode {
+        2 => (Factor::SrcAlpha, Factor::One, Op::Add),
+        3 | 5 => (Factor::Zero, Factor::Src, Op::Add),
+        4 => (Factor::Zero, Factor::Dst, Op::Add),
+        6 => (Factor::OneMinusDst, Factor::One, Op::Add),
+        7 => (Factor::One, Factor::One, Op::Min),
+        8 => (Factor::One, Factor::One, Op::Max),
+        9 => (Factor::One, Factor::One, Op::Add),
+        10 => (Factor::One, Factor::One, Op::ReverseSubtract),
+        11 => return None,
+        _ => (Factor::SrcAlpha, Factor::OneMinusSrcAlpha, Op::Add),
+    };
+    Some(wgpu::BlendState {
+        color: BlendComponent {
+            src_factor,
+            dst_factor,
+            operation,
+        },
+        alpha: wgpu::BlendComponent::OVER,
+    })
 }
 
 impl SpriteVertex {
@@ -96,8 +227,10 @@ enum SpanBinding {
 }
 
 struct DrawSpan {
+    raster: Option<RasterGpuUniforms>,
     binding: SpanBinding,
     first_vertex: u32,
+    mode: usize,
 }
 
 struct OffscreenTarget {
@@ -113,7 +246,9 @@ pub struct WgpuBackend {
     device: wgpu::Device,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
-    pipeline: wgpu::RenderPipeline,
+    pipelines: Vec<wgpu::RenderPipeline>,
+    raster_pipelines: Vec<wgpu::RenderPipeline>,
+    raster_bind_layout: wgpu::BindGroupLayout,
     sampler_nearest: wgpu::Sampler,
     sampler_linear: wgpu::Sampler,
     texture_bind_layout: wgpu::BindGroupLayout,
@@ -239,31 +374,48 @@ impl WgpuBackend {
             label: Some("pal sprite shader"),
             source: wgpu::ShaderSource::Wgsl(SPRITE_SHADER.into()),
         });
-        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("pal sprite pipeline"),
-            layout: Some(&pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &shader,
-                entry_point: Some("vs_main"),
-                compilation_options: wgpu::PipelineCompilationOptions::default(),
-                buffers: &[SpriteVertex::LAYOUT],
-            },
-            primitive: wgpu::PrimitiveState::default(),
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
-            fragment: Some(wgpu::FragmentState {
-                module: &shader,
-                entry_point: Some("fs_main"),
-                compilation_options: wgpu::PipelineCompilationOptions::default(),
-                targets: &[Some(wgpu::ColorTargetState {
+        let pipelines = (0..12)
+            .map(|mode| {
+                device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                    label: Some("pal sprite pipeline"),
+                    layout: Some(&pipeline_layout),
+                    vertex: wgpu::VertexState {
+                        module: &shader,
+                        entry_point: Some("vs_main"),
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                        buffers: &[SpriteVertex::LAYOUT],
+                    },
+                    primitive: wgpu::PrimitiveState::default(),
+                    depth_stencil: None,
+                    multisample: wgpu::MultisampleState::default(),
+                    fragment: Some(wgpu::FragmentState {
+                        module: &shader,
+                        entry_point: Some("fs_main"),
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                        targets: &[Some(wgpu::ColorTargetState {
+                            format,
+                            blend: blend_state(mode),
+                            write_mask: wgpu::ColorWrites::ALL,
+                        })],
+                    }),
+                    multiview_mask: None,
+                    cache: None,
+                })
+            })
+            .collect();
+
+        let raster_bind_layout = raster_bind_layout(&device);
+        let raster_pipelines = (0..12)
+            .map(|mode| {
+                raster_pipeline(
+                    &device,
                     format,
-                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
-                    write_mask: wgpu::ColorWrites::ALL,
-                })],
-            }),
-            multiview_mask: None,
-            cache: None,
-        });
+                    &texture_bind_layout,
+                    &raster_bind_layout,
+                    mode,
+                )
+            })
+            .collect();
 
         let white_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("pal solid quad texture"),
@@ -299,12 +451,8 @@ impl WgpuBackend {
             },
         );
         let white_view = white_texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let white_bind_nearest = Self::bind_texture(
-            &device,
-            &texture_bind_layout,
-            &white_view,
-            &sampler_nearest,
-        );
+        let white_bind_nearest =
+            Self::bind_texture(&device, &texture_bind_layout, &white_view, &sampler_nearest);
 
         let vertex_capacity = 4096_u64;
         let vertex_buffer = device.create_buffer(&wgpu::BufferDescriptor {
@@ -325,7 +473,9 @@ impl WgpuBackend {
             device,
             queue,
             config,
-            pipeline,
+            pipelines,
+            raster_pipelines,
+            raster_bind_layout,
             sampler_nearest,
             sampler_linear,
             texture_bind_layout,
@@ -534,6 +684,8 @@ impl WgpuBackend {
         scene: &FrameScene,
         fallback_clear: wgpu::Color,
     ) -> anyhow::Result<RenderOutcome> {
+        let resolved = crate::scene::resolve_raster_stage(scene);
+        let scene = resolved.as_ref();
         self.sync_textures(scene);
         let scale = [
             self.config.width as f32 / scene.logical_width.max(1) as f32,
@@ -581,6 +733,14 @@ impl WgpuBackend {
             self.queue
                 .write_buffer(&self.vertex_buffer, 0, bytemuck::cast_slice(&vertices));
         }
+        let raster_bindings: Vec<_> = spans
+            .iter()
+            .map(|span| {
+                span.raster.map(|uniforms| {
+                    raster_bind_group(&self.device, &self.raster_bind_layout, uniforms)
+                })
+            })
+            .collect();
         let frame = if let Some(surface) = &self.surface {
             Some(match surface.get_current_texture() {
                 wgpu::CurrentSurfaceTexture::Success(frame)
@@ -627,9 +787,9 @@ impl WgpuBackend {
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
-            pass.set_pipeline(&self.pipeline);
+            pass.set_pipeline(&self.pipelines[1]);
             pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            for span in &spans {
+            for (span_index, span) in spans.iter().enumerate() {
                 let bind_group = match span.binding {
                     SpanBinding::Nearest(texture_id) => self
                         .textures
@@ -644,6 +804,12 @@ impl WgpuBackend {
                 let Some(bind_group) = bind_group else {
                     continue;
                 };
+                if let Some(raster) = &raster_bindings[span_index] {
+                    pass.set_pipeline(&self.raster_pipelines[span.mode]);
+                    pass.set_bind_group(1, raster, &[]);
+                } else {
+                    pass.set_pipeline(&self.pipelines[span.mode]);
+                }
                 pass.set_bind_group(0, bind_group, &[]);
                 pass.draw(span.first_vertex..span.first_vertex + 6, 0..1);
             }
@@ -678,7 +844,8 @@ impl WgpuBackend {
         let src_h = sprite.src.h * texture.height as f32;
         // Match the software compositor: smooth sampling only kicks in when
         // the sprite is actually upscaled past its native texel density.
-        let smooth = sprite.smooth_upscale
+        let smooth = sprite.raster_fx.is_none()
+            && sprite.smooth_upscale
             && (dst_device.w > src_w * 1.1 || dst_device.h > src_h * 1.1);
         let mut uvs = [sprite.src.x, sprite.src.y, sprite.src.w, sprite.src.h];
         if smooth {
@@ -696,6 +863,7 @@ impl WgpuBackend {
         } else {
             SpanBinding::Nearest(sprite.texture_id)
         };
+        let first_vertex = vertices.len();
         push_quad_vertices(
             vertices,
             spans,
@@ -703,8 +871,28 @@ impl WgpuBackend {
             dst_device,
             surface_size,
             uvs,
-            sprite.color,
+            sprite.effective_blend_state().modulation(sprite.color),
         );
+        spans.last_mut().unwrap().mode = sprite
+            .effective_blend_state()
+            .pipeline_index(sprite.render_mode);
+        let quad = sprite.quad(false).map(|point| {
+            [
+                point[0] * scale[0] / surface_size[0] as f32 * 2.0 - 1.0,
+                1.0 - point[1] * scale[1] / surface_size[1] as f32 * 2.0,
+            ]
+        });
+        if let Some(fx) = sprite.raster_fx {
+            spans.last_mut().unwrap().raster = Some(RasterGpuUniforms::new(fx, quad));
+            let local = [[-1.0, 1.0], [1.0, 1.0], [1.0, -1.0], [-1.0, -1.0]];
+            for (vertex, index) in vertices[first_vertex..].iter_mut().zip([0, 1, 2, 0, 2, 3]) {
+                vertex.position = local[index];
+            }
+        } else {
+            for (vertex, index) in vertices[first_vertex..].iter_mut().zip([0, 1, 2, 0, 2, 3]) {
+                vertex.position = quad[index];
+            }
+        }
     }
 }
 
@@ -733,8 +921,10 @@ fn push_quad_vertices(
         (quad[3], [u0, v1]),
     ];
     spans.push(DrawSpan {
+        raster: None,
         binding,
         first_vertex: vertices.len() as u32,
+        mode: 1,
     });
     for index in [0_usize, 1, 2, 0, 2, 3] {
         let (position, uv) = corners[index];
@@ -754,3 +944,7 @@ fn scene_clear_color(scene: &FrameScene, fallback: wgpu::Color) -> wgpu::Color {
         fallback
     }
 }
+
+#[cfg(test)]
+#[path = "raster_tests.rs"]
+mod raster_tests;

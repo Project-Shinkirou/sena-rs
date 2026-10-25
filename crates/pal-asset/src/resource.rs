@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::path::{Component, Path, PathBuf};
 
-use crate::archive_dat::parse_archive_dat_paths;
+use crate::archive_dat::{parse_archive_dat_paths, parse_archive_dat_profile};
 use crate::decrypt::decrypt_pal_dollar_file;
 use crate::error::{AssetError, Result};
 use crate::key::{make_pac_key, PacKey};
@@ -28,6 +28,8 @@ pub struct ResourceManager {
     nls: Nls,
     paths: Vec<String>,
     pacs: HashMap<PathBuf, PacArchive>,
+    language_archive: Option<String>,
+    last_path_wins: bool,
 }
 
 impl ResourceManager {
@@ -37,6 +39,8 @@ impl ResourceManager {
             nls,
             paths: Vec::new(),
             pacs: HashMap::new(),
+            language_archive: None,
+            last_path_wins: false,
         }
     }
 
@@ -58,19 +62,58 @@ impl ResourceManager {
         nls: Nls,
         language_archive: Option<&str>,
     ) -> Result<Self> {
+        Self::bootstrap_with_path_order(root, nls, language_archive, false)
+    }
+
+    /// Newer PalSystemPathSet prepends each path to its native linked list.
+    /// Keep that precedence explicit so older release policies stay intact.
+    pub fn bootstrap_with_path_order(
+        root: impl Into<PathBuf>,
+        nls: Nls,
+        language_archive: Option<&str>,
+        last_path_wins: bool,
+    ) -> Result<Self> {
         let mut manager = Self::new(root, nls);
-        manager.add_path("data");
-
-        if let Some(list) = language_archive {
-            manager.add_archive_paths(list)?;
-        }
-
-        let archive = manager.open("archive.dat")?;
-        let paths = parse_archive_dat_paths(&archive.bytes, nls)?;
-        for path in paths {
-            manager.add_path(path);
-        }
+        manager.language_archive = language_archive.map(str::to_owned);
+        manager.last_path_wins = last_path_wins;
+        manager.select_archive_profile(0)?;
         Ok(manager)
+    }
+
+    /// Game.exe set_system_path clears the previous paths before reloading
+    /// ARCHIVE.DAT. Missing profiles fail with only the bootstrap path left.
+    pub fn select_archive_profile(&mut self, profile: usize) -> Result<()> {
+        self.paths.clear();
+        self.pacs.clear();
+        self.add_path("data");
+        let archive = match self.open("archive.dat") {
+            Ok(asset) => asset,
+            Err(AssetError::AssetNotFound { .. }) => {
+                let key = make_pac_key("archive.dat", self.nls)?;
+                self.try_open_in_base("csv", "archive.dat", &key)?
+                    .ok_or_else(|| AssetError::AssetNotFound { name: "archive.dat".into() })?
+            }
+            Err(err) => return Err(err),
+        };
+        let paths = parse_archive_dat_profile(&archive.bytes, self.nls, profile)?;
+        if let Some(list) = self.language_archive.clone().filter(|_| !self.last_path_wins) {
+            self.add_archive_paths(&list)?;
+        }
+        for path in paths {
+            self.add_path(path);
+        }
+        if let Some(list) = self.language_archive.clone().filter(|_| self.last_path_wins) {
+            self.add_archive_paths(&list)?;
+        }
+        Ok(())
+    }
+
+    pub fn last_path_wins(&self) -> bool {
+        self.last_path_wins
+    }
+
+    pub fn set_last_path_wins(&mut self, enabled: bool) {
+        self.last_path_wins = enabled;
     }
 
     /// Append every search path named by an `archive*.dat` list, which is a
@@ -105,7 +148,11 @@ impl ResourceManager {
         if normalized.is_empty() {
             return;
         }
-        if !self.paths.iter().any(|existing| existing == &normalized) {
+        if self.last_path_wins {
+            // A repeated native registration becomes the newest list node.
+            self.paths.retain(|existing| existing != &normalized);
+            self.paths.push(normalized);
+        } else if !self.paths.iter().any(|existing| existing == &normalized) {
             self.paths.push(normalized);
         }
     }
@@ -124,7 +171,11 @@ impl ResourceManager {
     pub fn open(&mut self, name: &str) -> Result<LoadedAsset> {
         let key = make_pac_key(name, self.nls)?;
 
-        for base in self.paths.clone() {
+        let mut paths = self.paths.clone();
+        if self.last_path_wins {
+            paths.reverse();
+        }
+        for base in paths {
             if let Some(asset) = self.try_open_in_base(&base, name, &key)? {
                 return Ok(asset);
             }

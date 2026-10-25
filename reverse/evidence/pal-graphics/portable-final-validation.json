@@ -1,0 +1,74 @@
+{
+  "review_date": "2026-10-23",
+  "regression_tests_run_after_user_stop_instruction": false,
+  "native_evidence_checks": {
+    "graphics_export_instances": 256,
+    "graphics_reviewed_machine_contract": 221,
+    "graphics_unresolved_abi": 35,
+    "platform_export_instances": 160,
+    "platform_reviewed_machine_contract": 139,
+    "platform_unresolved_abi": 21,
+    "integrity_status": "passed"
+  },
+  "abi_freshness": "python3 reverse/abi/generate.py --check passed",
+  "registered_vm_freshness": "python3 reverse/evidence/generate_registered_dispatch.py --check passed",
+  "compilation": [
+    "cargo build -p pal-vm --release --bin sena --lib",
+    "bash platform/switch/build_switch.sh",
+    "bash platform/vita/build_vita.sh"
+  ],
+  "actual_run": {
+    "game": "totsulover_try",
+    "root": "target/reverse-audit/isolated-totsulover-graphics",
+    "frames": 2400,
+    "fixed_timestep_ms": 16,
+    "elapsed_ms": 38400,
+    "exit_status": 0,
+    "last_pc": "0x000DD31C",
+    "draw_commands": 7,
+    "image": "target/reverse-audit/pal-graphics/totsulover-release-final.png",
+    "log": "target/reverse-audit/pal-graphics/totsulover-release-final.log",
+    "observed": "Trial title splash",
+    "reported_other_module_gaps": [
+      {
+        "category": 14,
+        "index": 13,
+        "name": "history_face_enable",
+        "pc": "0x000ABEB8"
+      },
+      {
+        "category": 14,
+        "index": 24,
+        "name": "history_secondary_icon_enable",
+        "pc": "0x000AA320"
+      }
+    ]
+  },
+  "artifact_hashes": [
+    {
+      "path": "target/release/sena",
+      "sha256": "9317c3983a94fecaf08d62e44f768a138d47efbdaad57f0a051681da53b76e9f"
+    },
+    {
+      "path": "target/release/libpal_vm.dylib",
+      "sha256": "1fd61d5e1f2f13a63fab9f5f15cf22c426a6bfb3a6fe0e49f8e1044911a08156"
+    },
+    {
+      "path": "dist/switch/sena.nro",
+      "sha256": "3852d5a58b389aedbeca2664b8d63edd5c6a00ecdb96884c604139e5acccc4b2"
+    },
+    {
+      "path": "dist/vita/sena.vpk",
+      "sha256": "6e933acc2a3dd11968f402fd769a47560fffb34778530fa555de4cc18ad0f916"
+    },
+    {
+      "path": "target/reverse-audit/pal-graphics/totsulover-release-final.png",
+      "sha256": "0d4a2bf985e773c6f7e233bf3598948919e0ac3681d25a6391527ba31d47460c"
+    }
+  ],
+  "limits": [
+    "This actual run does not cover every attachment or target-list branch.",
+    "Console package compilation is not console hardware execution.",
+    "Native DIB kernels, driver failures and full image-wrapper auxiliary banks remain separately documented boundaries."
+  ]
+}

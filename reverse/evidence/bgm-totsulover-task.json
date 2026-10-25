@@ -1,0 +1,208 @@
+{
+  "functions": [
+    {
+      "ea": "0x41d210",
+      "name": "sub_41D210",
+      "xrefs": [
+        {
+          "from": "0x41d35f",
+          "function": "sub_41D310"
+        },
+        {
+          "from": "0x41dbea",
+          "function": "sub_41DAB0"
+        },
+        {
+          "from": "0x477207",
+          "function": "sub_476F80"
+        }
+      ],
+      "pseudocode": "int __thiscall sub_41D210(_DWORD *this)\n{\n  unsigned int v2; // eax\n  unsigned int v3; // ecx\n  int v4; // edx\n  int v5; // edi\n  float v7; // xmm1_4\n  float v8; // xmm0_4\n\n  v2 = PaltimeGetTime() - this[22];\n  v3 = this[21];\n  v4 = this[20];\n  v5 = this[3];\n  if ( v2 < v3 )\n  {\n    v7 = (float)v2;\n    v8 = (float)v3;\n    return PalSoundSetVolumeChannel(*this, 100 * (v5 + (int)(float)((float)(v7 / v8) * (float)v4)));\n  }\n  else\n  {\n    this[2] &= 0xBFFDFFFF;\n    this[3] = v5 + v4;\n    return PalSoundSetVolumeChannel(*this, 100 * (v5 + v4));\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x41d210",
+          "push    esi"
+        ],
+        [
+          "0x41d211",
+          "push    edi"
+        ],
+        [
+          "0x41d212",
+          "mov     esi, ecx"
+        ],
+        [
+          "0x41d214",
+          "call    __imp_PaltimeGetTime"
+        ],
+        [
+          "0x41d21a",
+          "sub     eax, [esi+58h]"
+        ],
+        [
+          "0x41d21d",
+          "mov     ecx, [esi+54h]"
+        ],
+        [
+          "0x41d220",
+          "mov     edx, [esi+50h]"
+        ],
+        [
+          "0x41d223",
+          "mov     edi, [esi+0Ch]"
+        ],
+        [
+          "0x41d226",
+          "cmp     eax, ecx"
+        ],
+        [
+          "0x41d228",
+          "jb      short loc_41D249"
+        ],
+        [
+          "0x41d22a",
+          "and     dword ptr [esi+8], 0BFFDFFFFh"
+        ],
+        [
+          "0x41d231",
+          "lea     eax, [edi+edx]"
+        ],
+        [
+          "0x41d234",
+          "mov     [esi+0Ch], eax"
+        ],
+        [
+          "0x41d237",
+          "imul    eax, 64h ; 'd'"
+        ],
+        [
+          "0x41d23a",
+          "push    eax"
+        ],
+        [
+          "0x41d23b",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x41d23d",
+          "call    __imp_PalSoundSetVolumeChannel"
+        ],
+        [
+          "0x41d243",
+          "add     esp, 8"
+        ],
+        [
+          "0x41d246",
+          "pop     edi"
+        ],
+        [
+          "0x41d247",
+          "pop     esi"
+        ],
+        [
+          "0x41d248",
+          "retn"
+        ],
+        [
+          "0x41d249",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x41d24c",
+          "cvtsi2sd xmm0, eax"
+        ],
+        [
+          "0x41d250",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x41d253",
+          "addsd   xmm0, ds:qword_4DB680[eax*8]"
+        ],
+        [
+          "0x41d25c",
+          "cvtpd2ps xmm1, xmm0"
+        ],
+        [
+          "0x41d260",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x41d263",
+          "cvtsi2sd xmm0, ecx"
+        ],
+        [
+          "0x41d267",
+          "shr     ecx, 1Fh"
+        ],
+        [
+          "0x41d26a",
+          "addsd   xmm0, ds:qword_4DB680[ecx*8]"
+        ],
+        [
+          "0x41d273",
+          "cvtpd2ps xmm0, xmm0"
+        ],
+        [
+          "0x41d277",
+          "divss   xmm1, xmm0"
+        ],
+        [
+          "0x41d27b",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x41d27e",
+          "cvtsi2ss xmm0, edx"
+        ],
+        [
+          "0x41d282",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x41d286",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x41d28a",
+          "add     eax, edi"
+        ],
+        [
+          "0x41d28c",
+          "imul    eax, 64h ; 'd'"
+        ],
+        [
+          "0x41d28f",
+          "push    eax"
+        ],
+        [
+          "0x41d290",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x41d292",
+          "call    __imp_PalSoundSetVolumeChannel"
+        ],
+        [
+          "0x41d298",
+          "add     esp, 8"
+        ],
+        [
+          "0x41d29b",
+          "pop     edi"
+        ],
+        [
+          "0x41d29c",
+          "pop     esi"
+        ],
+        [
+          "0x41d29d",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "target/reverse-audit/totsulover/totsulover_try.exe",
+  "sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

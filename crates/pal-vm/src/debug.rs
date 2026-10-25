@@ -115,6 +115,7 @@ pub fn collect_frame_dump(
             }
             FrameEvent::WaitEmitted { pc, kind } => {
                 let k = match kind {
+                    WaitRequest::SpriteFx(handle) => format!("sprite_fx({})", handle.0),
                     WaitRequest::Frame(n) => format!("Frame({n})"),
                     WaitRequest::Time(ms) => format!("Time({ms})"),
                     WaitRequest::Click => "Click".to_owned(),

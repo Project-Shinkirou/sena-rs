@@ -1,0 +1,4043 @@
+{
+  "functions": [
+    {
+      "ea": "0x100b2600",
+      "name": "PalSoundPlay",
+      "xrefs": [
+        {
+          "from": "0x100a511b",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100a5145",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100a518f",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100a52c8",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100a5341",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x100a53fc",
+          "function": "PalButtonGetReaction"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __usercall PalSoundPlay@<eax>(int a1@<edi>, int a2, int *a3)\n{\n  int **v4; // eax\n  int **v5; // ebx\n  int *v6; // ecx\n  char *v7; // edx\n  int *v8; // esi\n  int v9; // edi\n  int v10; // eax\n  char *v11; // eax\n  char *v13; // ecx\n  int v14; // esi\n  int v15; // [esp+10h] [ebp+8h]\n\n  if ( !a2 )\n    return 0;\n  v4 = (int **)sub_100B1C80(a2);\n  v5 = v4;\n  if ( !v4[5] )\n    return 0;\n  v6 = v4[15];\n  v7 = (char *)dword_101336F4;\n  v4[22] = (int *)(int)(float)((float)*((int *)dword_101336F4 + (_DWORD)v6 + 4689)\n                             * (float)((float)(int)v4[19] / 10000.0));\n  if ( v6 == (int *)3 || !v6 )\n  {\n    EnterCriticalSection((LPCRITICAL_SECTION)(v7 + 18712));\n    v13 = (char *)dword_101336F4;\n    *((_DWORD *)dword_101336F4 + 4687) = 0;\n    v5[4] = a3;\n    v5[14] = (int *)6;\n    v5[16] = 0;\n    v5[18] = (int *)10;\n    LeaveCriticalSection((LPCRITICAL_SECTION)(v13 + 18712));\n    v14 = 100000;\n    while ( v5[14] == (int *)6 )\n    {\n      if ( !--v14 )\n        break;\n      Sleep(1u);\n    }\n    return 1;\n  }\n  else\n  {\n    EnterCriticalSection((LPCRITICAL_SECTION)(v7 + 18712));\n    v15 = (int)(float)((float)*((int *)dword_101336F4 + (_DWORD)v5[15] + 4689) * (float)((float)(int)v5[19] / 10000.0));\n    (*(void (__stdcall **)(int *, int, int))(**v5 + 60))(*v5, -10000, a1);\n    if ( PalSoundPlayIs(a2) )\n      (*(void (__stdcall **)(int *))(**v5 + 72))(*v5);\n    (*(void (__stdcall **)(int *, _DWORD))(**v5 + 52))(*v5, 0);\n    (*(void (__stdcall **)(int *, _DWORD, _DWORD))(**v5 + 48))(*v5, 0, 0);\n    v8 = *v5;\n    v9 = **v5;\n    v10 = sub_100B0150(v15);\n    (*(void (__stdcall **)(int *, int))(v9 + 60))(v8, v10);\n    v5[4] = a3;\n    v11 = (char *)dword_101336F4;\n    v5[2] = (int *)1;\n    *((_DWORD *)v11 + 4687) = 0;\n    LeaveCriticalSection((LPCRITICAL_SECTION)(v11 + 18712));\n    return 1;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100b2600",
+          "push    ebp"
+        ],
+        [
+          "0x100b2601",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2603",
+          "push    ebx"
+        ],
+        [
+          "0x100b2604",
+          "push    esi"
+        ],
+        [
+          "0x100b2605",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x100b2608",
+          "test    esi, esi"
+        ],
+        [
+          "0x100b260a",
+          "jz      loc_100B2799"
+        ],
+        [
+          "0x100b2610",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100b2612",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b2617",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100b2619",
+          "cmp     dword ptr [ebx+14h], 0"
+        ],
+        [
+          "0x100b261d",
+          "jz      loc_100B2799"
+        ],
+        [
+          "0x100b2623",
+          "movd    xmm0, dword ptr [ebx+4Ch]"
+        ],
+        [
+          "0x100b2628",
+          "mov     ecx, [ebx+3Ch]"
+        ],
+        [
+          "0x100b262b",
+          "mov     edx, dword_101336F4"
+        ],
+        [
+          "0x100b2631",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2634",
+          "push    edi"
+        ],
+        [
+          "0x100b2635",
+          "movd    xmm1, dword ptr [edx+ecx*4+4944h]"
+        ],
+        [
+          "0x100b263e",
+          "divss   xmm0, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b2646",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b2649",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b264d",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b2651",
+          "mov     [ebx+58h], eax"
+        ],
+        [
+          "0x100b2654",
+          "cmp     ecx, 3"
+        ],
+        [
+          "0x100b2657",
+          "jz      loc_100B272A"
+        ],
+        [
+          "0x100b265d",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b265f",
+          "jz      loc_100B272A"
+        ],
+        [
+          "0x100b2665",
+          "lea     eax, [edx+4918h]"
+        ],
+        [
+          "0x100b266b",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b266c",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b2672",
+          "movd    xmm0, dword ptr [ebx+4Ch]"
+        ],
+        [
+          "0x100b2677",
+          "mov     ecx, [ebx+3Ch]"
+        ],
+        [
+          "0x100b267a",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b267f",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2682",
+          "push    0FFFFD8F0h"
+        ],
+        [
+          "0x100b2687",
+          "movd    xmm1, dword ptr [eax+ecx*4+4944h]"
+        ],
+        [
+          "0x100b2690",
+          "divss   xmm0, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b2698",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b269b",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b269f",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b26a3",
+          "mov     [ebp+arg_0], eax"
+        ],
+        [
+          "0x100b26a6",
+          "mov     eax, [ebx]"
+        ],
+        [
+          "0x100b26a8",
+          "push    eax"
+        ],
+        [
+          "0x100b26a9",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b26ab",
+          "call    dword ptr [ecx+3Ch]"
+        ],
+        [
+          "0x100b26ae",
+          "push    esi"
+        ],
+        [
+          "0x100b26af",
+          "call    PalSoundPlayIs"
+        ],
+        [
+          "0x100b26b4",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b26b7",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b26b9",
+          "jz      short loc_100B26C3"
+        ],
+        [
+          "0x100b26bb",
+          "mov     eax, [ebx]"
+        ],
+        [
+          "0x100b26bd",
+          "push    eax"
+        ],
+        [
+          "0x100b26be",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b26c0",
+          "call    dword ptr [ecx+48h]"
+        ],
+        [
+          "0x100b26c3",
+          "mov     eax, [ebx]"
+        ],
+        [
+          "0x100b26c5",
+          "push    0"
+        ],
+        [
+          "0x100b26c7",
+          "push    eax"
+        ],
+        [
+          "0x100b26c8",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b26ca",
+          "call    dword ptr [ecx+34h]"
+        ],
+        [
+          "0x100b26cd",
+          "cmp     [ebp+arg_4], 0"
+        ],
+        [
+          "0x100b26d1",
+          "mov     ecx, [ebx]"
+        ],
+        [
+          "0x100b26d3",
+          "mov     eax, [ecx]"
+        ],
+        [
+          "0x100b26d5",
+          "mov     eax, [eax+30h]"
+        ],
+        [
+          "0x100b26d8",
+          "jz      short loc_100B26DE"
+        ],
+        [
+          "0x100b26da",
+          "push    1"
+        ],
+        [
+          "0x100b26dc",
+          "jmp     short loc_100B26E0"
+        ],
+        [
+          "0x100b26de",
+          "push    0"
+        ],
+        [
+          "0x100b26e0",
+          "push    0"
+        ],
+        [
+          "0x100b26e2",
+          "push    0"
+        ],
+        [
+          "0x100b26e4",
+          "push    ecx"
+        ],
+        [
+          "0x100b26e5",
+          "call    eax"
+        ],
+        [
+          "0x100b26e7",
+          "mov     esi, [ebx]"
+        ],
+        [
+          "0x100b26e9",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b26ec",
+          "mov     edi, [esi]"
+        ],
+        [
+          "0x100b26ee",
+          "call    sub_100B0150"
+        ],
+        [
+          "0x100b26f3",
+          "push    eax"
+        ],
+        [
+          "0x100b26f4",
+          "push    esi"
+        ],
+        [
+          "0x100b26f5",
+          "call    dword ptr [edi+3Ch]"
+        ],
+        [
+          "0x100b26f8",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b26fb",
+          "mov     [ebx+10h], eax"
+        ],
+        [
+          "0x100b26fe",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2703",
+          "mov     dword ptr [ebx+8], 1"
+        ],
+        [
+          "0x100b270a",
+          "mov     dword ptr [eax+493Ch], 0"
+        ],
+        [
+          "0x100b2714",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b2719",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b271a",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b2720",
+          "pop     edi"
+        ],
+        [
+          "0x100b2721",
+          "pop     esi"
+        ],
+        [
+          "0x100b2722",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b2727",
+          "pop     ebx"
+        ],
+        [
+          "0x100b2728",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2729",
+          "retn"
+        ],
+        [
+          "0x100b272a",
+          "lea     eax, [edx+4918h]"
+        ],
+        [
+          "0x100b2730",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b2731",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b2737",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b273d",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b2740",
+          "mov     dword ptr [ecx+493Ch], 0"
+        ],
+        [
+          "0x100b274a",
+          "mov     [ebx+10h], eax"
+        ],
+        [
+          "0x100b274d",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b2753",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b2754",
+          "mov     dword ptr [ebx+38h], 6"
+        ],
+        [
+          "0x100b275b",
+          "mov     dword ptr [ebx+40h], 0"
+        ],
+        [
+          "0x100b2762",
+          "mov     dword ptr [ebx+48h], 0Ah"
+        ],
+        [
+          "0x100b2769",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b276f",
+          "cmp     dword ptr [ebx+38h], 6"
+        ],
+        [
+          "0x100b2773",
+          "mov     esi, 186A0h"
+        ],
+        [
+          "0x100b2778",
+          "jnz     short loc_100B278F"
+        ],
+        [
+          "0x100b277a",
+          "mov     edi, ds:Sleep"
+        ],
+        [
+          "0x100b2780",
+          "sub     esi, 1"
+        ],
+        [
+          "0x100b2783",
+          "jz      short loc_100B278F"
+        ],
+        [
+          "0x100b2785",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b2787",
+          "call    edi ; Sleep"
+        ],
+        [
+          "0x100b2789",
+          "cmp     dword ptr [ebx+38h], 6"
+        ],
+        [
+          "0x100b278d",
+          "jz      short loc_100B2780"
+        ],
+        [
+          "0x100b278f",
+          "pop     edi"
+        ],
+        [
+          "0x100b2790",
+          "pop     esi"
+        ],
+        [
+          "0x100b2791",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b2796",
+          "pop     ebx"
+        ],
+        [
+          "0x100b2797",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2798",
+          "retn"
+        ],
+        [
+          "0x100b2799",
+          "pop     esi"
+        ],
+        [
+          "0x100b279a",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b279c",
+          "pop     ebx"
+        ],
+        [
+          "0x100b279d",
+          "pop     ebp"
+        ],
+        [
+          "0x100b279e",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b2520",
+      "name": "PalSoundPlayFade",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundPlayFade(int a1, int a2, int a3)\n{\n  _DWORD *v4; // edi\n  char *v5; // ecx\n  __m128i v6; // xmm1\n  float v7; // xmm0_4\n  int v8; // esi\n\n  if ( !a1 )\n    return 0;\n  v4 = (_DWORD *)sub_100B1C80(a1);\n  EnterCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n  if ( v4[5] )\n  {\n    v5 = (char *)dword_101336F4;\n    *((_DWORD *)dword_101336F4 + 4687) = 0;\n    v6 = _mm_cvtsi32_si128(*(_DWORD *)&v5[4 * v4[15] + 18756]);\n    v7 = (float)(int)v4[19] / 10000.0;\n    v4[14] = 6;\n    v4[16] = 0;\n    v4[22] = (int)(float)(_mm_cvtepi32_ps(v6).m128_f32[0] * v7);\n    v4[4] = a2;\n    v4[18] = a3;\n    LeaveCriticalSection((LPCRITICAL_SECTION)(v5 + 18712));\n    v8 = 100000;\n    while ( v4[14] == 6 )\n    {\n      if ( !--v8 )\n        break;\n      Sleep(1u);\n    }\n    return 1;\n  }\n  else\n  {\n    LeaveCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n    return 0;\n  }\n}\n",
+      "disassembly": [
+        [
+          "0x100b2520",
+          "push    ebp"
+        ],
+        [
+          "0x100b2521",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2523",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b2526",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b2528",
+          "jnz     short loc_100B252E"
+        ],
+        [
+          "0x100b252a",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b252c",
+          "pop     ebp"
+        ],
+        [
+          "0x100b252d",
+          "retn"
+        ],
+        [
+          "0x100b252e",
+          "push    edi"
+        ],
+        [
+          "0x100b252f",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b2534",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b253a",
+          "mov     edi, eax"
+        ],
+        [
+          "0x100b253c",
+          "add     ecx, 4918h"
+        ],
+        [
+          "0x100b2542",
+          "push    ecx; lpCriticalSection"
+        ],
+        [
+          "0x100b2543",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b2549",
+          "cmp     dword ptr [edi+14h], 0"
+        ],
+        [
+          "0x100b254d",
+          "jnz     short loc_100B2565"
+        ],
+        [
+          "0x100b254f",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2554",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b2559",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b255a",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b2560",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b2562",
+          "pop     edi"
+        ],
+        [
+          "0x100b2563",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2564",
+          "retn"
+        ],
+        [
+          "0x100b2565",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b256b",
+          "push    esi"
+        ],
+        [
+          "0x100b256c",
+          "mov     dword ptr [ecx+493Ch], 0"
+        ],
+        [
+          "0x100b2576",
+          "movd    xmm0, dword ptr [edi+4Ch]"
+        ],
+        [
+          "0x100b257b",
+          "mov     eax, [edi+3Ch]"
+        ],
+        [
+          "0x100b257e",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2581",
+          "movd    xmm1, dword ptr [ecx+eax*4+4944h]"
+        ],
+        [
+          "0x100b258a",
+          "divss   xmm0, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b2592",
+          "mov     dword ptr [edi+38h], 6"
+        ],
+        [
+          "0x100b2599",
+          "mov     dword ptr [edi+40h], 0"
+        ],
+        [
+          "0x100b25a0",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b25a3",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b25a7",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b25ab",
+          "mov     [edi+58h], eax"
+        ],
+        [
+          "0x100b25ae",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b25b1",
+          "mov     [edi+10h], eax"
+        ],
+        [
+          "0x100b25b4",
+          "mov     eax, [ebp+arg_8]"
+        ],
+        [
+          "0x100b25b7",
+          "mov     [edi+48h], eax"
+        ],
+        [
+          "0x100b25ba",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b25c0",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b25c1",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b25c7",
+          "cmp     dword ptr [edi+38h], 6"
+        ],
+        [
+          "0x100b25cb",
+          "mov     esi, 186A0h"
+        ],
+        [
+          "0x100b25d0",
+          "jnz     short loc_100B25F0"
+        ],
+        [
+          "0x100b25d2",
+          "push    ebx"
+        ],
+        [
+          "0x100b25d3",
+          "mov     ebx, ds:Sleep"
+        ],
+        [
+          "0x100b25d9",
+          "nop     dword ptr [eax+00000000h]"
+        ],
+        [
+          "0x100b25e0",
+          "sub     esi, 1"
+        ],
+        [
+          "0x100b25e3",
+          "jz      short loc_100B25EF"
+        ],
+        [
+          "0x100b25e5",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b25e7",
+          "call    ebx ; Sleep"
+        ],
+        [
+          "0x100b25e9",
+          "cmp     dword ptr [edi+38h], 6"
+        ],
+        [
+          "0x100b25ed",
+          "jz      short loc_100B25E0"
+        ],
+        [
+          "0x100b25ef",
+          "pop     ebx"
+        ],
+        [
+          "0x100b25f0",
+          "pop     esi"
+        ],
+        [
+          "0x100b25f1",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b25f6",
+          "pop     edi"
+        ],
+        [
+          "0x100b25f7",
+          "pop     ebp"
+        ],
+        [
+          "0x100b25f8",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b2440",
+      "name": "PalSoundStop",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundStop(int a1)\n{\n  _DWORD *v1; // eax\n  _DWORD *v2; // esi\n  char *v3; // ecx\n  __m128i v4; // xmm0\n  int v5; // eax\n  int v6; // edi\n\n  if ( !a1 )\n    return 0;\n  EnterCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n  v1 = (_DWORD *)sub_100B1C80(a1);\n  v2 = v1;\n  if ( !v1[5] || !v1[2] )\n  {\n    LeaveCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n    return 0;\n  }\n  v3 = (char *)dword_101336F4;\n  *((_DWORD *)dword_101336F4 + 4687) = 0;\n  v4 = _mm_cvtsi32_si128(v1[19]);\n  v5 = v1[15];\n  v2[14] = 3;\n  v2[16] = 0;\n  v2[22] = (int)(float)((float)*(int *)&v3[4 * v5 + 18756] * (float)(_mm_cvtepi32_ps(v4).m128_f32[0] / 10000.0));\n  LeaveCriticalSection((LPCRITICAL_SECTION)(v3 + 18712));\n  v6 = 100000;\n  while ( v2[14] == 3 )\n  {\n    if ( !--v6 )\n      break;\n    Sleep(1u);\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b2440",
+          "push    ebp"
+        ],
+        [
+          "0x100b2441",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2443",
+          "push    esi"
+        ],
+        [
+          "0x100b2444",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x100b2447",
+          "test    esi, esi"
+        ],
+        [
+          "0x100b2449",
+          "jz      loc_100B250F"
+        ],
+        [
+          "0x100b244f",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2454",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b2459",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b245a",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b2460",
+          "mov     ecx, esi"
+        ],
+        [
+          "0x100b2462",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b2467",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b2469",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b246d",
+          "jz      loc_100B24FE"
+        ],
+        [
+          "0x100b2473",
+          "cmp     dword ptr [esi+8], 0"
+        ],
+        [
+          "0x100b2477",
+          "jz      loc_100B24FE"
+        ],
+        [
+          "0x100b247d",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2483",
+          "push    edi"
+        ],
+        [
+          "0x100b2484",
+          "mov     dword ptr [ecx+493Ch], 0"
+        ],
+        [
+          "0x100b248e",
+          "movd    xmm0, dword ptr [esi+4Ch]"
+        ],
+        [
+          "0x100b2493",
+          "mov     eax, [esi+3Ch]"
+        ],
+        [
+          "0x100b2496",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2499",
+          "mov     dword ptr [esi+38h], 3"
+        ],
+        [
+          "0x100b24a0",
+          "mov     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100b24a7",
+          "movd    xmm1, dword ptr [ecx+eax*4+4944h]"
+        ],
+        [
+          "0x100b24b0",
+          "divss   xmm0, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b24b8",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b24bb",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b24bf",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b24c3",
+          "mov     [esi+58h], eax"
+        ],
+        [
+          "0x100b24c6",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b24cc",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b24cd",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b24d3",
+          "cmp     dword ptr [esi+38h], 3"
+        ],
+        [
+          "0x100b24d7",
+          "mov     edi, 186A0h"
+        ],
+        [
+          "0x100b24dc",
+          "jnz     short loc_100B24F5"
+        ],
+        [
+          "0x100b24de",
+          "push    ebx"
+        ],
+        [
+          "0x100b24df",
+          "mov     ebx, ds:Sleep"
+        ],
+        [
+          "0x100b24e5",
+          "sub     edi, 1"
+        ],
+        [
+          "0x100b24e8",
+          "jz      short loc_100B24F4"
+        ],
+        [
+          "0x100b24ea",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b24ec",
+          "call    ebx ; Sleep"
+        ],
+        [
+          "0x100b24ee",
+          "cmp     dword ptr [esi+38h], 3"
+        ],
+        [
+          "0x100b24f2",
+          "jz      short loc_100B24E5"
+        ],
+        [
+          "0x100b24f4",
+          "pop     ebx"
+        ],
+        [
+          "0x100b24f5",
+          "pop     edi"
+        ],
+        [
+          "0x100b24f6",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b24fb",
+          "pop     esi"
+        ],
+        [
+          "0x100b24fc",
+          "pop     ebp"
+        ],
+        [
+          "0x100b24fd",
+          "retn"
+        ],
+        [
+          "0x100b24fe",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2503",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b2508",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b2509",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b250f",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b2511",
+          "pop     esi"
+        ],
+        [
+          "0x100b2512",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2513",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b2380",
+      "name": "PalSoundStopFade",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundStopFade(int a1, int a2)\n{\n  _DWORD *v3; // esi\n  int v4; // esi\n  char *v5; // eax\n  int v6; // edi\n\n  if ( !a1 )\n    return 0;\n  v3 = (_DWORD *)sub_100B1C80(a1);\n  EnterCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n  if ( !v3[5] || !v3[2] )\n  {\n    v4 = 0;\n    goto LABEL_13;\n  }\n  if ( v3[16] == 2 && a2 )\n  {\n    v4 = 1;\nLABEL_13:\n    LeaveCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n    return v4;\n  }\n  v3[18] = a2;\n  v5 = (char *)dword_101336F4;\n  v3[14] = 7;\n  v3[16] = 0;\n  *((_DWORD *)v5 + 4687) = 0;\n  LeaveCriticalSection((LPCRITICAL_SECTION)(v5 + 18712));\n  v6 = 100000;\n  while ( v3[14] == 7 )\n  {\n    if ( !--v6 )\n      break;\n    Sleep(1u);\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b2380",
+          "push    ebp"
+        ],
+        [
+          "0x100b2381",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2383",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b2386",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b2388",
+          "jnz     short loc_100B238E"
+        ],
+        [
+          "0x100b238a",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b238c",
+          "pop     ebp"
+        ],
+        [
+          "0x100b238d",
+          "retn"
+        ],
+        [
+          "0x100b238e",
+          "push    esi"
+        ],
+        [
+          "0x100b238f",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b2394",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b239a",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b239c",
+          "add     ecx, 4918h"
+        ],
+        [
+          "0x100b23a2",
+          "push    ecx; lpCriticalSection"
+        ],
+        [
+          "0x100b23a3",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b23a9",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b23ad",
+          "jz      short loc_100B2421"
+        ],
+        [
+          "0x100b23af",
+          "cmp     dword ptr [esi+8], 0"
+        ],
+        [
+          "0x100b23b3",
+          "jz      short loc_100B2421"
+        ],
+        [
+          "0x100b23b5",
+          "cmp     dword ptr [esi+40h], 2"
+        ],
+        [
+          "0x100b23b9",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b23bc",
+          "jnz     short loc_100B23C9"
+        ],
+        [
+          "0x100b23be",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b23c0",
+          "jz      short loc_100B23C9"
+        ],
+        [
+          "0x100b23c2",
+          "mov     esi, 1"
+        ],
+        [
+          "0x100b23c7",
+          "jmp     short loc_100B2423"
+        ],
+        [
+          "0x100b23c9",
+          "mov     [esi+48h], eax"
+        ],
+        [
+          "0x100b23cc",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b23d1",
+          "mov     dword ptr [esi+38h], 7"
+        ],
+        [
+          "0x100b23d8",
+          "mov     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100b23df",
+          "push    edi"
+        ],
+        [
+          "0x100b23e0",
+          "mov     dword ptr [eax+493Ch], 0"
+        ],
+        [
+          "0x100b23ea",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b23ef",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b23f0",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b23f6",
+          "cmp     dword ptr [esi+38h], 7"
+        ],
+        [
+          "0x100b23fa",
+          "mov     edi, 186A0h"
+        ],
+        [
+          "0x100b23ff",
+          "jnz     short loc_100B2418"
+        ],
+        [
+          "0x100b2401",
+          "push    ebx"
+        ],
+        [
+          "0x100b2402",
+          "mov     ebx, ds:Sleep"
+        ],
+        [
+          "0x100b2408",
+          "sub     edi, 1"
+        ],
+        [
+          "0x100b240b",
+          "jz      short loc_100B2417"
+        ],
+        [
+          "0x100b240d",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b240f",
+          "call    ebx ; Sleep"
+        ],
+        [
+          "0x100b2411",
+          "cmp     dword ptr [esi+38h], 7"
+        ],
+        [
+          "0x100b2415",
+          "jz      short loc_100B2408"
+        ],
+        [
+          "0x100b2417",
+          "pop     ebx"
+        ],
+        [
+          "0x100b2418",
+          "pop     edi"
+        ],
+        [
+          "0x100b2419",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b241e",
+          "pop     esi"
+        ],
+        [
+          "0x100b241f",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2420",
+          "retn"
+        ],
+        [
+          "0x100b2421",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100b2423",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2429",
+          "add     ecx, 4918h"
+        ],
+        [
+          "0x100b242f",
+          "push    ecx; lpCriticalSection"
+        ],
+        [
+          "0x100b2430",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b2436",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100b2438",
+          "pop     esi"
+        ],
+        [
+          "0x100b2439",
+          "pop     ebp"
+        ],
+        [
+          "0x100b243a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b2020",
+      "name": "PalSoundSetVolume",
+      "xrefs": [
+        {
+          "from": "0x100b2204",
+          "function": "PalSoundSetPrimaryVolume"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundSetVolume(int a1, unsigned int a2)\n{\n  unsigned int v2; // edx\n  int v4; // eax\n  char *v5; // ecx\n  char *v6; // esi\n  int v7; // ebx\n  _DWORD *v8; // esi\n  int v9; // edi\n  int v10; // eax\n  int v11; // edx\n  int v12; // eax\n  int v13; // [esp+0h] [ebp-4h]\n\n  v2 = a2;\n  if ( a2 > 6 )\n    return 0;\n  v4 = a1;\n  if ( a1 <= 10000 )\n  {\n    if ( a1 < 0 )\n      v4 = 0;\n  }\n  else\n  {\n    v4 = 10000;\n  }\n  v5 = (char *)dword_101336F4;\n  *((_DWORD *)dword_101336F4 + a2 + 4689) = v4;\n  switch ( a2 )\n  {\n    case 4u:\n      v6 = v5 + 5264;\n      v7 = 16;\n      goto LABEL_21;\n    case 5u:\n      v6 = v5 + 7504;\n      v7 = 64;\n      goto LABEL_21;\n    case 6u:\n      v6 = v5 + 16464;\n      v7 = 16;\n      goto LABEL_21;\n    case 3u:\n      v6 = v5 + 3864;\n      break;\n    case 2u:\n      v6 = v5 + 4144;\n      v7 = 8;\n      goto LABEL_21;\n    case 1u:\n      v6 = v5 + 1624;\n      v7 = 16;\n      goto LABEL_21;\n    default:\n      v6 = v5 + 1344;\n      break;\n  }\n  v7 = 2;\nLABEL_21:\n  v8 = v6 + 64;\n  do\n  {\n    if ( *(v8 - 11) && !*v8 )\n    {\n      if ( v2 == 3 )\n      {\n        switch ( *(v8 - 2) )\n        {\n          case 2:\n          case 3:\n          case 4:\n          case 6:\n          case 7:\n            break;\n          default:\n            goto LABEL_26;\n        }\n      }\n      else\n      {\nLABEL_26:\n        v9 = *((_DWORD *)v5 + 4808);\n        v10 = (int)(float)((float)*(int *)&v5[4 * *(v8 - 1) + 18756] * (float)((float)(int)v8[3] / 10000.0));\n        v13 = v10;\n        do\n        {\n          if ( v10 * *((_DWORD *)v5 + 4688) / 10000 )\n            v11 = (int)(float)((float)(sub_100B0110().m128_f32[0] * 20.0) * 100.0);\n          else\n            v11 = -10000;\n          v12 = (*(int (__stdcall **)(_DWORD, int))(*(_DWORD *)*(v8 - 16) + 60))(*(v8 - 16), v11);\n          v5 = (char *)dword_101336F4;\n          if ( !v12 )\n            break;\n          v10 = v13;\n        }\n        while ( (unsigned int)(*((_DWORD *)dword_101336F4 + 4808) - v9) < 0xBB8 );\n        v2 = a2;\n      }\n    }\n    v8 += 35;\n    --v7;\n  }\n  while ( v7 );\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b2020",
+          "push    ebp"
+        ],
+        [
+          "0x100b2021",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2023",
+          "push    ecx"
+        ],
+        [
+          "0x100b2024",
+          "mov     edx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b2027",
+          "cmp     edx, 6"
+        ],
+        [
+          "0x100b202a",
+          "jbe     short loc_100B2032"
+        ],
+        [
+          "0x100b202c",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b202e",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b2030",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2031",
+          "retn"
+        ],
+        [
+          "0x100b2032",
+          "mov     eax, [ebp+arg_0]"
+        ],
+        [
+          "0x100b2035",
+          "cmp     eax, 2710h"
+        ],
+        [
+          "0x100b203a",
+          "jle     short loc_100B2043"
+        ],
+        [
+          "0x100b203c",
+          "mov     eax, 2710h"
+        ],
+        [
+          "0x100b2041",
+          "jmp     short loc_100B204A"
+        ],
+        [
+          "0x100b2043",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100b2045",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b2047",
+          "cmovs   eax, ecx"
+        ],
+        [
+          "0x100b204a",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2050",
+          "push    ebx"
+        ],
+        [
+          "0x100b2051",
+          "push    esi"
+        ],
+        [
+          "0x100b2052",
+          "push    edi"
+        ],
+        [
+          "0x100b2053",
+          "mov     [ecx+edx*4+4944h], eax"
+        ],
+        [
+          "0x100b205a",
+          "cmp     edx, 4"
+        ],
+        [
+          "0x100b205d",
+          "jnz     short loc_100B206A"
+        ],
+        [
+          "0x100b205f",
+          "lea     esi, [ecx+1490h]"
+        ],
+        [
+          "0x100b2065",
+          "lea     ebx, [edx+0Ch]"
+        ],
+        [
+          "0x100b2068",
+          "jmp     short loc_100B20C2"
+        ],
+        [
+          "0x100b206a",
+          "cmp     edx, 5"
+        ],
+        [
+          "0x100b206d",
+          "jnz     short loc_100B207A"
+        ],
+        [
+          "0x100b206f",
+          "lea     esi, [ecx+1D50h]"
+        ],
+        [
+          "0x100b2075",
+          "lea     ebx, [edx+3Bh]"
+        ],
+        [
+          "0x100b2078",
+          "jmp     short loc_100B20C2"
+        ],
+        [
+          "0x100b207a",
+          "cmp     edx, 6"
+        ],
+        [
+          "0x100b207d",
+          "jnz     short loc_100B208A"
+        ],
+        [
+          "0x100b207f",
+          "lea     esi, [ecx+4050h]"
+        ],
+        [
+          "0x100b2085",
+          "lea     ebx, [edx+0Ah]"
+        ],
+        [
+          "0x100b2088",
+          "jmp     short loc_100B20C2"
+        ],
+        [
+          "0x100b208a",
+          "cmp     edx, 3"
+        ],
+        [
+          "0x100b208d",
+          "jnz     short loc_100B2097"
+        ],
+        [
+          "0x100b208f",
+          "lea     esi, [ecx+0F18h]"
+        ],
+        [
+          "0x100b2095",
+          "jmp     short loc_100B20BD"
+        ],
+        [
+          "0x100b2097",
+          "cmp     edx, 2"
+        ],
+        [
+          "0x100b209a",
+          "jnz     short loc_100B20A7"
+        ],
+        [
+          "0x100b209c",
+          "lea     esi, [ecx+1030h]"
+        ],
+        [
+          "0x100b20a2",
+          "lea     ebx, [edx+6]"
+        ],
+        [
+          "0x100b20a5",
+          "jmp     short loc_100B20C2"
+        ],
+        [
+          "0x100b20a7",
+          "cmp     edx, 1"
+        ],
+        [
+          "0x100b20aa",
+          "jnz     short loc_100B20B7"
+        ],
+        [
+          "0x100b20ac",
+          "lea     esi, [ecx+658h]"
+        ],
+        [
+          "0x100b20b2",
+          "lea     ebx, [edx+0Fh]"
+        ],
+        [
+          "0x100b20b5",
+          "jmp     short loc_100B20C2"
+        ],
+        [
+          "0x100b20b7",
+          "lea     esi, [ecx+540h]"
+        ],
+        [
+          "0x100b20bd",
+          "mov     ebx, 2"
+        ],
+        [
+          "0x100b20c2",
+          "movss   xmm2, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b20ca",
+          "add     esi, 40h ; '@'"
+        ],
+        [
+          "0x100b20cd",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x100b20d0",
+          "cmp     dword ptr [esi-2Ch], 0"
+        ],
+        [
+          "0x100b20d4",
+          "jz      loc_100B21A8; jumptable 100B20FA cases 2-4,6,7"
+        ],
+        [
+          "0x100b20da",
+          "cmp     dword ptr [esi], 0"
+        ],
+        [
+          "0x100b20dd",
+          "jnz     loc_100B21A8; jumptable 100B20FA cases 2-4,6,7"
+        ],
+        [
+          "0x100b20e3",
+          "cmp     edx, 3"
+        ],
+        [
+          "0x100b20e6",
+          "jnz     short def_100B20FA; jumptable 100B20FA default case, case 5"
+        ],
+        [
+          "0x100b20e8",
+          "mov     eax, [esi-8]"
+        ],
+        [
+          "0x100b20eb",
+          "add     eax, 0FFFFFFFEh; switch 6 cases"
+        ],
+        [
+          "0x100b20ee",
+          "cmp     eax, 5"
+        ],
+        [
+          "0x100b20f1",
+          "ja      short def_100B20FA; jumptable 100B20FA default case, case 5"
+        ],
+        [
+          "0x100b20f3",
+          "movzx   eax, ds:byte_100B21CC[eax]"
+        ],
+        [
+          "0x100b20fa",
+          "jmp     ds:jpt_100B20FA[eax*4]; switch jump"
+        ],
+        [
+          "0x100b2101",
+          "movd    xmm0, dword ptr [esi+0Ch]; jumptable 100B20FA default case, case 5"
+        ],
+        [
+          "0x100b2106",
+          "mov     eax, [esi-4]"
+        ],
+        [
+          "0x100b2109",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b210c",
+          "mov     edi, [ecx+4B20h]"
+        ],
+        [
+          "0x100b2112",
+          "movd    xmm1, dword ptr [ecx+eax*4+4944h]"
+        ],
+        [
+          "0x100b211b",
+          "divss   xmm0, xmm2"
+        ],
+        [
+          "0x100b211f",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b2122",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b2126",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b212a",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100b212d",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x100b2130",
+          "mov     ecx, [ecx+4940h]"
+        ],
+        [
+          "0x100b2136",
+          "imul    ecx, eax"
+        ],
+        [
+          "0x100b2139",
+          "mov     eax, 68DB8BADh"
+        ],
+        [
+          "0x100b213e",
+          "imul    ecx"
+        ],
+        [
+          "0x100b2140",
+          "sar     edx, 0Ch"
+        ],
+        [
+          "0x100b2143",
+          "mov     eax, edx"
+        ],
+        [
+          "0x100b2145",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x100b2148",
+          "add     eax, edx"
+        ],
+        [
+          "0x100b214a",
+          "jz      short loc_100B2172"
+        ],
+        [
+          "0x100b214c",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100b2150",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2153",
+          "divss   xmm0, xmm2"
+        ],
+        [
+          "0x100b2157",
+          "call    sub_100B0110"
+        ],
+        [
+          "0x100b215c",
+          "mulss   xmm0, ds:dword_10117BA8"
+        ],
+        [
+          "0x100b2164",
+          "mulss   xmm0, ds:dword_10117BAC"
+        ],
+        [
+          "0x100b216c",
+          "cvttss2si edx, xmm0"
+        ],
+        [
+          "0x100b2170",
+          "jmp     short loc_100B2177"
+        ],
+        [
+          "0x100b2172",
+          "mov     edx, 0FFFFD8F0h"
+        ],
+        [
+          "0x100b2177",
+          "mov     eax, [esi-40h]"
+        ],
+        [
+          "0x100b217a",
+          "push    edx"
+        ],
+        [
+          "0x100b217b",
+          "push    eax"
+        ],
+        [
+          "0x100b217c",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b217e",
+          "call    dword ptr [ecx+3Ch]"
+        ],
+        [
+          "0x100b2181",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2187",
+          "movss   xmm2, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b218f",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b2191",
+          "jz      short loc_100B21A5"
+        ],
+        [
+          "0x100b2193",
+          "mov     eax, [ecx+4B20h]"
+        ],
+        [
+          "0x100b2199",
+          "sub     eax, edi"
+        ],
+        [
+          "0x100b219b",
+          "cmp     eax, 0BB8h"
+        ],
+        [
+          "0x100b21a0",
+          "mov     eax, [ebp+var_4]"
+        ],
+        [
+          "0x100b21a3",
+          "jb      short loc_100B2130"
+        ],
+        [
+          "0x100b21a5",
+          "mov     edx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b21a8",
+          "add     esi, 8Ch; jumptable 100B20FA cases 2-4,6,7"
+        ],
+        [
+          "0x100b21ae",
+          "sub     ebx, 1"
+        ],
+        [
+          "0x100b21b1",
+          "jnz     loc_100B20D0"
+        ],
+        [
+          "0x100b21b7",
+          "pop     edi"
+        ],
+        [
+          "0x100b21b8",
+          "pop     esi"
+        ],
+        [
+          "0x100b21b9",
+          "lea     eax, [ebx+1]"
+        ],
+        [
+          "0x100b21bc",
+          "pop     ebx"
+        ],
+        [
+          "0x100b21bd",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b21bf",
+          "pop     ebp"
+        ],
+        [
+          "0x100b21c0",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b1f00",
+      "name": "PalSoundSetVolumeChannel",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundSetVolumeChannel(int a1, int a2)\n{\n  _DWORD *v2; // eax\n  _DWORD *v3; // esi\n  bool v4; // zf\n  _DWORD *v5; // edx\n  int v6; // edi\n  int v7; // ebx\n  int v8; // edx\n\n  if ( !a1 )\n    return 0;\n  v2 = (_DWORD *)sub_100B1C80(a1);\n  v3 = v2;\n  if ( !v2[5] )\n    return 0;\n  v4 = v2[16] == 0;\n  v2[19] = a2;\n  if ( v4 )\n  {\n    v5 = dword_101336F4;\n    v6 = *((_DWORD *)dword_101336F4 + 4808);\n    v7 = (int)(float)((float)*((int *)dword_101336F4 + v2[15] + 4689) * (float)((float)a2 / 10000.0));\n    do\n    {\n      if ( v7 * v5[4688] / 10000 )\n        v8 = (int)(float)((float)(sub_100B0110().m128_f32[0] * 20.0) * 100.0);\n      else\n        v8 = -10000;\n      if ( !(*(int (__stdcall **)(_DWORD, int))(*(_DWORD *)*v3 + 60))(*v3, v8) )\n        break;\n      v5 = dword_101336F4;\n    }\n    while ( (unsigned int)(*((_DWORD *)dword_101336F4 + 4808) - v6) < 0xBB8 );\n  }\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b1f00",
+          "push    ebp"
+        ],
+        [
+          "0x100b1f01",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b1f03",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b1f06",
+          "push    esi"
+        ],
+        [
+          "0x100b1f07",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b1f09",
+          "jz      loc_100B1FEB"
+        ],
+        [
+          "0x100b1f0f",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b1f14",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b1f16",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b1f1a",
+          "jz      loc_100B1FEB"
+        ],
+        [
+          "0x100b1f20",
+          "cmp     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100b1f24",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b1f27",
+          "mov     [esi+4Ch], eax"
+        ],
+        [
+          "0x100b1f2a",
+          "jnz     loc_100B1FE3"
+        ],
+        [
+          "0x100b1f30",
+          "movss   xmm2, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b1f38",
+          "mov     edx, dword_101336F4"
+        ],
+        [
+          "0x100b1f3e",
+          "mov     ecx, [esi+3Ch]"
+        ],
+        [
+          "0x100b1f41",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100b1f45",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b1f48",
+          "push    ebx"
+        ],
+        [
+          "0x100b1f49",
+          "push    edi"
+        ],
+        [
+          "0x100b1f4a",
+          "mov     edi, [edx+4B20h]"
+        ],
+        [
+          "0x100b1f50",
+          "movd    xmm1, dword ptr [edx+ecx*4+4944h]"
+        ],
+        [
+          "0x100b1f59",
+          "divss   xmm0, xmm2"
+        ],
+        [
+          "0x100b1f5d",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b1f60",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b1f64",
+          "cvttss2si ebx, xmm1"
+        ],
+        [
+          "0x100b1f68",
+          "nop     dword ptr [eax+eax+00000000h]"
+        ],
+        [
+          "0x100b1f70",
+          "mov     ecx, [edx+4940h]"
+        ],
+        [
+          "0x100b1f76",
+          "mov     eax, 68DB8BADh"
+        ],
+        [
+          "0x100b1f7b",
+          "imul    ecx, ebx"
+        ],
+        [
+          "0x100b1f7e",
+          "imul    ecx"
+        ],
+        [
+          "0x100b1f80",
+          "sar     edx, 0Ch"
+        ],
+        [
+          "0x100b1f83",
+          "mov     eax, edx"
+        ],
+        [
+          "0x100b1f85",
+          "shr     eax, 1Fh"
+        ],
+        [
+          "0x100b1f88",
+          "add     eax, edx"
+        ],
+        [
+          "0x100b1f8a",
+          "jz      short loc_100B1FB2"
+        ],
+        [
+          "0x100b1f8c",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100b1f90",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b1f93",
+          "divss   xmm0, xmm2"
+        ],
+        [
+          "0x100b1f97",
+          "call    sub_100B0110"
+        ],
+        [
+          "0x100b1f9c",
+          "mulss   xmm0, ds:dword_10117BA8"
+        ],
+        [
+          "0x100b1fa4",
+          "mulss   xmm0, ds:dword_10117BAC"
+        ],
+        [
+          "0x100b1fac",
+          "cvttss2si edx, xmm0"
+        ],
+        [
+          "0x100b1fb0",
+          "jmp     short loc_100B1FB7"
+        ],
+        [
+          "0x100b1fb2",
+          "mov     edx, 0FFFFD8F0h"
+        ],
+        [
+          "0x100b1fb7",
+          "mov     eax, [esi]"
+        ],
+        [
+          "0x100b1fb9",
+          "push    edx"
+        ],
+        [
+          "0x100b1fba",
+          "push    eax"
+        ],
+        [
+          "0x100b1fbb",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b1fbd",
+          "call    dword ptr [ecx+3Ch]"
+        ],
+        [
+          "0x100b1fc0",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b1fc2",
+          "jz      short loc_100B1FE1"
+        ],
+        [
+          "0x100b1fc4",
+          "mov     edx, dword_101336F4"
+        ],
+        [
+          "0x100b1fca",
+          "movss   xmm2, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b1fd2",
+          "mov     eax, [edx+4B20h]"
+        ],
+        [
+          "0x100b1fd8",
+          "sub     eax, edi"
+        ],
+        [
+          "0x100b1fda",
+          "cmp     eax, 0BB8h"
+        ],
+        [
+          "0x100b1fdf",
+          "jb      short loc_100B1F70"
+        ],
+        [
+          "0x100b1fe1",
+          "pop     edi"
+        ],
+        [
+          "0x100b1fe2",
+          "pop     ebx"
+        ],
+        [
+          "0x100b1fe3",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b1fe8",
+          "pop     esi"
+        ],
+        [
+          "0x100b1fe9",
+          "pop     ebp"
+        ],
+        [
+          "0x100b1fea",
+          "retn"
+        ],
+        [
+          "0x100b1feb",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b1fed",
+          "pop     esi"
+        ],
+        [
+          "0x100b1fee",
+          "pop     ebp"
+        ],
+        [
+          "0x100b1fef",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b37b0",
+      "name": "PalSoundSetFreq",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundSetFreq(int a1, int a2)\n{\n  _DWORD *v2; // eax\n\n  if ( !a1 )\n    return 0;\n  v2 = (_DWORD *)sub_100B1C80(a1);\n  if ( !v2[5] )\n    return 0;\n  (*(void (__stdcall **)(_DWORD, int))(*(_DWORD *)*v2 + 68))(*v2, a2);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b37b0",
+          "push    ebp"
+        ],
+        [
+          "0x100b37b1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b37b3",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b37b6",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b37b8",
+          "jz      short loc_100B37D7"
+        ],
+        [
+          "0x100b37ba",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b37bf",
+          "cmp     dword ptr [eax+14h], 0"
+        ],
+        [
+          "0x100b37c3",
+          "jz      short loc_100B37D7"
+        ],
+        [
+          "0x100b37c5",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x100b37c7",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x100b37ca",
+          "push    eax"
+        ],
+        [
+          "0x100b37cb",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b37cd",
+          "call    dword ptr [ecx+44h]"
+        ],
+        [
+          "0x100b37d0",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b37d5",
+          "pop     ebp"
+        ],
+        [
+          "0x100b37d6",
+          "retn"
+        ],
+        [
+          "0x100b37d7",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b37d9",
+          "pop     ebp"
+        ],
+        [
+          "0x100b37da",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b37e0",
+      "name": "PalSoundGetFreq",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundGetFreq(int a1)\n{\n  _DWORD *v1; // eax\n  int v2; // edx\n  int v4; // [esp+0h] [ebp-4h] BYREF\n\n  v4 = -1;\n  if ( a1 )\n  {\n    v1 = (_DWORD *)sub_100B1C80(a1);\n    if ( !v1[5] )\n      return v2;\n    if ( !(*(int (__stdcall **)(_DWORD, int *))(*(_DWORD *)*v1 + 32))(*v1, &v4) )\n      return v4;\n  }\n  return -1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b37e0",
+          "push    ebp"
+        ],
+        [
+          "0x100b37e1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b37e3",
+          "push    ecx"
+        ],
+        [
+          "0x100b37e4",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b37e7",
+          "or      edx, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b37ea",
+          "mov     [ebp+var_4], edx"
+        ],
+        [
+          "0x100b37ed",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b37ef",
+          "jz      short loc_100B3815"
+        ],
+        [
+          "0x100b37f1",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b37f6",
+          "cmp     dword ptr [eax+14h], 0"
+        ],
+        [
+          "0x100b37fa",
+          "jz      short loc_100B380F"
+        ],
+        [
+          "0x100b37fc",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x100b37fe",
+          "lea     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b3801",
+          "push    edx"
+        ],
+        [
+          "0x100b3802",
+          "push    eax"
+        ],
+        [
+          "0x100b3803",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b3805",
+          "call    dword ptr [ecx+20h]"
+        ],
+        [
+          "0x100b3808",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b380a",
+          "jnz     short loc_100B3815"
+        ],
+        [
+          "0x100b380c",
+          "mov     edx, [ebp+var_4]"
+        ],
+        [
+          "0x100b380f",
+          "mov     eax, edx"
+        ],
+        [
+          "0x100b3811",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b3813",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3814",
+          "retn"
+        ],
+        [
+          "0x100b3815",
+          "or      eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b3818",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b381a",
+          "pop     ebp"
+        ],
+        [
+          "0x100b381b",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b1e60",
+      "name": "PalSoundSetPanChannel",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundSetPanChannel(int a1, int a2)\n{\n  _DWORD *v2; // eax\n\n  if ( !a1 )\n    return 0;\n  v2 = (_DWORD *)sub_100B1C80(a1);\n  if ( !v2[5] )\n    return 0;\n  (*(void (__stdcall **)(_DWORD, int))(*(_DWORD *)*v2 + 64))(*v2, a2);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b1e60",
+          "push    ebp"
+        ],
+        [
+          "0x100b1e61",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b1e63",
+          "mov     ecx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b1e66",
+          "test    ecx, ecx"
+        ],
+        [
+          "0x100b1e68",
+          "jz      short loc_100B1E87"
+        ],
+        [
+          "0x100b1e6a",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b1e6f",
+          "cmp     dword ptr [eax+14h], 0"
+        ],
+        [
+          "0x100b1e73",
+          "jz      short loc_100B1E87"
+        ],
+        [
+          "0x100b1e75",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x100b1e77",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x100b1e7a",
+          "push    eax"
+        ],
+        [
+          "0x100b1e7b",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b1e7d",
+          "call    dword ptr [ecx+40h]"
+        ],
+        [
+          "0x100b1e80",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b1e85",
+          "pop     ebp"
+        ],
+        [
+          "0x100b1e86",
+          "retn"
+        ],
+        [
+          "0x100b1e87",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b1e89",
+          "pop     ebp"
+        ],
+        [
+          "0x100b1e8a",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b27a0",
+      "name": "PalSoundRelease",
+      "xrefs": [
+        {
+          "from": "0x100a55a7",
+          "function": "PalButtonRelease"
+        },
+        {
+          "from": "0x100a55ba",
+          "function": "PalButtonRelease"
+        },
+        {
+          "from": "0x100b2b8d",
+          "function": "PalSoundReleaseEx"
+        },
+        {
+          "from": "0x100b2c2c",
+          "function": "PalSoundLoadVerEpeg"
+        },
+        {
+          "from": "0x100b2fdd",
+          "function": "PalSoundLoad"
+        },
+        {
+          "from": "0x100b30ce",
+          "function": "PalSoundLoadEx"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundRelease(int a1)\n{\n  __int64 v1; // rax\n  _DWORD *v2; // esi\n  char *v3; // eax\n  int i; // edi\n  char *v5; // ecx\n\n  if ( !a1 )\n    return 0;\n  v1 = sub_100B1C80(a1);\n  v2 = (_DWORD *)v1;\n  if ( (_UNKNOWN *)(HIDWORD(v1) & 0xF0000000) == &unk_20000000 )\n    *(_DWORD *)(v1 + 12) = 0;\n  if ( !*(_DWORD *)(v1 + 20) )\n    return 0;\n  EnterCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n  v3 = (char *)dword_101336F4;\n  *((_DWORD *)dword_101336F4 + 4687) = 0;\n  v2[16] = 0;\n  v2[14] = 4;\n  LeaveCriticalSection((LPCRITICAL_SECTION)(v3 + 18712));\n  for ( i = 100000; v2[5]; v2[14] = 4 )\n  {\n    if ( !--i )\n      break;\n    Sleep(1u);\n  }\n  EnterCriticalSection((LPCRITICAL_SECTION)((char *)dword_101336F4 + 18712));\n  v5 = (char *)dword_101336F4;\n  *((_DWORD *)dword_101336F4 + 4687) = 0;\n  v2[22] = (int)(float)((float)*(int *)&v5[4 * v2[15] + 18756] * (float)((float)(int)v2[19] / 10000.0));\n  LeaveCriticalSection((LPCRITICAL_SECTION)(v5 + 18712));\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x100b27a0",
+          "push    ebp"
+        ],
+        [
+          "0x100b27a1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b27a3",
+          "mov     edx, [ebp+arg_0]"
+        ],
+        [
+          "0x100b27a6",
+          "push    esi"
+        ],
+        [
+          "0x100b27a7",
+          "test    edx, edx"
+        ],
+        [
+          "0x100b27a9",
+          "jz      loc_100B289C"
+        ],
+        [
+          "0x100b27af",
+          "mov     ecx, edx"
+        ],
+        [
+          "0x100b27b1",
+          "call    sub_100B1C80"
+        ],
+        [
+          "0x100b27b6",
+          "and     edx, 0F0000000h"
+        ],
+        [
+          "0x100b27bc",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b27be",
+          "cmp     edx, offset unk_20000000"
+        ],
+        [
+          "0x100b27c4",
+          "jnz     short loc_100B27CD"
+        ],
+        [
+          "0x100b27c6",
+          "mov     dword ptr [esi+0Ch], 0"
+        ],
+        [
+          "0x100b27cd",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b27d1",
+          "jz      loc_100B289C"
+        ],
+        [
+          "0x100b27d7",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b27dc",
+          "push    edi"
+        ],
+        [
+          "0x100b27dd",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b27e2",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b27e3",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b27e9",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b27ee",
+          "mov     dword ptr [eax+493Ch], 0"
+        ],
+        [
+          "0x100b27f8",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b27fd",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b27fe",
+          "mov     dword ptr [esi+40h], 0"
+        ],
+        [
+          "0x100b2805",
+          "mov     dword ptr [esi+38h], 4"
+        ],
+        [
+          "0x100b280c",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b2812",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b2816",
+          "mov     edi, 186A0h"
+        ],
+        [
+          "0x100b281b",
+          "jz      short loc_100B283B"
+        ],
+        [
+          "0x100b281d",
+          "push    ebx"
+        ],
+        [
+          "0x100b281e",
+          "mov     ebx, ds:Sleep"
+        ],
+        [
+          "0x100b2824",
+          "sub     edi, 1"
+        ],
+        [
+          "0x100b2827",
+          "jz      short loc_100B283A"
+        ],
+        [
+          "0x100b2829",
+          "push    1; dwMilliseconds"
+        ],
+        [
+          "0x100b282b",
+          "call    ebx ; Sleep"
+        ],
+        [
+          "0x100b282d",
+          "mov     dword ptr [esi+38h], 4"
+        ],
+        [
+          "0x100b2834",
+          "cmp     dword ptr [esi+14h], 0"
+        ],
+        [
+          "0x100b2838",
+          "jnz     short loc_100B2824"
+        ],
+        [
+          "0x100b283a",
+          "pop     ebx"
+        ],
+        [
+          "0x100b283b",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2840",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b2845",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b2846",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b284c",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2852",
+          "mov     dword ptr [ecx+493Ch], 0"
+        ],
+        [
+          "0x100b285c",
+          "movd    xmm0, dword ptr [esi+4Ch]"
+        ],
+        [
+          "0x100b2861",
+          "mov     eax, [esi+3Ch]"
+        ],
+        [
+          "0x100b2864",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b2867",
+          "movd    xmm1, dword ptr [ecx+eax*4+4944h]"
+        ],
+        [
+          "0x100b2870",
+          "divss   xmm0, ds:flt_10117BD8"
+        ],
+        [
+          "0x100b2878",
+          "cvtdq2ps xmm1, xmm1"
+        ],
+        [
+          "0x100b287b",
+          "mulss   xmm1, xmm0"
+        ],
+        [
+          "0x100b287f",
+          "cvttss2si eax, xmm1"
+        ],
+        [
+          "0x100b2883",
+          "mov     [esi+58h], eax"
+        ],
+        [
+          "0x100b2886",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b288c",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b288d",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b2893",
+          "pop     edi"
+        ],
+        [
+          "0x100b2894",
+          "mov     eax, 1"
+        ],
+        [
+          "0x100b2899",
+          "pop     esi"
+        ],
+        [
+          "0x100b289a",
+          "pop     ebp"
+        ],
+        [
+          "0x100b289b",
+          "retn"
+        ],
+        [
+          "0x100b289c",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b289e",
+          "pop     esi"
+        ],
+        [
+          "0x100b289f",
+          "pop     ebp"
+        ],
+        [
+          "0x100b28a0",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b2e20",
+      "name": "PalSoundLoad",
+      "xrefs": [
+        {
+          "from": "0x100a5674",
+          "function": "PalButtonCreate"
+        },
+        {
+          "from": "0x100a56ab",
+          "function": "PalButtonCreate"
+        },
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundLoad(char *lpString, int a2, int a3)\n{\n  char *v3; // ecx\n  int v4; // esi\n  _DWORD *v5; // eax\n  int result; // eax\n  char *v7; // edi\n  int v8; // esi\n  int v9; // esi\n  _DWORD *i; // eax\n  int v11; // esi\n  _DWORD *v12; // eax\n  int v13; // esi\n  int v14; // esi\n  int v15; // esi\n  struct _RTL_CRITICAL_SECTION *v16; // eax\n\n  v3 = (char *)dword_101336F4;\n  switch ( a2 )\n  {\n    case 4:\n      v4 = 0;\n      v5 = (char *)dword_101336F4 + 5276;\n      while ( v5[2] || *v5 )\n      {\n        ++v4;\n        v5 += 35;\n        if ( v4 >= 16 )\n          goto LABEL_6;\n      }\n      if ( v4 == -1 )\n        return 0;\n      v7 = (char *)dword_101336F4 + 140 * v4 + 5264;\n      v8 = v4 | 0x40000000;\n      break;\n    case 5:\n      v9 = 0;\n      for ( i = (char *)dword_101336F4 + 7516; i[2] || *i; i += 35 )\n      {\n        if ( ++v9 >= 64 )\n        {\n          PalErrorLogPrintfBasic(\"[%d] channel all use\", 64);\n          return 0;\n        }\n      }\n      if ( v9 == -1 )\n        return 0;\n      v7 = (char *)dword_101336F4 + 140 * v9 + 7504;\n      v8 = v9 | 0x50000000;\n      break;\n    case 6:\n      v11 = 0;\n      v12 = (char *)dword_101336F4 + 16476;\n      while ( v12[2] || *v12 )\n      {\n        ++v11;\n        v12 += 35;\n        if ( v11 >= 16 )\n        {\nLABEL_6:\n          PalErrorLogPrintfBasic(\"[%d] channel all use\", 16);\n          return 0;\n        }\n      }\n      if ( v11 == -1 )\n        return 0;\n      v7 = (char *)dword_101336F4 + 140 * v11 + 16464;\n      v8 = v11 | 0x60000000;\n      break;\n    case 3:\n      v13 = sub_100B1D50((char *)dword_101336F4 + 3864, 2);\n      if ( v13 == -1 )\n        return 0;\n      v3 = (char *)dword_101336F4;\n      v7 = (char *)dword_101336F4 + 140 * v13 + 3864;\n      v8 = (unsigned int)&unk_20000000 | v13;\n      break;\n    case 2:\n      v14 = sub_100B1D50((char *)dword_101336F4 + 4144, 8);\n      if ( v14 == -1 )\n        return 0;\n      v3 = (char *)dword_101336F4;\n      v7 = (char *)dword_101336F4 + 140 * v14 + 4144;\n      v8 = v14 | 0x70000000;\n      break;\n    default:\n      v15 = sub_100B1D50((char *)dword_101336F4 + 1624, 16);\n      if ( v15 == -1 )\n        return 0;\n      v3 = (char *)dword_101336F4;\n      v7 = (char *)dword_101336F4 + 140 * v15 + 1624;\n      v8 = v15 | 0x30000000;\n      break;\n  }\n  if ( *((_DWORD *)v7 + 5) )\n  {\n    PalSoundRelease(v8);\n    v3 = (char *)dword_101336F4;\n  }\n  EnterCriticalSection((LPCRITICAL_SECTION)(v3 + 18712));\n  v16 = (struct _RTL_CRITICAL_SECTION *)((char *)dword_101336F4 + 18712);\n  *((_DWORD *)v7 + 15) = a2;\n  *((_DWORD *)v7 + 14) = 0;\n  *((_DWORD *)v7 + 19) = 10000;\n  LeaveCriticalSection(v16);\n  if ( !sub_100C37D0(lpString) )\n  {\n    if ( sub_100B1A30(lpString, a3) )\n      return v8;\n    return 0;\n  }\n  result = sub_100B16D0(a3);\n  if ( result )\n    return v8;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100b2e20",
+          "push    ebp"
+        ],
+        [
+          "0x100b2e21",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b2e23",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2e29",
+          "push    ebx"
+        ],
+        [
+          "0x100b2e2a",
+          "mov     ebx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b2e2d",
+          "push    esi"
+        ],
+        [
+          "0x100b2e2e",
+          "push    edi"
+        ],
+        [
+          "0x100b2e2f",
+          "cmp     ebx, 4"
+        ],
+        [
+          "0x100b2e32",
+          "jnz     short loc_100B2E8A"
+        ],
+        [
+          "0x100b2e34",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100b2e36",
+          "lea     eax, [ecx+149Ch]"
+        ],
+        [
+          "0x100b2e3c",
+          "nop     dword ptr [eax+00h]"
+        ],
+        [
+          "0x100b2e40",
+          "cmp     dword ptr [eax+8], 0"
+        ],
+        [
+          "0x100b2e44",
+          "jnz     short loc_100B2E4B"
+        ],
+        [
+          "0x100b2e46",
+          "cmp     dword ptr [eax], 0"
+        ],
+        [
+          "0x100b2e49",
+          "jz      short loc_100B2E6C"
+        ],
+        [
+          "0x100b2e4b",
+          "inc     esi"
+        ],
+        [
+          "0x100b2e4c",
+          "add     eax, 8Ch"
+        ],
+        [
+          "0x100b2e51",
+          "cmp     esi, 10h"
+        ],
+        [
+          "0x100b2e54",
+          "jl      short loc_100B2E40"
+        ],
+        [
+          "0x100b2e56",
+          "push    10h"
+        ],
+        [
+          "0x100b2e58",
+          "push    offset aDChannelAllUse; \"[%d] channel all use\""
+        ],
+        [
+          "0x100b2e5d",
+          "call    PalErrorLogPrintfBasic"
+        ],
+        [
+          "0x100b2e62",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b2e65",
+          "pop     edi"
+        ],
+        [
+          "0x100b2e66",
+          "pop     esi"
+        ],
+        [
+          "0x100b2e67",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b2e69",
+          "pop     ebx"
+        ],
+        [
+          "0x100b2e6a",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2e6b",
+          "retn"
+        ],
+        [
+          "0x100b2e6c",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2e6f",
+          "jz      short loc_100B2E65"
+        ],
+        [
+          "0x100b2e71",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2e77",
+          "lea     edi, [ecx+1490h]"
+        ],
+        [
+          "0x100b2e7d",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2e7f",
+          "or      esi, 40000000h"
+        ],
+        [
+          "0x100b2e85",
+          "jmp     loc_100B2FD6"
+        ],
+        [
+          "0x100b2e8a",
+          "cmp     ebx, 5"
+        ],
+        [
+          "0x100b2e8d",
+          "jnz     short loc_100B2EE1"
+        ],
+        [
+          "0x100b2e8f",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100b2e91",
+          "lea     eax, [ecx+1D5Ch]"
+        ],
+        [
+          "0x100b2e97",
+          "cmp     dword ptr [eax+8], 0"
+        ],
+        [
+          "0x100b2e9b",
+          "jnz     short loc_100B2EA2"
+        ],
+        [
+          "0x100b2e9d",
+          "cmp     dword ptr [eax], 0"
+        ],
+        [
+          "0x100b2ea0",
+          "jz      short loc_100B2EC3"
+        ],
+        [
+          "0x100b2ea2",
+          "inc     esi"
+        ],
+        [
+          "0x100b2ea3",
+          "add     eax, 8Ch"
+        ],
+        [
+          "0x100b2ea8",
+          "cmp     esi, 40h ; '@'"
+        ],
+        [
+          "0x100b2eab",
+          "jl      short loc_100B2E97"
+        ],
+        [
+          "0x100b2ead",
+          "push    40h ; '@'"
+        ],
+        [
+          "0x100b2eaf",
+          "push    offset aDChannelAllUse; \"[%d] channel all use\""
+        ],
+        [
+          "0x100b2eb4",
+          "call    PalErrorLogPrintfBasic"
+        ],
+        [
+          "0x100b2eb9",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b2ebc",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b2ebe",
+          "pop     edi"
+        ],
+        [
+          "0x100b2ebf",
+          "pop     esi"
+        ],
+        [
+          "0x100b2ec0",
+          "pop     ebx"
+        ],
+        [
+          "0x100b2ec1",
+          "pop     ebp"
+        ],
+        [
+          "0x100b2ec2",
+          "retn"
+        ],
+        [
+          "0x100b2ec3",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2ec6",
+          "jz      short loc_100B2E65"
+        ],
+        [
+          "0x100b2ec8",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2ece",
+          "lea     edi, [ecx+1D50h]"
+        ],
+        [
+          "0x100b2ed4",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2ed6",
+          "or      esi, 50000000h"
+        ],
+        [
+          "0x100b2edc",
+          "jmp     loc_100B2FD6"
+        ],
+        [
+          "0x100b2ee1",
+          "cmp     ebx, 6"
+        ],
+        [
+          "0x100b2ee4",
+          "jnz     short loc_100B2F2D"
+        ],
+        [
+          "0x100b2ee6",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100b2ee8",
+          "lea     eax, [ecx+405Ch]"
+        ],
+        [
+          "0x100b2eee",
+          "xchg    ax, ax"
+        ],
+        [
+          "0x100b2ef0",
+          "cmp     dword ptr [eax+8], 0"
+        ],
+        [
+          "0x100b2ef4",
+          "jnz     short loc_100B2EFB"
+        ],
+        [
+          "0x100b2ef6",
+          "cmp     dword ptr [eax], 0"
+        ],
+        [
+          "0x100b2ef9",
+          "jz      short loc_100B2F0B"
+        ],
+        [
+          "0x100b2efb",
+          "inc     esi"
+        ],
+        [
+          "0x100b2efc",
+          "add     eax, 8Ch"
+        ],
+        [
+          "0x100b2f01",
+          "cmp     esi, 10h"
+        ],
+        [
+          "0x100b2f04",
+          "jl      short loc_100B2EF0"
+        ],
+        [
+          "0x100b2f06",
+          "jmp     loc_100B2E56"
+        ],
+        [
+          "0x100b2f0b",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2f0e",
+          "jz      loc_100B2E65"
+        ],
+        [
+          "0x100b2f14",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2f1a",
+          "lea     edi, [ecx+4050h]"
+        ],
+        [
+          "0x100b2f20",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2f22",
+          "or      esi, 60000000h"
+        ],
+        [
+          "0x100b2f28",
+          "jmp     loc_100B2FD6"
+        ],
+        [
+          "0x100b2f2d",
+          "cmp     ebx, 3"
+        ],
+        [
+          "0x100b2f30",
+          "jnz     short loc_100B2F67"
+        ],
+        [
+          "0x100b2f32",
+          "lea     ecx, [ecx+0F18h]"
+        ],
+        [
+          "0x100b2f38",
+          "lea     edx, [ebx-1]"
+        ],
+        [
+          "0x100b2f3b",
+          "call    sub_100B1D50"
+        ],
+        [
+          "0x100b2f40",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b2f42",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2f45",
+          "jz      loc_100B2E65"
+        ],
+        [
+          "0x100b2f4b",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2f51",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2f57",
+          "lea     edi, [ecx+0F18h]"
+        ],
+        [
+          "0x100b2f5d",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2f5f",
+          "or      esi, offset unk_20000000"
+        ],
+        [
+          "0x100b2f65",
+          "jmp     short loc_100B2FD6"
+        ],
+        [
+          "0x100b2f67",
+          "cmp     ebx, 2"
+        ],
+        [
+          "0x100b2f6a",
+          "jnz     short loc_100B2FA1"
+        ],
+        [
+          "0x100b2f6c",
+          "lea     ecx, [ecx+1030h]"
+        ],
+        [
+          "0x100b2f72",
+          "lea     edx, [ebx+6]"
+        ],
+        [
+          "0x100b2f75",
+          "call    sub_100B1D50"
+        ],
+        [
+          "0x100b2f7a",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b2f7c",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2f7f",
+          "jz      loc_100B2E65"
+        ],
+        [
+          "0x100b2f85",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2f8b",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2f91",
+          "lea     edi, [ecx+1030h]"
+        ],
+        [
+          "0x100b2f97",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2f99",
+          "or      esi, 70000000h"
+        ],
+        [
+          "0x100b2f9f",
+          "jmp     short loc_100B2FD6"
+        ],
+        [
+          "0x100b2fa1",
+          "lea     ecx, [ecx+658h]"
+        ],
+        [
+          "0x100b2fa7",
+          "mov     edx, 10h"
+        ],
+        [
+          "0x100b2fac",
+          "call    sub_100B1D50"
+        ],
+        [
+          "0x100b2fb1",
+          "mov     esi, eax"
+        ],
+        [
+          "0x100b2fb3",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b2fb6",
+          "jz      loc_100B2E65"
+        ],
+        [
+          "0x100b2fbc",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2fc2",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b2fc8",
+          "lea     edi, [ecx+658h]"
+        ],
+        [
+          "0x100b2fce",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b2fd0",
+          "or      esi, 30000000h"
+        ],
+        [
+          "0x100b2fd6",
+          "cmp     dword ptr [edi+14h], 0"
+        ],
+        [
+          "0x100b2fda",
+          "jz      short loc_100B2FEB"
+        ],
+        [
+          "0x100b2fdc",
+          "push    esi"
+        ],
+        [
+          "0x100b2fdd",
+          "call    PalSoundRelease"
+        ],
+        [
+          "0x100b2fe2",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b2fe8",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b2feb",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b2ff1",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b2ff2",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b2ff8",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b2ffd",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b3002",
+          "mov     [edi+3Ch], ebx"
+        ],
+        [
+          "0x100b3005",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b3006",
+          "mov     dword ptr [edi+38h], 0"
+        ],
+        [
+          "0x100b300d",
+          "mov     dword ptr [edi+4Ch], 2710h"
+        ],
+        [
+          "0x100b3014",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b301a",
+          "mov     ebx, [ebp+lpString]"
+        ],
+        [
+          "0x100b301d",
+          "mov     edx, offset aOgg; \".ogg\""
+        ],
+        [
+          "0x100b3022",
+          "mov     ecx, ebx; lpString"
+        ],
+        [
+          "0x100b3024",
+          "call    sub_100C37D0"
+        ],
+        [
+          "0x100b3029",
+          "mov     edx, edi"
+        ],
+        [
+          "0x100b302b",
+          "mov     ecx, ebx; Source"
+        ],
+        [
+          "0x100b302d",
+          "push    [ebp+arg_8]; int"
+        ],
+        [
+          "0x100b3030",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b3032",
+          "jz      short loc_100B3045"
+        ],
+        [
+          "0x100b3034",
+          "call    sub_100B16D0"
+        ],
+        [
+          "0x100b3039",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b303c",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b303e",
+          "jnz     short loc_100B3055"
+        ],
+        [
+          "0x100b3040",
+          "pop     edi"
+        ],
+        [
+          "0x100b3041",
+          "pop     esi"
+        ],
+        [
+          "0x100b3042",
+          "pop     ebx"
+        ],
+        [
+          "0x100b3043",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3044",
+          "retn"
+        ],
+        [
+          "0x100b3045",
+          "call    sub_100B1A30"
+        ],
+        [
+          "0x100b304a",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b304d",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b304f",
+          "jz      loc_100B2E65"
+        ],
+        [
+          "0x100b3055",
+          "pop     edi"
+        ],
+        [
+          "0x100b3056",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100b3058",
+          "pop     esi"
+        ],
+        [
+          "0x100b3059",
+          "pop     ebx"
+        ],
+        [
+          "0x100b305a",
+          "pop     ebp"
+        ],
+        [
+          "0x100b305b",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100b3060",
+      "name": "PalSoundLoadEx",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl PalSoundLoadEx(CHAR *lpString, int a2, int a3, int a4)\n{\n  char *v4; // ecx\n  int v5; // esi\n  _DWORD *i; // eax\n  int result; // eax\n  int v8; // eax\n  int v9; // esi\n  float *v10; // edi\n  int v11; // xmm0_4\n  float v12; // xmm1_4\n  int v13; // edx\n  int v14; // ecx\n  int v15; // ebx\n  float v16; // xmm1_4\n  int v17; // edx\n  int v18; // eax\n  struct _RTL_CRITICAL_SECTION *v19; // [esp-4h] [ebp-20h]\n  int v20; // [esp+Ch] [ebp-10h] BYREF\n  int v21; // [esp+10h] [ebp-Ch] BYREF\n  int v22; // [esp+14h] [ebp-8h]\n  int v23; // [esp+18h] [ebp-4h] BYREF\n\n  if ( a2 != 4 )\n    return 0;\n  v4 = (char *)dword_101336F4;\n  v5 = 0;\n  for ( i = (char *)dword_101336F4 + 5276; i[2] || *i; i += 35 )\n  {\n    if ( ++v5 >= 16 )\n    {\n      PalErrorLogPrintfBasic(\"[%d] channel all use\", 16);\n      return 0;\n    }\n  }\n  if ( v5 == -1 )\n    return 0;\n  v8 = 140 * v5;\n  v9 = v5 | 0x40000000;\n  v10 = (float *)((char *)dword_101336F4 + v8 + 5264);\n  if ( *((_DWORD *)v10 + 5) )\n  {\n    PalSoundRelease(v9);\n    v4 = (char *)dword_101336F4;\n  }\n  EnterCriticalSection((LPCRITICAL_SECTION)(v4 + 18712));\n  v11 = a4;\n  v19 = (struct _RTL_CRITICAL_SECTION *)((char *)dword_101336F4 + 18712);\n  *((_DWORD *)v10 + 15) = 4;\n  v10[14] = 0.0;\n  *((_DWORD *)v10 + 19) = 10000;\n  *((_DWORD *)v10 + 33) = v11;\n  LeaveCriticalSection(v19);\n  if ( sub_100C37D0(lpString) )\n  {\n    result = sub_100B16D0(a3);\n    if ( !result )\n      return result;\n    goto LABEL_15;\n  }\n  if ( !sub_100B1A30(lpString, a3) )\n    return 0;\nLABEL_15:\n  if ( *((_DWORD *)v10 + 15) == 4 )\n  {\n    v12 = v10[33];\n    if ( v12 > 0.0 && v12 != 1.0 )\n    {\n      v13 = *((_DWORD *)v10 + 13);\n      if ( (v13 & 1) == 0 )\n      {\n        if ( (*(int (__stdcall **)(_DWORD, _DWORD, int, int *, int *, int *, int *, _DWORD))(**(_DWORD **)v10 + 44))(\n               *(_DWORD *)v10,\n               0,\n               v13,\n               &v23,\n               &a2,\n               &v20,\n               &v21,\n               0) >= 0 )\n        {\n          v14 = 0;\n          v15 = v23;\n          v16 = v10[33];\n          v17 = a2 / 2;\n          if ( a2 / 2 > 0 )\n          {\n            v22 = 0x7FFF;\n            do\n            {\n              v18 = (int)(float)((float)*(__int16 *)(v15 + 2 * v14) * v16);\n              if ( v18 >= -32768 )\n              {\n                if ( v18 >= 0x8000 )\n                  LOWORD(v18) = v22;\n              }\n              else\n              {\n                LOWORD(v18) = 0x8000;\n              }\n              *(_WORD *)(v15 + 2 * v14++) = v18;\n            }\n            while ( v14 < v17 );\n          }\n        }\n        (*(void (__stdcall **)(_DWORD, int, int, int, int))(**(_DWORD **)v10 + 76))(*(_DWORD *)v10, v23, a2, v20, v21);\n      }\n    }\n  }\n  return v9;\n}\n",
+      "disassembly": [
+        [
+          "0x100b3060",
+          "push    ebp"
+        ],
+        [
+          "0x100b3061",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100b3063",
+          "sub     esp, 10h"
+        ],
+        [
+          "0x100b3066",
+          "cmp     [ebp+arg_4], 4"
+        ],
+        [
+          "0x100b306a",
+          "push    ebx"
+        ],
+        [
+          "0x100b306b",
+          "push    esi"
+        ],
+        [
+          "0x100b306c",
+          "push    edi"
+        ],
+        [
+          "0x100b306d",
+          "jnz     short loc_100B30A5"
+        ],
+        [
+          "0x100b306f",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b3075",
+          "xor     esi, esi"
+        ],
+        [
+          "0x100b3077",
+          "lea     eax, [ecx+149Ch]"
+        ],
+        [
+          "0x100b307d",
+          "nop     dword ptr [eax]"
+        ],
+        [
+          "0x100b3080",
+          "cmp     dword ptr [eax+8], 0"
+        ],
+        [
+          "0x100b3084",
+          "jnz     short loc_100B308B"
+        ],
+        [
+          "0x100b3086",
+          "cmp     dword ptr [eax], 0"
+        ],
+        [
+          "0x100b3089",
+          "jz      short loc_100B30AE"
+        ],
+        [
+          "0x100b308b",
+          "inc     esi"
+        ],
+        [
+          "0x100b308c",
+          "add     eax, 8Ch"
+        ],
+        [
+          "0x100b3091",
+          "cmp     esi, 10h"
+        ],
+        [
+          "0x100b3094",
+          "jl      short loc_100B3080"
+        ],
+        [
+          "0x100b3096",
+          "push    10h"
+        ],
+        [
+          "0x100b3098",
+          "push    offset aDChannelAllUse; \"[%d] channel all use\""
+        ],
+        [
+          "0x100b309d",
+          "call    PalErrorLogPrintfBasic"
+        ],
+        [
+          "0x100b30a2",
+          "add     esp, 8"
+        ],
+        [
+          "0x100b30a5",
+          "pop     edi"
+        ],
+        [
+          "0x100b30a6",
+          "pop     esi"
+        ],
+        [
+          "0x100b30a7",
+          "xor     eax, eax"
+        ],
+        [
+          "0x100b30a9",
+          "pop     ebx"
+        ],
+        [
+          "0x100b30aa",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b30ac",
+          "pop     ebp"
+        ],
+        [
+          "0x100b30ad",
+          "retn"
+        ],
+        [
+          "0x100b30ae",
+          "cmp     esi, 0FFFFFFFFh"
+        ],
+        [
+          "0x100b30b1",
+          "jz      short loc_100B30A5"
+        ],
+        [
+          "0x100b30b3",
+          "imul    eax, esi, 8Ch"
+        ],
+        [
+          "0x100b30b9",
+          "lea     edi, [ecx+1490h]"
+        ],
+        [
+          "0x100b30bf",
+          "or      esi, 40000000h"
+        ],
+        [
+          "0x100b30c5",
+          "add     edi, eax"
+        ],
+        [
+          "0x100b30c7",
+          "cmp     dword ptr [edi+14h], 0"
+        ],
+        [
+          "0x100b30cb",
+          "jz      short loc_100B30DC"
+        ],
+        [
+          "0x100b30cd",
+          "push    esi"
+        ],
+        [
+          "0x100b30ce",
+          "call    PalSoundRelease"
+        ],
+        [
+          "0x100b30d3",
+          "mov     ecx, dword_101336F4"
+        ],
+        [
+          "0x100b30d9",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b30dc",
+          "lea     eax, [ecx+4918h]"
+        ],
+        [
+          "0x100b30e2",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b30e3",
+          "call    ds:EnterCriticalSection"
+        ],
+        [
+          "0x100b30e9",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100b30ee",
+          "movss   xmm0, [ebp+arg_C]"
+        ],
+        [
+          "0x100b30f3",
+          "add     eax, 4918h"
+        ],
+        [
+          "0x100b30f8",
+          "push    eax; lpCriticalSection"
+        ],
+        [
+          "0x100b30f9",
+          "mov     dword ptr [edi+3Ch], 4"
+        ],
+        [
+          "0x100b3100",
+          "mov     dword ptr [edi+38h], 0"
+        ],
+        [
+          "0x100b3107",
+          "mov     dword ptr [edi+4Ch], 2710h"
+        ],
+        [
+          "0x100b310e",
+          "movss   dword ptr [edi+84h], xmm0"
+        ],
+        [
+          "0x100b3116",
+          "call    ds:LeaveCriticalSection"
+        ],
+        [
+          "0x100b311c",
+          "mov     ebx, [ebp+lpString]"
+        ],
+        [
+          "0x100b311f",
+          "mov     edx, offset aOgg; \".ogg\""
+        ],
+        [
+          "0x100b3124",
+          "mov     ecx, ebx; lpString"
+        ],
+        [
+          "0x100b3126",
+          "call    sub_100C37D0"
+        ],
+        [
+          "0x100b312b",
+          "mov     edx, edi"
+        ],
+        [
+          "0x100b312d",
+          "mov     ecx, ebx; Source"
+        ],
+        [
+          "0x100b312f",
+          "push    [ebp+arg_8]; int"
+        ],
+        [
+          "0x100b3132",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b3134",
+          "jz      short loc_100B3149"
+        ],
+        [
+          "0x100b3136",
+          "call    sub_100B16D0"
+        ],
+        [
+          "0x100b313b",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b313e",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b3140",
+          "jnz     short loc_100B3159"
+        ],
+        [
+          "0x100b3142",
+          "pop     edi"
+        ],
+        [
+          "0x100b3143",
+          "pop     esi"
+        ],
+        [
+          "0x100b3144",
+          "pop     ebx"
+        ],
+        [
+          "0x100b3145",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b3147",
+          "pop     ebp"
+        ],
+        [
+          "0x100b3148",
+          "retn"
+        ],
+        [
+          "0x100b3149",
+          "call    sub_100B1A30"
+        ],
+        [
+          "0x100b314e",
+          "add     esp, 4"
+        ],
+        [
+          "0x100b3151",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b3153",
+          "jz      loc_100B30A5"
+        ],
+        [
+          "0x100b3159",
+          "cmp     dword ptr [edi+3Ch], 4"
+        ],
+        [
+          "0x100b315d",
+          "jnz     loc_100B3227"
+        ],
+        [
+          "0x100b3163",
+          "movss   xmm1, dword ptr [edi+84h]"
+        ],
+        [
+          "0x100b316b",
+          "xorps   xmm0, xmm0"
+        ],
+        [
+          "0x100b316e",
+          "comiss  xmm0, xmm1"
+        ],
+        [
+          "0x100b3171",
+          "jnb     loc_100B3227"
+        ],
+        [
+          "0x100b3177",
+          "ucomiss xmm1, ds:flt_10117B88"
+        ],
+        [
+          "0x100b317e",
+          "lahf"
+        ],
+        [
+          "0x100b317f",
+          "test    ah, 44h"
+        ],
+        [
+          "0x100b3182",
+          "jnp     loc_100B3227"
+        ],
+        [
+          "0x100b3188",
+          "mov     edx, [edi+34h]"
+        ],
+        [
+          "0x100b318b",
+          "test    dl, 1"
+        ],
+        [
+          "0x100b318e",
+          "jnz     loc_100B3227"
+        ],
+        [
+          "0x100b3194",
+          "mov     eax, [edi]"
+        ],
+        [
+          "0x100b3196",
+          "lea     ebx, [ebp+var_C]"
+        ],
+        [
+          "0x100b3199",
+          "push    0"
+        ],
+        [
+          "0x100b319b",
+          "push    ebx"
+        ],
+        [
+          "0x100b319c",
+          "lea     ebx, [ebp+var_10]"
+        ],
+        [
+          "0x100b319f",
+          "mov     ecx, [eax]"
+        ],
+        [
+          "0x100b31a1",
+          "push    ebx"
+        ],
+        [
+          "0x100b31a2",
+          "lea     ebx, [ebp+arg_4]"
+        ],
+        [
+          "0x100b31a5",
+          "push    ebx"
+        ],
+        [
+          "0x100b31a6",
+          "lea     ebx, [ebp+var_4]"
+        ],
+        [
+          "0x100b31a9",
+          "push    ebx"
+        ],
+        [
+          "0x100b31aa",
+          "push    edx"
+        ],
+        [
+          "0x100b31ab",
+          "push    0"
+        ],
+        [
+          "0x100b31ad",
+          "push    eax"
+        ],
+        [
+          "0x100b31ae",
+          "call    dword ptr [ecx+2Ch]"
+        ],
+        [
+          "0x100b31b1",
+          "test    eax, eax"
+        ],
+        [
+          "0x100b31b3",
+          "js      short loc_100B3213"
+        ],
+        [
+          "0x100b31b5",
+          "mov     eax, [ebp+arg_4]"
+        ],
+        [
+          "0x100b31b8",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100b31ba",
+          "mov     ebx, [ebp+var_4]"
+        ],
+        [
+          "0x100b31bd",
+          "movss   xmm1, dword ptr [edi+84h]"
+        ],
+        [
+          "0x100b31c5",
+          "cdq"
+        ],
+        [
+          "0x100b31c6",
+          "sub     eax, edx"
+        ],
+        [
+          "0x100b31c8",
+          "mov     edx, eax"
+        ],
+        [
+          "0x100b31ca",
+          "sar     edx, 1"
+        ],
+        [
+          "0x100b31cc",
+          "test    edx, edx"
+        ],
+        [
+          "0x100b31ce",
+          "jle     short loc_100B3213"
+        ],
+        [
+          "0x100b31d0",
+          "mov     [ebp+var_8], 7FFFh"
+        ],
+        [
+          "0x100b31d7",
+          "nop     word ptr [eax+eax+00000000h]"
+        ],
+        [
+          "0x100b31e0",
+          "movsx   eax, word ptr [ebx+ecx*2]"
+        ],
+        [
+          "0x100b31e4",
+          "movd    xmm0, eax"
+        ],
+        [
+          "0x100b31e8",
+          "cvtdq2ps xmm0, xmm0"
+        ],
+        [
+          "0x100b31eb",
+          "mulss   xmm0, xmm1"
+        ],
+        [
+          "0x100b31ef",
+          "cvttss2si eax, xmm0"
+        ],
+        [
+          "0x100b31f3",
+          "cmp     eax, 0FFFF8000h"
+        ],
+        [
+          "0x100b31f8",
+          "jge     short loc_100B3201"
+        ],
+        [
+          "0x100b31fa",
+          "mov     eax, 8000h"
+        ],
+        [
+          "0x100b31ff",
+          "jmp     short loc_100B320A"
+        ],
+        [
+          "0x100b3201",
+          "cmp     eax, 8000h"
+        ],
+        [
+          "0x100b3206",
+          "cmovge  eax, [ebp+var_8]"
+        ],
+        [
+          "0x100b320a",
+          "mov     [ebx+ecx*2], ax"
+        ],
+        [
+          "0x100b320e",
+          "inc     ecx"
+        ],
+        [
+          "0x100b320f",
+          "cmp     ecx, edx"
+        ],
+        [
+          "0x100b3211",
+          "jl      short loc_100B31E0"
+        ],
+        [
+          "0x100b3213",
+          "push    [ebp+var_C]"
+        ],
+        [
+          "0x100b3216",
+          "mov     ecx, [edi]"
+        ],
+        [
+          "0x100b3218",
+          "push    [ebp+var_10]"
+        ],
+        [
+          "0x100b321b",
+          "push    [ebp+arg_4]"
+        ],
+        [
+          "0x100b321e",
+          "mov     edx, [ecx]"
+        ],
+        [
+          "0x100b3220",
+          "push    [ebp+var_4]"
+        ],
+        [
+          "0x100b3223",
+          "push    ecx"
+        ],
+        [
+          "0x100b3224",
+          "call    dword ptr [edx+4Ch]"
+        ],
+        [
+          "0x100b3227",
+          "pop     edi"
+        ],
+        [
+          "0x100b3228",
+          "mov     eax, esi"
+        ],
+        [
+          "0x100b322a",
+          "pop     esi"
+        ],
+        [
+          "0x100b322b",
+          "pop     ebx"
+        ],
+        [
+          "0x100b322c",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100b322e",
+          "pop     ebp"
+        ],
+        [
+          "0x100b322f",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Pal.dll",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

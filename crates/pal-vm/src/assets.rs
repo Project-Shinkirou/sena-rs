@@ -5,8 +5,14 @@ use pal_script::{PointTable, ScriptImage};
 
 use crate::config::SystemDat;
 
+pub(crate) mod native_profile;
+pub use native_profile::NativeBuild;
+
 #[derive(Debug)]
 pub struct CoreAssets {
+    /// Exact audited PAL/Game binary pair, independent of script capabilities.
+    /// Missing, modified or mismatched binaries leave this Unknown.
+    pub native_build: NativeBuild,
     pub script: LoadedAsset,
     pub file_dat: LoadedAsset,
     pub text_dat: LoadedAsset,
@@ -23,6 +29,9 @@ pub struct CoreAssets {
     /// A later SoftPAL extension set exposes the millisecond clock at 18:121
     /// and uses a different SE load/play argument contract.
     pub extended_softpal: bool,
+    /// The newer DLL capability set accompanies the registered command table.
+    /// Its overlapping extcall coordinates need a separate dispatch profile.
+    pub registered_softpal: bool,
     pub point_table: PointTable,
     pub graphic_index: Option<GraphicIndex>,
 }
@@ -32,6 +41,13 @@ impl CoreAssets {
         resource_manager: &mut ResourceManager,
         system_dat: Option<&SystemDat>,
     ) -> anyhow::Result<Self> {
+        let native_build = native_profile::detect_native_build(resource_manager.root());
+        let registered_softpal =
+            native_profile::has_registered_dispatch_exports(resource_manager.root());
+        if registered_softpal && !resource_manager.last_path_wins() {
+            resource_manager.set_last_path_wins(true);
+            resource_manager.select_archive_profile(0)?;
+        }
         let script = resource_manager.open("Script.src")?;
         let script_image = ScriptImage::parse(&script.bytes)?;
 
@@ -74,14 +90,14 @@ impl CoreAssets {
         let script_entry_pc = script_image.entry_pc();
         // Probe an aligned extcall opcode/category pair rather than a game
         // title. The later script uses 18:121 as its PAL millisecond clock.
-        let extended_softpal = script
-            .bytes[12..]
+        let extended_softpal = script.bytes[12..]
             .windows(8)
             .step_by(4)
             .any(|words| words == [0x17, 0x00, 0x01, 0x00, 0x79, 0x00, 0x12, 0x00]);
         let _ = script_image; // release borrow of script.bytes before moving script
 
         Ok(Self {
+            native_build,
             script,
             file_dat,
             text_dat,
@@ -93,6 +109,7 @@ impl CoreAssets {
             script_check_value,
             script_entry_pc,
             extended_softpal,
+            registered_softpal,
             point_table,
             graphic_index,
         })
@@ -100,6 +117,12 @@ impl CoreAssets {
 
     pub fn script_image(&self) -> anyhow::Result<ScriptImage<'_>> {
         Ok(ScriptImage::parse(&self.script.bytes)?)
+    }
+
+    /// Enables only return contracts proved against the audited Koikake pair.
+    /// Capability markers and a missing executable cannot select this branch.
+    pub fn legacy_koikake(&self) -> bool {
+        self.native_build == NativeBuild::Koikake
     }
 }
 

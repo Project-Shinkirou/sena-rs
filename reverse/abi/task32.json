@@ -1,0 +1,700 @@
+{
+  "schema_version": 1,
+  "target": "i686-pc-windows",
+  "pointer_bytes": 4,
+  "functions": [
+    {
+      "name": "PalWait",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalTaskOpaque *",
+      "parameters": [
+        {
+          "name": "ticks",
+          "type": "int32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::create_wait_frame",
+      "notes": "Creates a wait task with four-byte work storage and returns the owned scheduler task pointer or null. First scheduled callback installs the countdown callback. Each later tick leaves -1 unchanged; otherwise decrements with wrapping arithmetic and frees the task when the result reaches zero. Input 0 becomes -1 and consequently waits indefinitely. This function queues a wait; it does not block the calling OS thread. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words. Work size is 4 bytes; task flags 0x10001 select blocking insertion after current task.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100c13a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-platform/totsulover-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/totsulover-consumers.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100bae80",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-platform/reference-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/reference-wait.json"
+          ]
+        },
+        "koikake": {
+          "address": "0x100cc0d0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-platform/koikake-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/koikake-wait.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalWaitTime",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalTaskOpaque *",
+      "parameters": [
+        {
+          "name": "duration_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::create_wait_time",
+      "notes": "Creates a wait task with eight-byte work storage. First scheduled callback records cached PAL time, later callbacks free the task when wrapping unsigned elapsed >= duration. Clock capture occurs at first scheduling, not at the exported call. Returns scheduler task pointer or null. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words. Work size is 8 bytes (duration +0, start +4); task flags 0x10001 select blocking insertion after current task. Zero duration still requires an initialization visit and a subsequent comparison visit.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100c15b0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-platform/totsulover-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/totsulover-wait.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100bb040",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-platform/reference-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/reference-wait.json"
+          ]
+        },
+        "koikake": {
+          "address": "0x100cc110",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-platform/koikake-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/koikake-wait.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalWaitTimeEx",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "PalTaskOpaque *",
+      "parameters": [
+        {
+          "name": "duration_ms",
+          "type": "uint32_t",
+          "stack_bytes": 4
+        },
+        {
+          "name": "relative_task",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::create_wait_time_ex",
+      "notes": "Creates 12 zeroed work bytes: reserved +0, duration +4, first scheduled clock +8. Flags 0x10001 insert immediately after relative_task in its sibling list, not as its child. Null selects the current task. First callback samples cached PAL time; subsequent callbacks use unsigned wrapping elapsed >= duration. Returns the scheduler-owned task pointer or null. Source contracts that called argument 2 a parent described only forwarding, not insertion semantics. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words.",
+      "evidence": {
+        "totsulover": {
+          "address": "0x100c1500",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-platform/totsulover-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/totsulover-wait.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100baf60",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-platform/reference-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/reference-wait.json"
+          ]
+        },
+        "koikake": {
+          "address": "0x100cc150",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-platform/koikake-exports.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-platform/koikake-wait.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalTaskFree",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "int32_t",
+      "parameters": [
+        {
+          "name": "task",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::native_free",
+      "notes": "Null selects current task. Returns 0 if no task or state is zero. Otherwise replaces current callback with destructor, sets state 2 and recursively marks descendants for destruction; returns 1. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7bb0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-koikake-helpers.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100b7fc0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-reference-helpers.json"
+          ]
+        },
+        "totsulover": {
+          "address": "0x100be310",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-totsulover-helpers.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalTaskGetMessage",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "task",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::native_get_message",
+      "notes": "Null selects current task. Reads the message DWORD at +16 and clears it to zero. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7e60",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-koikake-helpers.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100b7de0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-reference-helpers.json"
+          ]
+        },
+        "totsulover": {
+          "address": "0x100be130",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-totsulover-helpers.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalTaskGetState",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "uint32_t",
+      "parameters": [
+        {
+          "name": "task",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::native_get_state",
+      "notes": "Null selects current task. Returns 2 whenever current callback equals destructor, regardless of stored state; otherwise zero-extends state byte. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7cb0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-koikake-helpers.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100b7ed0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-reference-helpers.json"
+          ]
+        },
+        "totsulover": {
+          "address": "0x100be220",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-totsulover-helpers.json"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PalTaskGetTaskData",
+      "calling_convention": "cdecl",
+      "abi_status": "confirmed",
+      "return_type": "void *",
+      "parameters": [
+        {
+          "name": "task",
+          "type": "PalTaskOpaque *",
+          "stack_bytes": 4
+        }
+      ],
+      "implementation": "crates/pal-vm/src/task.rs::TaskSystem::native_get_task_data",
+      "notes": "Nonzero task returns its work pointer at +0; null uses the separately selected task-data context, not necessarily the currently executing task. Native task/work pointers are borrowed for access and scheduler-owned until deferred release; null task selects current task except GetTaskData, where it selects the separately chosen data context. Null with no context is guarded by the portable adapter, unlike native unchecked dereferences. Portable generation handles are not ABI pointer words.",
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7e00",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-koikake-helpers.json"
+          ]
+        },
+        "reference": {
+          "address": "0x100b7e30",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-reference-helpers.json"
+          ]
+        },
+        "totsulover": {
+          "address": "0x100be180",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json",
+          "helper_evidence": [
+            "reverse/evidence/pal-core-totsulover-helpers.json"
+          ]
+        }
+      }
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "PalTaskChangeNext",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "If a current task exists, replaces its callback at +8. Does not invoke it until processing resumes.",
+      "unresolved": [
+        "No stable source return established."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7d50",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7eb0",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be200",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next",
+      "portable_callback_contract": "Explicitly registered Rust callbacks receive the scheduler, sprite system and a translated task handle granting work access. The portable callback returns one u32 representing raw EAX. Normal/destructor dispatch ignores it; ChangeNextImm forwards it. This is a machine-result adapter, not confirmation of the unknown native source return type, and it never executes guest x86 bytes."
+    },
+    {
+      "name": "PalTaskChangeNextImm",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "Changes current callback then immediately calls it cdecl with exactly one stack word: current work pointer. Propagates its raw EAX.",
+      "unresolved": [
+        "Callback source return type is not established; raw EAX forwarding is known."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7d80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7e80",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be1d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_next_immediate",
+      "portable_callback_contract": "Explicitly registered Rust callbacks receive the scheduler, sprite system and a translated task handle granting work access. The portable callback returns one u32 representing raw EAX. Normal/destructor dispatch ignores it; ChangeNextImm forwards it. This is a machine-result adapter, not confirmation of the unknown native source return type, and it never executes guest x86 bytes."
+    },
+    {
+      "name": "PalTaskChangeState",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "state",
+          "carrier": "u8",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 8
+        }
+      ],
+      "behavior": "Null selects current task; writes the low byte of state at task+28 without validation.",
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer set AL to state with incidental upper bits. No common source return declared."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7c80",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7f00",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be250",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_change_state",
+      "portable_callback_contract": "Explicitly registered Rust callbacks receive the scheduler, sprite system and a translated task handle granting work access. The portable callback returns one u32 representing raw EAX. Normal/destructor dispatch ignores it; ChangeNextImm forwards it. This is a machine-result adapter, not confirmation of the unknown native source return type, and it never executes guest x86 bytes."
+    },
+    {
+      "name": "PalTaskCreate",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "ptr32<Task>",
+      "arguments": [
+        {
+          "name": "process",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "destructor",
+          "carrier": "ptr32<Callback>",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_size",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 12,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "work_out",
+          "carrier": "ptr32<ptr32<void>>",
+          "stack_offset_from_entry_esp": 16,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "flags",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 20,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "relative_task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 24,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "user_data",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 28,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "Clears optional work_out, rejects null process, reserves a task and a child sentinel from the pool, allocates zeroed work, stores callbacks/flags/user_data, sets task state 1 and child sentinel state 3. Low flags word 1 inserts after relative task; 2 inserts after its child sentinel. Null relative task uses current task. Other modes leave the task unlinked. Writes work_out and increments live count on success.",
+      "unresolved": [
+        "Callback return type is not established: normal scheduler ignores it, ChangeNextImm propagates raw EAX."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7a10",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b8020",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be350",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::create_native_task",
+      "portable_callback_contract": "Explicitly registered Rust callbacks receive the scheduler, sprite system and a translated task handle granting work access. The portable callback returns one u32 representing raw EAX. Normal/destructor dispatch ignores it; ChangeNextImm forwards it. This is a machine-result adapter, not confirmation of the unknown native source return type, and it never executes guest x86 bytes."
+    },
+    {
+      "name": "PalTaskReProcess",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "Null selects current task; saves current-task context, runs the scheduler from task.previous so task and subsequent siblings are visited, then restores saved current-task context.",
+      "unresolved": [
+        "No stable return value established."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7c20",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7f80",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be2d0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::reprocess",
+      "portable_return_note": "The portable Result reports address-validation success/failure only, and does not assert an unresolved native source return."
+    },
+    {
+      "name": "PalTaskReset",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [],
+      "behavior": "Marks descendants of the primary root for deferred destruction, processes their callbacks, then runs recursive residual cleanup.",
+      "unresolved": [
+        "No stable source return established; exact malformed scheduler-state outcomes remain native-undefined."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7d00",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7f20",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be270",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      }
+    },
+    {
+      "name": "PalTaskSetMessage",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        },
+        {
+          "name": "message",
+          "carrier": "u32",
+          "stack_offset_from_entry_esp": 8,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "Null selects current task, then overwrites message DWORD at +16. Messages are a single slot, not a queue.",
+      "unresolved": [
+        "Koikake leaves task pointer in EAX; reference/newer leave message. A stable source return is not established."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7e30",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7e10",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be160",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_set_message",
+      "portable_return_note": "The portable Result reports address-validation success/failure only, and does not assert an unresolved native source return."
+    },
+    {
+      "name": "PalTaskSetTaskData",
+      "abi_status": "unresolved",
+      "calling_convention": "cdecl",
+      "return_contract": "unresolved",
+      "arguments": [
+        {
+          "name": "task",
+          "carrier": "ptr32<Task>",
+          "stack_offset_from_entry_esp": 4,
+          "stack_bytes": 4,
+          "consumed_bits": 32
+        }
+      ],
+      "behavior": "Sets selected task-data context to the supplied task, or current task when null.",
+      "unresolved": [
+        "Incidental EAX varies by build and null branch; no stable return contract."
+      ],
+      "evidence": {
+        "koikake": {
+          "address": "0x100c7dc0",
+          "binary_sha256": "2a43bc4408aff086c18dc73ccd2d35be4f8a56cf8b3e82da7b75f80ffe61625e",
+          "file": "reverse/evidence/pal-core-koikake-complete.json"
+        },
+        "reference": {
+          "address": "0x100b7e50",
+          "binary_sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a",
+          "file": "reverse/evidence/pal-core-reference-complete.json"
+        },
+        "totsulover": {
+          "address": "0x100be1a0",
+          "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+          "file": "reverse/evidence/pal-core-totsulover.json"
+        }
+      },
+      "portable_mapping": "crates/pal-vm/src/task.rs::TaskSystem::native_select_task_data",
+      "portable_return_note": "The portable Result reports address-validation success/failure only, and does not assert an unresolved native source return."
+    }
+  ],
+  "shared_layouts": {
+    "PalTaskNode32": {
+      "size": 44,
+      "fields": {
+        "work": 0,
+        "work_size": 4,
+        "callback": 8,
+        "destructor": 12,
+        "message": 16,
+        "user_data": 20,
+        "flags": 24,
+        "state_byte": 28,
+        "next": 32,
+        "previous": 36,
+        "child_sentinel": 40
+      }
+    },
+    "PalWaitFrameData32": {
+      "size": 4,
+      "fields": {
+        "remaining": 0
+      }
+    },
+    "PalWaitTimeData32": {
+      "size": 8,
+      "fields": {
+        "duration_ms": 0,
+        "start_ms": 4
+      }
+    },
+    "PalWaitTimeExData32": {
+      "size": 12,
+      "fields": {
+        "reserved": 0,
+        "duration_ms": 4,
+        "start_ms": 8
+      }
+    }
+  },
+  "portable_differences": [
+    "The portable fixed pool stores one task per slot and embeds its child list; native allocates a task and separate 44-byte child sentinel. Pool exhaustion thresholds are not equivalent.",
+    "Unknown native callback addresses are not executable portable function pointers. Raw callback return types remain unresolved.",
+    "After a blocking task, native cleanup visits only pending-free sibling nodes, not their descendants. It can orphan descendants by clearing the child sentinel; the portable traversal preserves this observed scheduling behavior.",
+    "Native pointers are translated to generation-checked handles at the portable boundary. Invalid, null-without-context and freed-task access is rejected instead of reproducing unchecked native memory access.",
+    "Native callback address words require explicit Rust registration through register_callback. The portable bridge does not execute original x86 machine code; unmapped normal/destructor callbacks report a diagnostic and unmapped immediate calls return an adapter error.",
+    "Native callbacks use a work pointer. The registered Rust adapter uses a generation-checked task handle to access the same logical work bytes; destructor work remains accessible after its state byte has become zero.",
+    "Existing create_wait_frame/create_wait_time convenience calls made by the engine outside a callback append to the portable root. Calls made inside a registered callback insert after that current task and can be processed during the same traversal. create_native_task implements the native low-word flags and relative insertion explicitly.",
+    "Setting a linked task state byte to zero does not make its still-owned Rust storage allocatable until deferred release. Native reuse of a still-linked state-zero node is unsafe and is not reproduced."
+  ]
+}

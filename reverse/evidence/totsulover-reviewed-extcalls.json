@@ -1,0 +1,329 @@
+{
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+  "interface": "Game.exe VM extcalls, not PAL DLL ABI",
+  "registration_calls": 898,
+  "unique_registered_commands": 787,
+  "reviewed": [
+    {
+      "category": 2,
+      "index": 47,
+      "handler": "0x471ba0",
+      "argc": 3,
+      "name": "text_animation_set_mode",
+      "stack_pop_order": [
+        "type",
+        "fade",
+        "spaceskip"
+      ],
+      "notes": "Stores native globals; source order is pop order.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 3,
+      "index": 59,
+      "handler": "0x44d190",
+      "argc": 2,
+      "name": "unnamed_noop",
+      "stack_pop_order": [
+        "unused0",
+        "unused1"
+      ],
+      "notes": "Deliberate native no-op, returns success1; do not invent sprite behavior.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 8,
+      "index": 36,
+      "handler": "0x425d90",
+      "argc": 1,
+      "name": "btn_mode",
+      "stack_pop_order": [
+        "enabled"
+      ],
+      "notes": "Normalizes zero/nonzero and calls PalButtonMode.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 9,
+      "index": 44,
+      "handler": "0x465340",
+      "argc": 1,
+      "name": "set_system_path",
+      "stack_pop_order": [
+        "profile"
+      ],
+      "notes": "Clears PAL search paths and selects comma-separated ARCHIVE.DAT field.",
+      "evidence": "reverse/evidence/totsulover-dispatch-core.json"
+    },
+    {
+      "category": 9,
+      "index": 63,
+      "handler": "0x466c70",
+      "argc": 0,
+      "name": "is_active",
+      "stack_pop_order": [],
+      "notes": "Calls IsActive; destination result, handler returns1.",
+      "evidence": "reverse/evidence/totsulover-more-handlers.json"
+    },
+    {
+      "category": 12,
+      "index": 0,
+      "handler": "0x467750",
+      "argc": 3,
+      "name": "system_btn_set",
+      "stack_pop_order": [
+        "slot",
+        "point",
+        "mode"
+      ],
+      "notes": "Enables slot; resolves script point; stores mode as0/-1.",
+      "evidence": "reverse/evidence/totsulover-timing-se-handlers.json"
+    },
+    {
+      "category": 12,
+      "index": 1,
+      "handler": "0x4676a0",
+      "argc": 1,
+      "name": "system_btn_release",
+      "stack_pop_order": [
+        "slot"
+      ],
+      "notes": "0xFFFF clears all32slots.",
+      "evidence": "reverse/evidence/totsulover-timing-se-handlers.json"
+    },
+    {
+      "category": 14,
+      "index": 13,
+      "handler": "0x455af0",
+      "argc": 3,
+      "name": "select_config_13",
+      "stack_pop_order": [
+        "enabled",
+        "value0",
+        "value1"
+      ],
+      "notes": "Stores bool at ctx+0x55F88/+0x55F8C and raw words at ctx+0x15F50/+0x15F54; semantic field labels remain unresolved.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 14,
+      "index": 24,
+      "handler": "0x458380",
+      "argc": 3,
+      "name": "select_config_24",
+      "stack_pop_order": [
+        "enabled",
+        "value0",
+        "value1"
+      ],
+      "notes": "Stores bool at ctx+0x55F90 and raw words at ctx+0x15F70/+0x15F74; semantic field labels remain unresolved.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 88,
+      "handler": "0x433c40",
+      "argc": 0,
+      "name": "is_network",
+      "stack_pop_order": [],
+      "notes": "Reports0/1LAN/2WAN; platform-dependent Windows API result.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 89,
+      "handler": "0x433cd0",
+      "argc": 0,
+      "name": "is_touch",
+      "stack_pop_order": [],
+      "notes": "Requires digitizer-ready flag then PalIsTouch.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 91,
+      "handler": "0x434130",
+      "argc": 1,
+      "name": "touch_enable",
+      "stack_pop_order": [
+        "enabled"
+      ],
+      "notes": "Passes0/1 to PalTouchEnable.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 96,
+      "handler": "0x434290",
+      "argc": 0,
+      "name": "is_3d",
+      "stack_pop_order": [],
+      "notes": "Returns Pal3DIs in VM destination.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 97,
+      "handler": "0x4342b0",
+      "argc": 2,
+      "name": "memory_status",
+      "stack_pop_order": [
+        "selector",
+        "high_temp_slot"
+      ],
+      "notes": "GlobalMemoryStatusEx selectors0..7; selected64bit value >>20; low32in destination, high32 optionally temp slot unless-1. Selector0 loadpercent also shifts20, yielding0.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 98,
+      "handler": "0x434410",
+      "argc": 2,
+      "name": "disk_status",
+      "stack_pop_order": [
+        "selector",
+        "high_temp_slot"
+      ],
+      "notes": "Selected available-to-caller/total/free bytes >>20; unknownselector0; highword optional temp slotunless-1.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 99,
+      "handler": "0x434510",
+      "argc": 1,
+      "name": "os_version",
+      "stack_pop_order": [
+        "selector"
+      ],
+      "notes": "GetVersionExA fields0..8; preserves native selector1/5 alias to minor version.",
+      "evidence": "reverse/evidence/totsulover-boot-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 121,
+      "handler": "0x435870",
+      "argc": 0,
+      "name": "time",
+      "stack_pop_order": [],
+      "notes": "timeGetTime wrapping32bit in destination.",
+      "evidence": "reverse/evidence/totsulover-timing-se-handlers.json"
+    },
+    {
+      "category": 18,
+      "index": 127,
+      "handler": "0x4359c0",
+      "argc": 0,
+      "name": "get_change_window_mode_time",
+      "stack_pop_order": [],
+      "notes": "Returns PalGetChangeWindowModeTime. Not tangent.",
+      "evidence": "reverse/evidence/totsulover-more-handlers.json"
+    },
+    {
+      "category": 5,
+      "index": 0,
+      "handler": "0x462ed0",
+      "name": "se_load",
+      "argc": 3,
+      "stack_pop_order": [
+        "filename",
+        "slot",
+        "group"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 1,
+      "handler": "0x462cf0",
+      "name": "se_play",
+      "argc": 3,
+      "stack_pop_order": [
+        "slot",
+        "flags",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 2,
+      "handler": "0x462990",
+      "name": "se_play_ex",
+      "argc": 5,
+      "stack_pop_order": [
+        "slot",
+        "filename",
+        "flags",
+        "fade_ms",
+        "group"
+      ],
+      "writes_destination": true,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 3,
+      "handler": "0x462830",
+      "name": "se_stop",
+      "argc": 2,
+      "stack_pop_order": [
+        "slot",
+        "fade_ms"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 4,
+      "handler": "0x462690",
+      "name": "se_set_volume",
+      "argc": 2,
+      "stack_pop_order": [
+        "percent",
+        "group"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 5,
+      "handler": "0x4625f0",
+      "name": "se_get_volume",
+      "argc": 1,
+      "stack_pop_order": [
+        "group"
+      ],
+      "writes_destination": true,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 6,
+      "handler": "0x4624f0",
+      "name": "se_unload",
+      "argc": 1,
+      "stack_pop_order": [
+        "slot"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    },
+    {
+      "category": 5,
+      "index": 7,
+      "handler": "0x461f90",
+      "name": "se_wait",
+      "argc": 1,
+      "stack_pop_order": [
+        "slot"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-se-playback.json"
+    }
+  ]
+}

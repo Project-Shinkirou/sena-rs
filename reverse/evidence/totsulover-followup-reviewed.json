@@ -1,0 +1,128 @@
+{
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+  "interface": "VM extcalls; native handler status is distinct from destination write",
+  "contracts": [
+    {
+      "category": 18,
+      "index": 90,
+      "handler": "0x434100",
+      "helper": "0x433d40",
+      "argc": 8,
+      "name": "debug_output_level_zero",
+      "writes_destination": false,
+      "native_return": "1, including when debug is disabled",
+      "evidence": "reverse/evidence/totsulover-followup-detail.json"
+    },
+    {
+      "category": 5,
+      "index": 8,
+      "handler": "0x462350",
+      "argc": 4,
+      "name": "set_se_info",
+      "stack_pop_order": [
+        "slot",
+        "prefix_handle",
+        "volume",
+        "extra"
+      ],
+      "writes_destination": false,
+      "native_return": "1, including invalid slots",
+      "evidence": "reverse/evidence/totsulover-followup-consumers.json"
+    },
+    {
+      "category": 14,
+      "index": 13,
+      "handler": "0x455af0",
+      "argc": 3,
+      "name": "history_face_enable",
+      "stack_pop_order": [
+        "enabled",
+        "x_offset",
+        "y_offset"
+      ],
+      "writes_destination": false,
+      "native_return": "1",
+      "evidence": "reverse/evidence/totsulover-followup-consumers.json"
+    },
+    {
+      "category": 14,
+      "index": 24,
+      "handler": "0x458380",
+      "argc": 3,
+      "name": "history_secondary_icon_enable",
+      "stack_pop_order": [
+        "enabled",
+        "x_offset",
+        "y_offset"
+      ],
+      "writes_destination": false,
+      "native_return": "1",
+      "evidence": "reverse/evidence/totsulover-followup-consumers.json"
+    },
+    {
+      "category": 5,
+      "index": 9,
+      "handler": "0x4622a0",
+      "argc": 1,
+      "name": "get_se_ex_volume",
+      "stack_pop_order": [
+        "slot"
+      ],
+      "evidence": "reverse/evidence/totsulover-se-prefix-consumers.json"
+    },
+    {
+      "category": 5,
+      "index": 10,
+      "handler": "0x4621d0",
+      "argc": 2,
+      "name": "set_se_ex_volume",
+      "stack_pop_order": [
+        "slot",
+        "volume"
+      ],
+      "evidence": "reverse/evidence/totsulover-se-prefix-consumers.json",
+      "writes_destination": false
+    },
+    {
+      "category": 5,
+      "index": 11,
+      "handler": "0x462100",
+      "argc": 2,
+      "name": "se_enable",
+      "stack_pop_order": [
+        "slot",
+        "enabled"
+      ],
+      "evidence": "reverse/evidence/totsulover-se-prefix-consumers.json",
+      "writes_destination": false
+    },
+    {
+      "category": 5,
+      "index": 12,
+      "handler": "0x462040",
+      "argc": 1,
+      "name": "is_se_enable",
+      "stack_pop_order": [
+        "slot"
+      ],
+      "evidence": "reverse/evidence/totsulover-se-prefix-consumers.json"
+    },
+    {
+      "category": 18,
+      "index": 119,
+      "handler": "0x4354c0",
+      "argc": 4,
+      "name": "string_substr_bytes",
+      "stack_pop_order": [
+        "destination",
+        "source",
+        "byte_offset",
+        "byte_count"
+      ],
+      "writes_destination": false,
+      "native_return": "1; does not write the VM destination slot",
+      "evidence": "reverse/evidence/totsulover-string-split.json",
+      "notes": "Copies encoded bytes into a dynamic-string destination; byte_count -1 selects the remaining suffix. Native invalid offsets/counts or oversized copies can access outside fixed buffers. Portable code rejects invalid bounds/encoding and caps the destination at 2046 encoded bytes."
+    }
+  ]
+}

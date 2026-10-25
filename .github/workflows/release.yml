@@ -30,6 +30,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check reviewed PAL ABI declarations
+        run: |
+          python3 reverse/abi/generate.py --check
+          python3 reverse/evidence/generate_registered_dispatch.py --check
+
       - name: Read version from crates/pal-vm/Cargo.toml
         id: ver
         run: |
@@ -492,10 +497,126 @@ jobs:
           path: dist/android_ci/app-release.apk
           if-no-files-found: error
 
+  console_tests:
+    name: Console core and input tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Test the core without desktop dependencies
+        run: cargo test -p pal-vm --lib --no-default-features --features host-audio
+      - name: Test console input and letterboxing
+        run: |
+          cc -std=c11 -Wall -Wextra -Werror platform/common/test_console.c -lm -o /tmp/sena-console-test
+          /tmp/sena-console-test
+
+  consoles:
+    name: ${{ matrix.platform }} homebrew
+    runs-on: ubuntu-24.04
+    needs: [meta, console_tests]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: switch
+            package: sena.nro
+            # siglus_rs switch-build:f7740a0a96c7d24a
+            image: ghcr.io/xmoezzz/siglus_rs/switch-build@sha256:bb3f47af6951a4770171fe1c8e5a508ddb233d09a17bd6c8650c2e928ab504f3
+            sdk_key: bb3f47af6951a477
+            toolchain: nightly-2026-01-20
+          - platform: vita
+            package: sena.vpk
+            # siglus_rs vita-build:6f6be2c078140b09
+            image: ghcr.io/xmoezzz/siglus_rs/vita-build@sha256:f9e3eaa24d74fa48dd514fbc86b19a13d7fdf88db96e920a303b050ec8402a85
+            sdk_key: f9e3eaa24d74fa48
+            toolchain: nightly-2026-09-18
+    container:
+      image: ${{ matrix.image }}
+    env:
+      SENA_CONSOLE_TOOLCHAIN: ${{ matrix.toolchain }}
+      SENA_SWITCH_TOOLCHAIN: ${{ matrix.toolchain }}
+      SENA_VITA_TOOLCHAIN: ${{ matrix.toolchain }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install packaging helpers
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends cmake python3 patch
+
+      - name: Check prepared SDK and Rust toolchain
+        run: |
+          set -euo pipefail
+          rustup run "$SENA_CONSOLE_TOOLCHAIN" rustc --version
+          case "${{ matrix.platform }}" in
+            switch)
+              command -v aarch64-none-elf-gcc
+              command -v uam
+              test -f "$DEVKITPRO/libnx/lib/libdeko3d.a"
+              ;;
+            vita)
+              command -v arm-vita-eabi-gcc
+              test -f "$VITASDK/arm-vita-eabi/lib/libvita2d.a"
+              ;;
+          esac
+
+      - name: Cache console dependencies and build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/cargo/registry
+            /usr/local/cargo/git
+            target/${{ matrix.platform }}-native
+          key: console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-${{ hashFiles('Cargo.lock', 'platform/**/Cargo.lock') }}-
+            console-${{ runner.os }}-${{ matrix.platform }}-${{ matrix.sdk_key }}-${{ matrix.toolchain }}-${{ hashFiles(format('platform/{0}/build_*.sh', matrix.platform)) }}-
+
+      - name: Build native package
+        run: |
+          set -euo pipefail
+          mkdir -p "dist/${{ matrix.platform }}"
+          bash platform/${{ matrix.platform }}/build_${{ matrix.platform }}.sh 2>&1 | tee "dist/${{ matrix.platform }}/build.log"
+
+      - name: Verify native package and write checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 platform/scripts/verify_console_package.py \
+            "${{ matrix.platform }}" "dist/${{ matrix.platform }}/${{ matrix.package }}"
+          cd "dist/${{ matrix.platform }}"
+          sha256sum "${{ matrix.package }}" > "${{ matrix.package }}.sha256"
+
+      - name: Upload native package
+        uses: actions/upload-artifact@v4
+        with:
+          name: sena-${{ matrix.platform }}
+          path: |
+            dist/${{ matrix.platform }}/${{ matrix.package }}
+            dist/${{ matrix.platform }}/${{ matrix.package }}.sha256
+          if-no-files-found: error
+
+      - name: Upload failed build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sena-${{ matrix.platform }}-build-log
+          path: dist/${{ matrix.platform }}/build.log
+          if-no-files-found: warn
+
   prerelease:
     name: Publish GitHub Pre-release (non-tag pushes only)
     if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
-    needs: [meta, linux_x86_64, linux_aarch64, wasm, macos, ios, windows, android]
+    needs: [meta, linux_x86_64, linux_aarch64, wasm, macos, ios, windows, android, consoles]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -548,12 +669,16 @@ jobs:
             _artifacts/sena-ios/SenaLauncher.ipa \
             _artifacts/sena-windows/sena.exe \
             _artifacts/sena-windows/sena_arm64.exe \
-            _artifacts/sena-android/app-release.apk
+            _artifacts/sena-android/app-release.apk \
+            _artifacts/sena-switch/sena.nro \
+            _artifacts/sena-switch/sena.nro.sha256 \
+            _artifacts/sena-vita/sena.vpk \
+            _artifacts/sena-vita/sena.vpk.sha256
 
   release:
     name: Publish GitHub Release (tags only)
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [meta, linux_x86_64, linux_aarch64, wasm, macos, ios, windows, android]
+    needs: [meta, linux_x86_64, linux_aarch64, wasm, macos, ios, windows, android, consoles]
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -1,0 +1,885 @@
+{
+  "functions": [
+    {
+      "ea": "0x447b40",
+      "name": "sub_447B40",
+      "xrefs": [
+        {
+          "from": "0x4545ce",
+          "function": "sub_4542D0"
+        },
+        {
+          "from": "0x4eaef0",
+          "function": null
+        }
+      ],
+      "pseudocode": "int __cdecl sub_447B40(int a1)\n{\n  int v1; // ecx\n  int v2; // edi\n  int *v4; // eax\n  int v5; // eax\n  BOOL v6; // ecx\n  int v7; // eax\n  _DWORD *v8; // eax\n  const char *v9; // [esp-Ch] [ebp-18h]\n  BOOL v10; // [esp-8h] [ebp-14h]\n  int v11; // [esp-4h] [ebp-10h]\n\n  v1 = *(_DWORD *)(a1 + 286352);\n  if ( v1 - 1 < 0 )\n  {\n    PalDebugPrintf(0, 0, \"not stack\");\n    v1 = *(_DWORD *)(a1 + 286352);\n  }\n  *(_DWORD *)(a1 + 286352) = v1 - 1;\n  v2 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n  if ( v2 >= 128 )\n  {\n    v7 = sub_47ABA0(*(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n    if ( v7 == -1 )\n      v8 = 0;\n    else\n      v8 = (_DWORD *)((char *)&unk_4F44B0 + 656 * v7);\n    v11 = v2;\n    v6 = *v8 != 0;\n    v10 = v6;\n    v9 = \"[%d]is_sp %x\";\n  }\n  else\n  {\n    if ( (unsigned int)(v2 + 1) > 0x80 )\n    {\n      PalDebugPrintf(0, 0, aGraphError, *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n      return 0;\n    }\n    if ( v2 <= -1 )\n    {\n      PalDebugPrintf(10, 0, \"error paramater is_sp %d\", *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\nLABEL_7:\n      *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = 0;\n      return 0;\n    }\n    v4 = (int *)(a1 + 732 * v2 + 164564);\n    if ( !v4 )\n    {\n      PalDebugPrintf(0, 0, aIsSpLayerD, *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n      goto LABEL_7;\n    }\n    v5 = *v4;\n    if ( v5 == -858993460 || v5 == -572662307 )\n    {\n      PalDebugPrintf(0, 0, aIsSpLayerD_0, *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424));\n      goto LABEL_7;\n    }\n    v11 = *(_DWORD *)(a1 + 4 * (v1 - 1) + 258424);\n    v6 = v5 != 0;\n    v10 = v6;\n    v9 = \"[%d]is_sp %d\";\n  }\n  *(_DWORD *)(a1 + 4 * *(_DWORD *)(a1 + 286356) + 258680) = v6;\n  PalDebugPrintf(10, 0, v9, v10, v11);\n  return 1;\n}\n",
+      "disassembly": [
+        [
+          "0x447b40",
+          "push    ebp"
+        ],
+        [
+          "0x447b41",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x447b43",
+          "push    ebx"
+        ],
+        [
+          "0x447b44",
+          "mov     ebx, __imp_PalDebugPrintf"
+        ],
+        [
+          "0x447b4a",
+          "push    esi"
+        ],
+        [
+          "0x447b4b",
+          "mov     esi, [ebp+arg_0]"
+        ],
+        [
+          "0x447b4e",
+          "push    edi"
+        ],
+        [
+          "0x447b4f",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x447b55",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x447b58",
+          "test    eax, eax"
+        ],
+        [
+          "0x447b5a",
+          "jns     short loc_447B70"
+        ],
+        [
+          "0x447b5c",
+          "push    offset aNotStack; \"not stack\""
+        ],
+        [
+          "0x447b61",
+          "push    0"
+        ],
+        [
+          "0x447b63",
+          "push    0"
+        ],
+        [
+          "0x447b65",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x447b67",
+          "mov     ecx, [esi+45E90h]"
+        ],
+        [
+          "0x447b6d",
+          "add     esp, 0Ch"
+        ],
+        [
+          "0x447b70",
+          "lea     eax, [ecx-1]"
+        ],
+        [
+          "0x447b73",
+          "mov     [esi+45E90h], eax"
+        ],
+        [
+          "0x447b79",
+          "mov     edi, [esi+eax*4+3F178h]"
+        ],
+        [
+          "0x447b80",
+          "cmp     edi, 80h"
+        ],
+        [
+          "0x447b86",
+          "jge     loc_447C1D"
+        ],
+        [
+          "0x447b8c",
+          "lea     eax, [edi+1]"
+        ],
+        [
+          "0x447b8f",
+          "cmp     eax, 80h"
+        ],
+        [
+          "0x447b94",
+          "ja      short loc_447C07"
+        ],
+        [
+          "0x447b96",
+          "cmp     edi, 0FFFFFFFFh"
+        ],
+        [
+          "0x447b99",
+          "jg      short loc_447BC2"
+        ],
+        [
+          "0x447b9b",
+          "push    edi"
+        ],
+        [
+          "0x447b9c",
+          "push    offset aErrorParamater; \"error paramater is_sp %d\""
+        ],
+        [
+          "0x447ba1",
+          "push    0"
+        ],
+        [
+          "0x447ba3",
+          "push    0Ah"
+        ],
+        [
+          "0x447ba5",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x447ba7",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x447bad",
+          "add     esp, 10h"
+        ],
+        [
+          "0x447bb0",
+          "pop     edi"
+        ],
+        [
+          "0x447bb1",
+          "mov     dword ptr [esi+eax*4+3F278h], 0"
+        ],
+        [
+          "0x447bbc",
+          "xor     eax, eax"
+        ],
+        [
+          "0x447bbe",
+          "pop     esi"
+        ],
+        [
+          "0x447bbf",
+          "pop     ebx"
+        ],
+        [
+          "0x447bc0",
+          "pop     ebp"
+        ],
+        [
+          "0x447bc1",
+          "retn"
+        ],
+        [
+          "0x447bc2",
+          "imul    eax, edi, 2DCh"
+        ],
+        [
+          "0x447bc8",
+          "add     eax, 282D4h"
+        ],
+        [
+          "0x447bcd",
+          "add     eax, esi"
+        ],
+        [
+          "0x447bcf",
+          "jnz     short loc_447BDB"
+        ],
+        [
+          "0x447bd1",
+          "push    edi"
+        ],
+        [
+          "0x447bd2",
+          "push    offset aIsSpLayerD; \"is_sp layer %d \""
+        ],
+        [
+          "0x447bd7",
+          "push    eax"
+        ],
+        [
+          "0x447bd8",
+          "push    eax"
+        ],
+        [
+          "0x447bd9",
+          "jmp     short loc_447BA5"
+        ],
+        [
+          "0x447bdb",
+          "mov     eax, [eax]"
+        ],
+        [
+          "0x447bdd",
+          "cmp     eax, 0CCCCCCCCh"
+        ],
+        [
+          "0x447be2",
+          "jz      short loc_447BFB"
+        ],
+        [
+          "0x447be4",
+          "cmp     eax, 0DDDDDDDDh"
+        ],
+        [
+          "0x447be9",
+          "jz      short loc_447BFB"
+        ],
+        [
+          "0x447beb",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x447bed",
+          "test    eax, eax"
+        ],
+        [
+          "0x447bef",
+          "push    edi"
+        ],
+        [
+          "0x447bf0",
+          "setnz   cl"
+        ],
+        [
+          "0x447bf3",
+          "push    ecx"
+        ],
+        [
+          "0x447bf4",
+          "push    offset aDIsSpD; \"[%d]is_sp %d\""
+        ],
+        [
+          "0x447bf9",
+          "jmp     short loc_447C46"
+        ],
+        [
+          "0x447bfb",
+          "push    edi"
+        ],
+        [
+          "0x447bfc",
+          "push    offset aIsSpLayerD_0; \"is_sp layer %d \""
+        ],
+        [
+          "0x447c01",
+          "push    0"
+        ],
+        [
+          "0x447c03",
+          "push    0"
+        ],
+        [
+          "0x447c05",
+          "jmp     short loc_447BA5"
+        ],
+        [
+          "0x447c07",
+          "push    edi"
+        ],
+        [
+          "0x447c08",
+          "push    offset aGraphError; \"graph error : \""
+        ],
+        [
+          "0x447c0d",
+          "push    0"
+        ],
+        [
+          "0x447c0f",
+          "push    0"
+        ],
+        [
+          "0x447c11",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x447c13",
+          "add     esp, 10h"
+        ],
+        [
+          "0x447c16",
+          "xor     eax, eax"
+        ],
+        [
+          "0x447c18",
+          "pop     edi"
+        ],
+        [
+          "0x447c19",
+          "pop     esi"
+        ],
+        [
+          "0x447c1a",
+          "pop     ebx"
+        ],
+        [
+          "0x447c1b",
+          "pop     ebp"
+        ],
+        [
+          "0x447c1c",
+          "retn"
+        ],
+        [
+          "0x447c1d",
+          "mov     ecx, edi"
+        ],
+        [
+          "0x447c1f",
+          "call    sub_47ABA0"
+        ],
+        [
+          "0x447c24",
+          "cmp     eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x447c27",
+          "jnz     short loc_447C2D"
+        ],
+        [
+          "0x447c29",
+          "xor     eax, eax"
+        ],
+        [
+          "0x447c2b",
+          "jmp     short loc_447C38"
+        ],
+        [
+          "0x447c2d",
+          "imul    eax, 290h"
+        ],
+        [
+          "0x447c33",
+          "add     eax, offset unk_4F44B0"
+        ],
+        [
+          "0x447c38",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x447c3a",
+          "cmp     [eax], ecx"
+        ],
+        [
+          "0x447c3c",
+          "push    edi"
+        ],
+        [
+          "0x447c3d",
+          "setnz   cl"
+        ],
+        [
+          "0x447c40",
+          "push    ecx"
+        ],
+        [
+          "0x447c41",
+          "push    offset aDIsSpX; \"[%d]is_sp %x\""
+        ],
+        [
+          "0x447c46",
+          "mov     eax, [esi+45E94h]"
+        ],
+        [
+          "0x447c4c",
+          "push    0"
+        ],
+        [
+          "0x447c4e",
+          "push    0Ah"
+        ],
+        [
+          "0x447c50",
+          "mov     [esi+eax*4+3F278h], ecx"
+        ],
+        [
+          "0x447c57",
+          "call    ebx ; __imp_PalDebugPrintf"
+        ],
+        [
+          "0x447c59",
+          "add     esp, 14h"
+        ],
+        [
+          "0x447c5c",
+          "mov     eax, 1"
+        ],
+        [
+          "0x447c61",
+          "pop     edi"
+        ],
+        [
+          "0x447c62",
+          "pop     esi"
+        ],
+        [
+          "0x447c63",
+          "pop     ebx"
+        ],
+        [
+          "0x447c64",
+          "pop     ebp"
+        ],
+        [
+          "0x447c65",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x47aba0",
+      "name": "sub_47ABA0",
+      "xrefs": [
+        {
+          "from": "0x40263f",
+          "function": "sub_402610"
+        },
+        {
+          "from": "0x40265d",
+          "function": "sub_402610"
+        },
+        {
+          "from": "0x40267c",
+          "function": "sub_402610"
+        },
+        {
+          "from": "0x40301f",
+          "function": "sub_402FF0"
+        },
+        {
+          "from": "0x40303d",
+          "function": "sub_402FF0"
+        },
+        {
+          "from": "0x40305c",
+          "function": "sub_402FF0"
+        },
+        {
+          "from": "0x4039d9",
+          "function": "sub_4039C0"
+        },
+        {
+          "from": "0x41a6fa",
+          "function": "sub_41A4B0"
+        },
+        {
+          "from": "0x41a97e",
+          "function": "sub_41A8B0"
+        },
+        {
+          "from": "0x41aa66",
+          "function": "sub_41A9B0"
+        },
+        {
+          "from": "0x41ac3a",
+          "function": "sub_41AB80"
+        },
+        {
+          "from": "0x41ad2c",
+          "function": "sub_41AC80"
+        },
+        {
+          "from": "0x41ae2e",
+          "function": "sub_41AD60"
+        },
+        {
+          "from": "0x41af20",
+          "function": "sub_41AE60"
+        },
+        {
+          "from": "0x41b0e0",
+          "function": "sub_41B020"
+        },
+        {
+          "from": "0x41b1bc",
+          "function": "sub_41B110"
+        },
+        {
+          "from": "0x41b2b0",
+          "function": "sub_41B1F0"
+        },
+        {
+          "from": "0x41b396",
+          "function": "sub_41B2E0"
+        },
+        {
+          "from": "0x41b4a8",
+          "function": "sub_41B3D0"
+        },
+        {
+          "from": "0x41b5a0",
+          "function": "sub_41B4E0"
+        },
+        {
+          "from": "0x41b690",
+          "function": "sub_41B5D0"
+        },
+        {
+          "from": "0x41b776",
+          "function": "sub_41B6C0"
+        },
+        {
+          "from": "0x41b870",
+          "function": "sub_41B7B0"
+        },
+        {
+          "from": "0x41b960",
+          "function": "sub_41B8A0"
+        },
+        {
+          "from": "0x41c664",
+          "function": "sub_41C570"
+        },
+        {
+          "from": "0x41c831",
+          "function": "sub_41C760"
+        },
+        {
+          "from": "0x41c936",
+          "function": "sub_41C880"
+        },
+        {
+          "from": "0x41cb08",
+          "function": "sub_41CAC0"
+        },
+        {
+          "from": "0x41cc94",
+          "function": "sub_41CBD0"
+        },
+        {
+          "from": "0x426eb9",
+          "function": "sub_426D60"
+        },
+        {
+          "from": "0x443cad",
+          "function": "sub_443CA0"
+        },
+        {
+          "from": "0x444174",
+          "function": null
+        },
+        {
+          "from": "0x447392",
+          "function": "sub_447320"
+        },
+        {
+          "from": "0x447578",
+          "function": "sub_447500"
+        },
+        {
+          "from": "0x447c1f",
+          "function": "sub_447B40"
+        },
+        {
+          "from": "0x44a146",
+          "function": "sub_449B90"
+        },
+        {
+          "from": "0x44ab7f",
+          "function": "sub_44AB10"
+        },
+        {
+          "from": "0x44ac7f",
+          "function": "sub_44AC40"
+        },
+        {
+          "from": "0x44ad62",
+          "function": "sub_44AD20"
+        },
+        {
+          "from": "0x44ae22",
+          "function": "sub_44ADE0"
+        },
+        {
+          "from": "0x44aeda",
+          "function": "sub_44AE90"
+        },
+        {
+          "from": "0x44af9a",
+          "function": "sub_44AF50"
+        },
+        {
+          "from": "0x44b0d9",
+          "function": "sub_44B010"
+        },
+        {
+          "from": "0x44b259",
+          "function": "sub_44B190"
+        },
+        {
+          "from": "0x44b37b",
+          "function": "sub_44B310"
+        },
+        {
+          "from": "0x44b44b",
+          "function": "sub_44B3E0"
+        },
+        {
+          "from": "0x44b4fb",
+          "function": "sub_44B490"
+        },
+        {
+          "from": "0x44b613",
+          "function": "sub_44B570"
+        },
+        {
+          "from": "0x44b9c8",
+          "function": "sub_44B900"
+        },
+        {
+          "from": "0x44d28f",
+          "function": "sub_44D200"
+        },
+        {
+          "from": "0x44d43a",
+          "function": "sub_44D3A0"
+        },
+        {
+          "from": "0x44d4ce",
+          "function": "sub_44D490"
+        },
+        {
+          "from": "0x44d4ea",
+          "function": "sub_44D490"
+        },
+        {
+          "from": "0x44d871",
+          "function": "sub_44D7B0"
+        },
+        {
+          "from": "0x44d9db",
+          "function": "sub_44D900"
+        },
+        {
+          "from": "0x44e35e",
+          "function": "sub_44E330"
+        },
+        {
+          "from": "0x44e37a",
+          "function": "sub_44E330"
+        },
+        {
+          "from": "0x44e438",
+          "function": "sub_44E400"
+        },
+        {
+          "from": "0x44e454",
+          "function": "sub_44E400"
+        },
+        {
+          "from": "0x44e94e",
+          "function": "sub_44E8D0"
+        },
+        {
+          "from": "0x44ea7b",
+          "function": "sub_44E9F0"
+        },
+        {
+          "from": "0x44f7a1",
+          "function": "sub_44F6E0"
+        },
+        {
+          "from": "0x44fb0c",
+          "function": "sub_44FA50"
+        },
+        {
+          "from": "0x44ffd3",
+          "function": "sub_44FF30"
+        },
+        {
+          "from": "0x45009f",
+          "function": "sub_450060"
+        },
+        {
+          "from": "0x45017f",
+          "function": "sub_450140"
+        },
+        {
+          "from": "0x4502ab",
+          "function": "sub_450220"
+        },
+        {
+          "from": "0x45037b",
+          "function": "sub_450330"
+        },
+        {
+          "from": "0x450397",
+          "function": "sub_450330"
+        },
+        {
+          "from": "0x452523",
+          "function": "sub_4524B0"
+        },
+        {
+          "from": "0x4743a3",
+          "function": "sub_474270"
+        }
+      ],
+      "pseudocode": "int __fastcall sub_47ABA0(int a1)\n{\n  int result; // eax\n  int v3; // esi\n\n  PalTaskGetTaskData(0);\n  result = (unsigned __int16)a1;\n  v3 = a1 & 0xF000000;\n  if ( (a1 & 0xF000000) == 0 )\n    return (unsigned __int16)a1 + 16;\n  if ( v3 != 0x1000000 )\n  {\n    if ( v3 == 0x2000000 )\n    {\n      return (((a1 >> 20) & 0xF) << 7) + (unsigned __int16)a1 + 144;\n    }\n    else\n    {\n      PalDebugPrintf(0, 0, \"fail original image no : 0x%08X\", a1);\n      return -1;\n    }\n  }\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x47aba0",
+          "push    esi"
+        ],
+        [
+          "0x47aba1",
+          "push    edi"
+        ],
+        [
+          "0x47aba2",
+          "push    0"
+        ],
+        [
+          "0x47aba4",
+          "mov     edi, ecx"
+        ],
+        [
+          "0x47aba6",
+          "call    __imp_PalTaskGetTaskData"
+        ],
+        [
+          "0x47abac",
+          "mov     edx, edi"
+        ],
+        [
+          "0x47abae",
+          "movzx   eax, di"
+        ],
+        [
+          "0x47abb1",
+          "sar     edx, 14h"
+        ],
+        [
+          "0x47abb4",
+          "mov     esi, edi"
+        ],
+        [
+          "0x47abb6",
+          "add     esp, 4"
+        ],
+        [
+          "0x47abb9",
+          "and     edx, 0Fh"
+        ],
+        [
+          "0x47abbc",
+          "and     esi, 0F000000h"
+        ],
+        [
+          "0x47abc2",
+          "jnz     short loc_47ABCA"
+        ],
+        [
+          "0x47abc4",
+          "pop     edi"
+        ],
+        [
+          "0x47abc5",
+          "add     eax, 10h"
+        ],
+        [
+          "0x47abc8",
+          "pop     esi"
+        ],
+        [
+          "0x47abc9",
+          "retn"
+        ],
+        [
+          "0x47abca",
+          "cmp     esi, 1000000h"
+        ],
+        [
+          "0x47abd0",
+          "jz      short loc_47ABFD"
+        ],
+        [
+          "0x47abd2",
+          "cmp     esi, 2000000h"
+        ],
+        [
+          "0x47abd8",
+          "jnz     short loc_47ABE7"
+        ],
+        [
+          "0x47abda",
+          "shl     edx, 7"
+        ],
+        [
+          "0x47abdd",
+          "add     eax, 90h"
+        ],
+        [
+          "0x47abe2",
+          "pop     edi"
+        ],
+        [
+          "0x47abe3",
+          "add     eax, edx"
+        ],
+        [
+          "0x47abe5",
+          "pop     esi"
+        ],
+        [
+          "0x47abe6",
+          "retn"
+        ],
+        [
+          "0x47abe7",
+          "push    edi"
+        ],
+        [
+          "0x47abe8",
+          "push    offset aFailOriginalIm; \"fail original image no : 0x%08X\""
+        ],
+        [
+          "0x47abed",
+          "push    0"
+        ],
+        [
+          "0x47abef",
+          "push    0"
+        ],
+        [
+          "0x47abf1",
+          "call    __imp_PalDebugPrintf"
+        ],
+        [
+          "0x47abf7",
+          "add     esp, 10h"
+        ],
+        [
+          "0x47abfa",
+          "or      eax, 0FFFFFFFFh"
+        ],
+        [
+          "0x47abfd",
+          "pop     edi"
+        ],
+        [
+          "0x47abfe",
+          "pop     esi"
+        ],
+        [
+          "0x47abff",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Game.exe (totsulover)",
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483"
+}

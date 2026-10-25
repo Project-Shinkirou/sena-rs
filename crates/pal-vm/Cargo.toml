@@ -13,41 +13,63 @@ crate-type = ["rlib", "cdylib", "staticlib"]
 [[bin]]
 name = "sena"
 path = "src/sena.rs"
+required-features = ["desktop"]
 
 [[bin]]
 name = "dump-pgd"
 path = "src/dump_pgd.rs"
+required-features = ["cli"]
 
 [[bin]]
 name = "dump-graphic"
 path = "src/dump_graphic.rs"
+required-features = ["cli"]
 
 [[bin]]
 name = "dump-pgd-info"
 path = "src/dump_pgd_info.rs"
+required-features = ["cli"]
 
 [[bin]]
 name = "dump-resource"
 path = "src/dump_resource.rs"
+required-features = ["cli"]
+
+[features]
+default = ["desktop", "device-audio"]
+cli = ["dep:clap", "dep:env_logger"]
+desktop = ["cli", "dep:bytemuck", "dep:pollster", "dep:softbuffer", "dep:wgpu", "dep:winit"]
+device-audio = ["kira/cpal"]
+# Platform shells pull PCM from Kira through the C ABI instead of using CPAL.
+host-audio = []
 
 [dependencies]
 ab_glyph.workspace = true
 anyhow.workspace = true
-bytemuck.workspace = true
-clap.workspace = true
+bytemuck = { workspace = true, optional = true }
+clap = { workspace = true, optional = true }
 encoding_rs.workspace = true
-env_logger.workspace = true
+env_logger = { workspace = true, optional = true }
 log.workspace = true
 kira.workspace = true
 pal-asset.workspace = true
 pal-script.workspace = true
-plmpeg.workspace = true
+na_mpeg2_decoder.workspace = true
 png = "0.17"
-pollster.workspace = true
-softbuffer.workspace = true
-wgpu.workspace = true
+jpeg-decoder = { version = "=0.3.2", default-features = false }
+symphonia = { version = "=0.5.5", default-features = false, features = ["mp1", "mp2", "mp3"] }
+sha2 = { version = "=0.10.9", default-features = false }
+pollster = { workspace = true, optional = true }
+softbuffer = { workspace = true, optional = true }
+wgpu = { workspace = true, optional = true }
 wmv-decoder.workspace = true
-winit.workspace = true
+winit = { workspace = true, optional = true }
+
+[target.'cfg(any(target_os = "linux", target_os = "android", target_os = "macos", target_os = "ios"))'.dependencies]
+libc = "0.2"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_SystemInformation", "Win32_System_EventNotificationService"] }
 
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = "0.15"

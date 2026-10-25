@@ -43,6 +43,7 @@ pub struct PalSequenceAnimationDesc {
 
 /// 24-byte frame record for PalAnimationEx. Mirrors the original structure:
 /// RECT.left, RECT.top, RECT.right, RECT.bottom, duration_ms, next_frame_index.
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PalAnimationFrameRecord {
     pub rect: PalRect,
@@ -50,6 +51,14 @@ pub struct PalAnimationFrameRecord {
     /// -1 = terminal (last frame).
     pub next: i32,
 }
+
+const _: () = {
+    use core::mem::{align_of, offset_of, size_of};
+    assert!(size_of::<PalAnimationFrameRecord>() == 24);
+    assert!(align_of::<PalAnimationFrameRecord>() == 4);
+    assert!(offset_of!(PalAnimationFrameRecord, duration_ms) == 16);
+    assert!(offset_of!(PalAnimationFrameRecord, next) == 20);
+};
 
 impl PalAnimationFrameRecord {
     pub const fn new(rect: PalRect, duration_ms: u32, next: i32) -> Self {
@@ -67,6 +76,8 @@ impl PalAnimationFrameRecord {
 /// Stored inside TaskSystem as TaskKind::AnimationSheet.
 #[derive(Clone, Debug)]
 pub struct PalSheetAnimation {
+    /// Native constructors install an initializer before the update callback.
+    initialized: bool,
     pub sprite: SpriteHandle,
     pub frame_delay_ms: u32,
     /// PAL-time timestamp of the last frame advance (PaltimeGetTime equivalent).
@@ -84,20 +95,19 @@ impl PalSheetAnimation {
     pub fn create(
         sprites: &mut SpriteSystem,
         desc: PalSheetAnimationDesc,
-        pal_time_ms: u32,
+        _pal_time_ms: u32,
     ) -> anyhow::Result<Self> {
         let flags = PalAnimationFlags::from_original(desc.flags.raw());
-        let axis = flags.axis();
-        let sprite = sprites.get(desc.sprite).ok_or_else(|| {
+        sprites.get(desc.sprite).ok_or_else(|| {
             anyhow::anyhow!("PalAnimation sprite {:?} does not exist", desc.sprite)
         })?;
-        let frame_count = sprite.frame_count(axis);
         Ok(Self {
+            initialized: false,
             sprite: desc.sprite,
             frame_delay_ms: desc.frame_delay_ms,
-            last_time_ms: pal_time_ms,
+            last_time_ms: 0,
             current_frame: 0,
-            frame_count,
+            frame_count: 0,
             flags,
             running: true,
             looped_since_last_query: false,
@@ -117,6 +127,26 @@ impl PalSheetAnimation {
         sprites: &mut SpriteSystem,
         pal_time_ms: u32,
     ) -> TaskUpdateOutcome {
+        if !self.initialized {
+            // PalAnimation's first callback samples dimensions and time even
+            // when the caller stopped the animation before it was scheduled.
+            self.frame_count = sprites.get(self.sprite).map_or(0, |sprite| {
+                let (dimension, cell) = match self.flags.axis() {
+                    PalAnimationAxis::Horizontal => {
+                        (sprite.texture_size.width, sprite.cell_size.width)
+                    }
+                    PalAnimationAxis::Vertical => {
+                        (sprite.texture_size.height, sprite.cell_size.height)
+                    }
+                };
+                native_frame_count(dimension, cell)
+            });
+            self.current_frame = 0;
+            self.looped_since_last_query = false;
+            self.last_time_ms = pal_time_ms;
+            self.initialized = true;
+            return TaskUpdateOutcome::Continue;
+        }
         if !self.running {
             return TaskUpdateOutcome::Continue;
         }
@@ -152,13 +182,22 @@ impl PalSheetAnimation {
     fn apply_rect(&self, sprites: &mut SpriteSystem) -> anyhow::Result<()> {
         match self.flags.axis() {
             PalAnimationAxis::Horizontal => {
-                sprites.rect_set_pos(self.sprite, self.current_frame, 0)
+                sprites.rect_set_pos(self.sprite, i32::from(self.current_frame), 0)
             }
-            PalAnimationAxis::Vertical => sprites.rect_set_pos(self.sprite, 0, self.current_frame),
+            PalAnimationAxis::Vertical => {
+                sprites.rect_set_pos(self.sprite, 0, i32::from(self.current_frame))
+            }
         }
         .then_some(())
         .ok_or_else(|| anyhow::anyhow!("PalAnimation sprite {:?} does not exist", self.sprite))
     }
+}
+
+/// The native initializer performs signed division and stores the low word.
+/// A zero divisor or signed division overflow faults natively; keep those
+/// malformed dimensions inert in the portable engine instead.
+fn native_frame_count(dimension: u32, cell: u32) -> u16 {
+    (dimension as i32).checked_div(cell as i32).unwrap_or(0) as u16
 }
 
 // ---- PalSequenceAnimation: 0x18 task data ----
@@ -167,6 +206,7 @@ impl PalSheetAnimation {
 /// Stored inside TaskSystem as TaskKind::AnimationSequence.
 #[derive(Clone, Debug)]
 pub struct PalSequenceAnimation {
+    initialized: bool,
     pub sprite: SpriteHandle,
     pub frames: Vec<PalAnimationFrameRecord>,
     pub current_duration_ms: u32,
@@ -182,17 +222,26 @@ impl PalSequenceAnimation {
     pub fn create(
         sprites: &mut SpriteSystem,
         desc: PalSequenceAnimationDesc,
-        pal_time_ms: u32,
+        _pal_time_ms: u32,
     ) -> anyhow::Result<Self> {
-        let mut anim = Self {
+        let anim = Self {
+            initialized: false,
             sprite: desc.sprite,
             frames: desc.frames,
             current_duration_ms: 0,
-            last_time_ms: pal_time_ms,
+            last_time_ms: 0,
             current_frame: 0,
             running: true,
         };
-        anim.apply_current_frame(sprites, pal_time_ms)?;
+        let frame = anim.frames.first().ok_or_else(|| {
+            anyhow::anyhow!("PalAnimationEx requires at least one 24-byte frame record")
+        })?;
+        if !sprites.set_rect(anim.sprite, Some(frame.rect)) {
+            return Err(anyhow::anyhow!(
+                "PalAnimationEx sprite {:?} does not exist",
+                anim.sprite
+            ));
+        }
         Ok(anim)
     }
 
@@ -212,6 +261,17 @@ impl PalSequenceAnimation {
         sprites: &mut SpriteSystem,
         pal_time_ms: u32,
     ) -> TaskUpdateOutcome {
+        if !self.initialized {
+            // Creation applies the first rectangle, but only this first
+            // callback reads the duration and starts the elapsed-time clock.
+            self.current_duration_ms = self
+                .frames
+                .get(self.current_frame as usize)
+                .map_or(0, |frame| frame.duration_ms);
+            self.last_time_ms = pal_time_ms;
+            self.initialized = true;
+            return TaskUpdateOutcome::Continue;
+        }
         if !self.running || self.current_frame == -1 {
             return TaskUpdateOutcome::Continue;
         }

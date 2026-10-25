@@ -1,0 +1,124 @@
+{
+  "functions": [
+    {
+      "ea": "0x100a05a0",
+      "name": "Pal3DIs",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int Pal3DIs()\n{\n  return *((_DWORD *)dword_101336F4 + 271) & 8;\n}\n",
+      "disassembly": [
+        [
+          "0x100a05a0",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100a05a5",
+          "mov     eax, [eax+43Ch]"
+        ],
+        [
+          "0x100a05ab",
+          "and     eax, 8"
+        ],
+        [
+          "0x100a05ae",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a0390",
+      "name": "PalGetChangeWindowModeTime",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "int PalGetChangeWindowModeTime()\n{\n  return dword_101336D0;\n}\n",
+      "disassembly": [
+        [
+          "0x100a0390",
+          "mov     eax, dword_101336D0"
+        ],
+        [
+          "0x100a0395",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a03a0",
+      "name": "PalSetChangeWindowModeTime",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "DWORD PalSetChangeWindowModeTime()\n{\n  DWORD result; // eax\n\n  result = timeGetTime();\n  dword_101336D0 = result;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100a03a0",
+          "call    ds:timeGetTime"
+        ],
+        [
+          "0x100a03a6",
+          "mov     dword_101336D0, eax"
+        ],
+        [
+          "0x100a03ab",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a4740",
+      "name": "PalTouchEnable",
+      "xrefs": [
+        {
+          "from": "0x1011d278",
+          "function": null
+        }
+      ],
+      "pseudocode": "void *__cdecl PalTouchEnable(char a1)\n{\n  void *result; // eax\n\n  result = dword_101336F4;\n  *((_BYTE *)dword_101336F4 + 652) = a1;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100a4740",
+          "push    ebp"
+        ],
+        [
+          "0x100a4741",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100a4743",
+          "mov     eax, dword_101336F4"
+        ],
+        [
+          "0x100a4748",
+          "mov     cl, [ebp+arg_0]"
+        ],
+        [
+          "0x100a474b",
+          "mov     [eax+28Ch], cl"
+        ],
+        [
+          "0x100a4751",
+          "pop     ebp"
+        ],
+        [
+          "0x100a4752",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "Pal.dll",
+  "binary_sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e",
+  "sha256": "744219b7c2b2ba80c5bb0440ac556201652ffbcc01d2de1211c4b576ad21db7e"
+}

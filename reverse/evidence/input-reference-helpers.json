@@ -1,0 +1,317 @@
+{
+  "functions": [
+    {
+      "ea": "0x100ea334",
+      "name": "GetAsyncKeyState",
+      "xrefs": [
+        {
+          "from": "0x100ab891",
+          "function": "sub_100AB690"
+        },
+        {
+          "from": "0x100ab8b5",
+          "function": "sub_100AB690"
+        },
+        {
+          "from": "0x100ab891",
+          "function": "sub_100AB690"
+        },
+        {
+          "from": "0x100ab8b5",
+          "function": "sub_100AB690"
+        }
+      ]
+    },
+    {
+      "ea": "0x100ea338",
+      "name": "GetCursorPos",
+      "xrefs": [
+        {
+          "from": "0x100ab0dd",
+          "function": "sub_100AB0D0"
+        },
+        {
+          "from": "0x100ab6d8",
+          "function": "sub_100AB690"
+        },
+        {
+          "from": "0x100ab0dd",
+          "function": "sub_100AB0D0"
+        },
+        {
+          "from": "0x100ab6d8",
+          "function": "sub_100AB690"
+        }
+      ]
+    },
+    {
+      "ea": "0x100ab670",
+      "name": "sub_100AB670",
+      "xrefs": [
+        {
+          "from": "0x100a21e1",
+          "function": "sub_100A20F0"
+        }
+      ],
+      "pseudocode": "_DWORD *sub_100AB670()\n{\n  _DWORD *result; // eax\n\n  result = dword_10128698;\n  *((_WORD *)dword_10128698 + 306) = 0;\n  result[145] = 0;\n  return result;\n}\n",
+      "disassembly": [
+        [
+          "0x100ab670",
+          "mov     eax, dword_10128698"
+        ],
+        [
+          "0x100ab675",
+          "xor     ecx, ecx"
+        ],
+        [
+          "0x100ab677",
+          "mov     [eax+264h], cx"
+        ],
+        [
+          "0x100ab67e",
+          "mov     [eax+244h], ecx"
+        ],
+        [
+          "0x100ab684",
+          "retn"
+        ]
+      ]
+    },
+    {
+      "ea": "0x100a45f0",
+      "name": "sub_100A45F0",
+      "xrefs": [
+        {
+          "from": "0x100a47db",
+          "function": "PalButtonGetReactionEx"
+        },
+        {
+          "from": "0x100a4a0e",
+          "function": "PalButtonGetReaction"
+        }
+      ],
+      "pseudocode": "int __fastcall sub_100A45F0(int a1, int a2, int a3)\n{\n  int *v3; // esi\n  int v4; // ebx\n  int v5; // edi\n  int i; // [esp+Ch] [ebp-15Ch]\n  _BYTE v8[52]; // [esp+10h] [ebp-158h] BYREF\n  int v9; // [esp+44h] [ebp-124h]\n\n  v3 = *(int **)(a1 + 20);\n  v4 = 0x7FFFFFFF;\n  v5 = 0;\n  for ( i = a2; v3; a2 = i )\n  {\n    if ( PalSpriteHit((float *)*v3, a2, a3, v3[4] & 0x10000) )\n    {\n      PalSpriteGetInfo(*v3, (int)v8);\n      if ( v4 > v9 )\n      {\n        if ( v3[1] )\n          v5 = *v3;\n        else\n          v5 = 0;\n        v4 = v9;\n      }\n    }\n    v3 = (int *)v3[5];\n  }\n  return v5;\n}\n",
+      "disassembly": [
+        [
+          "0x100a45f0",
+          "push    ebp"
+        ],
+        [
+          "0x100a45f1",
+          "mov     ebp, esp"
+        ],
+        [
+          "0x100a45f3",
+          "sub     esp, 15Ch"
+        ],
+        [
+          "0x100a45f9",
+          "mov     eax, ___security_cookie"
+        ],
+        [
+          "0x100a45fe",
+          "xor     eax, ebp"
+        ],
+        [
+          "0x100a4600",
+          "mov     [ebp+var_4], eax"
+        ],
+        [
+          "0x100a4603",
+          "push    ebx"
+        ],
+        [
+          "0x100a4604",
+          "push    esi"
+        ],
+        [
+          "0x100a4605",
+          "mov     esi, [ecx+14h]"
+        ],
+        [
+          "0x100a4608",
+          "mov     ebx, 7FFFFFFFh"
+        ],
+        [
+          "0x100a460d",
+          "push    edi"
+        ],
+        [
+          "0x100a460e",
+          "xor     edi, edi"
+        ],
+        [
+          "0x100a4610",
+          "mov     [ebp+var_15C], edx"
+        ],
+        [
+          "0x100a4616",
+          "test    esi, esi"
+        ],
+        [
+          "0x100a4618",
+          "jz      short loc_100A4671"
+        ],
+        [
+          "0x100a461a",
+          "nop     word ptr [eax+eax+00h]"
+        ],
+        [
+          "0x100a4620",
+          "mov     eax, [esi+10h]"
+        ],
+        [
+          "0x100a4623",
+          "and     eax, 10000h"
+        ],
+        [
+          "0x100a4628",
+          "push    eax"
+        ],
+        [
+          "0x100a4629",
+          "push    [ebp+arg_0]"
+        ],
+        [
+          "0x100a462c",
+          "push    edx"
+        ],
+        [
+          "0x100a462d",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x100a462f",
+          "call    PalSpriteHit"
+        ],
+        [
+          "0x100a4634",
+          "add     esp, 10h"
+        ],
+        [
+          "0x100a4637",
+          "test    eax, eax"
+        ],
+        [
+          "0x100a4639",
+          "jz      short loc_100A4664"
+        ],
+        [
+          "0x100a463b",
+          "lea     eax, [ebp+var_158]"
+        ],
+        [
+          "0x100a4641",
+          "push    eax"
+        ],
+        [
+          "0x100a4642",
+          "push    dword ptr [esi]"
+        ],
+        [
+          "0x100a4644",
+          "call    PalSpriteGetInfo"
+        ],
+        [
+          "0x100a4649",
+          "mov     eax, [ebp+var_124]"
+        ],
+        [
+          "0x100a464f",
+          "add     esp, 8"
+        ],
+        [
+          "0x100a4652",
+          "cmp     ebx, eax"
+        ],
+        [
+          "0x100a4654",
+          "jle     short loc_100A4664"
+        ],
+        [
+          "0x100a4656",
+          "cmp     dword ptr [esi+4], 0"
+        ],
+        [
+          "0x100a465a",
+          "jz      short loc_100A4660"
+        ],
+        [
+          "0x100a465c",
+          "mov     edi, [esi]"
+        ],
+        [
+          "0x100a465e",
+          "jmp     short loc_100A4662"
+        ],
+        [
+          "0x100a4660",
+          "xor     edi, edi"
+        ],
+        [
+          "0x100a4662",
+          "mov     ebx, eax"
+        ],
+        [
+          "0x100a4664",
+          "mov     esi, [esi+14h]"
+        ],
+        [
+          "0x100a4667",
+          "mov     edx, [ebp+var_15C]"
+        ],
+        [
+          "0x100a466d",
+          "test    esi, esi"
+        ],
+        [
+          "0x100a466f",
+          "jnz     short loc_100A4620"
+        ],
+        [
+          "0x100a4671",
+          "mov     ecx, [ebp+var_4]"
+        ],
+        [
+          "0x100a4674",
+          "mov     eax, edi"
+        ],
+        [
+          "0x100a4676",
+          "pop     edi"
+        ],
+        [
+          "0x100a4677",
+          "pop     esi"
+        ],
+        [
+          "0x100a4678",
+          "xor     ecx, ebp; StackCookie"
+        ],
+        [
+          "0x100a467a",
+          "pop     ebx"
+        ],
+        [
+          "0x100a467b",
+          "call    @__security_check_cookie@4; __security_check_cookie(x)"
+        ],
+        [
+          "0x100a4680",
+          "mov     esp, ebp"
+        ],
+        [
+          "0x100a4682",
+          "pop     ebp"
+        ],
+        [
+          "0x100a4683",
+          "retn"
+        ]
+      ]
+    }
+  ],
+  "tables": {},
+  "binary": "reverse/PAL.dll",
+  "sha256": "e676972ddaab2d45fc82210bb89143923f10d1053492a89e50571dbcec54840a"
+}

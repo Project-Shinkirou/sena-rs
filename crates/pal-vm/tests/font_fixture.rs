@@ -1,4 +1,4 @@
-use pal_vm::{PalFontFallback, PalFontSystem};
+use pal_vm::{PalFontFallback, PalFontProfile, PalFontSystem};
 
 #[test]
 fn default_ttf_loads_and_measures_ascii() {
@@ -59,8 +59,9 @@ fn pal_font_system_tracks_pal_state_and_rasterizes_rgba() {
     let mut font = PalFontSystem::new();
     assert_eq!(font.font_size(), 28);
     assert_eq!(font.font_type(), 1);
-    assert!(!font.set_type(4), "type 4 requires an ExFont load in PAL");
+    assert!(!font.set_type(4), "type 4 requires a bitmap font in PAL");
     font.set_font_size(18);
+    font.set_profile(PalFontProfile::Totsulover);
     font.set_effect(3);
     font.set_color(0xFFFF_0000, 0xFF00_0000);
     assert!(font.begin());

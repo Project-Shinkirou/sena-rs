@@ -1,0 +1,100 @@
+{
+  "binary": "totsulover_try.exe",
+  "binary_sha256": "4778fe70629a7c0ee6cb3caa30ce572cc45440ac392ea998b406ca45ec304483",
+  "rows": [
+    {
+      "category": 3,
+      "index": 49,
+      "name": "sp_set_child",
+      "handler": "0x447860",
+      "argc": 5,
+      "stack_pop_order": [
+        "parent_slot",
+        "child_slot",
+        "offset_x",
+        "offset_y",
+        "child_lane"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+      "registration_evidence": "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+      "notes": "Registration0x4545DF installs code0x30031. Native callback status does not write a VM destination. Eight parent lanes borrow child slot identities. The child shared auxiliary bank stores independent base-scale product differences, integer/float angle differences, and each child color byte minus255. Parent propagation copies effective parent lanes first and adds these deltas. Invalid native lane memory writes are safely rejected."
+    },
+    {
+      "category": 3,
+      "index": 82,
+      "name": "sp_target_render_clear",
+      "handler": "0x44f650",
+      "argc": 1,
+      "stack_pop_order": [
+        "parent_slot"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/pal-graphics/exe-totsulover-target-wrappers.json",
+      "registration_evidence": "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+      "notes": "Native callback return status is not a VM destination write. Registered only in the newer profile; target-list modes are 17/18 in the eight-lane wrapper bank."
+    },
+    {
+      "category": 3,
+      "index": 83,
+      "name": "sp_target_render_add",
+      "handler": "0x44f6e0",
+      "argc": 3,
+      "stack_pop_order": [
+        "parent_slot",
+        "source_slot",
+        "child_lane"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/pal-graphics/exe-totsulover-target-wrappers.json",
+      "registration_evidence": "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+      "notes": "Native callback return status is not a VM destination write. Registered only in the newer profile; target-list modes are 17/18 in the eight-lane wrapper bank."
+    },
+    {
+      "category": 3,
+      "index": 84,
+      "name": "sp_target_render_run",
+      "handler": "0x44f960",
+      "argc": 2,
+      "stack_pop_order": [
+        "parent_slot",
+        "child_lane"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/pal-graphics/exe-totsulover-target-wrappers.json",
+      "registration_evidence": "reverse/evidence/pal-graphics/exe-totsulover-child-dispatch.json",
+      "notes": "Native callback return status is not a VM destination write. Registered only in the newer profile; target-list modes are 17/18 in the eight-lane wrapper bank."
+    },
+    {
+      "category": 3,
+      "index": 48,
+      "name": "sp_is",
+      "handler": "0x447b40",
+      "argc": 1,
+      "stack_pop_order": [
+        "sprite_reference"
+      ],
+      "writes_destination": true,
+      "evidence": "reverse/evidence/totsulover-sprite-existence.json",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "notes": "Ordinary slots 0..127 check the Game wrapper handle. References >=128 resolve through 0x47ABA0: tag bits 24..27 select ordinary PAL slots (low16+16), raw PAL slots (tag1), or button slots (tag2, group bits20..23, index low16). Visibility and alpha are not existence predicates. Slot -1 writes zero and yields; values below -1 preserve the destination and yield. Invalid native raw references can dereference null; the portable implementation returns zero instead."
+    },
+    {
+      "category": 3,
+      "index": 25,
+      "name": "sp_set_pos_move",
+      "handler": "0x44b900",
+      "argc": 4,
+      "stack_pop_order": [
+        "sprite_reference",
+        "delta_x",
+        "delta_y",
+        "delta_z"
+      ],
+      "writes_destination": false,
+      "evidence": "reverse/evidence/totsulover-sprite-packed-position.json",
+      "registration_evidence": "reverse/evidence/totsulover-command-map.json",
+      "notes": "Resolves through 0x47ABA0, adds raw integer deltas to wrapper +16/+20/+24 and float deltas to +116/+120/+124. Returns control 1 without writing the VM destination. The packed button path is now implemented; complete ordinary-wrapper transform-bank equivalence remains separately unverified."
+    }
+  ]
+}

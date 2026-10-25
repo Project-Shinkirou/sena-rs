@@ -1,0 +1,18 @@
+[package]
+name = "sena-vita-core"
+version = "0.1.0"
+edition = "2021"
+license = "MPL-2.0"
+
+[workspace]
+
+[lib]
+name = "sena_console"
+crate-type = ["staticlib"]
+
+[dependencies]
+pal-vm = { path = "../../../crates/pal-vm", default-features = false, features = ["host-audio"] }
+
+[profile.release]
+panic = "abort"
+opt-level = 3

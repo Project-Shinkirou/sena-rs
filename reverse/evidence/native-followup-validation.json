@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-23",
+  "complete_port": false,
+  "new_regression_tests_added_after_user_instruction": false,
+  "regression_tests_run_after_user_instruction": false,
+  "abi": {
+    "unique_generated_declarations": 148,
+    "per_build_declarations": {
+      "koikake": 108,
+      "reference": 111,
+      "totsulover": 142
+    },
+    "export_build_rows_reviewed": 921,
+    "reviewed_newer_vm_coordinates": 69,
+    "newer_vm_coordinates_total": 787,
+    "not_a_behavioral_coverage_percentage": true
+  },
+  "compilation": [
+    {
+      "command": "cargo check -p pal-vm --lib --features host-audio",
+      "status": "passed",
+      "log": "target/reverse-audit/native-implementation-check.log"
+    },
+    {
+      "command": "cargo check -p pal-vm --tests --features host-audio",
+      "status": "passed; compilation only, no tests executed",
+      "log": "target/reverse-audit/native-test-compilation.log"
+    },
+    {
+      "command": "cargo check -p pal-vm --lib --no-default-features --target i686-pc-windows-gnu",
+      "status": "passed",
+      "log": "target/reverse-audit/native-abi-rust-check.log"
+    },
+    {
+      "command": "C11 and C++11 Win32-x86 header syntax checks, -Wall -Wextra -Werror",
+      "status": "passed"
+    },
+    {
+      "command": "cargo build -p pal-vm --release --lib --features host-audio",
+      "status": "passed",
+      "log": "target/reverse-audit/native-release-build.log"
+    },
+    {
+      "command": "platform/switch/build_switch.sh",
+      "status": "passed",
+      "log": "target/reverse-audit/pal-graphics/build-switch-child-final.log"
+    },
+    {
+      "command": "platform/vita/build_vita.sh",
+      "status": "passed",
+      "log": "target/reverse-audit/pal-graphics/build-vita-child-final.log"
+    }
+  ],
+  "freshness": {
+    "abi": "passed",
+    "registered_vm": "passed",
+    "native_inventory_require_all_reviewed": "passed"
+  },
+  "koikake_actual_run": {
+    "frames": 3600,
+    "dt_ms": 16,
+    "pcm_peak": 26783,
+    "frames_with_audio": 2235,
+    "sink_after_engine_teardown": "silent",
+    "wall_seconds": 33.69,
+    "log": "target/reverse-audit/native-final-gameplay.log",
+    "visual_review": "Title menu and first ADV scene inspected; final capture occurs during text reveal.",
+    "root": "target/reverse-audit/isolated-game",
+    "source_game_writes": false
+  },
+  "newer_actual_run": {
+    "frames": 2400,
+    "fixed_timestep_ms": 16,
+    "observed": "Trial title splash",
+    "log": "target/reverse-audit/pal-graphics/totsulover-release-final.log",
+    "missing_calls": [
+      "14:13 history_face_enable",
+      "14:24 history_secondary_icon_enable"
+    ]
+  },
+  "original_save_fixture": "unavailable; no native-save acceptance claim",
+  "console_hardware_execution": false,
+  "source_hashes": [
+    {
+      "path": "crates/pal-vm/src/runtime.rs",
+      "sha256": "50935cca7fabe38558587f54705cd134adb588deade73bcccbfc80e1181553d9"
+    },
+    {
+      "path": "crates/pal-vm/src/runtime/buttons.rs",
+      "sha256": "560fe4c190b5675187a583185314c299d191cfcd373ec612ba6f2c416f6b8e41"
+    },
+    {
+      "path": "crates/pal-vm/src/runtime/children.rs",
+      "sha256": "b045de9b63fefff7528a900f6fd8c396041878632ab05caf8aba81ada0c29b2d"
+    },
+    {
+      "path": "crates/pal-vm/src/runtime/native_save.rs",
+      "sha256": "b0416c3a4b05e8f445ff59af3fd2bb33f1d6591fe1b6e6a3cad05a760dd49b66"
+    },
+    {
+      "path": "crates/pal-vm/src/save_format.rs",
+      "sha256": "b16f0c0fc92b42b165f02ac0769b7c077ce79037326c96a513ee1abe7a67a9d2"
+    },
+    {
+      "path": "crates/pal-vm/src/audio.rs",
+      "sha256": "abff00ae8b0f5d5cb7b2379088ad50435316887af57997af4300210a8232adfd"
+    },
+    {
+      "path": "crates/pal-vm/src/audio/native_sound.rs",
+      "sha256": "389b164c66d45be6227ec4b6524e9f1292165ed38bfd5c48ed1b702ccad58cc2"
+    },
+    {
+      "path": "crates/pal-vm/src/task.rs",
+      "sha256": "9acb9891d62cad04542f400745d74d8c4ddde4a6c9082cbd8447b1d4d22934de"
+    },
+    {
+      "path": "crates/pal-vm/src/assets/native_profile.rs",
+      "sha256": "6d9eaadb454896f7aaa328a5629a915cb9d1d275fcb27ad21abaea8b69f33b70"
+    },
+    {
+      "path": "crates/pal-vm/src/sprite.rs",
+      "sha256": "5a6199e2cdb906952066231c283034bbb18562f668a2fb49ac1b1e2435559181"
+    },
+    {
+      "path": "crates/pal-vm/src/renderer/wgpu_backend.rs",
+      "sha256": "af8da27d5dffa1fb6d1314277026bdbca2d6753a55b99124c22ad0e1c803e523"
+    },
+    {
+      "path": "crates/pal-vm/src/abi/mod.rs",
+      "sha256": "eabf8e1bf86ac9878fa2e61bdfb65ddd3da7d0627fd4dc0825e512a89dd3dae3"
+    },
+    {
+      "path": "crates/pal-vm/src/abi/generated.rs",
+      "sha256": "8ecb456e1fc364cf14d93c19a3def6b95da6d6d6118c8a70ce68428bbf5cdc39"
+    },
+    {
+      "path": "crates/pal-script/src/extsig_registered.rs",
+      "sha256": "623744740775bad077e1cecaef4752f26305bbce877978a2d323c8d798b85c87"
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "path": "target/release/libpal_vm.dylib",
+      "sha256": "960f433f8c4d1dd43c9563a2db2dcfaf8c486124d50d795e67b356bda5c92209"
+    },
+    {
+      "path": "dist/switch/sena.nro",
+      "sha256": "3852d5a58b389aedbeca2664b8d63edd5c6a00ecdb96884c604139e5acccc4b2"
+    },
+    {
+      "path": "dist/vita/sena.vpk",
+      "sha256": "6e933acc2a3dd11968f402fd769a47560fffb34778530fa555de4cc18ad0f916"
+    },
+    {
+      "path": "target/reverse-audit/console-ffi-1699.png",
+      "sha256": "73ecc615c8ecf26ea90bac2ba5e61e3ca4269c454c9e47ca836b36680191a9f4"
+    },
+    {
+      "path": "target/reverse-audit/console-ffi-3599.png",
+      "sha256": "d411cd5fc0dbb3a282d4cc299940ad3ec3441ba2ccddd563157d01ea98da2e52"
+    },
+    {
+      "path": "target/reverse-audit/pal-graphics/totsulover-release-final.png",
+      "sha256": "0d4a2bf985e773c6f7e233bf3598948919e0ac3681d25a6391527ba31d47460c"
+    }
+  ],
+  "limits_document": "reverse/port-status.md"
+}

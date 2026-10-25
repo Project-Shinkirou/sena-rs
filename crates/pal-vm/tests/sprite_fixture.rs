@@ -157,6 +157,70 @@ fn sprite_rect_reset_uses_texture_size_but_rect_set_pos_uses_cell_size() {
 }
 
 #[test]
+fn pal_cell_indices_keep_native_word_width_and_wrapping_products() {
+    let mut sprites = make_system();
+    let handle = sprites.create(SpriteDesc {
+        cell_width: 16,
+        cell_height: 16,
+        ..SpriteDesc::new(SceneTextureId(10), 64, 32)
+    });
+    // Both audited DLLs use 32-bit IMUL followed by unsigned bounds checks.
+    // Truncating to u16, clamping negatives, or saturating multiplication
+    // changes at least one of these native results.
+    for (x, y, expected) in [
+        (65_536, -1, PalRect::new(48, 16, 64, 32)),
+        (-1, 65_536, PalRect::new(48, 16, 64, 32)),
+        (0x1000_0001, 0x1000_0001, PalRect::new(16, 16, 32, 32)),
+        (i32::MIN, i32::MIN, PalRect::new(0, 0, 16, 16)),
+    ] {
+        assert!(sprites.rect_set_pos(handle, x, y));
+        assert_eq!(sprites.get(handle).unwrap().source_rect, expected);
+    }
+}
+
+#[test]
+fn pal_cell_indices_preserve_native_oversized_cell_subtraction() {
+    let mut sprites = make_system();
+    let handle = sprites.create(SpriteDesc {
+        cell_width: 80,
+        cell_height: 48,
+        ..SpriteDesc::new(SceneTextureId(10), 64, 32)
+    });
+    assert!(sprites.rect_set_pos(handle, 1, 1));
+    assert_eq!(
+        sprites.get(handle).unwrap().source_rect,
+        PalRect::new(-16, -16, 64, 32)
+    );
+}
+
+#[test]
+fn registered_cells_preserve_signed_indices_and_ignore_one_pixel_padding() {
+    let mut sprites = make_system();
+    let handle = sprites.create(SpriteDesc {
+        cell_width: 16,
+        cell_height: 16,
+        ..SpriteDesc::new(SceneTextureId(10), 65, 34)
+    });
+    sprites.set_registered_profile(true);
+    for (x, y, expected) in [
+        (-1, -2, PalRect::new(-16, -32, 0, -16)),
+        (4, 2, PalRect::new(48, 18, 64, 34)),
+        (i32::MAX, i32::MAX, PalRect::new(48, 18, 64, 34)),
+        (i32::MIN, i32::MIN, PalRect::new(0, 0, 16, 16)),
+    ] {
+        assert!(sprites.rect_set_pos(handle, x, y));
+        assert_eq!(sprites.get(handle).unwrap().source_rect, expected);
+    }
+    // Changing back also updates sprites created before profile selection.
+    sprites.set_registered_profile(false);
+    assert!(sprites.rect_set_pos(handle, -1, -2));
+    assert_eq!(
+        sprites.get(handle).unwrap().source_rect,
+        PalRect::new(49, 18, 65, 34)
+    );
+}
+
+#[test]
 fn center_offset_setter_stores_negative_value_and_does_not_move_2d_draw_position() {
     let mut sprites = make_system();
     let sprite = sprites.create(SpriteDesc {
@@ -289,7 +353,7 @@ fn transition_or_lock_suppresses_normal_sprite_draw() {
 }
 
 #[test]
-fn fully_transparent_argb_sprite_does_not_emit_draw_command() {
+fn transparent_sprite_keeps_a_node_for_persistent_native_blend_state() {
     let mut sprites = make_system();
     let sprite = sprites.create(SpriteDesc {
         texture_id: SceneTextureId(10),
@@ -300,7 +364,7 @@ fn fully_transparent_argb_sprite_does_not_emit_draw_command() {
         ..SpriteDesc::new(SceneTextureId(10), 64, 32)
     });
 
-    assert!(sprites.commands().is_empty());
+    assert_eq!(sprites.commands().len(), 1);
     sprites.get_mut(sprite).expect("sprite should exist").color = PalColor::from_argb(0x01FF_FFFF);
     assert_eq!(sprites.commands().len(), 1);
 }
@@ -332,6 +396,67 @@ fn sprite_scale_preserves_visible_source_aspect() {
 }
 
 #[test]
+fn render_modes_keep_native_words_and_scope_extended_operations_by_build() {
+    let mut sprites = make_system();
+    let sprite = sprites.create(SpriteDesc {
+        visible: true,
+        ..SpriteDesc::new(SceneTextureId(10), 64, 32)
+    });
+    sprites.set_render_mode(sprite, pal_vm::sprite::PalRenderMode::new(5));
+    assert_eq!(sprites.get(sprite).unwrap().render_mode.raw(), 5);
+    let DrawCommand::Sprite(draw) = &sprites.commands()[0] else {
+        panic!("sprite draw");
+    };
+    assert_eq!(draw.render_mode, 1);
+    sprites.set_registered_profile(true);
+    let DrawCommand::Sprite(draw) = &sprites.commands()[0] else {
+        panic!("sprite draw");
+    };
+    assert_eq!(draw.render_mode, 5);
+    sprites.set_alpha(sprite, 0);
+    assert_eq!(
+        sprites.commands().len(),
+        1,
+        "multiplication ignores source alpha"
+    );
+    sprites.set_render_mode(sprite, pal_vm::sprite::PalRenderMode::new(1));
+    assert_eq!(
+        sprites.commands().len(),
+        1,
+        "the render walk resolves persistent blend state before alpha optimization"
+    );
+}
+
+#[test]
+fn newer_sprite_scale_preserves_independent_axes_and_uniform_reset() {
+    let mut sprites = make_system();
+    let sprite = sprites.create(SpriteDesc {
+        visible: true,
+        position: PalVec3::new(10, 20, 0),
+        ..SpriteDesc::new(SceneTextureId(10), 64, 32)
+    });
+    assert!(sprites.set_scale_xy(sprite, 2.0, 0.5));
+    let DrawCommand::Sprite(draw) = &sprites.commands()[0] else {
+        panic!("anisotropic sprite should draw");
+    };
+    assert_eq!(
+        (draw.dst.x, draw.dst.y, draw.dst.w, draw.dst.h),
+        (-22.0, 28.0, 128.0, 16.0)
+    );
+    let info = sprites.get(sprite).unwrap().info();
+    assert_eq!(info.scale_y, Some(0.5));
+    assert!(sprites.set_scale(sprite, 1.0));
+    assert_eq!(sprites.get(sprite).unwrap().scale_y, None);
+    let DrawCommand::Sprite(draw) = &sprites.commands()[0] else {
+        panic!("uniform sprite should draw");
+    };
+    assert_eq!(
+        (draw.dst.x, draw.dst.y, draw.dst.w, draw.dst.h),
+        (10.0, 20.0, 64.0, 32.0)
+    );
+}
+
+#[test]
 fn offset_rect_and_change_priority_match_pal_sprite_external_semantics() {
     let mut sprites = make_system();
     let sprite = sprites.create(SpriteDesc {
@@ -354,7 +479,7 @@ fn offset_rect_and_change_priority_match_pal_sprite_external_semantics() {
     let pal_vm::DrawCommand::Sprite(draw) = &sprites.commands()[0] else {
         panic!("expected sprite draw")
     };
-    assert_eq!(draw.priority, 10);
+    assert_eq!(draw.priority, 3);
     assert_eq!(
         sprites
             .render_nodes()
@@ -363,6 +488,54 @@ fn offset_rect_and_change_priority_match_pal_sprite_external_semantics() {
             .priority,
         3
     );
+    assert!(sprites.set_offset_rect(sprite, 0, u32::MAX));
+    assert_eq!(sprites.get_width(sprite), Some(0));
+    assert_eq!(sprites.get_height(sprite), Some(u32::MAX));
+    assert!(sprites.set_offset_pos(sprite, i32::MAX, i32::MIN));
+    assert!(sprites.move_offset_pos(sprite, 1, -1));
+    assert_eq!(sprites.get(sprite).unwrap().offset.x, i32::MIN);
+    assert_eq!(sprites.get(sprite).unwrap().offset.y, i32::MAX);
+    assert!(sprites.set_pos_float(sprite, 0.0, 0.0, f32::INFINITY));
+    assert_eq!(
+        sprites
+            .render_nodes()
+            .find(|node| node.sprite == sprite)
+            .unwrap()
+            .priority,
+        i32::MIN + 3
+    );
+}
+
+#[test]
+fn sprite_mix_ex_truncates_retained_alpha_and_clears_transparent_pixels() {
+    let mut sprites = SpriteSystem::new();
+    let dst = sprites
+        .create_rgba_sprite(
+            2,
+            1,
+            vec![4, 5, 6, 0, 20, 40, 60, 70],
+            PalVec3::default(),
+            0,
+            "dst",
+        )
+        .unwrap();
+    let src = sprites
+        .create_rgba_sprite(
+            2,
+            1,
+            vec![1, 2, 3, 0, 200, 100, 0, 100],
+            PalVec3::default(),
+            0,
+            "src",
+        )
+        .unwrap();
+    assert!(sprites.mix_sprite_to_sprite_ex(dst, 0, 0, 2, 1, src, 0, 0));
+    let pixels = &sprites
+        .surface(sprites.get(dst).unwrap().surface)
+        .unwrap()
+        .pixels;
+    assert_eq!(&pixels[..], &[0, 0, 0, 0, 146, 82, 17, 142]);
+    assert!(!sprites.mix_sprite_to_sprite_ex(dst, 0, 0, -1, 1, src, 0, 0));
 }
 
 #[test]
@@ -392,7 +565,7 @@ fn sprite_surface_copy_mix_and_mask_mutate_pixels() {
         2,
         2,
         vec![
-            128, 0, 0, 255, 128, 0, 0, 255, 128, 0, 0, 255, 128, 0, 0, 255,
+            0, 0, 128, 255, 0, 0, 128, 255, 0, 0, 128, 255, 0, 0, 128, 255,
         ],
     ));
 
@@ -449,33 +622,38 @@ fn sprite_transition_handle_marks_and_cancels_participating_sprites() {
     });
     let transition = sprites.create_transition_handle();
 
-    assert_eq!(sprites.transition_state(transition), 3);
-    assert!(sprites.set_transition(transition, 1, Some(from), Some(to), 9, 500, 0));
+    assert_eq!(sprites.transition_state(transition), 0);
+    assert!(sprites.set_transition(transition, 1, Some(to), Some(from), 1, 1000, 500));
     assert_eq!(sprites.transition_state(transition), 1);
-    assert_eq!(sprites.get(from).unwrap().transition_block, 9);
-    assert_eq!(sprites.get(to).unwrap().transition_block, 9);
+    assert_eq!(sprites.get(from).unwrap().transition_block, 1);
+    assert_eq!(sprites.get(to).unwrap().transition_block, 1);
     assert!(sprites.commands().is_empty());
     assert_eq!(sprites.transition_commands().len(), 2);
 
-    sprites.advance_transitions(250);
+    sprites.advance_transitions(1250, false);
     let commands = sprites.transition_commands();
     assert_eq!(commands.len(), 2);
     let DrawCommand::Sprite(to_draw) = &commands[1] else {
         panic!("transition target must be drawn as sprite");
     };
-    assert!(to_draw.color[3] > 0.0 && to_draw.color[3] < 1.0);
+    assert_eq!(to_draw.color[3], 127.0 / 255.0);
 
-    sprites.advance_transitions(250);
-    assert_eq!(sprites.transition_state(transition), 3);
-    assert_eq!(sprites.get(from).unwrap().transition_block, 0);
+    sprites.advance_transitions(1500, false);
+    assert_eq!(sprites.transition_state(transition), 2);
+    assert!(sprites.get(from).is_some());
+    assert!(sprites.commands().is_empty());
+    assert!(sprites.cancel_transition(transition));
+    assert_eq!(sprites.transition_state(transition), 0);
+    assert!(sprites.get(from).is_none());
     assert_eq!(sprites.get(to).unwrap().transition_block, 0);
-    assert_eq!(sprites.commands().len(), 2);
+    assert_eq!(sprites.commands().len(), 1);
     assert!(!sprites.cancel_transition(transition));
     assert!(sprites.release_transition_handle(transition));
+    assert_eq!(sprites.transition_state(transition), 3);
 }
 
 #[test]
-fn screen_copy_sprite_is_hidden_after_transition_finishes() {
+fn screen_copy_sprite_is_released_only_when_transition_is_cancelled() {
     let mut sprites = SpriteSystem::new();
     let backbuffer = sprites
         .create_rgba_sprite(
@@ -490,13 +668,66 @@ fn screen_copy_sprite_is_hidden_after_transition_finishes() {
     assert!(sprites.view_ctrl(backbuffer, true));
     let transition = sprites.create_transition_handle();
 
-    assert!(sprites.set_transition(transition, 1, None, Some(backbuffer), 1, 16, 0));
+    assert!(sprites.set_transition(transition, 1, None, Some(backbuffer), 1, 0, 16));
     assert_eq!(sprites.transition_commands().len(), 1);
-    sprites.advance_transitions(16);
+    sprites.advance_transitions(16, false);
 
-    assert_eq!(sprites.transition_state(transition), 3);
-    assert!(!sprites.get(backbuffer).unwrap().visible);
+    assert_eq!(sprites.transition_state(transition), 2);
+    assert!(sprites.get(backbuffer).unwrap().visible);
     assert!(sprites.commands().is_empty());
+    assert!(sprites.cancel_transition(transition));
+    assert!(sprites.get(backbuffer).is_none());
+}
+
+#[test]
+fn sprite_transition_uses_wrapping_absolute_clock_and_zero_duration() {
+    let mut sprites = make_system();
+    let first = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
+    let transition = sprites.create_transition_handle();
+    assert!(sprites.set_transition(transition, 1, Some(first), None, 1, u32::MAX - 15, 32));
+    sprites.advance_transitions(0, false);
+    assert_eq!(sprites.transition_state(transition), 1);
+    sprites.advance_transitions(16, false);
+    assert_eq!(sprites.transition_state(transition), 2);
+    assert!(sprites.set_transition(transition, 1, Some(first), None, 1, 100, 0));
+    sprites.advance_transitions(100, false);
+    assert_eq!(sprites.transition_state(transition), 2);
+    assert!(sprites.get(first).is_some());
+    assert!(sprites.release_transition_handle(transition));
+    assert!(sprites.get(first).is_some());
+}
+
+#[test]
+fn unsupported_transition_and_both_null_preserve_native_state() {
+    let mut sprites = make_system();
+    let first = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
+    let transition = sprites.create_transition_handle();
+    assert!(sprites.set_transition(transition, 1, Some(first), None, -1, 0, 1));
+    sprites.advance_transitions(100, true);
+    assert_eq!(sprites.transition_state(transition), 1);
+    assert!(sprites.transition_commands().is_empty());
+    assert_eq!(sprites.get(first).unwrap().transition_block, u32::MAX);
+    assert!(!sprites.set_transition(transition, 1, None, None, 1, 0, 0));
+    assert_eq!(sprites.transition_state(transition), 1);
+    sprites.advance_transitions(100, true);
+    assert_eq!(sprites.transition_state(transition), 1);
+    assert_eq!(sprites.get(first).unwrap().transition_block, 0);
+    assert!(sprites.cancel_transition(transition));
+}
+
+#[test]
+fn sprite_transition_skip_keeps_second_owned_until_cancellation() {
+    let mut sprites = make_system();
+    let first = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
+    let second = sprites.create(SpriteDesc::new(SceneTextureId(11), 64, 32));
+    let transition = sprites.create_transition_handle();
+    assert!(sprites.set_transition(transition, 1, Some(first), Some(second), 1, 100, 1000));
+    sprites.advance_transitions(101, true);
+    assert_eq!(sprites.transition_state(transition), 2);
+    assert!(sprites.get(second).is_some());
+    assert!(sprites.release_transition_handle(transition));
+    assert!(sprites.get(first).is_some());
+    assert!(sprites.get(second).is_none());
 }
 
 #[test]
@@ -505,10 +736,16 @@ fn sprite_fx_effect_state_tracks_set_update_and_release() {
     let sprite = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
 
     assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
-    assert!(sprites.set_sprite_fx_effect(sprite, 4, 1, 100));
-    assert_eq!(sprites.sprite_fx_effect_state(sprite), 1);
     assert!(!sprites.set_sprite_fx_effect(sprite, 4, 1, 100));
-    assert!(sprites.set_sprite_fx_effect(sprite, 4, 2, 200));
+    assert!(sprites.set_sprite_fx_effect(sprite, 0, 1, 100));
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 1);
+    assert!(!sprites.set_sprite_fx_effect(sprite, 0, 1, 100));
+    assert!(sprites.set_sprite_fx_effect(sprite, 0, 2, 200));
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 2);
+    sprites.tick_fx_effects(199);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 2);
+    sprites.tick_fx_effects(200);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
     assert!(sprites.release_sprite_fx_effect(sprite));
     assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
 }
@@ -542,4 +779,79 @@ fn named_ani_motion_lanes_share_one_motion_entry_and_clear_on_completion() {
     assert_eq!(done.scale, 2.0);
     assert_eq!(done.color.alpha(), 64);
     assert_eq!(sprites.motion_entry_count(), 0);
+}
+
+#[test]
+fn fx_non_start_actions_ignore_type_and_keep_the_owner() {
+    let mut sprites = make_system();
+    let sprite = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
+    assert!(sprites.set_sprite_fx_effect(sprite, u32::MAX, 0, i32::MIN));
+    let owner = sprites.get(sprite).unwrap().fx_effect;
+    assert!(owner.is_some());
+    assert!(sprites.set_sprite_fx_effect(sprite, u32::MAX, u32::MAX, i32::MAX));
+    assert_eq!(sprites.get(sprite).unwrap().fx_effect, owner);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
+    assert!(sprites.set_sprite_fx_effect(sprite, 0, 1, 100));
+    assert!(sprites.set_sprite_fx_effect(sprite, u32::MAX, 99, 0));
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 1);
+    assert!(sprites.set_sprite_fx_effect(sprite, u32::MAX, 0, 0));
+    assert_eq!(sprites.get(sprite).unwrap().fx_effect, owner);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
+    assert!(sprites.release_sprite_fx_effect(sprite));
+    assert!(sprites.get(sprite).unwrap().fx_effect.is_none());
+    assert!(!sprites.release_sprite_fx_effect(sprite));
+}
+
+#[test]
+fn fx_stop_before_start_sets_state_and_preserves_full_duration_bits() {
+    let mut sprites = make_system();
+    let sprite = sprites.create(SpriteDesc::new(SceneTextureId(10), 64, 32));
+    assert!(sprites.set_sprite_fx_effect(sprite, u32::MAX, 2, -1));
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 2);
+    assert!(!sprites.set_sprite_fx_effect(sprite, 0, 1, 0));
+    sprites.tick_fx_effects(u32::MAX - 1);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 2);
+    sprites.tick_fx_effects(u32::MAX);
+    assert_eq!(sprites.sprite_fx_effect_state(sprite), 0);
+    assert!(sprites.set_sprite_fx_effect(sprite, 0, 1, 0));
+}
+
+#[test]
+fn global_fx_requires_release_after_stop_or_clear_before_another_start() {
+    use pal_vm::fx::RasterSource;
+    let mut sprites = make_system();
+    let source = RasterSource {
+        period_ms: 100,
+        undulate_x: 0.5,
+        undulate_y: 0.25,
+    };
+    assert!(sprites.start_global_raster(42, source, 0));
+    sprites.tick_fx_effects(10);
+    assert_eq!(sprites.global_raster_stage().unwrap().priority, 42);
+    sprites.stop_global_raster(20);
+    sprites.tick_fx_effects(30);
+    assert_eq!(sprites.global_raster_state(), 0);
+    assert!(sprites.global_raster_stage().is_none());
+    assert!(!sprites.start_global_raster(43, source, 0));
+    sprites.release_global_raster();
+    assert!(sprites.start_global_raster(44, source, 0));
+    sprites.clear_global_raster();
+    assert_eq!(sprites.global_raster_state(), 0);
+    assert!(!sprites.start_global_raster(45, source, 0));
+    sprites.release_global_raster();
+    assert!(sprites.start_global_raster(46, source, 0));
+}
+
+#[test]
+fn global_fx_stop_without_render_attachment_does_not_advance() {
+    let mut sprites = make_system();
+    sprites.stop_global_raster(10);
+    sprites.tick_fx_effects(20);
+    assert_eq!(sprites.global_raster_state(), 2);
+    assert!(sprites.global_raster_stage().is_none());
+    assert!(!sprites.start_global_raster(1, Default::default(), 0));
+    sprites.clear_global_raster();
+    assert!(!sprites.start_global_raster(1, Default::default(), 0));
+    sprites.release_global_raster();
+    assert!(sprites.start_global_raster(1, Default::default(), 0));
 }

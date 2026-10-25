@@ -1,12 +1,29 @@
 use std::collections::BTreeMap;
 use std::io::Cursor;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU32, Ordering};
 
 use kira::sound::static_sound::{StaticSoundData, StaticSoundHandle, StaticSoundSettings};
 use kira::sound::{EndPosition, PlaybackPosition, PlaybackState, Region};
-use kira::{AudioManager, AudioManagerSettings, DefaultBackend, Frame, Tween};
+use kira::{AudioManager, AudioManagerSettings, Frame, Tween};
+#[cfg(not(feature = "host-audio"))]
+use kira::DefaultBackend;
+#[cfg(feature = "host-audio")]
+pub mod host_backend;
+#[cfg(feature = "host-audio")]
+use host_backend::HostBackend as DefaultBackend;
 use pal_asset::{LoadedAsset, ResourceManager};
 use wmv_decoder::AsfWmaDecoder;
+
+mod movie;
+mod decode;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod stream;
+mod native_sound;
+mod source_format;
+pub use source_format::{PcmSourceFormat, PcmSourceKind};
+use native_sound::{NativeSoundData, NativeSoundHandle};
+pub use movie::{decode_movie_audio, movie_loop_region, movie_loop_samples, resize_movie_audio};
 
 #[derive(Clone, Debug)]
 pub struct AudioConfig {
@@ -21,9 +38,13 @@ impl Default for AudioConfig {
 
 pub struct AudioSystem {
     enabled: bool,
+    #[cfg(feature = "host-audio")]
+    sink: host_backend::AudioSink,
     manager: Option<AudioManager<DefaultBackend>>,
     groups: BTreeMap<PalSoundGroup, Vec<AudioSlot>>,
     primary_volume: PalVolume,
+    pal_time_ms: u32,
+    fade_clock_ms: Arc<AtomicU32>,
     group_volumes: BTreeMap<PalSoundGroup, PalVolume>,
     suspended_sounds: Vec<AudioHandle>,
 }
@@ -42,11 +63,19 @@ impl AudioSystem {
     }
 
     pub fn new(config: AudioConfig) -> anyhow::Result<Self> {
+        #[cfg(feature = "host-audio")]
+        let sink = host_backend::AudioSink::default();
+        #[allow(unused_mut)]
+        let mut settings = AudioManagerSettings::<DefaultBackend>::default();
+        #[cfg(feature = "host-audio")]
+        {
+            settings.backend_settings = sink.clone();
+        }
         let manager = if config.enabled {
-            match AudioManager::<DefaultBackend>::new(AudioManagerSettings::default()) {
+            match AudioManager::<DefaultBackend>::new(settings) {
                 Ok(manager) => Some(manager),
                 Err(error) => {
-                    log::warn!("audio backend initialization failed; audio disabled: {error:#}");
+                    log::warn!("audio backend initialization failed; audio disabled: {error:?}");
                     None
                 }
             }
@@ -59,19 +88,38 @@ impl AudioSystem {
             groups.insert(
                 group,
                 (0..group.slot_count())
-                    .map(|_| AudioSlot::default())
+                    .map(|_| AudioSlot {
+                        // Native worker initialization creates its two stream
+                        // buffers in each bank with stable command 5.
+                        worker_command: if matches!(group.0, 0 | 3) { 5 } else { 0 },
+                        ..AudioSlot::default()
+                    })
                     .collect(),
             );
             group_volumes.insert(group, PalVolume::MAX);
         }
         Ok(Self {
             enabled: manager.is_some(),
+            #[cfg(feature = "host-audio")]
+            sink,
             manager,
             groups,
             primary_volume: PalVolume::MAX,
+            pal_time_ms: 0,
+            fade_clock_ms: Arc::new(AtomicU32::new(0)),
             group_volumes,
             suspended_sounds: Vec::new(),
         })
+    }
+
+    #[cfg(feature = "host-audio")]
+    pub fn host_sink(&self) -> host_backend::AudioSink {
+        self.sink.clone()
+    }
+
+    pub fn set_pal_time(&mut self, milliseconds: u32) {
+        self.pal_time_ms = milliseconds;
+        self.fade_clock_ms.store(milliseconds, Ordering::Release);
     }
 
     pub fn is_enabled(&self) -> bool {
@@ -105,6 +153,14 @@ impl AudioSystem {
         }
     }
 
+    /// Submit a movie soundtrack outside PAL's ordinary sound groups. The
+    /// caller owns its handle and synchronizes seek/stop with the movie clock.
+    pub fn play_movie_sound(&mut self, data: StaticSoundData) -> anyhow::Result<StaticSoundHandle> {
+        let manager = self.manager.as_mut()
+            .ok_or_else(|| anyhow::anyhow!("movie audio backend is disabled"))?;
+        manager.play(data).map_err(|error| anyhow::anyhow!("movie audio playback failed: {error}"))
+    }
+
     pub fn load_static_from_resource(
         &mut self,
         resource_manager: &mut ResourceManager,
@@ -120,8 +176,104 @@ impl AudioSystem {
         asset: LoadedAsset,
         group: PalSoundGroup,
     ) -> anyhow::Result<AudioHandle> {
-        let data = decode_static_sound(&asset.bytes)?;
-        self.load_static_data(asset.name, data, group)
+        self.load_static_asset_range(asset, group, None)
+    }
+
+    pub fn load_static_asset_range(
+        &mut self, asset: LoadedAsset, group: PalSoundGroup,
+        range: Option<crate::abi::PalSoundLoadRange32>,
+    ) -> anyhow::Result<AudioHandle> {
+        let (data, format) = decode_asset_sound(&asset.bytes, group)?;
+        let handle = self.load_sound_data(asset.name, data, group)?;
+        self.set_source_format(handle, format)?;
+        if let Some(range) = range.filter(|range| range.enabled != 0 && group == PalSoundGroup::GROUP3) {
+            if let Err(error) = self.set_load_range(handle, range) {
+                self.release(handle)?;
+                return Err(error);
+            }
+        }
+        Ok(handle)
+    }
+
+    /// Keep PAL's group-3 Ogg stream encoded until the decoder worker needs PCM.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn load_streaming_ogg(&mut self, name: impl Into<String>, bytes: &[u8],
+        group: PalSoundGroup) -> anyhow::Result<AudioHandle> {
+        anyhow::ensure!(group == PalSoundGroup::GROUP3, "Ogg streaming requires PAL group 3");
+        let stream = stream::StreamAsset::new(bytes)?;
+        let format = stream.source_format;
+        let handle = self.load_sound_data(name, LoadedSound::Stream(stream), group)?;
+        self.set_source_format(handle, format)?;
+        Ok(handle)
+    }
+
+    pub fn set_source_format(&mut self, handle: AudioHandle, format: PcmSourceFormat) -> anyhow::Result<()> {
+        let slot = self.slot_mut(handle)?;
+        ensure_loaded(slot, handle)?;
+        slot.source_format = Some(format);
+        if slot.source_group == PalSoundGroup::GROUP3 && !slot.loop_bytes_explicit {
+            slot.loop_end_bytes = format.decoded_bytes as i32;
+        }
+        Ok(())
+    }
+
+    pub fn source_format(&self, handle: AudioHandle) -> anyhow::Result<Option<PcmSourceFormat>> {
+        Ok(self.slot(handle)?.source_format)
+    }
+
+    /// Return the reviewed native buffer format, not the mixer's stereo f32
+    /// layout. PAL preallocates both stream banks as 44.1 kHz stereo PCM16.
+    pub fn sound_buffer_format(&self, handle: AudioHandle) -> anyhow::Result<crate::abi::PalWaveFormatEx32> {
+        let slot = self.slot(handle)?;
+        if matches!(handle.group.0, 0 | 3) || (slot.data.is_some() && matches!(slot.source_group.0, 0 | 3)) {
+            return Ok(crate::abi::PalWaveFormatEx32 {
+                format_tag: 1, channels: 2, samples_per_second: 44_100,
+                average_bytes_per_second: 176_400, block_align: 4,
+                bits_per_sample: 16, extra_size: 0,
+            });
+        }
+        ensure_loaded(slot, handle)?;
+        let format = slot.source_format.filter(|format| format.native_pal_format()
+            && format.format_tag == 1 && format.extra_size == 0)
+            .ok_or_else(|| anyhow::anyhow!("native buffer format unavailable for this source"))?;
+        Ok(crate::abi::PalWaveFormatEx32 {
+            format_tag: format.format_tag, channels: format.channels,
+            samples_per_second: format.sample_rate,
+            average_bytes_per_second: format.average_bytes_per_second,
+            block_align: format.block_align, bits_per_sample: format.bits_per_sample,
+            extra_size: format.extra_size,
+        })
+    }
+
+    /// Reserve an unloaded group-3 entry without opening a resource. The first
+    /// native word is unused, and the reservation does not retain a filename.
+    pub fn load_set_reserved(&mut self, _unused_word: i32, group: i32) -> u32 {
+        if group != 3 { return 0; }
+        let Ok(index) = self.find_free_slot(PalSoundGroup::GROUP3) else { return 0; };
+        let handle = AudioHandle::new(PalSoundGroup::GROUP3, index);
+        self.slot_mut(handle).unwrap().reserved_word = 1;
+        handle.raw()
+    }
+
+    /// Apply the reviewed side effect of PalSoundSetReserved. Its incidental
+    /// native EAX value is deliberately not presented as a result contract.
+    pub fn set_reserved(&mut self, group: i32, raw_handle: u32, reserved: i32) {
+        if group != 3 || !(0x2000_0000..=0x2000_0001).contains(&raw_handle) { return; }
+        let handle = AudioHandle::new(PalSoundGroup::GROUP3, (raw_handle & 1) as usize);
+        self.slot_mut(handle).unwrap().reserved_word = reserved;
+    }
+
+    /// Apply the native loader's group-3 byte-range descriptor. Other groups
+    /// ignore the pointer, as in the original WAV and Ogg loaders.
+    pub fn set_load_range(&mut self, handle: AudioHandle, range: crate::abi::PalSoundLoadRange32) -> anyhow::Result<()> {
+        let slot = self.slot_mut(handle)?;
+        ensure_loaded(slot, handle)?;
+        if range.enabled == 0 || slot.source_group != PalSoundGroup::GROUP3 { return Ok(()); }
+        let format = slot.source_format.ok_or_else(|| anyhow::anyhow!("PCM source format is unavailable"))?;
+        format.frame_at_byte(range.initial_start_bytes as i32)?;
+        slot.initial_start_bytes = range.initial_start_bytes as i32;
+        let end = if range.loop_end_bytes == 0 { format.decoded_bytes } else { range.loop_end_bytes };
+        self.set_start_end(handle, range.loop_start_bytes as i32, end as i32)
     }
 
     pub fn load_static_data(
@@ -130,20 +282,57 @@ impl AudioSystem {
         data: StaticSoundData,
         group: PalSoundGroup,
     ) -> anyhow::Result<AudioHandle> {
+        self.load_sound_data(name, LoadedSound::Static(data), group)
+    }
+
+    fn load_sound_data(&mut self, name: impl Into<String>, data: LoadedSound,
+        group: PalSoundGroup) -> anyhow::Result<AudioHandle> {
         let slot_index = self.find_free_slot(group)?;
         let slot = self.slot_mut(AudioHandle::new(group, slot_index))?;
         slot.name = Some(name.into());
         slot.data = Some(data);
         slot.handle = None;
-        slot.looping = false;
+        slot.loop_mode = 0;
         slot.volume = PalVolume::MAX;
-        slot.start_ms = 0;
-        slot.end_ms = 0;
+        slot.initial_start_bytes = 0;
+        slot.loop_start_bytes = 0;
+        slot.loop_end_bytes = 0;
+        slot.loop_bytes_explicit = false;
+        slot.source_group = group;
+        slot.source_format = None;
+        slot.pause_word = 0;
+        slot.reserved_word = 0;
+        slot.worker_command = 0;
+        slot.fade_start_ms = 0;
+        slot.fade_duration_ms = 0;
+        slot.copied_resource = false;
         slot.loop_start_samples = 0;
         slot.loop_end_samples = 0;
         slot.pan = 0;
         slot.frequency = 0;
+        slot.volume_ratio = 0.0;
         Ok(AudioHandle::new(group, slot_index))
+    }
+
+    /// PalSoundLoadEx (newer DLL 0x100B3060) amplifies and clips signed
+    /// 16-bit PCM at load time, independently of subsequent channel gain.
+    pub fn load_static_data_ex(
+        &mut self,
+        name: impl Into<String>,
+        mut data: StaticSoundData,
+        group: PalSoundGroup,
+        gain: f32,
+    ) -> anyhow::Result<AudioHandle> {
+        anyhow::ensure!(group == PalSoundGroup::GROUP4, "PalSoundLoadEx requires group 4");
+        if gain > 0.0 && gain != 1.0 {
+            for frame in Arc::make_mut(&mut data.frames) {
+                frame.left = amplify_pcm16(frame.left, gain);
+                frame.right = amplify_pcm16(frame.right, gain);
+            }
+        }
+        let handle = self.load_static_data(name, data, group)?;
+        self.slot_mut(handle)?.volume_ratio = gain;
+        Ok(handle)
     }
 
     pub fn copy_sound(
@@ -151,99 +340,200 @@ impl AudioSystem {
         source: AudioHandle,
         target_group: PalSoundGroup,
     ) -> anyhow::Result<AudioHandle> {
-        let (data, name, loop_start_samples, loop_end_samples) = {
+        // PAL chooses a destination bank but memcpy preserves the source
+        // record's scalar configuration. The duplicated buffer starts stopped.
+        let (data, name, looping, volume, initial_start_bytes, loop_start_bytes, loop_end_bytes, loop_bytes_explicit, source_group, source_format, pause_word, reserved_word, worker_command, fade_start_ms, fade_duration_ms, loop_start_samples,
+            loop_end_samples, pan, frequency, volume_ratio) = {
             let source_slot = self.slot(source)?;
-            let data = source_slot
-                .data
-                .as_ref()
-                .ok_or_else(|| {
-                    anyhow::anyhow!("audio handle {:?} has no loaded sound data", source)
-                })?
-                .clone();
-            (
-                data,
-                source_slot.name.clone(),
-                source_slot.loop_start_samples,
-                source_slot.loop_end_samples,
-            )
+            let data = source_slot.data.clone().ok_or_else(|| anyhow::anyhow!("audio handle {:?} has no loaded sound data", source))?;
+            (data, source_slot.name.clone(), source_slot.loop_mode, source_slot.volume,
+                source_slot.initial_start_bytes, source_slot.loop_start_bytes, source_slot.loop_end_bytes, source_slot.loop_bytes_explicit, source_slot.source_group, source_slot.source_format, source_slot.pause_word, source_slot.reserved_word, source_slot.native_worker_command(), source_slot.fade_start_ms, source_slot.fade_duration_ms, source_slot.loop_start_samples,
+                source_slot.loop_end_samples, source_slot.pan, source_slot.frequency, source_slot.volume_ratio)
         };
         let slot_index = self.find_free_slot(target_group)?;
         let slot = self.slot_mut(AudioHandle::new(target_group, slot_index))?;
         slot.name = name;
         slot.data = Some(data);
         slot.handle = None;
-        slot.looping = false;
-        slot.volume = PalVolume::MAX;
-        slot.start_ms = 0;
-        slot.end_ms = 0;
+        slot.loop_mode = looping;
+        slot.volume = volume;
+        slot.initial_start_bytes = initial_start_bytes;
+        slot.loop_start_bytes = loop_start_bytes;
+        slot.loop_end_bytes = loop_end_bytes;
+        slot.loop_bytes_explicit = loop_bytes_explicit;
+        slot.source_group = source_group;
+        slot.source_format = source_format;
+        slot.pause_word = pause_word;
+        slot.reserved_word = reserved_word;
+        slot.worker_command = worker_command;
+        slot.fade_start_ms = fade_start_ms;
+        slot.fade_duration_ms = fade_duration_ms;
+        slot.copied_resource = true;
         slot.loop_start_samples = loop_start_samples;
         slot.loop_end_samples = loop_end_samples;
-        slot.pan = 0;
-        slot.frequency = 0;
+        slot.pan = pan;
+        slot.frequency = frequency;
+        slot.volume_ratio = volume_ratio;
         Ok(AudioHandle::new(target_group, slot_index))
     }
 
     pub fn play(&mut self, handle: AudioHandle, looping: bool) -> anyhow::Result<()> {
+        let source_group = self.slot(handle)?.source_group;
+        let duration = if source_group == PalSoundGroup::GROUP0 || source_group == PalSoundGroup::GROUP3 { 10 } else { 0 };
+        let old_clock = self.slot(handle)?.fade_start_ms;
+        let old_duration = self.slot(handle)?.fade_duration_ms;
+        let old_command = self.slot(handle)?.native_worker_command();
+        self.play_native(handle, i32::from(looping), duration)?;
+        if duration == 0 {
+            self.slot_mut(handle)?.fade_start_ms = old_clock;
+            self.slot_mut(handle)?.fade_duration_ms = old_duration;
+            let slot = self.slot_mut(handle)?;
+            slot.worker_command = old_command;
+            if let Some(sound) = &slot.handle { sound.set_worker_command(old_command); }
+        }
+        Ok(())
+    }
+
+    /// PAL's PlayFade starts at silence; its envelope is independent of the
+    /// channel/group gain so voice volume and autopan updates preserve the fade.
+    pub fn play_fade(&mut self, handle: AudioHandle, looping: bool, fade_ms: i32) -> anyhow::Result<()> {
+        self.play_native(handle, i32::from(looping), fade_ms)
+    }
+
+    pub fn play_native(&mut self, handle: AudioHandle, loop_mode: i32, fade_ms: i32) -> anyhow::Result<()> {
         if !self.enabled {
             return Ok(());
         }
-        let data = {
+        let (data, start, end, region, pan, rate) = {
             let slot = self.slot(handle)?;
-            let data = slot
-                .data
-                .as_ref()
-                .ok_or_else(|| {
-                    anyhow::anyhow!("audio handle {:?} has no loaded sound data", handle)
-                })?
-                .clone();
-            apply_loop_region(
-                data,
-                looping,
-                slot.loop_start_samples,
-                slot.loop_end_samples,
-            )
+            let data = slot.data.clone().ok_or_else(||
+                anyhow::anyhow!("audio handle {:?} has no loaded sound data", handle))?;
+            let mut start = None;
+            let mut end = None;
+            if slot.source_group == PalSoundGroup::GROUP3 {
+                if let Some(format) = slot.source_format {
+                    let index = format.frame_at_byte(slot.initial_start_bytes)?;
+                    anyhow::ensure!(index <= data.num_frames(), "native initial byte offset exceeds decoded audio");
+                    start = Some(PlaybackPosition::Samples(index));
+                    if slot.loop_bytes_explicit && slot.loop_end_bytes != 0 {
+                        let limit = format.frame_at_byte(slot.loop_end_bytes)?;
+                        anyhow::ensure!(limit <= data.num_frames() && limit > index,
+                            "unsupported native byte range outside decoded audio");
+                        end = Some((0, limit));
+                    }
+                }
+            }
+            let rate = if slot.frequency > 0 {
+                f64::from(slot.frequency) / f64::from(data.sample_rate())
+            } else { 1.0 };
+            (data, start, end, loop_region_for(loop_mode != 0,
+                slot.loop_start_samples, slot.loop_end_samples), pal_pan_settings(slot.pan).0, rate)
         };
+        // A native DirectSound buffer is restarted, not duplicated, by Play.
+        // Dropping a Kira handle alone leaves its sound alive on the mixer.
+        if let Some(mut previous) = self.slot_mut(handle)?.handle.take() {
+            previous.stop(immediate_audio_tween());
+        }
         let effective = self.effective_volume(handle)?;
-        let decibels = effective.to_decibels() as f32;
+        let decibels = native_volume_decibels(effective).unwrap_or(-100.0)
+            + pal_pan_settings(self.slot(handle)?.pan).1;
         log::debug!(
-            "[trace-audio] play handle={handle:?} looping={looping} effective_raw={} db={decibels:.2}",
+            "[trace-audio] play handle={handle:?} loop_mode={loop_mode} effective_raw={} db={decibels:.2}",
             effective.raw()
         );
         let manager = self
             .manager
             .as_mut()
             .ok_or_else(|| anyhow::anyhow!("audio backend is disabled"))?;
-        let mut static_handle = manager.play(data)?;
-        static_handle.set_volume(decibels, Tween::default());
+        // Set the destination gain before scheduling audio to avoid a first
+        // buffer at full volume; NativeSound owns the amplitude envelope.
+        let static_handle = match data {
+            LoadedSound::Static(mut data) => {
+                if let Some(start) = start { data = data.start_position(start); }
+                if let Some(end) = end { data.slice = Some(end); }
+                if let Some(region) = region { data = data.loop_region(region); }
+                data = data.panning(pan).playback_rate(rate);
+                let mut playback = prepare_playback(data, decibels, fade_ms);
+                playback.clock_ms = Some(self.fade_clock_ms.clone());
+                manager.play(playback)?
+            }
+            #[cfg(not(target_arch = "wasm32"))]
+            LoadedSound::Stream(asset) => {
+                let mut data = asset.sound()?.volume(decibels).panning(pan).playback_rate(rate);
+                if let Some(start) = start { data = data.start_position(start); }
+                if let Some(end) = end { data.slice = Some(end); }
+                if let Some(region) = region { data = data.loop_region(region); }
+                manager.play(NativeSoundData { data, fade_ms: fade_ms as u32,
+                    clock_ms: Some(self.fade_clock_ms.clone()) })?
+            }
+        };
+        let now = self.pal_time_ms;
         let slot = self.slot_mut(handle)?;
+        slot.fade_start_ms = now;
+        slot.fade_duration_ms = fade_ms;
         slot.handle = Some(static_handle);
-        slot.looping = looping;
+        slot.loop_mode = loop_mode;
+        slot.worker_command = 5;
         Ok(())
     }
 
     pub fn stop(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
         let slot = self.slot_mut(handle)?;
+        let started = slot.handle.is_some();
         if let Some(sound) = slot.handle.as_mut() {
-            sound.stop(Tween::default());
+            sound.stop(immediate_audio_tween());
         }
         slot.handle = None;
+        if started { slot.worker_command = 5; }
+        if started && slot.source_group == PalSoundGroup::GROUP3 {
+            slot.data = None; slot.reserved_word = 0;
+        }
         Ok(())
     }
 
     pub fn pause(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
+        self.pause_native(handle, 1, 0).map(|_| ())
+    }
+
+    pub fn stop_fade(&mut self, handle: AudioHandle, duration_ms: u32) -> anyhow::Result<()> {
+        let now = self.pal_time_ms;
         let slot = self.slot_mut(handle)?;
         if let Some(sound) = slot.handle.as_mut() {
-            sound.pause(Tween::default());
+            if sound.fade_state() == 2 && duration_ms != 0 { return Ok(()); }
+            slot.fade_start_ms = now;
+            slot.fade_duration_ms = duration_ms as i32;
+            sound.stop(Tween {
+                duration: std::time::Duration::from_millis(u64::from(duration_ms)),
+                ..Tween::default()
+            });
         }
         Ok(())
     }
 
-    pub fn resume(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
+    pub fn pause_fade(&mut self, handle: AudioHandle, paused: bool, duration_ms: u32) -> anyhow::Result<()> {
+        self.pause_native(handle, i32::from(paused), duration_ms as i32).map(|_| ())
+    }
+
+    pub fn pause_native(&mut self, handle: AudioHandle, pause: i32, duration_ms: i32) -> anyhow::Result<i32> {
+        let now = self.pal_time_ms;
         let slot = self.slot_mut(handle)?;
-        if let Some(sound) = slot.handle.as_mut() {
-            sound.resume(Tween::default());
+        let Some(sound) = slot.handle.as_mut() else { return Ok(0); };
+        if slot.data.is_none() || sound.state() == PlaybackState::Stopped || slot.pause_word == pause { return Ok(0); }
+        slot.pause_word = pause;
+        if duration_ms != 0 {
+            slot.fade_start_ms = now;
+            slot.fade_duration_ms = duration_ms;
         }
-        Ok(())
+        let tween = Tween {
+            duration: std::time::Duration::from_millis(u64::from(duration_ms as u32)),
+            ..Tween::default()
+        };
+        if pause != 0 { sound.pause(tween); } else { sound.resume(tween); }
+        Ok(1)
+    }
+
+    pub fn resume(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
+        self.pause_native(handle, 0, 0).map(|_| ())
     }
 
     pub fn release(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
@@ -262,7 +552,7 @@ impl AudioSystem {
     }
 
     pub fn set_primary_volume(&mut self, volume: PalVolume) -> anyhow::Result<()> {
-        self.primary_volume = volume.clamped();
+        self.primary_volume = volume;
         log::debug!(
             "[trace-audio] set_primary_volume raw={}",
             self.primary_volume.raw()
@@ -279,6 +569,7 @@ impl AudioSystem {
         group: PalSoundGroup,
         volume: PalVolume,
     ) -> anyhow::Result<()> {
+        anyhow::ensure!(group.0 <= 6, "invalid native sound group");
         self.group_volumes.insert(group, volume.clamped());
         log::debug!(
             "[trace-audio] set_group_volume group={group:?} raw={}",
@@ -300,28 +591,53 @@ impl AudioSystem {
         handle: AudioHandle,
         volume: PalVolume,
     ) -> anyhow::Result<()> {
-        self.slot_mut(handle)?.volume = volume.clamped();
+        let slot = self.slot_mut(handle)?;
+        ensure_loaded(slot, handle)?;
+        slot.volume = volume;
         log::debug!(
             "[trace-audio] set_channel_volume handle={handle:?} raw={}",
-            volume.clamped().raw()
+            volume.raw()
         );
         self.apply_slot_volume(handle)
     }
 
     pub fn channel_volume(&self, handle: AudioHandle) -> anyhow::Result<PalVolume> {
-        Ok(self.slot(handle)?.volume)
+        let slot = self.slot(handle)?;
+        ensure_loaded(slot, handle)?;
+        Ok(slot.volume)
     }
 
+    /// The native setter only stores this float. LoadEx consumes its initial
+    /// value while amplifying PCM; subsequent writes do not rescale the buffer.
+    pub fn set_volume_ratio(&mut self, handle: AudioHandle, gain: f32) -> anyhow::Result<i32> {
+        let slot = self.slot_mut(handle)?;
+        if slot.data.is_none() { return Ok(0); }
+        slot.volume_ratio = gain;
+        Ok(1)
+    }
+
+    /// Store native byte offsets without seeking or reinterpreting them as milliseconds.
+    /// Group-3 playback converts through the retained source PCM layout;
+    /// Ogg retains the native byte-offset shift by two.
     pub fn set_start_end(
         &mut self,
         handle: AudioHandle,
-        start_ms: i32,
-        end_ms: i32,
+        loop_start_bytes: i32,
+        loop_end_bytes: i32,
     ) -> anyhow::Result<()> {
         let slot = self.slot_mut(handle)?;
         ensure_loaded(slot, handle)?;
-        slot.start_ms = start_ms;
-        slot.end_ms = end_ms;
+        slot.loop_start_bytes = loop_start_bytes;
+        slot.loop_end_bytes = loop_end_bytes;
+        slot.loop_bytes_explicit = true;
+        if let Some(format) = slot.source_format.filter(|_| slot.source_group == PalSoundGroup::GROUP3) {
+            slot.loop_start_samples = format.frame_at_byte(loop_start_bytes)? as i64;
+            slot.loop_end_samples = format.frame_at_byte(loop_end_bytes)? as i64;
+            if slot.loop_mode != 0 {
+                let region = loop_region_for(true, slot.loop_start_samples, slot.loop_end_samples);
+                if let Some(sound) = slot.handle.as_mut() { sound.set_loop_region(region); }
+            }
+        }
         Ok(())
     }
 
@@ -336,6 +652,14 @@ impl AudioSystem {
         ensure_loaded(slot, handle)?;
         slot.loop_start_samples = loop_start_samples;
         slot.loop_end_samples = loop_end_samples;
+        if let Some(format) = slot.source_format {
+            let stride = i64::from(format.seek_bytes_per_frame);
+            if stride != 0 {
+                slot.loop_start_bytes = loop_start_samples.wrapping_mul(stride) as i32;
+                slot.loop_end_bytes = loop_end_samples.wrapping_mul(stride) as i32;
+                slot.loop_bytes_explicit = loop_end_samples > 0;
+            }
+        }
         Ok(())
     }
 
@@ -348,14 +672,20 @@ impl AudioSystem {
     pub fn start_end(&self, handle: AudioHandle) -> anyhow::Result<(i32, i32)> {
         let slot = self.slot(handle)?;
         ensure_loaded(slot, handle)?;
-        Ok((slot.start_ms, slot.end_ms))
+        Ok((slot.loop_start_bytes, slot.loop_end_bytes))
     }
 
     pub fn set_channel_pan(&mut self, handle: AudioHandle, pan: i32) -> anyhow::Result<()> {
         let slot = self.slot_mut(handle)?;
         ensure_loaded(slot, handle)?;
-        slot.pan = pan;
-        Ok(())
+        slot.pan = pan.clamp(-10_000, 10_000);
+        if let Some(sound) = slot.handle.as_mut() {
+            sound.set_panning(pal_pan_settings(slot.pan).0, Tween {
+                duration: std::time::Duration::ZERO,
+                ..Tween::default()
+            });
+        }
+        self.apply_slot_volume(handle)
     }
 
     pub fn channel_pan(&self, handle: AudioHandle) -> anyhow::Result<i32> {
@@ -371,30 +701,121 @@ impl AudioSystem {
     ) -> anyhow::Result<()> {
         let slot = self.slot_mut(handle)?;
         ensure_loaded(slot, handle)?;
+        // DirectSound accepts zero as the original sample rate. Invalid rates
+        // leave the channel unchanged; the VM wrapper ignores that API error.
+        anyhow::ensure!(frequency == 0 || (100..=200_000).contains(&frequency), "invalid sound frequency");
         slot.frequency = frequency;
+        let original = slot.data.as_ref().unwrap().sample_rate();
+        let rate = if frequency == 0 { 1.0 } else { f64::from(frequency) / f64::from(original) };
+        if let Some(sound) = slot.handle.as_mut() {
+            sound.set_playback_rate(rate, Tween { duration: std::time::Duration::ZERO, ..Tween::default() });
+        }
         Ok(())
     }
 
     pub fn channel_frequency(&self, handle: AudioHandle) -> anyhow::Result<i32> {
         let slot = self.slot(handle)?;
         ensure_loaded(slot, handle)?;
-        Ok(slot.frequency)
+        Ok(if slot.frequency == 0 { slot.data.as_ref().unwrap().sample_rate() as i32 } else { slot.frequency })
     }
 
-    pub fn sound_param(&self, group: PalSoundGroup, index: usize, param: usize) -> i32 {
-        let Some(slot) = self.groups.get(&group).and_then(|slots| slots.get(index)) else {
-            return 0;
+    /// Reviewed newer PalSoundGetParamByType selector map. Fields belonging to
+    /// DirectSound's streaming ring or resource addresses have no portable
+    /// equivalent yet and return an explicit error instead of a fake value.
+    pub fn sound_param_by_type(&self, group: i32, index: u32, selector: i32) -> anyhow::Result<i32> {
+        let Some(slots) = u8::try_from(group).ok().and_then(|group| self.groups.get(&PalSoundGroup(group))) else {
+            return Ok(0);
         };
-        match param {
-            0 => i32::from(slot.data.is_some()),
-            1 => i32::from(slot.handle.is_some()),
-            2 => i32::from(slot.looping),
-            3 => slot.start_ms,
-            4 => slot.end_ms,
+        let Some(slot) = slots.get(index as usize) else { return Ok(0); };
+        let playing = slot.handle.as_ref().is_some_and(|sound| sound.state() != PlaybackState::Stopped);
+        Ok(match selector {
+            0 => slot.initial_start_bytes,
+            1 => slot.loop_start_bytes,
+            2 if slot.source_group == PalSoundGroup::GROUP3 && slot.data.is_some() && !slot.loop_bytes_explicit && slot.source_format.is_none() => {
+                anyhow::bail!("native default loop end needs original decoded PCM byte length")
+            }
+            2 => slot.loop_end_bytes,
+            4 if slot.data.is_some() && !matches!(slot.source_group.0, 0 | 3) => {
+                let format = slot.source_format.filter(|format| format.native_pal_format())
+                    .ok_or_else(|| anyhow::anyhow!("native buffer byte size unavailable"))?;
+                format.decoded_bytes as i32
+            }
+            6 if playing && !matches!(slot.source_group.0, 0 | 3) => {
+                let format = slot.source_format.filter(|format| format.native_pal_format() && format.seek_bytes_per_frame != 0)
+                    .ok_or_else(|| anyhow::anyhow!("native buffer cursor byte format unavailable"))?;
+                let position = slot.handle.as_ref().unwrap().position();
+                let frame = (position * f64::from(format.sample_rate)).floor() as u64;
+                frame.wrapping_mul(u64::from(format.block_align)) as i32
+            }
+            10 if slot.data.is_some() => {
+                let format = slot.source_format.filter(|format| format.native_pal_format())
+                    .ok_or_else(|| anyhow::anyhow!("native source format flag unavailable"))?;
+                i32::from(format.kind == PcmSourceKind::Ogg)
+            }
+            19 if slot.copied_resource => 0,
+            23 if playing && slot.source_group == PalSoundGroup::GROUP3 => {
+                let format = slot.source_format.filter(|format| format.native_pal_format() && format.seek_bytes_per_frame == format.block_align)
+                    .ok_or_else(|| anyhow::anyhow!("native source cursor byte alignment unavailable"))?;
+                let position = slot.handle.as_ref().unwrap().position();
+                let frame = (position * f64::from(format.sample_rate)).floor() as u64;
+                frame.wrapping_mul(u64::from(format.block_align)) as i32
+            }
+            3 | 4 | 11 | 19 | 22 | 23 if slot.data.is_some() => {
+                anyhow::bail!("native sound selector {selector} needs unimplemented resource/streaming metadata")
+            }
+            3 | 4 | 10 | 11 | 19 | 22 | 23 => 0,
+            5 | 6 if slot.data.is_none() || !playing => -1,
+            5 => self.pal_time_ms.wrapping_sub(slot.fade_start_ms) as i32,
+            6 => anyhow::bail!("native streaming ring-buffer play cursor is unavailable"),
+            7 => i32::from(slot.data.is_some()),
+            8 => i32::from(playing),
+            9 => slot.loop_mode,
+            12 => slot.pause_word,
+            13 => slot.native_worker_command(),
+            14 => i32::from(slot.source_group.0),
+            15 => slot.handle.as_ref().map_or(0, |sound| sound.fade_state()),
+            16 => slot.fade_duration_ms,
+            20 => slot.fade_start_ms as i32,
+            17 => slot.reserved_word,
+            18 => i32::from(slot.reserved_word != 0 || slot.data.is_some() || playing),
+            21 => if slot.data.is_some() { slot.volume.raw() } else { 0 },
             _ => 0,
-        }
+        })
     }
 
+    /// PalSoundGetParam addresses group 3; the earlier reference only supports
+    /// selectors 0..4. Out-of-range indices are rejected rather than emulating
+    /// the original unchecked memory read.
+    pub fn sound_param(&self, index: i32, selector: i32, extended: bool) -> anyhow::Result<i32> {
+        anyhow::ensure!((0..2).contains(&index), "invalid native group 3 sound index");
+        if !extended && !(0..=4).contains(&selector) { return Ok(0); }
+        self.sound_param_by_type(3, index as u32, selector)
+    }
+
+    /// The native zero-argument query returns an index, not a channel count.
+    pub fn now_channel(&self) -> i32 {
+        self.groups.get(&PalSoundGroup::GROUP3).and_then(|slots| slots.iter().position(|slot| {
+            slot.handle.as_ref().is_some_and(|sound| sound.state() != PlaybackState::Stopped)
+        })).map_or(-1, |index| index as i32)
+    }
+
+    pub fn native_free_channel_count(&self, group: i32) -> i32 {
+        let group = if (0..=6).contains(&group) { PalSoundGroup(group as u8) } else { PalSoundGroup::GROUP0 };
+        self.free_channel_count(group) as i32
+    }
+
+    pub fn native_group3_status(&self, index: i32) -> anyhow::Result<i32> {
+        anyhow::ensure!((0..2).contains(&index), "invalid native group 3 sound index");
+        let slot = self.slot(AudioHandle::new(PalSoundGroup::GROUP3, index as usize))?;
+        Ok(slot.native_worker_command())
+    }
+
+    pub fn fade_state(&self, handle: AudioHandle) -> anyhow::Result<i32> {
+        let slot = self.slot(handle)?;
+        Ok(if slot.data.is_none() { -1 } else { slot.handle.as_ref().map_or(0, |sound| sound.fade_state()) })
+    }
+
+    /// Portable convenience enum; this is not native PalSoundGetStatus.
     pub fn sound_status(&self, handle: AudioHandle) -> anyhow::Result<PalSoundStatus> {
         let slot = self.slot(handle)?;
         if slot.data.is_none() {
@@ -430,7 +851,7 @@ impl AudioSystem {
                     .filter(|slot| {
                         slot.handle
                             .as_ref()
-                            .is_some_and(|sound| matches!(sound.state(), PlaybackState::Playing))
+                            .is_some_and(|sound| sound.state().is_advancing())
                     })
                     .count()
             })
@@ -440,7 +861,8 @@ impl AudioSystem {
     pub fn is_playing(&self, handle: AudioHandle) -> anyhow::Result<bool> {
         let slot = self.slot(handle)?;
         Ok(match slot.handle.as_ref() {
-            Some(sound) => matches!(sound.state(), PlaybackState::Playing),
+            Some(sound) if slot.source_group == PalSoundGroup::GROUP3 => sound.state() != PlaybackState::Stopped,
+            Some(sound) => sound.state().is_advancing(),
             None => false,
         })
     }
@@ -455,19 +877,25 @@ impl AudioSystem {
     pub fn free_channel_count(&self, group: PalSoundGroup) -> usize {
         self.groups
             .get(&group)
-            .map(|slots| slots.iter().filter(|slot| slot.data.is_none()).count())
+            .map(|slots| slots.iter().filter(|slot| slot.data.is_none() && slot.reserved_word == 0).count())
             .unwrap_or(0)
     }
 
     pub fn update(&mut self) {
         for slots in self.groups.values_mut() {
             for slot in slots {
+                if let Some(sound) = &mut slot.handle { sound.report_errors(); }
                 if slot
                     .handle
                     .as_ref()
                     .is_some_and(|sound| matches!(sound.state(), PlaybackState::Stopped))
                 {
+                    let natural_end = slot.handle.as_ref().is_some_and(NativeSoundHandle::ended_naturally);
+                    slot.worker_command = slot.native_worker_command();
                     slot.handle = None;
+                    if slot.source_group == PalSoundGroup::GROUP3 || (slot.source_group == PalSoundGroup::GROUP0 && natural_end) {
+                        slot.data = None; slot.reserved_word = 0;
+                    }
                 }
             }
         }
@@ -476,7 +904,7 @@ impl AudioSystem {
     fn find_free_slot(&self, group: PalSoundGroup) -> anyhow::Result<usize> {
         self.groups
             .get(&group)
-            .and_then(|slots| slots.iter().position(|slot| slot.data.is_none()))
+            .and_then(|slots| slots.iter().position(|slot| slot.data.is_none() && slot.reserved_word == 0))
             .ok_or_else(|| anyhow::anyhow!("no free audio slot in group {:?}", group))
     }
 
@@ -492,7 +920,10 @@ impl AudioSystem {
 
     fn apply_slot_volume(&mut self, handle: AudioHandle) -> anyhow::Result<()> {
         let effective = self.effective_volume(handle)?;
-        let decibels = effective.to_decibels() as f32;
+        // Invalid DirectSound gain leaves the existing buffer level intact.
+        // The native retry timeout is not reproduced by the portable mixer.
+        let Some(decibels) = native_volume_decibels(effective) else { return Ok(()); };
+        let decibels = decibels + pal_pan_settings(self.slot(handle)?.pan).1;
         let slot = self.slot_mut(handle)?;
         let has_loaded_sound = slot.data.is_some() || slot.handle.is_some();
         if has_loaded_sound {
@@ -502,19 +933,21 @@ impl AudioSystem {
             );
         }
         if let Some(sound) = slot.handle.as_mut() {
-            sound.set_volume(decibels, Tween::default());
+            sound.set_volume(decibels, immediate_audio_tween());
         }
         Ok(())
     }
 
     pub fn effective_volume(&self, handle: AudioHandle) -> anyhow::Result<PalVolume> {
         let slot = self.slot(handle)?;
-        let group = self.group_volume(handle.group);
-        Ok(PalVolume::from_raw(
-            (self.primary_volume.raw() as i64 * group.raw() as i64 * slot.volume.raw() as i64
-                / 10000
-                / 10000) as i32,
-        ))
+        let group = self.group_volume(slot.source_group);
+        // The native helper rounds the group/channel product through float32,
+        // then performs a wrapping 32-bit master multiplication.
+        let combined = (group.raw() as f32 * (slot.volume.raw() as f32 / 10000.0)).trunc();
+        let combined = if !combined.is_finite() || !(-2147483648.0..2147483648.0).contains(&combined) {
+            i32::MIN
+        } else { combined as i32 };
+        Ok(PalVolume::from_raw(combined.wrapping_mul(self.primary_volume.raw()) / 10000))
     }
 
     fn slot(&self, handle: AudioHandle) -> anyhow::Result<&AudioSlot> {
@@ -567,19 +1000,83 @@ impl PalSoundStatus {
     }
 }
 
+/// PAL forwards pan directly to DirectSound SetPan: hundredths of a dB
+/// attenuate the opposite speaker, with the near speaker unchanged. Convert
+/// both pan and gain to Kira's equal-power law so panning never boosts it.
+fn pal_pan_settings(pan: i32) -> (f32, f32) {
+    let pan = pan.clamp(-10_000, 10_000);
+    let quiet_power = 10.0_f32.powf(-(pan.abs() as f32) / 1000.0);
+    let panning = (1.0 - quiet_power) / (1.0 + quiet_power) * pan.signum() as f32;
+    let gain_db = 10.0 * ((1.0 + quiet_power) * 0.5).log10();
+    (panning, gain_db)
+}
+
+fn decode_asset_sound(bytes: &[u8], _group: PalSoundGroup)
+    -> anyhow::Result<(LoadedSound, PcmSourceFormat)>
+{
+    #[cfg(target_os = "vita")]
+    if _group == PalSoundGroup::GROUP3 && bytes.starts_with(b"OggS") {
+        let stream = stream::StreamAsset::new(bytes)?;
+        let format = stream.source_format;
+        return Ok((LoadedSound::Stream(stream), format));
+    }
+    let data = decode_static_sound(bytes)?;
+    let format = source_format::describe_source(bytes, &data)?;
+    Ok((LoadedSound::Static(data), format))
+}
+
+#[derive(Clone)]
+enum LoadedSound {
+    Static(StaticSoundData),
+    #[cfg(not(target_arch = "wasm32"))]
+    Stream(stream::StreamAsset),
+}
+impl LoadedSound {
+    fn sample_rate(&self) -> u32 {
+        match self { Self::Static(data) => data.sample_rate, #[cfg(not(target_arch = "wasm32"))] Self::Stream(data) => data.sample_rate }
+    }
+    fn num_frames(&self) -> usize {
+        match self { Self::Static(data) => data.frames.len(), #[cfg(not(target_arch = "wasm32"))] Self::Stream(data) => data.frame_count }
+    }
+    #[cfg(test)]
+    fn static_data(&self) -> &StaticSoundData {
+        match self { Self::Static(data) => data, #[cfg(not(target_arch = "wasm32"))] Self::Stream(_) => panic!("expected static PCM") }
+    }
+}
+
 #[derive(Default)]
 struct AudioSlot {
     name: Option<String>,
-    data: Option<StaticSoundData>,
-    handle: Option<StaticSoundHandle>,
-    looping: bool,
+    data: Option<LoadedSound>,
+    handle: Option<NativeSoundHandle>,
+    loop_mode: i32,
     volume: PalVolume,
-    start_ms: i32,
-    end_ms: i32,
+    initial_start_bytes: i32,
+    loop_start_bytes: i32,
+    loop_end_bytes: i32,
+    loop_bytes_explicit: bool,
+    source_group: PalSoundGroup,
+    source_format: Option<PcmSourceFormat>,
+    pause_word: i32,
+    reserved_word: i32,
+    worker_command: i32,
+    fade_start_ms: u32,
+    fade_duration_ms: i32,
+    copied_resource: bool,
     loop_start_samples: i64,
     loop_end_samples: i64,
     pan: i32,
     frequency: i32,
+    volume_ratio: f32,
+}
+
+impl AudioSlot {
+    fn native_worker_command(&self) -> i32 {
+        self.handle.as_ref().map_or(self.worker_command, |sound| {
+            if matches!(self.source_group.0, 0 | 3) && sound.ended_naturally() { 0 }
+            else { sound.worker_command() }
+        })
+    }
 }
 
 /// One `BGM.CSV` row. Loop columns are PCM sample indices in that file.
@@ -644,8 +1141,27 @@ pub fn parse_bgm_csv(bytes: &[u8]) -> BTreeMap<String, BgmLoop> {
     table
 }
 
-/// A `.MIX` voice list is N null-padded 32-byte names and is not itself audio.
+/// Voice lists use null-padded 32-byte names in older releases or 32 UTF-16LE
+/// code units in the native 0x442C10 reader. They are not encoded audio.
 pub fn parse_mix_playlist(bytes: &[u8]) -> Option<Vec<String>> {
+    if !bytes.is_empty() && bytes.len() % 64 == 0 && !is_encoded_audio(bytes) {
+        let wide: Option<Vec<String>> = bytes.chunks_exact(64).map(|chunk| {
+            let units: Vec<u16> = chunk.chunks_exact(2)
+                .map(|pair| u16::from_le_bytes([pair[0], pair[1]])).collect();
+            let end = units.iter().position(|&unit| unit == 0)?;
+            if end == 0 || units[end..].iter().any(|&unit| unit != 0) {
+                return None;
+            }
+            let name = String::from_utf16(&units[..end]).ok()?;
+            // Distinguish narrow records: ASCII names packed as UTF-16 form
+            // arbitrary CJK codepoints, but never a valid ASCII first byte.
+            if !name.chars().next()?.is_ascii_graphic() || name.chars().any(char::is_control) {
+                return None;
+            }
+            Some(name)
+        }).collect();
+        if wide.is_some() { return wide; }
+    }
     if bytes.is_empty() || bytes.len() % 32 != 0 || is_encoded_audio(bytes) {
         return None;
     }
@@ -675,8 +1191,14 @@ pub fn decode_static_sound(bytes: &[u8]) -> anyhow::Result<StaticSoundData> {
     if is_asf_container(bytes) {
         return decode_wma_sound(bytes);
     }
-    StaticSoundData::from_cursor(Cursor::new(bytes.to_vec()))
-        .map_err(|err| anyhow::anyhow!("audio decode failed: {err}"))
+    decode::decode_static(bytes)
+}
+
+/// Retain source format when a decoded clip still corresponds to one input
+/// stream. A MIX sum has no native single-buffer byte layout.
+pub fn source_pcm_format(bytes: &[u8], data: &StaticSoundData) -> anyhow::Result<Option<PcmSourceFormat>> {
+    if parse_mix_playlist(bytes).is_some() { return Ok(None); }
+    source_format::describe_source(bytes, data).map(Some)
 }
 
 /// Decode one voice, or sum every clip named by a `.MIX` playlist.
@@ -927,6 +1449,10 @@ impl AudioHandle {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct PalSoundGroup(pub u8);
 
+impl Default for PalSoundGroup {
+    fn default() -> Self { Self::GROUP0 }
+}
+
 impl PalSoundGroup {
     pub const GROUP0: Self = Self(0);
     pub const GROUP1: Self = Self(1);
@@ -1005,7 +1531,7 @@ impl PalVolume {
     pub const MAX: Self = Self(10000);
 
     pub fn from_raw(value: i32) -> Self {
-        Self(value).clamped()
+        Self(value)
     }
 
     pub fn raw(self) -> i32 {
@@ -1019,9 +1545,9 @@ impl PalVolume {
     pub fn to_decibels(self) -> f64 {
         let raw = self.clamped().0;
         if raw == 0 {
-            -80.0
+            -100.0
         } else {
-            20.0 * (raw as f64 / 10000.0).log10()
+            (2000.0 * (raw as f64 / 10000.0).log10()).trunc() / 100.0
         }
     }
 }
@@ -1032,13 +1558,216 @@ impl Default for PalVolume {
     }
 }
 
+fn amplify_pcm16(sample: f32, gain: f32) -> f32 {
+    let pcm = (sample * 32768.0).clamp(-32768.0, 32767.0).trunc();
+    let scaled = pcm * gain;
+    // CVTTSS2SI returns INT_MIN on overflow, rather than Rust's saturating
+    // float cast. The native loop then clamps that result to signed 16 bits.
+    let integer = if !scaled.is_finite() || scaled >= 2147483648.0 || scaled < -2147483648.0 {
+        i32::MIN
+    } else { scaled as i32 };
+    integer.clamp(-32768, 32767) as f32 / 32768.0
+}
+
+fn native_volume_decibels(volume: PalVolume) -> Option<f32> {
+    (0..=10_000).contains(&volume.raw()).then(|| volume.to_decibels() as f32)
+}
+
+fn immediate_audio_tween() -> Tween {
+    Tween { duration: std::time::Duration::ZERO, ..Tween::default() }
+}
+
+fn prepare_playback(mut data: StaticSoundData, decibels: f32, fade_ms: i32) -> NativeSoundData {
+    data.settings.fade_in_tween = None;
+    NativeSoundData { data: data.volume(decibels), fade_ms: fade_ms as u32, clock_ms: None }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
+    fn constant_sound() -> StaticSoundData {
+        StaticSoundData { sample_rate: 48000, frames: vec![Frame::from_mono(0.25); 48000].into(),
+            settings: StaticSoundSettings::default(), slice: None }
+    }
+
+    #[cfg(feature = "host-audio")]
+    #[test]
+    fn replay_stops_the_prior_mixer_sound_and_immediate_stop_leaves_no_orphan() {
+        let mut audio = AudioSystem::new(AudioConfig { enabled: true }).unwrap();
+        let sink = audio.host_sink();
+        let handle = audio.load_static_data("repeat", constant_sound(), PalSoundGroup::GROUP4).unwrap();
+        let mut samples = [0; 1024];
+        audio.play(handle, true).unwrap();
+        sink.render_i16(&mut samples);
+        assert!(samples.iter().any(|&sample| sample > 100));
+        audio.play(handle, true).unwrap();
+        sink.render_i16(&mut samples);
+        audio.stop(handle).unwrap();
+        sink.render_i16(&mut samples);
+        assert!(samples.iter().all(|&sample| sample == 0));
+    }
+
+    #[test]
+    fn copied_sound_preserves_scalar_configuration_without_starting_playback() {
+        let mut audio = AudioSystem::new(AudioConfig { enabled: false }).unwrap();
+        let source = audio.load_static_data("source", constant_sound(), PalSoundGroup::GROUP4).unwrap();
+        audio.set_channel_volume(source, PalVolume::from_raw(3456)).unwrap();
+        audio.set_channel_pan(source, 1234).unwrap();
+        audio.set_channel_frequency(source, 24000).unwrap();
+        audio.set_start_end(source, 80, 500).unwrap();
+        audio.set_loop_samples(source, 120, 450).unwrap();
+        let copied = audio.copy_sound(source, PalSoundGroup::GROUP5).unwrap();
+        assert_eq!(audio.channel_volume(copied).unwrap().raw(),3456);
+        assert_eq!(audio.channel_pan(copied).unwrap(),1234);
+        assert_eq!(audio.channel_frequency(copied).unwrap(),24000);
+        assert_eq!(audio.start_end(copied).unwrap(),(80,500));
+        assert_eq!(audio.loop_samples(copied).unwrap(),(120,450));
+        assert!(!audio.is_playing(copied).unwrap());
+        audio.release(source).unwrap();
+        assert_eq!(audio.channel_frequency(copied).unwrap(),24000);
+    }
+    #[test]
+    fn native_query_map_preserves_byte_bounds_group_and_raw_gain() {
+        let mut audio = AudioSystem::new(AudioConfig { enabled: false }).unwrap();
+        let handle = audio.load_static_data("native", constant_sound(), PalSoundGroup::GROUP3).unwrap();
+        audio.set_start_end(handle, -4, i32::MAX).unwrap();
+        audio.set_primary_volume(PalVolume::from_raw(12_345)).unwrap();
+        audio.set_channel_volume(handle, PalVolume::from_raw(-123)).unwrap();
+        audio.set_group_volume(PalSoundGroup::GROUP3, PalVolume::from_raw(12_345)).unwrap();
+        assert_eq!(audio.primary_volume().raw(), 12_345);
+        assert_eq!(audio.channel_volume(handle).unwrap().raw(), -123);
+        assert_eq!(audio.group_volume(PalSoundGroup::GROUP3).raw(), 10_000);
+        assert_eq!(audio.sound_param(0, 0, true).unwrap(), 0);
+        assert_eq!(audio.sound_param(0, 1, true).unwrap(), -4);
+        assert_eq!(audio.sound_param(0, 2, true).unwrap(), i32::MAX);
+        assert_eq!(audio.sound_param(0, 7, true).unwrap(), 1);
+        assert_eq!(audio.sound_param(0, 14, true).unwrap(), 3);
+        assert_eq!(audio.sound_param(0, 21, true).unwrap(), -123);
+        assert_eq!(audio.sound_param(0, 21, false).unwrap(), 0);
+        assert!(audio.sound_param(0, 19, true).is_err());
+        assert_eq!(audio.sound_param_by_type(7, 0, 7).unwrap(), 0);
+        assert_eq!(audio.sound_param_by_type(3, 2, 7).unwrap(), 0);
+        assert_eq!(audio.native_free_channel_count(-1), 2);
+        assert_eq!(audio.native_free_channel_count(3), 1);
+        assert_eq!(audio.now_channel(), -1);
+        audio.stop(handle).unwrap();
+        assert_eq!(audio.loaded_channel_count(PalSoundGroup::GROUP3), 1);
+        audio.release(handle).unwrap();
+        assert_eq!(audio.sound_param(0, 7, true).unwrap(), 0);
+    }
+
+    #[test]
+    fn copied_buffer_keeps_source_group_volume_selection() {
+        let mut audio = AudioSystem::new(AudioConfig { enabled: false }).unwrap();
+        let source = audio.load_static_data("group", constant_sound(), PalSoundGroup::GROUP4).unwrap();
+        audio.set_group_volume(PalSoundGroup::GROUP4, PalVolume::from_raw(2500)).unwrap();
+        audio.set_group_volume(PalSoundGroup::GROUP5, PalVolume::from_raw(9000)).unwrap();
+        let copied = audio.copy_sound(source, PalSoundGroup::GROUP5).unwrap();
+        assert_eq!(audio.effective_volume(copied).unwrap().raw(), 2500);
+        assert_eq!(audio.sound_param_by_type(5, copied.index as u32, 14).unwrap(), 4);
+    }
+
+    #[cfg(feature = "host-audio")]
+    #[test]
+    fn raw_pause_words_compare_without_boolean_narrowing_and_group3_retains_play_latch() {
+        let mut audio = AudioSystem::new(AudioConfig { enabled: true }).unwrap();
+        let sink = audio.host_sink();
+        let handle = audio.load_static_data("pause", constant_sound(), PalSoundGroup::GROUP3).unwrap();
+        let mut samples = [0; 512];
+        audio.play_native(handle, -1, 0).unwrap();
+        sink.render_i16(&mut samples);
+        assert_eq!(audio.sound_param(0, 9, true).unwrap(), -1);
+        assert_eq!(audio.pause_native(handle, 0x100, 0).unwrap(), 1);
+        assert_eq!(audio.pause_native(handle, 0x100, 0).unwrap(), 0);
+        assert_eq!(audio.pause_native(handle, 1, 0).unwrap(), 1);
+        sink.render_i16(&mut samples);
+        assert!(samples.iter().all(|&sample| sample == 0));
+        assert!(audio.is_playing(handle).unwrap());
+        assert_eq!(audio.now_channel(), 0);
+        assert_eq!(audio.sound_param(0, 12, true).unwrap(), 1);
+        audio.stop_fade(handle, 1).unwrap();
+        // Native fades follow the PAL clock, independently of PCM consumption.
+        audio.set_pal_time(1);
+        sink.render_i16(&mut samples);
+        audio.update();
+        assert_eq!(audio.loaded_channel_count(PalSoundGroup::GROUP3), 0);
+        assert_eq!(audio.now_channel(), -1);
+    }
+
+    #[test]
+    fn load_ex_amplifies_pcm_before_channel_volume_and_frequency_queries_use_sample_rate() {
+        use super::*;
+        let data = StaticSoundData { sample_rate: 8000,
+            frames: Arc::from([Frame::new(0.25, -0.75), Frame::new(0.75, -0.25)]),
+            settings: StaticSoundSettings::default(), slice: None };
+        let mut audio = AudioSystem::new(AudioConfig { enabled: false }).unwrap();
+        assert!(audio.load_static_data_ex("bad", data.clone(), PalSoundGroup::GROUP5, 2.0).is_err());
+        let handle = audio.load_static_data_ex("gain", data, PalSoundGroup::GROUP4, 2.0).unwrap();
+        let data = audio.slot(handle).unwrap().data.as_ref().unwrap().static_data();
+        assert_eq!(data.frames[0], Frame::new(0.5, -1.0));
+        assert_eq!(data.frames[1], Frame::new(32767.0 / 32768.0, -0.5));
+        audio.set_channel_volume(handle, PalVolume::from_raw(2500)).unwrap();
+        assert_eq!(audio.slot(handle).unwrap().data.as_ref().unwrap().static_data().frames[0].left, 0.5);
+        assert_eq!(audio.channel_frequency(handle).unwrap(), 8000);
+        audio.set_channel_frequency(handle, 16000).unwrap();
+        assert_eq!(audio.channel_frequency(handle).unwrap(), 16000);
+        assert!(audio.set_channel_frequency(handle, -1).is_err());
+        assert_eq!(audio.channel_frequency(handle).unwrap(), 16000);
+        audio.set_channel_frequency(handle, 0).unwrap();
+        assert_eq!(audio.channel_frequency(handle).unwrap(), 8000);
+    }
     use super::{
         apply_loop_region, audio_lookup_key, decode_game_audio, decode_static_sound,
         mix_static_sounds, parse_bgm_csv, parse_mix_playlist,
     };
     use kira::sound::{EndPosition, PlaybackPosition};
+
+    #[test]
+    fn voice_fade_uses_independent_backend_envelope() {
+        use kira::sound::SoundData;
+        let data = kira::sound::static_sound::StaticSoundData {
+            sample_rate: 1000,
+            frames: vec![kira::Frame::new(1.0, 1.0); 3000].into(),
+            settings: Default::default(),
+            slice: None,
+        };
+        let prepared = super::prepare_playback(data.clone(), -6.0, 1000);
+        assert_eq!(std::time::Duration::from_millis(u64::from(prepared.fade_ms)),
+            std::time::Duration::from_secs(1));
+        let (mut sound, _handle) = prepared.into_sound().unwrap();
+        let builder = kira::info::MockInfoBuilder::new();
+        let info = builder.build();
+        sound.on_start_processing();
+        let initial = sound.process_one(0.001, &info).left.abs();
+        let mut middle = initial;
+        for _ in 0..499 { middle = sound.process_one(0.001, &info).left.abs(); }
+        let mut end = middle;
+        for _ in 0..600 { end = sound.process_one(0.001, &info).left.abs(); }
+        assert!(initial < middle && middle < end, "{initial} < {middle} < {end}");
+        assert!((end - 10.0_f32.powf(-6.0 / 20.0)).abs() < 0.001, "final gain {end}");
+        assert_eq!(super::prepare_playback(data.clone(), -6.0, -1).fade_ms, u32::MAX);
+        let direct = super::prepare_playback(data, -6.0, 0);
+        assert_eq!(direct.fade_ms, 0);
+        let (mut direct, _handle) = direct.into_sound().unwrap();
+        direct.on_start_processing();
+        let _ = direct.process_one(0.001, &info);
+        assert!((direct.process_one(0.001, &info).left - end).abs() < 0.001);
+    }
+
+    #[test]
+    fn directsound_pan_attenuates_only_the_opposite_speaker() {
+        for pan in [-10_000, -2_000, -600, 0, 600, 2_000, 10_000] {
+            let (position, gain_db) = super::pal_pan_settings(pan);
+            let output = (kira::Frame::new(1.0, 1.0) * 10.0_f32.powf(gain_db / 20.0))
+                .panned(position.into());
+            let expected_quiet = 10.0_f32.powf(-(pan.abs() as f32) / 2000.0);
+            let (near, far) = if pan >= 0 { (output.right, output.left) }
+                else { (output.left, output.right) };
+            assert!((near - 1.0).abs() < 0.0001, "pan={pan}, near={near}");
+            assert!((far - expected_quiet).abs() < 0.0001, "pan={pan}, far={far}");
+        }
+    }
 
     #[test]
     fn bgm_csv_rows_are_sample_loop_points() {
@@ -1077,6 +1806,21 @@ mod tests {
         );
         assert!(parse_mix_playlist(b"OggSrest").is_none());
         assert!(parse_mix_playlist(&[0x30, 0x26, 0xB2, 0x75]).is_none());
+    }
+
+    #[test]
+    fn mix_playlist_reads_native_wide_records() {
+        let mut bytes = vec![0u8; 128];
+        for (record, name) in ["speaker01_line", "speaker02_line"].iter().enumerate() {
+            for (i, unit) in name.encode_utf16().enumerate() {
+                bytes[record * 64 + i * 2..record * 64 + i * 2 + 2]
+                    .copy_from_slice(&unit.to_le_bytes());
+            }
+        }
+        assert_eq!(parse_mix_playlist(&bytes), Some(vec![
+            "speaker01_line".to_owned(), "speaker02_line".to_owned()]));
+        bytes[127] = 1;
+        assert!(parse_mix_playlist(&bytes).is_none());
     }
 
     #[test]

@@ -23,6 +23,11 @@ Specifically, targeted for the game "Koikake".
 | iOS | arm64 device, arm64 simulator, x86_64 simulator |
 | Android | arm64-v8a, x86_64 |
 | WebAssembly | wasm32-unknown-unknown |
+| Nintendo Switch | Homebrew NRO, experimental; package build verified |
+| PlayStation Vita | Homebrew VPK, experimental; package build verified |
+
+See [platform build instructions](platform/README.md) for SDK requirements,
+controls, artifacts, and validation limits. Console hardware has not been tested.
 
 ## Run
 

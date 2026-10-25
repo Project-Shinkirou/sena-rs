@@ -3,11 +3,11 @@ use std::sync::Arc;
 
 use pal_asset::Nls;
 use winit::application::ApplicationHandler;
-use winit::dpi::{LogicalSize, PhysicalSize};
+use winit::dpi::{LogicalPosition, LogicalSize, PhysicalSize};
 use winit::event::{ElementState, MouseButton as WinitMouseButton, MouseScrollDelta, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
 use winit::keyboard::Key;
-use winit::window::{Window, WindowId};
+use winit::window::{Fullscreen, Window, WindowId};
 
 use crate::audio::AudioConfig;
 use crate::config::TextLang;
@@ -17,6 +17,7 @@ use crate::platform_time::{Duration, Instant};
 use crate::renderer::{RenderOutcome, Renderer, RendererConfig};
 use crate::runtime::{RuntimeStatus, ScriptRuntimeConfig};
 use crate::scene::{rasterize_scene_rgba, FrameScene};
+use crate::system::PalWindowRequest;
 
 #[derive(Clone, Debug)]
 pub struct SenaConfig {
@@ -413,10 +414,63 @@ impl SenaApplication {
         ))
         .expect("sena failed to initialize the software renderer");
         self.window = Some(window);
+        self.engine.set_host_gpu_renderer(renderer.uses_gpu());
         self.renderer = Some(renderer);
+        self.observe_window_geometry();
+    }
+
+    fn observe_window_geometry(&mut self) {
+        let Some(window) = self.window.as_ref() else {
+            return;
+        };
+        let scale = window.scale_factor();
+        let size = window.inner_size().to_logical::<i32>(scale);
+        let pos = window
+            .outer_position()
+            .unwrap_or_default()
+            .to_logical::<i32>(scale);
+        self.engine.observe_window_geometry(
+            pos.x,
+            pos.y,
+            size.width,
+            size.height,
+            window.fullscreen().is_some(),
+        );
+    }
+
+    fn apply_window_requests(&mut self) {
+        let Some(window) = self.window.clone() else {
+            return;
+        };
+        for request in self.engine.take_window_requests() {
+            match request {
+                PalWindowRequest::ChangeMode { mode } => {
+                    window.set_fullscreen(
+                        (mode != 0).then(|| Fullscreen::Borderless(window.current_monitor())),
+                    );
+                }
+                PalWindowRequest::ChangeSize { width, height } => {
+                    if let Some(size) = window.request_inner_size(LogicalSize::new(width, height)) {
+                        self.handle_resize(size);
+                    }
+                }
+                PalWindowRequest::SetPos { x, y } => {
+                    window.set_outer_position(LogicalPosition::new(x, y));
+                }
+                PalWindowRequest::ChangeAspect { mode } => {
+                    // The PAL renderer's four scaling policies need a separate port.
+                    log::warn!("PAL aspect mode {mode} has no desktop renderer mapping yet");
+                }
+            }
+        }
     }
 
     fn handle_resize(&mut self, size: PhysicalSize<u32>) {
+        // Minimized surfaces must not replace the last usable PAL window size.
+        if size.width == 0 || size.height == 0 {
+            return;
+        }
+        self.observe_window_geometry();
         self.engine.handle_event(PalEvent::Resized {
             width: size.width,
             height: size.height,
@@ -594,6 +648,7 @@ impl SenaApplication {
                 return;
             }
         };
+        self.apply_window_requests();
         let Some(renderer) = self.renderer.as_mut() else {
             self.engine.input_begin_frame();
             return;
@@ -634,6 +689,7 @@ impl SenaApplication {
                 }
             };
 
+            self.apply_window_requests();
             if should_render {
                 if let Some(renderer) = self.renderer.as_mut() {
                     match renderer.render_with_png_dump(&frame.scene, dump_path.as_deref()) {
@@ -702,6 +758,7 @@ impl SenaApplication {
                 return;
             }
         };
+        self.apply_window_requests();
         let Some(renderer) = self.renderer.as_mut() else {
             self.engine.input_begin_frame();
             return;
@@ -951,6 +1008,7 @@ impl ApplicationHandler for SenaApplication {
                 event_loop.exit();
             }
             WindowEvent::Resized(size) => self.handle_resize(size),
+            WindowEvent::Moved(_) => self.observe_window_geometry(),
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 if self.config.trace_input {
                     eprintln!(
@@ -965,6 +1023,7 @@ impl ApplicationHandler for SenaApplication {
                 self.handle_resize(window.inner_size());
             }
             WindowEvent::RedrawRequested => self.render(event_loop),
+            WindowEvent::Focused(focused) => self.engine.handle_event(PalEvent::Focused { focused }),
             WindowEvent::CursorMoved { position, .. } => {
                 if self.config.trace_input {
                     let size = window.inner_size();
