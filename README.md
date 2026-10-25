@@ -89,8 +89,10 @@ cargo test --locked -p shinki-emu-sena-rs --lib
 
 `build.rs` records the actual target/profile and `LICENSE-MPL-2.0` in
 `OUT_DIR/core-build.json`; Cargo produces `shinki_emu_sena_rs.dll`.
-The embedded adapter currently supports Windows x64 MSVC. Game archives and
-release-specific fonts come from the user's game tree; the upstream
+The embedded adapter accepts Windows x64 MSVC, Linux x64 GNU, both macOS
+architectures and iOS device/simulator targets. macOS uses a `cdylib` with
+`diagnostic-bridge`; iOS statically links the `rlib` without that feature.
+Game archives and release-specific fonts come from the user's game tree; the upstream
 `pal-vm/src/default.ttf` fallback is embedded into the library, not a separate
 core Resource. Its SFNT metadata identifies Microsoft-supplied MS PGothic
 (Ricoh/RYOBI) with restricted-use terms. Redistribution of the binary and that
