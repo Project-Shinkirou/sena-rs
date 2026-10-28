@@ -122,7 +122,11 @@ impl SystemDat {
     pub const FIXED_BLOCK_SIZE: usize = 0x330;
 
     pub fn load_optional(root: &Path) -> anyhow::Result<Option<Self>> {
-        let path = root.join(Self::FILE_NAME);
+        // The native PAL metadata names SaveFolder as the directory that
+        // contains numbered saves.  VmTask_WriteSystemDat therefore uses
+        // SaveFolder\\system.dat, which is <game>\\save\\system.dat for
+        // the shipped titles.
+        let path = root.join("save").join(Self::FILE_NAME);
         if !vfs::is_file(&path) {
             return Ok(None);
         }
